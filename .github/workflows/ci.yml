@@ -1,4 +1,4 @@
-name: FutPro CI/CD
+name: FutPro CI
 
 on:
   push:
@@ -7,11 +7,14 @@ on:
     branches: [ main, master ]
 
 jobs:
-  test:
+  ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [18.x]
+    env:
+      VITE_API_URL: https://futpro.vip/api
+      NODE_ENV: production
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
@@ -20,9 +23,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
-      - name: Instalar dependencias
-        run: npm install
+      - name: Instalar dependencias (npm ci)
+        run: npm ci
 
       - name: Lint automático con ESLint
         run: npx eslint . --ext .js,.jsx
@@ -48,28 +52,5 @@ jobs:
       - name: Build de producción (React/Vite)
         run: npm run build
 
-      - name: Notificación a Slack (ejemplo)
-        if: always()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,commit,author,action,eventName,ref,workflow,job,took
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-      - name: Deploy automático a Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: .
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      # Nota: El deploy se realiza con Netlify conectado al repo (recomendado).
+      # Si deseas deploy desde Actions, agrega un job que use Netlify CLI con NETLIFY_AUTH_TOKEN y NETLIFY_SITE_ID.
