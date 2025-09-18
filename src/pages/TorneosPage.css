@@ -1,0 +1,53 @@
+
+.torneos-container {
+	background: #222;
+	color: #FFD700;
+	min-height: 100vh;
+	padding: 32px;
+}
+
+.torneos-title {
+	font-size: 2.2rem;
+	font-weight: bold;
+	margin-bottom: 24px;
+	color: #FFD700;
+}
+
+.torneos-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: #333;
+	border-radius: 12px;
+	box-shadow: 0 2px 12px #0006;
+}
+
+.torneos-table th, .torneos-table td {
+	padding: 12px 18px;
+	border-bottom: 1px solid #FFD700;
+}
+
+.torneos-table th {
+	background: #222;
+	color: #FFD700;
+	font-weight: bold;
+}
+
+.torneos-table tr:nth-child(even) {
+	background: #2a2a2a;
+}
+
+.torneos-table tr:hover {
+	background: #444;
+}
+
+.torneo-btn {
+	background: linear-gradient(90deg, #FFD700 0%, #222 100%);
+	color: #222;
+	border: none;
+	border-radius: 6px;
+	padding: 8px 16px;
+	font-weight: bold;
+	cursor: pointer;
+	margin: 4px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}

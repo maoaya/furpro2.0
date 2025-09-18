@@ -1,0 +1,51 @@
+# Ignora archivos de entorno
+.env
+.env.local
+.env.test
+.env.production
+
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+.cache/
+temp/
+tmp/
+
+# Java / Maven outputs
+target/
+*.jar
+*.war
+*.ear
+
+# Binaries
+*.exe
+*.dll
+*.bin
+
+# Databases / dumps
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+*.sql
+backups/
+
+# Media uploads
+uploads/
+
+# IDE files
+.vscode/
+.DS_Store
+
+# Logs
+*.log
+coverage/
+.nyc_output/
+*.tsbuildinfo
+.eslintcache
+
+# Misc OS files
+Thumbs.db
+Desktop.ini

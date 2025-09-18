@@ -1,0 +1,10 @@
+import { enviarNotificacionPush } from '../services/notificationsService.js';
+import { registrarEvento } from '../services/AnalyticsManager.js';
+import { asignarLogro } from '../services/AchievementManager.js';
+import { iniciarStream } from '../services/StreamManager.js';
+
+// Usar en los flujos correspondientes
+await enviarNotificacionPush(subscription, payload);
+await registrarEvento({ tipo: 'login', usuario: userId });
+await asignarLogro(userId, 'primer_login');
+await iniciarStream(streamData);

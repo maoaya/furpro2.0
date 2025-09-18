@@ -1,0 +1,26 @@
+.logros-panel {
+  background: #232323;
+  color: #FFD700;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  padding: 32px;
+  max-width: 420px;
+  margin: 40px auto;
+  text-align: left;
+  border: 2px solid #FFD700;
+}
+.logros-panel h3 {
+  text-align: center;
+  margin-bottom: 18px;
+}
+.logro-item {
+  margin-bottom: 12px;
+  font-size: 1.05em;
+}
+.logro-nombre {
+  font-weight: bold;
+  color: #FFD700;
+}
+.logro-descripcion {
+  color: #fff;
+}

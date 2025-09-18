@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sin conexión - FutPro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #FFD700;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .offline-container {
+            text-align: center;
+            max-width: 500px;
+            padding: 40px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 20px;
+            border: 2px solid #FFD700;
+            backdrop-filter: blur(10px);
+        }
+
+        .offline-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .offline-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .offline-message {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #cccccc;
+            line-height: 1.6;
+        }
+
+        .retry-button {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .retry-button:active {
+            transform: translateY(0);
+        }
+
+        .offline-tips {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .offline-tips h3 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .offline-tips ul {
+            list-style: none;
+            color: #cccccc;
+        }
+
+        .offline-tips li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .offline-tips li:before {
+            content: "⚽";
+            position: absolute;
+            left: 0;
+            color: #FFD700;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 600px) {
+            .offline-container {
+                padding: 30px 20px;
+            }
+
+            .offline-title {
+                font-size: 2rem;
+            }
+
+            .offline-message {
+                font-size: 1rem;
+            }
+
+            .offline-icon {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon pulse">⚽</div>
+        <h1 class="offline-title">Sin Conexión</h1>
+        <p class="offline-message">
+            Parece que no tienes conexión a internet. No te preocupes, 
+            puedes seguir usando algunas funciones de FutPro sin conexión.
+        </p>
+        
+        <button class="retry-button" onclick="retryConnection()">
+            Reintentar Conexión
+        </button>
+
+        <div class="offline-tips">
+            <h3>Funciones disponibles sin conexión:</h3>
+            <ul>
+                <li>Ver contenido previamente cargado</li>
+                <li>Crear publicaciones (se enviarán cuando tengas conexión)</li>
+                <li>Practicar el juego de penales</li>
+                <li>Ver tu perfil y estadísticas guardadas</li>
+                <li>Navegar por equipos y torneos guardados</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function retryConnection() {
+            // Mostrar indicador de carga
+            const button = document.querySelector('.retry-button');
+            const originalText = button.textContent;
+            button.textContent = 'Verificando...';
+            button.disabled = true;
+
+            // Intentar cargar la página principal
+            fetch('/', { method: 'HEAD', cache: 'no-cache' })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/';
+                    } else {
+                        throw new Error('Sin conexión');
+                    }
+                })
+                .catch(() => {
+                    // Restaurar botón si no hay conexión
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.disabled = false;
+                        
+                        // Mostrar mensaje temporal
+                        const message = document.createElement('div');
+                        message.textContent = 'Aún sin conexión. Intenta de nuevo más tarde.';
+                        message.style.cssText = `
+                            position: fixed;
+                            top: 20px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            background: rgba(255, 0, 0, 0.8);
+                            color: white;
+                            padding: 10px 20px;
+                            border-radius: 5px;
+                            z-index: 1000;
+                        `;
+                        document.body.appendChild(message);
+                        
+                        setTimeout(() => {
+                            document.body.removeChild(message);
+                        }, 3000);
+                    }, 1000);
+                });
+        }
+
+        // Verificar conexión automáticamente cada 30 segundos
+        setInterval(() => {
+            if (navigator.onLine) {
+                fetch('/', { method: 'HEAD', cache: 'no-cache' })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = '/';
+                        }
+                    })
+                    .catch(() => {
+                        // Conexión aún no disponible
+                    });
+            }
+        }, 30000);
+
+        // Escuchar eventos de conexión
+        window.addEventListener('online', () => {
+            retryConnection();
+        });
+
+        window.addEventListener('offline', () => {
+            console.log('Conexión perdida');
+        });
+    </script>
+</body>
+</html>

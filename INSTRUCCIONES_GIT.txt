@@ -1,0 +1,27 @@
+# COMANDOS PARA CONECTAR TU PROYECTO CON GITHUB
+# Ejecuta estos comandos UNO POR UNO después de instalar Git
+
+# 1. Configurar Git con tu información (reemplaza con tus datos)
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu_email@ejemplo.com"
+
+# 2. Verificar que Git funciona
+git --version
+
+# 3. Inicializar repositorio en tu proyecto
+git init
+
+# 4. Agregar todos los archivos
+git add .
+
+# 5. Hacer el primer commit
+git commit -m "Initial commit: FutPro 2.0 with futpro.vip domain setup"
+
+# 6. Conectar con tu repositorio de GitHub
+git remote add origin https://github.com/[TU_USUARIO]/futpro2.0.git
+
+# 7. Crear rama main y subir código
+git branch -M main
+git push -u origin main
+
+# IMPORTANTE: Reemplaza [TU_USUARIO] con tu nombre de usuario de GitHub

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutPro 2.0 - Autenticando...</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000, #1a1a1a, #2d2d2d);
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        .callback-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 400px;
+        }
+
+        .trophy-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ffd700, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 215, 0, 0.3);
+            border-top: 4px solid #ffd700;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="callback-container">
+        <div class="trophy-icon">🏆</div>
+        <h1 class="title">FUTPRO 2.0</h1>
+        <div class="status" id="status">Completando autenticación...</div>
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // Configuración de Supabase
+        const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU4NDkwMDEsImV4cCI6MjA1MTQyNTAwMX0.YpU5CqvKs2o8bVvOCjv1WK5H8H_fOMgKT7uZTSxGIEI';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function handleCallback() {
+            const statusElement = document.getElementById('status');
+            
+            try {
+                // Manejar el callback de OAuth
+                const { data, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    throw error;
+                }
+                
+                if (data.session) {
+                    statusElement.textContent = '✅ ¡Autenticación exitosa! Redirigiendo...';
+                    
+                    // Redirigir al dashboard después de 2 segundos
+                    setTimeout(() => {
+                        window.location.href = '../dashboard.html';
+                    }, 2000);
+                } else {
+                    throw new Error('No se pudo completar la autenticación');
+                }
+                
+            } catch (error) {
+                console.error('Error en callback:', error);
+                statusElement.textContent = '❌ Error en autenticación. Redirigiendo...';
+                
+                // Redirigir de vuelta al login en caso de error
+                setTimeout(() => {
+                    window.location.href = '../futpro-premium.html';
+                }, 3000);
+            }
+        }
+
+        // Ejecutar cuando la página cargue
+        document.addEventListener('DOMContentLoaded', handleCallback);
+    </script>
+</body>
+</html>

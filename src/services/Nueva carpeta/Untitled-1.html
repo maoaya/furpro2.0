@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Card FutPro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body { background: #181818; color: #FFD700; font-family: Arial, sans-serif; }
+    .card-demo {
+      background: #232323;
+      border: 2px solid #FFD700;
+      border-radius: 12px;
+      padding: 18px;
+      width: 320px;
+      margin: 40px auto;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    .card-demo img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .card-demo h3 { color: #FFD700; margin: 0 0 8px 0; }
+    .card-demo p { color: #fff; margin: 0 0 12px 0; }
+    .card-demo .precio { font-weight: bold; color: #FFD700; margin-bottom: 12px; }
+    .card-demo button {
+      background: #FFD700;
+      color: #181818;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .card-demo button:hover { background: #e6c200; }
+  </style>
+</head>
+<body>
+  <div class="card-demo">
+    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Producto o Usuario">
+    <h3>Balón Adidas Pro</h3>
+    <p>Balón oficial para torneos, resistente y de alta calidad.</p>
+    <div class="precio">Precio: $120.000</div>
+    <button onclick="alert('Contacto con vendedor')"><i class="fa-solid fa-comment"></i> Contactar vendedor</button>
+  </div>
+</body>
+</html>

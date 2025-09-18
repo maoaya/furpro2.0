@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutPro 2.0 - Autenticación</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #0a4b3e, #1a5f4d, #2d7a5f, #0f3029);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 25px;
+            padding: 3rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #00ff88, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .auth-options {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-btn {
+            background: linear-gradient(45deg, rgba(0, 255, 136, 0.2), rgba(0, 204, 102, 0.2));
+            border: 2px solid rgba(0, 255, 136, 0.5);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .auth-btn:hover {
+            background: linear-gradient(45deg, rgba(0, 255, 136, 0.4), rgba(0, 204, 102, 0.4));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
+        }
+
+        .form-container {
+            display: none;
+            text-align: left;
+        }
+
+        .form-container.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #00ff88, #00cc66);
+            border: none;
+            color: white;
+            padding: 1rem;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .oauth-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .oauth-btn {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .google-btn {
+            background: #db4437;
+        }
+
+        .facebook-btn {
+            background: #4267B2;
+        }
+
+        .oauth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .message.error {
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid #ff4444;
+            color: #ff8888;
+        }
+
+        .message.success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            color: #88ffaa;
+        }
+
+        .message.info {
+            background: rgba(100, 150, 255, 0.2);
+            border: 1px solid #6496ff;
+            color: #aaccff;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #00ff88;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Pantalla principal -->
+        <div id="main-view" class="view">
+            <div class="logo">⚽</div>
+            <h1 class="title">FUTPRO 2.0</h1>
+            <p class="subtitle">Tu plataforma profesional de fútbol</p>
+            
+            <div class="auth-options">
+                <button class="auth-btn" onclick="showForm('register')">
+                    <i class="fas fa-user-plus"></i>
+                    1. Crear Cuenta Nueva
+                </button>
+                <button class="auth-btn" onclick="showForm('login')">
+                    <i class="fas fa-sign-in-alt"></i>
+                    2. Iniciar Sesión
+                </button>
+                <button class="auth-btn" onclick="showForm('change-password')">
+                    <i class="fas fa-key"></i>
+                    3. Cambiar Contraseña
+                </button>
+                <button class="auth-btn" onclick="showForm('forgot-password')">
+                    <i class="fas fa-question-circle"></i>
+                    4. Olvidé mi Contraseña
+                </button>
+            </div>
+        </div>
+
+        <!-- Formulario de Registro -->
+        <div id="register-form" class="form-container">
+            <button class="back-btn" onclick="showMain()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            <h2><i class="fas fa-user-plus"></i> Crear Cuenta</h2>
+            <div id="register-message"></div>
+            
+            <form onsubmit="register(event)">
+                <div class="form-group">
+                    <label class="form-label">Nombre Completo</label>
+                    <input type="text" id="reg-fullname" class="form-input" placeholder="Ej: Lionel Messi" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="reg-email" class="form-input" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" id="reg-password" class="form-input" placeholder="Mínimo 6 caracteres" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmar Contraseña</label>
+                    <input type="password" id="reg-confirm-password" class="form-input" placeholder="Repite tu contraseña" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-rocket"></i> Crear Mi Cuenta
+                </button>
+            </form>
+
+            <div class="oauth-section">
+                <button class="oauth-btn google-btn" onclick="signInWithGoogle()">
+                    <i class="fab fa-google"></i> Continuar con Google
+                </button>
+                <button class="oauth-btn facebook-btn" onclick="signInWithFacebook()">
+                    <i class="fab fa-facebook-f"></i> Continuar con Facebook
+                </button>
+            </div>
+        </div>
+
+        <!-- Formulario de Login -->
+        <div id="login-form" class="form-container">
+            <button class="back-btn" onclick="showMain()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            <h2><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h2>
+            <div id="login-message"></div>
+            
+            <form onsubmit="login(event)">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="login-email" class="form-input" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" id="login-password" class="form-input" placeholder="Tu contraseña" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </button>
+            </form>
+
+            <div class="oauth-section">
+                <button class="oauth-btn google-btn" onclick="signInWithGoogle()">
+                    <i class="fab fa-google"></i> Iniciar con Google
+                </button>
+                <button class="oauth-btn facebook-btn" onclick="signInWithFacebook()">
+                    <i class="fab fa-facebook-f"></i> Iniciar con Facebook
+                </button>
+            </div>
+        </div>
+
+        <!-- Formulario de Cambio de Contraseña -->
+        <div id="change-password-form" class="form-container">
+            <button class="back-btn" onclick="showMain()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            <h2><i class="fas fa-key"></i> Cambiar Contraseña</h2>
+            <div id="change-password-message"></div>
+            
+            <form onsubmit="changePassword(event)">
+                <div class="form-group">
+                    <label class="form-label">Contraseña Actual</label>
+                    <input type="password" id="current-password" class="form-input" placeholder="Tu contraseña actual" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nueva Contraseña</label>
+                    <input type="password" id="new-password" class="form-input" placeholder="Mínimo 6 caracteres" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmar Nueva Contraseña</label>
+                    <input type="password" id="confirm-new-password" class="form-input" placeholder="Repite la nueva contraseña" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-save"></i> Cambiar Contraseña
+                </button>
+            </form>
+        </div>
+
+        <!-- Formulario de Recuperación de Contraseña -->
+        <div id="forgot-password-form" class="form-container">
+            <button class="back-btn" onclick="showMain()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            <h2><i class="fas fa-question-circle"></i> Recuperar Contraseña</h2>
+            <div id="forgot-password-message"></div>
+            
+            <form onsubmit="resetPassword(event)">
+                <div class="form-group">
+                    <label class="form-label">Email de tu Cuenta</label>
+                    <input type="email" id="reset-email" class="form-input" placeholder="tu@email.com" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Enviar Email de Recuperación
+                </button>
+            </form>
+            <p style="margin-top: 1rem; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
+                Te enviaremos un email con las instrucciones para restablecer tu contraseña.
+            </p>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Procesando...</p>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Supabase
+        const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU4NDkwMDEsImV4cCI6MjA1MTQyNTAwMX0.YpU5CqvKs2o8bVvOCjv1WK5H8H_fOMgKT7uZTSxGIEI';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Verificar sesión al cargar
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 FutPro 2.0 Auth iniciado');
+            
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    console.log('✅ Sesión activa encontrada');
+                    redirectToDashboard();
+                }
+            } catch (error) {
+                console.log('ℹ️ No hay sesión activa');
+            }
+        });
+
+        // Navegación entre vistas
+        function showForm(formName) {
+            document.querySelectorAll('.view, .form-container').forEach(el => {
+                el.classList.remove('active');
+                el.style.display = 'none';
+            });
+            document.getElementById(formName + '-form').style.display = 'block';
+            document.getElementById(formName + '-form').classList.add('active');
+            clearMessage(formName);
+        }
+
+        function showMain() {
+            document.querySelectorAll('.form-container').forEach(el => {
+                el.classList.remove('active');
+                el.style.display = 'none';
+            });
+            document.getElementById('main-view').style.display = 'block';
+        }
+
+        // Funciones de utilidad
+        function showMessage(text, type, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="message ${type}">${text}</div>`;
+        }
+
+        function clearMessage(formName) {
+            const container = document.getElementById(formName + '-message');
+            if (container) container.innerHTML = '';
+        }
+
+        function showLoading() {
+            document.querySelectorAll('.view, .form-container').forEach(el => {
+                el.style.display = 'none';
+            });
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function redirectToDashboard() {
+            showMessage('✅ ¡Redirigiendo al dashboard...', 'success', 'main-view');
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 2000);
+        }
+
+        // FUNCIONES DE AUTENTICACIÓN
+
+        async function register(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+            const fullName = document.getElementById('reg-fullname').value;
+            
+            // Validaciones
+            if (!email || !password || !confirmPassword || !fullName) {
+                showMessage('⚠️ Todos los campos son obligatorios', 'error', 'register-message');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('⚠️ Las contraseñas no coinciden', 'error', 'register-message');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('⚠️ La contraseña debe tener al menos 6 caracteres', 'error', 'register-message');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: fullName
+                        }
+                    }
+                });
+                
+                hideLoading();
+                showForm('register');
+                
+                if (error) {
+                    throw error;
+                }
+                
+                if (data.user && !data.session) {
+                    showMessage('📧 Te hemos enviado un email de confirmación. Revisa tu bandeja de entrada.', 'success', 'register-message');
+                } else if (data.session) {
+                    showMessage('✅ ¡Cuenta creada exitosamente!', 'success', 'register-message');
+                    setTimeout(redirectToDashboard, 2000);
+                }
+                
+            } catch (error) {
+                hideLoading();
+                showForm('register');
+                console.error('Error en registro:', error);
+                showMessage(`❌ Error: ${error.message}`, 'error', 'register-message');
+            }
+        }
+
+        async function login(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                showMessage('⚠️ Email y contraseña son obligatorios', 'error', 'login-message');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                hideLoading();
+                
+                if (error) {
+                    showForm('login');
+                    throw error;
+                }
+                
+                showMessage('✅ ¡Inicio de sesión exitoso!', 'success', 'login-message');
+                setTimeout(redirectToDashboard, 2000);
+                
+            } catch (error) {
+                showForm('login');
+                console.error('Error en login:', error);
+                showMessage(`❌ Error: ${error.message}`, 'error', 'login-message');
+            }
+        }
+
+        async function changePassword(event) {
+            event.preventDefault();
+            
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmNewPassword = document.getElementById('confirm-new-password').value;
+            
+            if (!currentPassword || !newPassword || !confirmNewPassword) {
+                showMessage('⚠️ Todos los campos son obligatorios', 'error', 'change-password-message');
+                return;
+            }
+            
+            if (newPassword !== confirmNewPassword) {
+                showMessage('⚠️ Las nuevas contraseñas no coinciden', 'error', 'change-password-message');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showMessage('⚠️ La nueva contraseña debe tener al menos 6 caracteres', 'error', 'change-password-message');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const { error } = await supabase.auth.updateUser({
+                    password: newPassword
+                });
+                
+                hideLoading();
+                showForm('change-password');
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showMessage('✅ ¡Contraseña cambiada exitosamente!', 'success', 'change-password-message');
+                
+                // Limpiar campos
+                document.getElementById('current-password').value = '';
+                document.getElementById('new-password').value = '';
+                document.getElementById('confirm-new-password').value = '';
+                
+            } catch (error) {
+                hideLoading();
+                showForm('change-password');
+                console.error('Error al cambiar contraseña:', error);
+                showMessage(`❌ Error: ${error.message}`, 'error', 'change-password-message');
+            }
+        }
+
+        async function resetPassword(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('reset-email').value;
+            
+            if (!email) {
+                showMessage('⚠️ El email es obligatorio', 'error', 'forgot-password-message');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/futpro-auth.html'
+                });
+                
+                hideLoading();
+                showForm('forgot-password');
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showMessage('📧 ¡Email de recuperación enviado! Revisa tu bandeja de entrada.', 'success', 'forgot-password-message');
+                
+            } catch (error) {
+                hideLoading();
+                showForm('forgot-password');
+                console.error('Error al recuperar contraseña:', error);
+                showMessage(`❌ Error: ${error.message}`, 'error', 'forgot-password-message');
+            }
+        }
+
+        async function signInWithGoogle() {
+            showLoading();
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback'
+                    }
+                });
+                
+                if (error) {
+                    hideLoading();
+                    throw error;
+                }
+                
+                // La redirección se maneja automáticamente
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Error con Google OAuth:', error);
+                const activeForm = document.querySelector('.form-container.active');
+                if (activeForm) {
+                    const messageId = activeForm.id.replace('-form', '-message');
+                    showMessage(`❌ Error al conectar con Google: ${error.message}`, 'error', messageId);
+                }
+            }
+        }
+
+        async function signInWithFacebook() {
+            showLoading();
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'facebook',
+                    options: {
+                        redirectTo: 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback'
+                    }
+                });
+                
+                if (error) {
+                    hideLoading();
+                    throw error;
+                }
+                
+                // La redirección se maneja automáticamente
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Error con Facebook OAuth:', error);
+                const activeForm = document.querySelector('.form-container.active');
+                if (activeForm) {
+                    const messageId = activeForm.id.replace('-form', '-message');
+                    showMessage(`❌ Error al conectar con Facebook: ${error.message}`, 'error', messageId);
+                }
+            }
+        }
+
+        console.log('🔐 Sistema de autenticación FutPro 2.0 con Supabase cargado');
+    </script>
+</body>
+</html>

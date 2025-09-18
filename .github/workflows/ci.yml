@@ -1,0 +1,75 @@
+name: FutPro CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Lint automático con ESLint
+        run: npx eslint . --ext .js,.jsx
+
+      - name: Ejecutar tests backend (ping y ranking)
+        run: npx jest -c jest.backend.config.cjs --runInBand testing/ping.test.js testing/ranking-new.test.js
+
+      - name: Ejecutar tests frontend (incluye integración)
+        run: npx jest -c jest.frontend.config.cjs --runInBand
+
+      - name: Generar reporte de cobertura
+        run: |
+          npx jest -c jest.backend.config.cjs --coverage --runInBand testing/ping.test.js testing/ranking-new.test.js
+          npx jest -c jest.frontend.config.cjs --coverage --runInBand
+        continue-on-error: true
+
+      - name: Subir cobertura a GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
+      - name: Build de producción (React/Vite)
+        run: npm run build
+
+      - name: Notificación a Slack (ejemplo)
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,commit,author,action,eventName,ref,workflow,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+      - name: Deploy automático a Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: .
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

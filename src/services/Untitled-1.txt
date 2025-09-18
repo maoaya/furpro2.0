@@ -1,0 +1,8 @@
+@CrossOrigin(origins = "https://futpro.com")
+@RestController
+public class ValidadorDominios {
+    @GetMapping("/validar")
+    public String validar(@RequestParam String dominio) {
+        // lógica de validación
+    }
+}

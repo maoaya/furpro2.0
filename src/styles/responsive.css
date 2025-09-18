@@ -1,0 +1,71 @@
+/* Responsive global para FutPro 2.0 */
+
+body {
+  margin: 0;
+  font-family: 'Inter', Arial, sans-serif;
+  background: #181818;
+  color: #FFD700;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+/* Layout principal responsive */
+@media (max-width: 900px) {
+  .main-flex {
+    flex-direction: column !important;
+  }
+  aside {
+    width: 100% !important;
+    border: none !important;
+    border-bottom: 2px solid #FFD700 !important;
+    padding: 16px !important;
+    text-align: center;
+  }
+  main {
+    padding: 16px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .main-flex {
+    flex-direction: column !important;
+  }
+  aside, main {
+    width: 100% !important;
+    padding: 8px !important;
+  }
+  h1, h2 {
+    font-size: 1.2em !important;
+  }
+  button, input, textarea, select {
+    font-size: 1em !important;
+    padding: 8px 12px !important;
+  }
+  .posts-grid, .achievements-grid, .stats-grid, table {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    font-size: 0.98em !important;
+  }
+}
+
+/* Mejorar usabilidad de botones en móvil */
+button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Scroll horizontal para tablas grandes */
+table {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+}

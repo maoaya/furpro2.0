@@ -1,0 +1,125 @@
+{
+  "name": "FutPro",
+  "short_name": "FutPro",
+  "description": "Red social de fútbol profesional con transmisiones en vivo, torneos y equipos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#FFD700",
+  "orientation": "portrait-primary",
+  "categories": ["sports", "social", "entertainment"],
+  "lang": "es",
+  "scope": "/",
+  "id": "com.futpro.app",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/assets/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-96.png", 
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-128.png",
+      "sizes": "128x128", 
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/screenshot-mobile.png",
+      "sizes": "320x640",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/assets/screenshot-desktop.png", 
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nuevo Post",
+      "short_name": "Post",
+      "description": "Crear una nueva publicación",
+      "url": "/?action=new-post",
+      "icons": [
+        {
+          "src": "/assets/shortcut-post.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Transmitir",
+      "short_name": "Live",
+      "description": "Iniciar transmisión en vivo", 
+      "url": "/?action=start-stream",
+      "icons": [
+        {
+          "src": "/assets/shortcut-live.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Torneos",
+      "short_name": "Torneos",
+      "description": "Ver torneos disponibles",
+      "url": "/tournaments",
+      "icons": [
+        {
+          "src": "/assets/shortcut-tournament.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share-target/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text", 
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["image/*", "video/*"]
+        }
+      ]
+    }
+  }
+}

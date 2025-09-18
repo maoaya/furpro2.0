@@ -1,0 +1,42 @@
+{
+  "posts": [
+    {
+      "id": "p1",
+      "tipo": "video",
+      "url": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "portada": "https://via.placeholder.com/400x200",
+      "autorId": "u1",
+      "autorNombre": "JuanFutbol",
+      "club": "Golden FC",
+      "texto": "¡Golazo en la final!",
+      "hashtags": ["golazo","final","futpro"],
+      "musica": "Eye of the Tiger",
+      "vistas": 1200,
+      "likes": 230,
+      "guardados": 12,
+      "comentarios": [
+        {"id":"c1","autorId":"u2","autorNombre":"Leo","texto":"Tremendo gol!"},
+        {"id":"c2","autorId":"u3","autorNombre":"Sofi","texto":"Crack!"}
+      ],
+      "privacidad": "publico",
+      "enVivo": true
+    },
+    {
+      "id": "p2",
+      "tipo": "foto",
+      "url": "https://via.placeholder.com/400x600",
+      "autorId": "u2",
+      "autorNombre": "Leo",
+      "club": "Blue Club",
+      "texto": "Entrenando duro para el torneo.",
+      "hashtags": ["entrenamiento","torneo"],
+      "vistas": 800,
+      "likes": 120,
+      "guardados": 8,
+      "comentarios": [
+        {"id":"c3","autorId":"u1","autorNombre":"JuanFutbol","texto":"¡Vamos!"}
+      ],
+      "privacidad": "publico"
+    }
+  ]
+}

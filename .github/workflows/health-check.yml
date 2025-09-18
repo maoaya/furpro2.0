@@ -1,0 +1,25 @@
+name: Backend Health Check
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Ejecutar test de salud /api/ping
+        run: npx jest testing/ping.test.js

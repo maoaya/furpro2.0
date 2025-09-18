@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FutPro - Red Social de Fútbol Profesional</title>
+    <meta name="description" content="La red social más completa para futbolistas, equipos, organizadores y patrocinadores. Transmite partidos en vivo, participa en torneos y conecta con la comunidad futbolística.">
+    <meta name="keywords" content="futbol, soccer, torneos, equipos, transmisiones en vivo, red social deportiva">
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link rel="stylesheet" href="public/tailwind.output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- iOS Specific Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FutPro">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://futpro.app/">
+    <meta property="og:title" content="FutPro - Red Social de Fútbol Profesional">
+    <meta property="og:description" content="La red social más completa para futbolistas, equipos, organizadores y patrocinadores.">
+    <meta property="og:image" content="/assets/og-image.jpg">
+    <style>
+        body { background: #181818; color: #fff; font-family: 'Montserrat', Arial, sans-serif; }
+        .gold-menu { background: #222; border-right: 2px solid #FFD700; }
+        .main-menu ul { list-style: none; padding: 0; margin: 0; }
+        .main-menu li { padding: 18px 24px; cursor: pointer; display: flex; align-items: center; font-size: 1.15em; transition: background 0.2s; }
+        .main-menu li i { margin-right: 12px; font-size: 1.3em; color: #FFD700; }
+        .main-menu li.active, .main-menu li:hover { background: #333; color: #FFD700; }
+        .main-menu li span { flex: 1; }
+        .badge { background: #FFD700; color: #222; border-radius: 12px; padding: 2px 8px; font-size: 0.9em; margin-left: 8px; }
+        .gold-badge { background: #FFD700; color: #222; }
+        .content-container { padding: 32px 24px; min-height: 80vh; }
+        .card { background: #232323; border-radius: 12px; box-shadow: 0 2px 12px #0006; padding: 24px; margin-bottom: 24px; }
+        .post-card { border: 2px solid #FFD700; }
+        .post-header i, .post-footer i { color: #FFD700; }
+        .btn-primary { background: #FFD700; color: #222; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; }
+        .btn-primary:hover { background: #fffbe6; color: #222; }
+        .modal { background: rgba(24,24,24,0.95); border: 2px solid #FFD700; }
+        .fa-play-circle { color: #e53935; }
+        .fa-users { color: #111; }
+        .fa-user { color: #2196f3; }
+        .fa-trophy { color: #FFD700; }
+        .fa-bell { color: #FFD700; }
+        .fa-cog { color: #aaa; }
+        /* Animaciones y transiciones */
+        .main-menu li, .card, .modal { transition: box-shadow 0.2s, background 0.2s, color 0.2s; }
+        .main-menu li:active { box-shadow: 0 0 8px #FFD700; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <!-- Barra inferior fija con botones principales -->
+    <nav id="main-bottom-bar" style="position:fixed;bottom:0;left:0;width:100vw;height:68px;background:#181818;border-top:2px solid #FFD700;display:flex;align-items:center;justify-content:space-around;z-index:9999;">
+        <button onclick="window.location.hash='#live'" style="background:none;border:none;color:#FFD700;font-size:1.5em;font-weight:bold;display:flex;flex-direction:column;align-items:center;cursor:pointer;">
+            <i class="fa-solid fa-bolt"></i>
+            <span style="font-size:0.9em;">En Vivo</span>
+        </button>
+        <button onclick="window.location.hash='#marketplace'" style="background:none;border:none;color:#FFD700;font-size:1.5em;font-weight:bold;display:flex;flex-direction:column;align-items:center;cursor:pointer;">
+            <i class="fa-solid fa-fire"></i>
+            <span style="font-size:0.9em;">Ven On Fire</span>
+        </button>
+        <button onclick="window.location.hash='#notifications'" style="background:none;border:none;color:#FFD700;font-size:1.5em;font-weight:bold;display:flex;flex-direction:column;align-items:center;cursor:pointer;position:relative;">
+            <i class="fa-solid fa-bell"></i>
+            <span style="font-size:0.9em;">Notificaciones</span>
+            <span id="bottomNotificationBadge" class="badge gold-badge" style="position:absolute;top:2px;right:18px;">0</span>
+        </button>
+    </nav>
+    <div id="loginModal" class="modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(24,24,24,0.95);z-index:999;align-items:center;justify-content:center;">
+        <div style="background:#222;border-radius:18px;padding:32px 40px;max-width:340px;margin:auto;box-shadow:0 4px 24px #FFD70055;text-align:center;">
+            <h2 style="color:#FFD700;margin-bottom:18px;"><i class="fa-solid fa-sign-in-alt"></i> ¡Acceso requerido!</h2>
+            <p style="color:#fff;margin-bottom:24px;">Para usar todas las funciones (transmitir, chatear, publicar, recibir notificaciones personalizadas) debes iniciar sesión con tu cuenta FutPro.<br><br><span style='color:#FFD700;'>¿No tienes cuenta? Regístrate gratis y accede a toda la experiencia.</span></p>
+            <button class="btn-primary" style="width:100%;margin-bottom:12px;" onclick="window.location.href='#login'">Iniciar sesión</button>
+            <button class="btn-outline" style="width:100%;" onclick="window.location.href='#register'">Registrarse</button>
+            <button class="btn-outline" onclick="document.getElementById('loginModal').style.display='none'" style="margin-top:18px;">Cerrar</button>
+        </div>
+    </div>
+    <div id="app-container" class="app-container">
+        <aside class="sidebar">
+            <div class="logo" style="text-align:center;margin:24px 0;">
+                <img src="/assets/logo-futpro.png" alt="FutPro" style="height:48px;">
+            </div>
+            <nav class="main-menu">
+                <ul>
+                    <li class="nav-item" data-page="feed"><i class="fa-solid fa-home"></i> <span>Inicio</span></li>
+                    <li class="nav-item" data-page="live"><i class="fa-solid fa-play-circle"></i> <span>En Vivo</span></li>
+                    <li class="nav-item" data-page="tournaments"><i class="fa-solid fa-trophy"></i> <span>Torneos</span></li>
+                    <li class="nav-item" data-page="teams"><i class="fa-solid fa-users"></i> <span>Equipos</span></li>
+                    <li class="nav-item" data-page="players"><i class="fa-solid fa-user"></i> <span>Jugadores</span></li>
+                    <li class="nav-item notifications-menu" data-page="notifications">
+                        <i class="fa-solid fa-bell"></i> <span>Notificaciones</span>
+                        <span id="notificationBadge" class="badge gold-badge">0</span>
+                    </li>
+                    <li class="nav-item" data-page="settings"><i class="fa-solid fa-cog"></i> <span>Configuración</span></li>
+                    <li class="nav-item" data-page="buscar-mis-campeonatos"><i class="fa-solid fa-map-marker-alt"></i> <span>Mis Campeonatos</span></li>
+                    <li class="nav-item" data-page="compartir-contenido"><i class="fa-solid fa-share-alt"></i> <span>Compartir</span></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-panel">
+            <header class="main-header" style="display:flex;align-items:center;justify-content:space-between;padding:24px 32px 0 32px;">
+                <div style="display:flex;align-items:center;gap:18px;">
+                    <button onclick="window.location.hash='#home'" style="background:none;border:none;color:#FFD700;font-size:2em;cursor:pointer;margin-right:12px;">
+                        <i class="fa-solid fa-home"></i>
+                    </button>
+                    <h1 style="font-size:2.2em;color:#FFD700;font-weight:700;">FutPro</h1>
+                </div>
+                <div class="user-info" style="display:flex;align-items:center;gap:16px;">
+                    <img src="/assets/user-avatar.png" alt="Usuario" style="height:40px;width:40px;border-radius:50%;border:2px solid #FFD700;">
+                    <span id="userName" style="font-weight:600;">Usuario</span>
+                </div>
+            </header>
+            <div id="futpro-react-root"></div>
+            <div id="live-match-banner" style="position:fixed;top:70px;right:24px;z-index:200;background:#e53935;color:#fff;padding:12px 28px;border-radius:18px;box-shadow:0 2px 12px #FFD70055;font-weight:bold;display:flex;align-items:center;gap:12px;">
+                <i class="fa-solid fa-bolt"></i> Partido en vivo
+                <button onclick="window.location.hash='#live'" style="background:#FFD700;color:#222;border:none;border-radius:8px;padding:6px 18px;font-weight:bold;margin-left:12px;cursor:pointer;">Ver ahora</button>
+            </div>
+            <section class="achievements-section card" style="margin-bottom:32px;">
+                <h2 style="color:#FFD700;"><i class="fa-solid fa-medal"></i> Logros</h2>
+                <div id="achievements-list" style="display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;"></div>
+                <div id="level-progress" style="margin-top:24px;"></div>
+            </section>
+            <section class="search-section card" style="margin-bottom:32px;">
+                <h2 style="color:#FFD700;"><i class="fa-solid fa-search"></i> Búsqueda Avanzada</h2>
+                <input type="text" id="advancedSearchInput" placeholder="Buscar jugadores, equipos, torneos..." style="width:100%;padding:10px;border-radius:8px;border:1px solid #FFD700;">
+                <div id="advancedSearchResults" style="display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;"></div>
+            </section>
+            <footer class="main-footer" style="text-align:center;padding:24px 0;color:#FFD700;font-size:1em;">
+                &copy; 2025 FutPro. Todos los derechos reservados. | <a href="/privacidad.html" style="color:#FFD700;">Privacidad</a> | <a href="/terminos.html" style="color:#FFD700;">Términos</a>
+            </footer>
+        </main>
+    </div>
+    <div id="auth-container" class="auth-container"></div>
+</body>
+</html>
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://futpro.app/">
+    <meta property="twitter:title" content="FutPro - Red Social de Fútbol Profesional">
+    <meta property="twitter:description" content="La red social más completa para futbolistas, equipos, organizadores y patrocinadores.">
+    <meta property="twitter:image" content="/assets/twitter-image.jpg">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#FFD700">
+    <link rel="apple-touch-icon" href="/assets/icon-192.png">
+    
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/icon-152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/icon-144.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/assets/icon-120.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/icon-114.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/icon-76.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/icon-72.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="/assets/icon-57.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link rel="stylesheet" href="src/styles/auth.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/responsive.css">
+    <link rel="stylesheet" href="src/styles/mobile.css">
+</head>
+<body>
+    <!-- 🔄 Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="futpro-logo">
+                <div class="logo-icon">
+                    <i class="fas fa-futbol"></i>
+                </div>
+                <h1>FutPro</h1>
+            </div>
+            <div class="loading-animation">
+                <div class="loading-bars">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+            </div>
+            <p class="loading-text">Preparando tu experiencia futbolística...</p>
+        </div>
+    </div>
+
+    <!-- 🔐 Authentication Container -->
+    <div id="auth-container" class="auth-container hidden">
+        <!-- Login Form -->
+        <div id="login-form" class="auth-form">
+            <div class="auth-header">
+                <div class="futpro-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <h1>FutPro</h1>
+                </div>
+                <h2>Bienvenido de vuelta</h2>
+                <p>Inicia sesión para continuar con tu pasión por el fútbol</p>
+            </div>
+
+            <form class="auth-form-content" id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">
+                        <i class="fas fa-envelope"></i>
+                        Correo electrónico
+                    </label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">
+                        <i class="fas fa-lock"></i>
+                        Contraseña
+                    </label>
+                    <input type="password" id="loginPassword" required>
+                    <span class="password-toggle" onclick="togglePassword('loginPassword')">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Iniciar Sesión
+                </button>
+
+                <div class="divider">
+                    <span>o continúa con</span>
+                </div>
+
+                <div class="social-login">
+                    <button type="button" class="btn btn-google" id="googleLogin">
+                        <i class="fab fa-google"></i>
+                        Google
+                    </button>
+                    <button type="button" class="btn btn-facebook" id="facebookLogin">
+                        <i class="fab fa-facebook-f"></i>
+                        Facebook
+                    </button>
+                </div>
+
+                <div class="auth-links">
+                    <a href="#" id="showForgotPassword">¿Olvidaste tu contraseña?</a>
+                    <a href="#" id="showRegister">¿No tienes cuenta? Regístrate</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" class="auth-form hidden">
+            <div class="auth-header">
+                <div class="futpro-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <h1>FutPro</h1>
+                </div>
+                <h2>Únete a la comunidad</h2>
+                <p>Crea tu cuenta y forma parte de la red social futbolística más completa</p>
+            </div>
+
+            <form class="auth-form-content" id="registerForm">
+                <div class="form-group">
+                    <label for="registerName">
+                        <i class="fas fa-user"></i>
+                        Nombre completo
+                    </label>
+                    <input type="text" id="registerName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">
+                        <i class="fas fa-envelope"></i>
+                        Correo electrónico
+                    </label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPhone">
+                        <i class="fas fa-phone"></i>
+                        Teléfono
+                    </label>
+                    <input type="tel" id="registerPhone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="userType">
+                        <i class="fas fa-users"></i>
+                        Tipo de usuario
+                    </label>
+                    <select id="userType" required>
+                        <option value="">Selecciona tu rol</option>
+                        <option value="player">⚽ Jugador</option>
+                        <option value="organizer">🏆 Organizador</option>
+                        <option value="referee">🟨 Árbitro</option>
+                        <option value="sponsor">💰 Patrocinador</option>
+                    </select>
+                </div>
+
+                <div class="form-group player-fields hidden">
+                    <label for="position">
+                        <i class="fas fa-running"></i>
+                        Posición
+                    </label>
+                    <select id="position">
+                        <option value="">Selecciona tu posición</option>
+                        <option value="goalkeeper">🥅 Portero</option>
+                        <option value="defender">🛡️ Defensa</option>
+                        <option value="midfielder">⚽ Mediocampista</option>
+                        <option value="forward">🎯 Delantero</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">
+                        <i class="fas fa-lock"></i>
+                        Contraseña
+                    </label>
+                    <input type="password" id="registerPassword" required>
+                    <span class="password-toggle" onclick="togglePassword('registerPassword')">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">
+                        <i class="fas fa-lock"></i>
+                        Confirmar contraseña
+                    </label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <span class="checkmark"></span>
+                        Acepto los <a href="#" class="terms-link">términos y condiciones</a>
+                    </label>
+                </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="ageConfirmation" required>
+                        <span class="checkmark"></span>
+                        Confirmo que soy mayor de 12 años
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-user-plus"></i>
+                    Crear Cuenta
+                </button>
+
+                <div class="auth-links">
+                    <a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Forgot Password Form -->
+        <div id="forgot-password-form" class="auth-form hidden">
+            <div class="auth-header">
+                <div class="futpro-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <h1>FutPro</h1>
+                </div>
+                <h2>Recuperar contraseña</h2>
+                <p>Ingresa tu correo y te enviaremos las instrucciones</p>
+            </div>
+
+            <form class="auth-form-content" id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="forgotEmail">
+                        <i class="fas fa-envelope"></i>
+                        Correo electrónico
+                    </label>
+                    <input type="email" id="forgotEmail" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-paper-plane"></i>
+                    Enviar instrucciones
+                </button>
+
+                <div class="auth-links">
+                    <a href="#" id="backToLogin">Volver al inicio de sesión</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 📱 Main App Container -->
+    <div id="app-container" class="app-container hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <span class="logo-text">FutPro</span>
+                </div>
+            </div>
+
+            <div class="header-center">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar jugadores, equipos, torneos..." id="globalSearch">
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="action-btn" id="notificationsBtn" title="Notificaciones">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge" id="notificationBadge">0</span>
+                    </button>
+                    
+                    <button class="action-btn" id="messagesBtn" title="Mensajes">
+                        <i class="fas fa-comment"></i>
+                        <span class="badge" id="messagesBadge">0</span>
+                    </button>
+
+                    <div class="user-menu">
+                        <button class="user-avatar" id="userMenuBtn">
+                            <img src="/assets/default-avatar.jpg" alt="Mi perfil" id="headerAvatar">
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <img src="/assets/default-avatar.jpg" alt="Mi perfil" id="dropdownAvatar">
+                                <div class="user-info">
+                                    <span class="user-name" id="dropdownUserName">Usuario</span>
+                                    <span class="user-rating" id="dropdownUserRating">Novato</span>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item" id="viewProfile">
+                                <i class="fas fa-user"></i>
+                                Mi Perfil
+                            </a>
+                            <a href="#" class="dropdown-item" id="editProfile">
+                                <i class="fas fa-edit"></i>
+                                Editar Perfil
+                            </a>
+                            <a href="#" class="dropdown-item" id="myTeams">
+                                <i class="fas fa-users"></i>
+                                Mis Equipos
+                            </a>
+                            <a href="#" class="dropdown-item" id="myTournaments">
+                                <i class="fas fa-trophy"></i>
+                                Mis Torneos
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item" id="settings">
+                                <i class="fas fa-cog"></i>
+                                Configuración
+                            </a>
+                            <a href="#" class="dropdown-item" id="privacy">
+                                <i class="fas fa-shield-alt"></i>
+                                Privacidad
+                            </a>
+                            <a href="#" class="dropdown-item" id="help">
+                                <i class="fas fa-question-circle"></i>
+                                Ayuda
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout" id="logout">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Cerrar Sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Side Navigation -->
+        <nav class="side-nav" id="sideNav">
+            <div class="nav-section">
+                <div class="nav-title">Principal</div>
+                <a href="#" class="nav-item active" data-page="feed">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="#" class="nav-item" data-page="tournaments">
+                    <i class="fas fa-trophy"></i>
+                    <span>Torneos</span>
+                </a>
+                <a href="#" class="nav-item" data-page="teams">
+                    <i class="fas fa-users"></i>
+                    <span>Equipos</span>
+                </a>
+                <a href="#" class="nav-item" data-page="players">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Jugadores</span>
+                </a>
+                <a href="#" class="nav-item" data-page="live">
+                    <i class="fas fa-video"></i>
+                    <span>En Vivo</span>
+                    <span class="live-indicator"></span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Mis Actividades</div>
+                <a href="#" class="nav-item" data-page="my-profile">
+                    <i class="fas fa-user"></i>
+                    <span>Mi Perfil</span>
+                </a>
+                <a href="#" class="nav-item" data-page="my-teams">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Mis Equipos</span>
+                </a>
+                <a href="#" class="nav-item" data-page="my-matches">
+                    <i class="fas fa-calendar"></i>
+                    <span>Mis Partidos</span>
+                </a>
+                <a href="#" class="nav-item" data-page="achievements">
+                    <i class="fas fa-medal"></i>
+                    <span>Logros</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Herramientas</div>
+                <a href="#" class="nav-item" data-page="penalty-game">
+                    <i class="fas fa-gamepad"></i>
+                    <span>Juego Penaltis</span>
+                </a>
+                <a href="#" class="nav-item" data-page="statistics">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Estadísticas</span>
+                </a>
+                <a href="#" class="nav-item" data-page="sponsors">
+                    <i class="fas fa-handshake"></i>
+                    <span>Patrocinios</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Configuración</div>
+                <a href="#" class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </a>
+                <a href="#" class="nav-item" data-page="privacy">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Privacidad</span>
+                </a>
+                <a href="#" class="nav-item" data-page="help">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Ayuda</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+                        <div class="content-container">
+                                <!-- Panel visual de logros -->
+                                <section id="achievements-panel" class="card" style="max-width:700px;margin:32px auto;">
+                                    <h2 style="color:#FFD700;"><i class="fas fa-medal"></i> Logros y Progreso</h2>
+                                    <div id="achievements-list" style="display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;"></div>
+                                    <div id="level-progress" style="margin-top:24px;"></div>
+                                </section>
+
+                                <!-- Gráficos y métricas de estadísticas -->
+                                <section id="statistics-panel" class="card" style="max-width:700px;margin:32px auto;">
+                                    <h2 style="color:#FFD700;"><i class="fas fa-chart-bar"></i> Estadísticas</h2>
+                                    <div class="dashboard-filters" style="display: flex; gap: 16px; justify-content: center; margin-bottom: 24px;">
+                                        <label for="dashboardRange">Rango:</label>
+                                        <select id="dashboardRange">
+                                            <option value="7">Últimos 7 días</option>
+                                            <option value="30">Últimos 30 días</option>
+                                            <option value="90">Últimos 90 días</option>
+                                        </select>
+                                        <label for="dashboardChartType">Tipo de gráfico:</label>
+                                        <select id="dashboardChartType">
+                                            <option value="bar">Barras</option>
+                                            <option value="line">Líneas</option>
+                                            <option value="pie">Torta</option>
+                                        </select>
+                                    </div>
+                                    <canvas id="activityChart" width="600" height="320" style="margin: 0 auto; display: block;"></canvas>
+                                    <canvas id="postsChart" width="600" height="320" style="margin: 32px auto 0 auto; display: block;"></canvas>
+                                    <canvas id="matchesChart" width="600" height="320" style="margin: 32px auto 0 auto; display: block;"></canvas>
+                                    <canvas id="teamsChart" width="600" height="320" style="margin: 32px auto 0 auto; display: block;"></canvas>
+                                </section>
+
+                                <!-- Panel de búsqueda avanzada -->
+                                <section id="search-panel" class="card" style="max-width:700px;margin:32px auto;">
+                                    <h2 style="color:#FFD700;"><i class="fas fa-search"></i> Búsqueda Avanzada</h2>
+                                    <div class="search-container" style="margin-bottom:18px;">
+                                        <input type="text" id="advancedSearchInput" placeholder="Buscar jugadores, equipos, torneos..." style="width:100%;padding:10px;border-radius:8px;border:1px solid #FFD700;">
+                                    </div>
+                                    <div id="advancedSearchFilters" style="margin-bottom:12px;"></div>
+                                    <div id="advancedSearchResults" style="display:flex;flex-wrap:wrap;gap:18px;"></div>
+                                </section>
+
+                                <!-- Botones principales de acción -->
+                                <div class="main-actions" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 32px;">
+                                    <button class="btn btn-primary" id="btnFeed"><i class="fas fa-home"></i> Inicio</button>
+                                    <button class="btn btn-primary" id="btnPublicar"><i class="fas fa-plus"></i> Publicar</button>
+                                    <button class="btn btn-secondary" id="btnPerfil"><i class="fas fa-user"></i> Perfil</button>
+                                    <button class="btn btn-secondary" id="btnEquipos"><i class="fas fa-users"></i> Equipos</button>
+                                    <button class="btn btn-secondary" id="btnTorneos"><i class="fas fa-trophy"></i> Torneos</button>
+                                    <button class="btn btn-secondary" id="btnMensajes"><i class="fas fa-comment"></i> Mensajes</button>
+                                    <button class="btn btn-secondary" id="btnNotificaciones"><i class="fas fa-bell"></i> Notificaciones</button>
+                                    <button class="btn btn-secondary" id="btnPenaltis"><i class="fas fa-futbol"></i> Penaltis</button>
+                                    <button class="btn btn-secondary" id="btnStreaming"><i class="fas fa-video"></i> En Vivo</button>
+                                    <button class="btn btn-secondary" id="btnPatrocinios"><i class="fas fa-handshake"></i> Patrocinios</button>
+                                    <button class="btn btn-outline" id="btnConfig"><i class="fas fa-cog"></i> Configuración</button>
+                                    <button class="btn btn-outline" id="btnCerrarSesion"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                                </div>
+                                <!-- Feed dinámico -->
+                                <div id="feed-modal-root"></div>
+                <!-- Modal para subir imagen/video en post -->
+                <style>
+                  .post-input-file {
+                    margin-top: 8px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                  }
+                  .file-preview {
+                    margin-top: 8px;
+                    max-width: 220px;
+                    max-height: 180px;
+                    border-radius: 12px;
+                    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                  }
+                  .file-preview video {
+                    max-width: 100%;
+                    border-radius: 12px;
+                  }
+                  .file-preview img {
+                    max-width: 100%;
+                    border-radius: 12px;
+                  }
+                </style>
+    <!-- Modal de comentarios (dinámico) -->
+    <style>
+      .emoji-picker {
+        position: absolute;
+        background: #fff;
+        border: 1px solid #FFD700;
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        padding: 8px 12px;
+        z-index: 9999;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        max-width: 320px;
+      }
+      .emoji-item {
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: transform 0.1s;
+      }
+      .emoji-item:hover {
+        transform: scale(1.2);
+      }
+      .comment-modal {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.25);
+        z-index: 10001;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .comment-modal .modal-content {
+        background: #fff;
+        border-radius: 18px;
+        padding: 32px 24px;
+        max-width: 420px;
+        width: 100%;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      }
+      .comments-list {
+        max-height: 220px;
+        overflow-y: auto;
+        margin-bottom: 18px;
+      }
+      .comment-item {
+        margin-bottom: 8px;
+        font-size: 1rem;
+      }
+      .comment-user {
+        font-weight: bold;
+        color: #FFD700;
+      }
+      .comment-input-section {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .comment-input {
+        flex: 1;
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+      .close-modal {
+        margin-top: 10px;
+      }
+      .emoji-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .emoji-btn {
+        background: none;
+        border: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+        color: #FFD700;
+        margin-left: 4px;
+      }
+    </style>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar" id="rightSidebar">
+            <!-- Stories Section -->
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-images"></i> Historias</h3>
+                </div>
+                <div class="stories-container" id="storiesContainer">
+                    <!-- Stories will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Suggestions Section -->
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-user-plus"></i> Sugerencias</h3>
+                </div>
+                <div class="suggestions-container" id="suggestionsContainer">
+                    <!-- Suggestions will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Live Matches Section -->
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-play-circle"></i> Partidos en Vivo</h3>
+                </div>
+                <div class="live-matches-container" id="liveMatchesContainer">
+                    <!-- Live matches will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Trending Section -->
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-fire"></i> Tendencias</h3>
+                </div>
+                <div class="trending-container" id="trendingContainer">
+                    <!-- Trending content will be loaded here -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- 🎮 Penalty Game Modal -->
+    <div id="penaltyGameModal" class="modal hidden">
+        <div class="modal-content penalty-game-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-futbol"></i> Juego de Penaltis</h2>
+                <button class="close-btn" onclick="closePenaltyGame()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="penalty-game-container">
+                <!-- Penalty game content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 📺 Live Stream Modal -->
+    <div id="liveStreamModal" class="modal hidden">
+        <div class="modal-content stream-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-video"></i> Transmisión en Vivo</h2>
+                <button class="close-btn" onclick="closeStream()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="stream-container">
+                <!-- Stream content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔔 Notifications Panel -->
+    <div id="notificationsPanel" class="notifications-panel hidden">
+        <div class="panel-header">
+            <h3><i class="fas fa-bell"></i> Notificaciones</h3>
+            <button class="close-panel" onclick="closeNotifications()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notifications-list" id="notificationsList">
+            <!-- Notifications will be loaded here -->
+        </div>
+    </div>
+
+    <!-- 💬 Chat Panel -->
+    <div id="chatPanel" class="chat-panel hidden">
+        <div class="panel-header">
+            <h3><i class="fas fa-comment"></i> Mensajes</h3>
+            <button class="close-panel" onclick="closeChat()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-list" id="chatList">
+            <!-- Chat conversations will be loaded here -->
+        </div>
+    </div>
+
+    <!-- 🎯 Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- 🔄 Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Cargando...</p>
+        </div>
+    </div>
+
+    <!-- Selector de rol y botones dinámicos -->
+    <div id="role-selector-container" style="margin: 30px auto; text-align: center;">
+      <label for="roleSelector" style="font-weight: bold;">Selecciona tu rol:</label>
+      <select id="roleSelector" style="margin: 0 10px;">
+        <option value="player">Jugador</option>
+        <option value="sponsor">Patrocinador</option>
+        <option value="coach">Entrenador</option>
+        <option value="admin">Administrador</option>
+        <option value="referee">Árbitro</option>
+        <option value="fan">Aficionado</option>
+      </select>
+      <button id="cambiarRolBtn">Cambiar rol</button>
+    </div>
+    <div id="role-buttons-container" style="margin: 20px auto; text-align: center;"></div>
+    <script type="module">
+      import { supabase } from './src/config/supabase.js';
+      // Simulación de usuario actual
+      const userId = 'ID_DEL_USUARIO'; // Reemplaza por el id real del usuario logueado
+
+      // Botones por rol
+      const roleButtons = {
+        player: [
+          { text: 'Ver Partidos', action: () => alert('Ver Partidos') },
+          { text: 'Mis Equipos', action: () => alert('Mis Equipos') },
+          { text: 'Estadísticas', action: () => alert('Estadísticas') }
+        ],
+        sponsor: [
+          { text: 'Buscar Jugadores', action: () => alert('Buscar Jugadores') },
+          { text: 'Ver Patrocinios', action: () => alert('Ver Patrocinios') }
+        ],
+        coach: [
+          { text: 'Gestionar Equipo', action: () => alert('Gestionar Equipo') },
+          { text: 'Ver Jugadores', action: () => alert('Ver Jugadores') }
+        ],
+        admin: [
+          { text: 'Panel de Administración', action: () => alert('Panel de Administración') },
+          { text: 'Gestionar Usuarios', action: () => alert('Gestionar Usuarios') }
+        ],
+        referee: [
+          { text: 'Ver Partidos Asignados', action: () => alert('Ver Partidos Asignados') }
+        ],
+        fan: [
+          { text: 'Ver Noticias', action: () => alert('Ver Noticias') },
+          { text: 'Seguir Equipos', action: () => alert('Seguir Equipos') }
+        ]
+      };
+
+      function renderRoleButtons(role) {
+        const container = document.getElementById('role-buttons-container');
+        container.innerHTML = '';
+        if (roleButtons[role]) {
+          roleButtons[role].forEach(btn => {
+            const button = document.createElement('button');
+            button.textContent = btn.text;
+            button.className = 'btn btn-secondary';
+            button.style.margin = '0 8px 8px 0';
+            button.onclick = btn.action;
+            container.appendChild(button);
+          });
+        }
+      }
+
+      // Inicializar con el rol por defecto
+      let currentRole = document.getElementById('roleSelector').value;
+      renderRoleButtons(currentRole);
+
+      document.getElementById('roleSelector').addEventListener('change', function(e) {
+        currentRole = e.target.value;
+        renderRoleButtons(currentRole);
+      });
+
+      document.getElementById('cambiarRolBtn').addEventListener('click', async function() {
+        // Actualiza el rol en Supabase
+        const { error } = await supabase
+          .from('users')
+          .update({ user_type: currentRole })
+          .eq('id', userId);
+        if (error) {
+          alert('Error al cambiar el rol: ' + error.message);
+        } else {
+          alert('Rol actualizado correctamente a ' + currentRole);
+        }
+      });
+    </script>
+    <script type="module" src="src/main.jsx"></script>
+    <footer class="app-footer">
+  <a href="https://app.termly.io/dashboard/website/b175d369-77f6-4527-98ad-4b1b44d1c0f0/privacy-policy" target="_blank">
+    Política de Privacidad
+  </a>
+  |
+  <a href="https://app.termly.io/dashboard/website/b175d369-77f6-4527-98ad-4b1b44d1c0f0/privacy-policy" target="_blank">
+    Condiciones del Servicio
+  </a>
+                </footer>
+            </body>
+        </html>
+
