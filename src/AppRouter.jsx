@@ -49,7 +49,7 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <LayoutPrincipal>
-        <React.Suspense fallback={<div className="loader" />}> 
+        <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Cargando…</div>}> 
           <Routes>
             <Route path="/inicio" element={<Inicio />} />
             <Route path="/perfil" element={<Perfil />} />
