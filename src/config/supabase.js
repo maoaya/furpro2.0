@@ -31,18 +31,14 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 // 🔐 Configuración de autenticación
 export const authConfig = {
   providers: ['google', 'facebook'],
-  redirectTo: 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback',
+  // Para Supabase email flows (registro/reset), usar la callback de Supabase o tu dominio
+  // Sugerido: URL de callback de Supabase (no del dominio) para evitar redirect_uri_mismatch
+  redirectTo: SUPABASE_URL && SUPABASE_URL !== 'https://TU_SUPABASE_URL.supabase.co'
+    ? `${SUPABASE_URL}/auth/v1/callback`
+    : (typeof window !== 'undefined' ? window.location.origin : ''),
   scopes: {
     google: 'email profile',
     facebook: 'email,public_profile'
-  },
-  google: {
-    callbackUrl: 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback',
-    scopes: 'email profile'
-  },
-  facebook: {
-    callbackUrl: 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback',
-    scopes: 'email,public_profile'
   }
 }
 

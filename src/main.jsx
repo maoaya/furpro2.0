@@ -23,8 +23,10 @@ function AuthGate() {
     if (user) {
       const target = localStorage.getItem('postLoginRedirect') || '/dashboard';
       localStorage.removeItem('postLoginRedirect');
-      // Redirección segura tras login (no depende del Router)
-      window.location.replace(target);
+      // Solo redirigir si no estamos ya en la página destino
+      if (window.location.pathname !== target) {
+        window.location.replace(target);
+      }
     }
   }, [user]);
 

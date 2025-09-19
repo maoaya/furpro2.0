@@ -53,6 +53,19 @@ export const AuthProvider = ({ children }) => {
       } catch (_e) {
         // Silenciamos errores de arranque; se reintenta en flujos de login
       }
+
+      // Procesar resultado de redirección de Firebase (fallback cuando el popup es bloqueado)
+      try {
+        const { auth, getRedirectResult } = await getFirebase();
+        const redirectRes = await getRedirectResult(auth);
+        if (!mounted) return;
+        if (redirectRes?.user) {
+          setUser(redirectRes.user);
+          // opcional: limpiar cualquier estado o hash
+        }
+      } catch (_e) {
+        // Ignorar si no hay resultado de redirect
+      }
     })();
     return () => {
       mounted = false;
@@ -66,36 +79,23 @@ export const AuthProvider = ({ children }) => {
   const loginWithGoogle = async () => {
     setLoading(true);
     try {
-      const { auth, googleProvider, signInWithPopup } = await getFirebase();
-      const result = await signInWithPopup(auth, googleProvider);
-      setUser(result.user);
-      return result;
-    } catch (e) {
-      console.warn('Firebase Google login failed, trying Supabase:', e.message);
-      // Fallback a Supabase OAuth con popup mode
+      const { auth, googleProvider, signInWithPopup, signInWithRedirect } = await getFirebase();
       try {
-        const supa = await import('./config/supabase');
-        if (!supa.supabaseConfigured) {
-          return { error: 'Autenticación de Google no disponible: configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.' };
+        const result = await signInWithPopup(auth, googleProvider);
+        setUser(result.user);
+        return result;
+      } catch (e) {
+        // Fallback a redirect si el popup es bloqueado o en navegadores móviles
+        const popupIssues = ['auth/popup-blocked', 'auth/cancelled-popup-request', 'auth/popup-closed-by-user'];
+        if (popupIssues.includes(e?.code)) {
+          await signInWithRedirect(auth, googleProvider);
+          return { user: null, redirecting: true };
         }
-        const supabase = await getSupabase();
-        const authCfg = await getAuthConfig();
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: authCfg?.redirectTo || window.location.origin,
-            queryParams: {
-              access_type: 'offline',
-              prompt: 'consent',
-            }
-          }
-        });
-        if (error) throw error;
-        return { user: null, redirecting: true };
-      } catch (supaError) {
-        console.error('Supabase Google login also failed:', supaError);
-        return { error: 'Error de autenticación con Google. Verifica la configuración del proyecto.' };
+        throw e;
       }
+    } catch (e) {
+      console.error('Error de autenticación con Google:', e);
+      return { error: 'No se pudo iniciar sesión con Google. Intenta de nuevo.' };
     } finally {
       setLoading(false);
     }
@@ -105,33 +105,22 @@ export const AuthProvider = ({ children }) => {
   const loginWithFacebook = async () => {
     setLoading(true);
     try {
-      const { auth, facebookProvider, signInWithPopup } = await getFirebase();
-      const result = await signInWithPopup(auth, facebookProvider);
-      setUser(result.user);
-      return result;
-    } catch (e) {
-      console.warn('Firebase Facebook login failed, trying Supabase:', e.message);
-      // Fallback a Supabase OAuth
+      const { auth, facebookProvider, signInWithPopup, signInWithRedirect } = await getFirebase();
       try {
-        const supa = await import('./config/supabase');
-        if (!supa.supabaseConfigured) {
-          return { error: 'Autenticación de Facebook no disponible: configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.' };
+        const result = await signInWithPopup(auth, facebookProvider);
+        setUser(result.user);
+        return result;
+      } catch (e) {
+        const popupIssues = ['auth/popup-blocked', 'auth/cancelled-popup-request', 'auth/popup-closed-by-user'];
+        if (popupIssues.includes(e?.code)) {
+          await signInWithRedirect(auth, facebookProvider);
+          return { user: null, redirecting: true };
         }
-        const supabase = await getSupabase();
-        const authCfg = await getAuthConfig();
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: 'facebook',
-          options: {
-            redirectTo: authCfg?.redirectTo || window.location.origin,
-            queryParams: { display: 'popup' }
-          }
-        });
-        if (error) throw error;
-        return { user: null, redirecting: true };
-      } catch (supaError) {
-        console.error('Supabase Facebook login also failed:', supaError);
-        return { error: 'Error de autenticación con Facebook. Verifica la configuración del proyecto.' };
+        throw e;
       }
+    } catch (e) {
+      console.error('Error de autenticación con Facebook:', e);
+      return { error: 'No se pudo iniciar sesión con Facebook. Intenta de nuevo.' };
     } finally {
       setLoading(false);
     }
