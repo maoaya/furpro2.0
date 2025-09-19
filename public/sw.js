@@ -1,78 +1,72 @@
 // Service Worker para funcionalidad offline y notificaciones push
-// Note: Las importaciones ES6 no están soportadas en Service Workers
-// Se usarán funciones nativas y fetch API
-const CACHE_NAME = 'futpro-v1.0.0';
-const urlsToCache = [
-  '/',
-  '/src/main.js',
-  '/src/styles/main.css',
-  '/src/styles/auth.css',
-  '/assets/logo.png',
+// Estrategia: network-first para navegación (HTML) para evitar contenido obsoleto
+const CACHE_NAME = 'futpro-v1.0.1';
+const STATIC_CACHE_URLS = [
+  '/offline.html',
+  '/manifest.json',
+  '/images/futpro-logo.png',
   '/assets/icon-192.png',
   '/assets/icon-512.png'
 ];
 
 // Instalar Service Worker
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Cache abierto');
-        return cache.addAll(urlsToCache);
-      })
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    try {
+      await cache.addAll(STATIC_CACHE_URLS);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('SW precache falló:', e);
+    }
+    // Activar inmediatamente la nueva versión
+    self.skipWaiting();
+  })());
 });
 
 // Activar Service Worker
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.map((key) => key !== CACHE_NAME && caches.delete(key)));
+    // Reclamar clientes para usar inmediatamente el SW actualizado
+    await self.clients.claim();
+  })());
 });
 
 // Interceptar peticiones de red
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Cache hit - devolver respuesta
-        if (response) {
-          return response;
-        }
-
-        return fetch(event.request)
-          .then((response) => {
-            // Verificar si recibimos una respuesta válida
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clonar la respuesta
-            var responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          });
+  const { request } = event;
+  // Network-first para navegación (HTML)
+  if (request.mode === 'navigate') {
+    event.respondWith((async () => {
+      try {
+        const networkResponse = await fetch(request, { cache: 'no-store' });
+        const cache = await caches.open(CACHE_NAME);
+        // Cachear copia para fallback offline
+        cache.put('/', networkResponse.clone());
+        return networkResponse;
+      } catch (_e) {
+        // Fallback a caché (offline)
+        const cached = await caches.match('/');
+        return cached || caches.match('/offline.html');
       }
-    ).catch(() => {
-      // Mostrar página offline si no hay conexión
-      if (event.request.destination === 'document') {
-        return caches.match('/offline.html');
-      }
-    })
-  );
+    })());
+    return;
+  }
+
+  // Para estáticos: cache-first con actualización en segundo plano
+  event.respondWith((async () => {
+    const cached = await caches.match(request);
+    const fetchPromise = fetch(request).then(async (networkResponse) => {
+      try {
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(request, networkResponse.clone());
+      } catch (_) { /* noop */ }
+      return networkResponse;
+    }).catch(() => cached);
+    return cached || fetchPromise;
+  })());
 });
 
 // Manejar notificaciones push
@@ -267,12 +261,6 @@ function clearPendingData() {
 
 function getStoredToken() {
   return new Promise((resolve) => {
-    // Obtener token almacenado localmente
-    const token = localStorage.getItem('futpro_token') || 
-                  sessionStorage.getItem('futpro_token');
-    resolve(token);
-  });
-}
     // Obtener token almacenado localmente
     const token = localStorage.getItem('futpro_token') || 
                   sessionStorage.getItem('futpro_token');

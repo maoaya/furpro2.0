@@ -5,10 +5,10 @@ import { getDatabase, ref, set, get, push, onValue, off } from 'firebase/databas
 import { getStorage } from 'firebase/storage'
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY || 'TU_FIREBASE_API_KEY',
-  authDomain: `${process.env.FIREBASE_PROJECT_ID}.firebaseapp.com`,
-  projectId: process.env.FIREBASE_PROJECT_ID || 'TU_FIREBASE_PROJECT_ID',
-  databaseURL: process.env.VITE_FIREBASE_DATABASE_URL || '',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || '',
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID

@@ -7,29 +7,33 @@ import { createClient } from '@supabase/supabase-js';
 
 // Utilidad para obtener variables de entorno con fallback
 export function getEnv(key, fallback = '') {
-  return process.env[key] || fallback;
+  // Preferir import.meta.env en cliente (Vite) y caer a process.env en server
+  const viteVal = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) ||
+                  (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env['VITE_' + key])
+  const nodeVal = typeof process !== 'undefined' ? process.env[key] : undefined;
+  return viteVal || nodeVal || fallback;
 }
 
 // Usa variables de entorno para seguridad
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://TU_SUPABASE_URL.supabase.co';
-const SUPABASE_KEY = process.env.SUPABASE_KEY || 'TU_SUPABASE_API_KEY';
+const SUPABASE_URL = getEnv('VITE_SUPABASE_URL', getEnv('SUPABASE_URL', 'https://TU_SUPABASE_URL.supabase.co'));
+const SUPABASE_KEY = getEnv('VITE_SUPABASE_ANON_KEY', getEnv('SUPABASE_KEY', 'TU_SUPABASE_API_KEY'));
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // 🔐 Configuración de autenticación
 export const authConfig = {
   providers: ['google', 'facebook'],
-  redirectTo: getEnv('GOOGLE_CALLBACK_URL', 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback'),
+  redirectTo: (typeof window !== 'undefined' ? window.location.origin : getEnv('GOOGLE_CALLBACK_URL', 'https://qqrxetxcglwrejtblwut.supabase.co')) + '/auth/v1/callback',
   scopes: {
     google: 'email profile',
     facebook: 'email,public_profile'
   },
   google: {
-    callbackUrl: getEnv('GOOGLE_CALLBACK_URL', 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback'),
+    callbackUrl: (typeof window !== 'undefined' ? window.location.origin : getEnv('GOOGLE_CALLBACK_URL', 'https://qqrxetxcglwrejtblwut.supabase.co')) + '/auth/v1/callback',
     scopes: 'email profile'
   },
   facebook: {
-    callbackUrl: getEnv('FACEBOOK_CALLBACK_URL', 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback'),
+    callbackUrl: (typeof window !== 'undefined' ? window.location.origin : getEnv('FACEBOOK_CALLBACK_URL', 'https://qqrxetxcglwrejtblwut.supabase.co')) + '/auth/v1/callback',
     scopes: 'email,public_profile'
   }
 }
