@@ -39,6 +39,18 @@ const LoginRegisterForm = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setError('');
+    const res = await loginWithGoogle();
+    if (res?.error) setError(res.error);
+  };
+
+  const handleFacebookLogin = async () => {
+    setError('');
+    const res = await loginWithFacebook();
+    if (res?.error) setError(res.error);
+  };
+
   return (
     <div className="login-register-form" style={{ maxWidth: 360, margin: '40px auto', background: '#222', borderRadius: 18, padding: '24px 24px 28px', boxShadow: '0 4px 24px #FFD70055', textAlign: 'center' }}>
       {/* Logo de FutPro */}
@@ -91,10 +103,10 @@ const LoginRegisterForm = () => {
           {tab === 'login' && (
             <div style={{ marginTop: 14 }}>
               <div style={{ color: '#888', fontSize: 12, textAlign: 'center', margin: '10px 0' }}>o continúa con</div>
-              <button type="button" className="btn-outline" style={{ width: '100%', marginBottom: 10 }} onClick={loginWithGoogle} disabled={loading}>
+              <button type="button" className="btn-outline" style={{ width: '100%', marginBottom: 10 }} onClick={handleGoogleLogin} disabled={loading}>
                 <i className="fab fa-google"></i> Google
               </button>
-              <button type="button" className="btn-outline" style={{ width: '100%' }} onClick={loginWithFacebook} disabled={loading}>
+              <button type="button" className="btn-outline" style={{ width: '100%' }} onClick={handleFacebookLogin} disabled={loading}>
                 <i className="fab fa-facebook"></i> Facebook
               </button>
               <div style={{ textAlign: 'center', marginTop: 10 }}>

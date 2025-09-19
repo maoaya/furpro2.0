@@ -18,6 +18,14 @@ export function getEnv(key, fallback = '') {
 const SUPABASE_URL = getEnv('VITE_SUPABASE_URL', getEnv('SUPABASE_URL', 'https://TU_SUPABASE_URL.supabase.co'));
 const SUPABASE_KEY = getEnv('VITE_SUPABASE_ANON_KEY', getEnv('SUPABASE_KEY', 'TU_SUPABASE_API_KEY'));
 
+// Señalizar configuración inválida para evitar redirecciones a placeholders
+const isPlaceholderUrl = !SUPABASE_URL || /TU_SUPABASE_URL/i.test(SUPABASE_URL);
+const isPlaceholderKey = !SUPABASE_KEY || /TU_SUPABASE_API_KEY/i.test(SUPABASE_KEY);
+export const supabaseConfigured = !(isPlaceholderUrl || isPlaceholderKey);
+if (!supabaseConfigured && typeof console !== 'undefined') {
+  console.error('[Supabase] Configuración faltante: define VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en el entorno (Netlify). URL actual:', SUPABASE_URL);
+}
+
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // 🔐 Configuración de autenticación

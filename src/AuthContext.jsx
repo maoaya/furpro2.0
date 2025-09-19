@@ -72,6 +72,10 @@ export const AuthProvider = ({ children }) => {
       return result;
     } catch (e) {
       // Fallback a Supabase OAuth
+      const supa = await import('./config/supabase');
+      if (!supa.supabaseConfigured) {
+        return { error: 'Autenticación de Google no disponible: configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.' };
+      }
       const supabase = await getSupabase();
       const authConfig = await getAuthConfig();
       await supabase.auth.signInWithOAuth({
@@ -94,6 +98,10 @@ export const AuthProvider = ({ children }) => {
       return result;
     } catch (e) {
       // Fallback a Supabase OAuth
+      const supa = await import('./config/supabase');
+      if (!supa.supabaseConfigured) {
+        return { error: 'Autenticación de Facebook no disponible: configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.' };
+      }
       const supabase = await getSupabase();
       const authConfig = await getAuthConfig();
       await supabase.auth.signInWithOAuth({
