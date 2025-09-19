@@ -11,6 +11,7 @@
     "start": "node start.js",
     "backend": "node start.js",
     "build": "vite build",
+    "netlify:redeploy": "powershell -ExecutionPolicy Bypass -File ./netlify-clear-cache.ps1 -Branch master",
     "test": "jest",
     "test:backend": "jest testing/",
     "lint": "eslint ."
