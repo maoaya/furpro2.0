@@ -31,17 +31,17 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 // 🔐 Configuración de autenticación
 export const authConfig = {
   providers: ['google', 'facebook'],
-  redirectTo: (typeof window !== 'undefined' ? window.location.origin : getEnv('GOOGLE_CALLBACK_URL', 'https://qqrxetxcglwrejtblwut.supabase.co')) + '/auth/v1/callback',
+  redirectTo: 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback',
   scopes: {
     google: 'email profile',
     facebook: 'email,public_profile'
   },
   google: {
-    callbackUrl: (typeof window !== 'undefined' ? window.location.origin : getEnv('GOOGLE_CALLBACK_URL', 'https://qqrxetxcglwrejtblwut.supabase.co')) + '/auth/v1/callback',
+    callbackUrl: 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback',
     scopes: 'email profile'
   },
   facebook: {
-    callbackUrl: (typeof window !== 'undefined' ? window.location.origin : getEnv('FACEBOOK_CALLBACK_URL', 'https://qqrxetxcglwrejtblwut.supabase.co')) + '/auth/v1/callback',
+    callbackUrl: 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback',
     scopes: 'email,public_profile'
   }
 }
