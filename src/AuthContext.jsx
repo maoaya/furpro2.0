@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
     })();
     return () => {
       mounted = false;
-      try { unsubscribe?.(); } catch {}
+  try { unsubscribe?.(); } catch (_e) { /* noop */ }
     };
   }, []);
 
@@ -106,6 +106,61 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Inicio de sesión con email/contraseña (Supabase)
+  const signInWithEmail = async (email, password) => {
+    setLoading(true);
+    try {
+      const supabase = await getSupabase();
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      setUser(data?.user || null);
+      return { user: data?.user || null };
+    } catch (e) {
+      return { error: e.message || 'No se pudo iniciar sesión' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Registro con email/contraseña (Supabase)
+  const signUpWithEmail = async (email, password) => {
+    setLoading(true);
+    try {
+      const supabase = await getSupabase();
+      const authCfg = await getAuthConfig();
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: authCfg?.redirectTo || window.location.origin }
+      });
+      if (error) throw error;
+      // En Supabase, user puede ser null cuando requiere verificación por email
+      return { user: data?.user || null, needsVerification: !data?.user };
+    } catch (e) {
+      return { error: e.message || 'No se pudo registrar' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Recuperación de contraseña (Supabase)
+  const resetPassword = async (email) => {
+    setLoading(true);
+    try {
+      const supabase = await getSupabase();
+      const authCfg = await getAuthConfig();
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: authCfg?.redirectTo || window.location.origin
+      });
+      if (error) throw error;
+      return { ok: true };
+    } catch (e) {
+      return { error: e.message || 'No se pudo enviar el correo de recuperación' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Logout
   const logout = async () => {
     setLoading(true);
@@ -113,11 +168,11 @@ export const AuthProvider = ({ children }) => {
       try {
         const supabase = await getSupabase();
         await supabase.auth.signOut();
-      } catch {}
+  } catch (_e) { /* ignore supabase signOut errors */ }
       try {
         const { auth, signOut } = await getFirebase();
         await signOut(auth);
-      } catch {}
+  } catch (_e) { /* ignore firebase signOut errors */ }
     } finally {
       setUser(null);
       setLoading(false);
@@ -125,7 +180,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginWithFacebook, logout }}>
+    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginWithFacebook, signInWithEmail, signUpWithEmail, resetPassword, logout }}>
       {children}
     </AuthContext.Provider>
   );
