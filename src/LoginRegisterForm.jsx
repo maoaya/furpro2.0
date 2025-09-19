@@ -14,51 +14,26 @@ const TabButton = ({ active, onClick, children }) => (
 );
 
 const LoginRegisterForm = () => {
-  const { loginWithGoogle, loginWithFacebook, signInWithEmail, signUpWithEmail, resetPassword, user, loading, logout } = useAuth();
+  const { loginWithGoogle, loginWithFacebook, user, loading, logout } = useAuth();
   const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
-  const [tab, setTab] = useState('login'); // login | register | recover
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [tab, setTab] = useState('login'); // login | register
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setInfo('');
-    
-    if (!email || !email.includes('@')) {
-      setError('Por favor ingresa un email válido.');
-      return;
-    }
-    
-    if (tab !== 'recover' && (!password || password.length < 6)) {
-      setError('La contraseña debe tener al menos 6 caracteres.');
-      return;
-    }
-    
-    if (tab === 'login') {
-      const res = await signInWithEmail(email, password);
-      if (res?.error) setError(res.error);
-      else if (res?.user) setInfo('¡Sesión iniciada correctamente!');
-    } else if (tab === 'register') {
-      const res = await signUpWithEmail(email, password);
-      if (res?.error) setError(res.error);
-      else setInfo('Revisa tu correo para confirmar la cuenta.');
-    } else if (tab === 'recover') {
-      const res = await resetPassword(email);
-      if (res?.error) setError(res.error);
-      else setInfo('Te enviamos un enlace para restablecer tu contraseña.');
-    }
+  // Definir destino tras login según pestaña activa
+  const setRedirectTarget = () => {
+    const target = tab === 'register' ? '/validar-usuario' : '/dashboard';
+    localStorage.setItem('postLoginRedirect', target);
   };
 
   const handleGoogleLogin = async () => {
     setError('');
+    setRedirectTarget();
     const res = await loginWithGoogle();
     if (res?.error) setError(res.error);
   };
 
   const handleFacebookLogin = async () => {
     setError('');
+    setRedirectTarget();
     const res = await loginWithFacebook();
     if (res?.error) setError(res.error);
   };
@@ -85,45 +60,25 @@ const LoginRegisterForm = () => {
           <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
             <TabButton active={tab === 'login'} onClick={() => setTab('login')}>Ingresar</TabButton>
             <TabButton active={tab === 'register'} onClick={() => setTab('register')}>Registrarse</TabButton>
-            <TabButton active={tab === 'recover'} onClick={() => setTab('recover')}>Recuperar</TabButton>
           </div>
 
-          {(tab === 'login' || tab === 'register' || tab === 'recover') && (
-            <form onSubmit={handleSubmit} style={{ textAlign: 'left' }}>
-              <div style={{ marginBottom: 10 }}>
-                <label style={{ display: 'block', color: '#bbb', fontSize: 12, marginBottom: 6 }}>Email</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="tu@email"
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #333', background: '#1a1a1a', color: '#fff' }} />
-              </div>
-              {tab !== 'recover' && (
-                <div style={{ marginBottom: 10 }}>
-                  <label style={{ display: 'block', color: '#bbb', fontSize: 12, marginBottom: 6 }}>Contraseña</label>
-                  <input type="password" value={password} onChange={e => setPassword(e.target.value)} required={tab !== 'recover'} placeholder="••••••••"
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #333', background: '#1a1a1a', color: '#fff' }} />
-                </div>
-              )}
+          {/* Eliminado formulario de email/contraseña; solo botones sociales */}
 
-              {error && <div style={{ color: '#ff6b6b', marginBottom: 8 }}>{error}</div>}
-              {info && <div style={{ color: '#8bd86b', marginBottom: 8 }}>{info}</div>}
-
-              <button type="submit" className="btn-primary" disabled={loading} style={{ width: '100%', marginTop: 6 }}>
-                {tab === 'login' ? 'Ingresar' : tab === 'register' ? 'Crear cuenta' : 'Enviar enlace'}
-              </button>
-            </form>
-          )}
-
-          {tab === 'login' && (
+          {(tab === 'login' || tab === 'register') && (
             <div style={{ marginTop: 14 }}>
-              <div style={{ color: '#888', fontSize: 12, textAlign: 'center', margin: '10px 0' }}>o continúa con</div>
+              <div style={{ color: '#888', fontSize: 12, textAlign: 'center', margin: '10px 0' }}>Continúa con</div>
               <button type="button" className="btn-outline" style={{ width: '100%', marginBottom: 10 }} onClick={handleGoogleLogin} disabled={loading}>
                 <i className="fab fa-google"></i> Google
               </button>
               <button type="button" className="btn-outline" style={{ width: '100%' }} onClick={handleFacebookLogin} disabled={loading}>
                 <i className="fab fa-facebook"></i> Facebook
               </button>
-              <div style={{ textAlign: 'center', marginTop: 10 }}>
-                <a href="#" onClick={(e)=>{e.preventDefault(); setTab('recover')}} style={{ color: '#aaa', fontSize: 12 }}>¿Olvidaste tu contraseña?</a>
-              </div>
+              {error && <div style={{ color: '#ff6b6b', marginTop: 8 }}>{error}</div>}
+              {tab === 'register' && (
+                <div style={{ textAlign: 'center', marginTop: 10 }}>
+                  <span style={{ color: '#aaa', fontSize: 12 }}>Tras registrarte te llevamos al formulario de inscripción.</span>
+                </div>
+              )}
             </div>
           )}
         </>

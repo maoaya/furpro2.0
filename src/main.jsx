@@ -19,6 +19,15 @@ import AppRouter from './AppRouter';
 
 function AuthGate() {
   const { user, loading } = useAuth();
+  React.useEffect(() => {
+    if (user) {
+      const target = localStorage.getItem('postLoginRedirect') || '/dashboard';
+      localStorage.removeItem('postLoginRedirect');
+      // Redirección segura tras login (no depende del Router)
+      window.location.replace(target);
+    }
+  }, [user]);
+
   if (loading) return <div className="loader" />;
   return user ? <AppRouter /> : <LoginRegisterForm />;
 }
