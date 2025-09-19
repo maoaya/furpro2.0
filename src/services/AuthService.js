@@ -270,11 +270,11 @@ export class AuthService {
         email: user.email,
         name: user.user_metadata?.name || user.email.split('@')[0],
         phone: user.user_metadata?.phone || null,
-        user_type: user.user_metadata?.user_type || 'player',
+  user_type: user.user_metadata?.user_type || 'integrado',
         position: user.user_metadata?.position || null,
         avatar_url: user.user_metadata?.avatar_url || null,
         team_name: null,
-        stats: this.getInitialStats(user.user_metadata?.user_type || 'player'),
+  stats: this.getInitialStats(user.user_metadata?.user_type || 'integrado'),
         achievements: [],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()

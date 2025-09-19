@@ -79,10 +79,11 @@ export const AuthProvider = ({ children }) => {
           return { error: 'Autenticación de Google no disponible: configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.' };
         }
         const supabase = await getSupabase();
+        const authCfg = await getAuthConfig();
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: window.location.origin,
+            redirectTo: authCfg?.redirectTo || window.location.origin,
             queryParams: {
               access_type: 'offline',
               prompt: 'consent',
@@ -117,10 +118,11 @@ export const AuthProvider = ({ children }) => {
           return { error: 'Autenticación de Facebook no disponible: configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.' };
         }
         const supabase = await getSupabase();
+        const authCfg = await getAuthConfig();
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'facebook',
           options: {
-            redirectTo: window.location.origin,
+            redirectTo: authCfg?.redirectTo || window.location.origin,
             queryParams: { display: 'popup' }
           }
         });

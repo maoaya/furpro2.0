@@ -68,7 +68,7 @@ class AuthCallbackHandler {
                 email: user.email,
                 name: user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
                 avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
-                user_type: 'player', // Por defecto
+                user_type: 'integrado', // Por defecto unificado
                 phone: user.user_metadata?.phone || null,
                 stats: {
                     rating: 500,

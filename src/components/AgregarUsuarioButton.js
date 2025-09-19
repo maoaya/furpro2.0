@@ -2,24 +2,10 @@ import React, { useState } from 'react';
 import { supabase } from '../config/supabase.js';
 import CondicionesUsoPanel from './CondicionesUsoPanel.jsx';
 
-export default function AgregarUsuarioButton({ userId }) {
-  const [role, setRole] = useState('player');
+export default function AgregarUsuarioButton() {
   const [showPanel, setShowPanel] = useState(false);
   const [usuarioCreado, setUsuarioCreado] = useState(false);
-
-  const cambiarRol = async () => {
-    const { error } = await supabase
-      .from('users')
-      .update({ user_type: role })
-      .eq('id', userId);
-
-    if (error) {
-      alert('Error al cambiar el rol: ' + error.message);
-    } else {
-      alert('Rol actualizado correctamente a ' + role);
-      // Aquí puedes actualizar la vista según el nuevo rol
-    }
-  };
+  const DEFAULT_ROLE = 'integrado'; // Rol unificado por solicitud: el usuario puede hacer todo
 
   const handleCrearUsuario = async () => {
     setUsuarioCreado(false);
@@ -31,7 +17,11 @@ export default function AgregarUsuarioButton({ userId }) {
       alert('Email y nombre requeridos');
       return;
     }
-    const { data, error } = await supabase.from('usuarios').insert([{ email, nombre, user_type: role }]).select().single();
+    const { data, error } = await supabase
+      .from('usuarios')
+      .insert([{ email, nombre, user_type: DEFAULT_ROLE }])
+      .select()
+      .single();
     if (error) {
       alert('Error al crear usuario: ' + error.message);
     } else {
@@ -42,15 +32,7 @@ export default function AgregarUsuarioButton({ userId }) {
 
   return (
     <div>
-      <select value={role} onChange={e => setRole(e.target.value)}>
-        <option value="player">Jugador</option>
-        <option value="sponsor">Patrocinador</option>
-        <option value="coach">Entrenador</option>
-        <option value="admin">Administrador</option>
-        <option value="referee">Árbitro</option>
-        <option value="fan">Aficionado</option>
-      </select>
-      <button onClick={cambiarRol}>Cambiar rol</button>
+      {/* UI de rol desactivada: los usuarios son "integrado" y no necesitan cambiar rol */}
 
       {/* Botón para mostrar el panel de condiciones */}
       {!showPanel && !usuarioCreado && (
