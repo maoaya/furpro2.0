@@ -23,7 +23,7 @@ export default function RecuperarPassword() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: black, color: gold, alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ background: gold, color: black, borderRadius: 16, padding: 32, boxShadow: '0 2px 12px #0006', minWidth: 320, textAlign: 'center' }}>
-        <img src="/images/futpro-logo.png" alt="FutPro Logo" style={{ width: 80, height: 80, borderRadius: 12, marginBottom: 24 }} />
+        <img src="/images/futpro-logo.svg" alt="FutPro Logo" style={{ width: 80, height: 80, borderRadius: 12, marginBottom: 24 }} />
         <h1>Recuperar contraseña</h1>
         <form onSubmit={handleRecuperar}>
           <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} style={{ width: '100%', marginBottom: 16, padding: 8, borderRadius: 8, border: '1px solid #ccc' }} />

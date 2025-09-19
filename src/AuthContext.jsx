@@ -118,12 +118,17 @@ export const AuthProvider = ({ children }) => {
   const signInWithEmail = async (email, password) => {
     setLoading(true);
     try {
+      const supa = await import('./config/supabase');
+      if (!supa.supabaseConfigured) {
+        return { error: 'Configuración de autenticación no disponible.' };
+      }
       const supabase = await getSupabase();
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       setUser(data?.user || null);
       return { user: data?.user || null };
     } catch (e) {
+      console.error('Error login email:', e);
       return { error: e.message || 'No se pudo iniciar sesión' };
     } finally {
       setLoading(false);
@@ -134,6 +139,10 @@ export const AuthProvider = ({ children }) => {
   const signUpWithEmail = async (email, password) => {
     setLoading(true);
     try {
+      const supa = await import('./config/supabase');
+      if (!supa.supabaseConfigured) {
+        return { error: 'Configuración de registro no disponible.' };
+      }
       const supabase = await getSupabase();
       const authCfg = await getAuthConfig();
       const { data, error } = await supabase.auth.signUp({
@@ -145,6 +154,7 @@ export const AuthProvider = ({ children }) => {
       // En Supabase, user puede ser null cuando requiere verificación por email
       return { user: data?.user || null, needsVerification: !data?.user };
     } catch (e) {
+      console.error('Error registro email:', e);
       return { error: e.message || 'No se pudo registrar' };
     } finally {
       setLoading(false);

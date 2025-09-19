@@ -25,9 +25,21 @@ const LoginRegisterForm = () => {
     e.preventDefault();
     setError('');
     setInfo('');
+    
+    if (!email || !email.includes('@')) {
+      setError('Por favor ingresa un email válido.');
+      return;
+    }
+    
+    if (tab !== 'recover' && (!password || password.length < 6)) {
+      setError('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+    
     if (tab === 'login') {
       const res = await signInWithEmail(email, password);
       if (res?.error) setError(res.error);
+      else if (res?.user) setInfo('¡Sesión iniciada correctamente!');
     } else if (tab === 'register') {
       const res = await signUpWithEmail(email, password);
       if (res?.error) setError(res.error);
@@ -56,7 +68,7 @@ const LoginRegisterForm = () => {
       {/* Logo de FutPro */}
       <div style={{ marginBottom: 18 }}>
         <img 
-          src="/images/futpro-logo.png" 
+          src="/images/futpro-logo.svg" 
           alt="FutPro Logo" 
           style={{ width: 72, height: 72, borderRadius: 12, boxShadow: '0 4px 12px rgba(255, 215, 0, 0.3)' }} 
         />
