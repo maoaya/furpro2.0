@@ -71,18 +71,30 @@ export const AuthProvider = ({ children }) => {
       setUser(result.user);
       return result;
     } catch (e) {
-      // Fallback a Supabase OAuth
-      const supa = await import('./config/supabase');
-      if (!supa.supabaseConfigured) {
-        return { error: 'Autenticación de Google no disponible: configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.' };
+      console.warn('Firebase Google login failed, trying Supabase:', e.message);
+      // Fallback a Supabase OAuth con popup mode
+      try {
+        const supa = await import('./config/supabase');
+        if (!supa.supabaseConfigured) {
+          return { error: 'Autenticación de Google no disponible: configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.' };
+        }
+        const supabase = await getSupabase();
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: window.location.origin,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent',
+            }
+          }
+        });
+        if (error) throw error;
+        return { user: null, redirecting: true };
+      } catch (supaError) {
+        console.error('Supabase Google login also failed:', supaError);
+        return { error: 'Error de autenticación con Google. Verifica la configuración del proyecto.' };
       }
-      const supabase = await getSupabase();
-      const authConfig = await getAuthConfig();
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: authConfig.google?.callbackUrl, scopes: authConfig.google?.scopes }
-      });
-      return { user: null, redirecting: true };
     } finally {
       setLoading(false);
     }
@@ -97,18 +109,27 @@ export const AuthProvider = ({ children }) => {
       setUser(result.user);
       return result;
     } catch (e) {
+      console.warn('Firebase Facebook login failed, trying Supabase:', e.message);
       // Fallback a Supabase OAuth
-      const supa = await import('./config/supabase');
-      if (!supa.supabaseConfigured) {
-        return { error: 'Autenticación de Facebook no disponible: configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.' };
+      try {
+        const supa = await import('./config/supabase');
+        if (!supa.supabaseConfigured) {
+          return { error: 'Autenticación de Facebook no disponible: configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.' };
+        }
+        const supabase = await getSupabase();
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'facebook',
+          options: {
+            redirectTo: window.location.origin,
+            queryParams: { display: 'popup' }
+          }
+        });
+        if (error) throw error;
+        return { user: null, redirecting: true };
+      } catch (supaError) {
+        console.error('Supabase Facebook login also failed:', supaError);
+        return { error: 'Error de autenticación con Facebook. Verifica la configuración del proyecto.' };
       }
-      const supabase = await getSupabase();
-      const authConfig = await getAuthConfig();
-      await supabase.auth.signInWithOAuth({
-        provider: 'facebook',
-        options: { redirectTo: authConfig.facebook?.callbackUrl, scopes: authConfig.facebook?.scopes, queryParams: { display: 'popup' } }
-      });
-      return { user: null, redirecting: true };
     } finally {
       setLoading(false);
     }

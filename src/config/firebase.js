@@ -24,8 +24,14 @@ export const storage = getStorage(app)
 export const googleProvider = new GoogleAuthProvider()
 export const facebookProvider = new FacebookAuthProvider()
 
+// Configurar dominios autorizados para OAuth
 googleProvider.setCustomParameters({
   prompt: 'select_account'
+})
+
+// Configurar Facebook provider
+facebookProvider.setCustomParameters({
+  display: 'popup'
 })
 
 facebookProvider.setCustomParameters({
