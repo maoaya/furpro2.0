@@ -90,18 +90,16 @@ export default function FutProAppDefinitivo() {
     <Routes>
       {/* Página de login/registro */}
       <Route path="/" element={
-        user ? null : (
-          <div style={{
-            minHeight: '100vh',
-            background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontFamily: 'Arial, sans-serif'
-          }}>
-            <LoginRegisterForm />
-          </div>
-        )
+        <div style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: 'Arial, sans-serif'
+        }}>
+          <LoginRegisterForm />
+        </div>
       } />
       
       {/* Dashboard principal */}
