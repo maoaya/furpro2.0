@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AppRouter from './pages/AppRouter';
 import TorneosPage from './pages/TorneosPage';
-import ChatPage from './pages/ChatPage';
+import ChatPage from './components/ChatPage';
 import ChatSQLPage from './pages/ChatSQLPage';
 import BuscarMisCampeonatosPage from './pages/BuscarMisCampeonatosPage';
 import CompartirContenidoPage from './pages/CompartirContenidoPage';

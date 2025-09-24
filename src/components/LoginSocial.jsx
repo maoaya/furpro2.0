@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CondicionesUsoPanel from './CondicionesUsoPanel.jsx';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../context/AuthContext';
 import FutproLogo from './FutproLogo.jsx';
 import { Link } from 'react-router-dom';
 

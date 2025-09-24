@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase.js';
 
 
@@ -10,23 +11,53 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const [result, setResult] = useState('');
   const [token, setToken] = useState('');
+  const navigate = useNavigate();
+
+  // Escuchar cambios de autenticación
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('🔐 AuthPage - Auth state change:', event, session?.user?.email);
+
+      if (event === 'SIGNED_IN' && session) {
+        setResult('¡Inicio de sesión exitoso! Redirigiendo...');
+        setToken(session.access_token);
+
+        // Redirigir después de un breve delay
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
+      } else if (event === 'SIGNED_OUT') {
+        setResult('Sesión cerrada');
+        setToken('');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
 
   const handleRegister = async () => {
-    setResult('');
+    setResult('Procesando registro...');
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre, email, password })
     });
     const data = await res.json();
-    if (data.user) setResult('Registro exitoso');
-    else setResult(data.error || 'Error en el registro');
+    if (data.user) {
+      setResult('¡Registro exitoso! Redirigiendo...');
+      // Redirigir después de registro exitoso
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 2000);
+    } else {
+      setResult(data.error || 'Error en el registro');
+    }
   };
 
 
   const handleLogin = async () => {
-    setResult('');
+    setResult('Iniciando sesión...');
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -34,10 +65,13 @@ export default function AuthPage() {
     });
     const data = await res.json();
     if (data.token) {
-      setResult('Login exitoso');
+      setResult('¡Login exitoso! Redirigiendo...');
       setToken(data.token);
       localStorage.setItem('token', data.token);
-      // window.location.href = '/'; // Redirigir si es necesario
+      // Redirigir después de login exitoso
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
     } else {
       setResult(data.error || 'Error en el login');
     }
@@ -45,10 +79,21 @@ export default function AuthPage() {
 
   // Login social con Google
   const handleLoginGoogle = async () => {
-    setResult('');
+    setResult('Conectando con Google...');
     try {
-      await supabase.auth.signInWithOAuth({ provider: 'google' });
-      setResult('Login con Google iniciado');
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
+      });
+
+      if (error) {
+        setResult('Error Google: ' + error.message);
+      } else {
+        setResult('Redirigiendo a Google...');
+        // La redirección se maneja automáticamente por Supabase
+      }
     } catch (e) {
       setResult('Error Google: ' + e.message);
     }
@@ -56,10 +101,21 @@ export default function AuthPage() {
 
   // Login social con Facebook
   const handleLoginFacebook = async () => {
-    setResult('');
+    setResult('Conectando con Facebook...');
     try {
-      await supabase.auth.signInWithOAuth({ provider: 'facebook' });
-      setResult('Login con Facebook iniciado');
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
+      });
+
+      if (error) {
+        setResult('Error Facebook: ' + error.message);
+      } else {
+        setResult('Redirigiendo a Facebook...');
+        // La redirección se maneja automáticamente por Supabase
+      }
     } catch (e) {
       setResult('Error Facebook: ' + e.message);
     }

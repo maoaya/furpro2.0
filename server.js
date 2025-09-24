@@ -8,58 +8,19 @@ let io;
 
 // Crear el servidor HTTP siempre (para tests y producción)
 const server = http.createServer(app);
-
-// Exportar para ESM y CommonJS
 export { app, server };
-if (typeof module !== 'undefined') {
-  module.exports = { app, server };
-}
 
 
 
 // WebSocket para notificaciones y comentarios en tiempo real (solo si no es test)
 if (process.env.NODE_ENV !== 'test') {
-  import('ws').then(({ WebSocketServer }) => {
-    io = new Server(server, {
-      cors: { origin: '*' }
-    });
-    const wss = new WebSocketServer({ server });
-    app.set('wss', wss);
-    // Socket.io para streaming y chat
-    io.on('connection', (socket) => {
-      socket.on('join-stream', (streamId) => {
-        socket.join(streamId);
-        io.to(streamId).emit('viewer-joined', socket.id);
-      });
-      socket.on('send-message', (data) => {
-        io.emit('new-message', data);
-      });
-      socket.on('disconnect', () => {});
-    });
-    const PORT = 3000;
-    server.listen(PORT, () => {
-      console.log(`Servidor escuchando en http://localhost:${PORT}`);
-    });
+  const { WebSocketServer } = await import('ws');
+  io = new Server(server, {
+    cors: { origin: '*' }
   });
-}
-
-
-
-
-// Para compatibilidad CommonJS (require)
-module.exports = { app, server };
-
-// Web Push configuración (solo si usas notificaciones push)
-if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
-  webpush.setVapidDetails(
-    'mailto:admin@futpro.com',
-    process.env.VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
-  );
-}
-
-// Socket.io para streaming y chat (solo si io está definido)
-if (io) {
+  const wss = new WebSocketServer({ server });
+  app.set('wss', wss);
+  // Socket.io para streaming y chat
   io.on('connection', (socket) => {
     socket.on('join-stream', (streamId) => {
       socket.join(streamId);
@@ -70,7 +31,27 @@ if (io) {
     });
     socket.on('disconnect', () => {});
   });
+  const PORT = 3000;
+  server.listen(PORT, () => {
+    console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  });
 }
+
+
+
+
+
+
+// Web Push configuración (solo si usas notificaciones push)
+if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+  webpush.setVapidDetails(
+    'mailto:admin@futpro.com',
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  );
+}
+
+
 
 // Endpoint para comentarios con limpieza y asistencia IA
 app.post('/comentario', async (req, res) => {
@@ -92,12 +73,6 @@ app.post('/comentario', async (req, res) => {
 
 
 
-// Solo levantar el servidor si es ejecución directa (no test)
-const PORT = 3000;
-if (process.env.NODE_ENV !== 'test' && require.main === module) {
-  server.listen(PORT, () => {
-    console.log(`Servidor escuchando en http://localhost:${PORT}`);
-  });
-}
+
 
 

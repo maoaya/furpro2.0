@@ -94,7 +94,9 @@ export default function AppRouter() {
             <Route path="/transporte" element={<TransportePage />} />
             <Route path="/crear-marca" element={<CrearMarcaPage />} />
             <Route path="/categorias" element={<CategoriasPage />} />
-            <Route path="*" element={<Inicio />} />
+            {/* Ruta por defecto - redirige a dashboard */}
+            <Route path="/" element={<Dashboard />} />
+            <Route path="*" element={<Dashboard />} />
           </Routes>
         </React.Suspense>
       </LayoutPrincipal>

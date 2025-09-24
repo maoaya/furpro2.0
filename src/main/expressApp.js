@@ -1,5 +1,7 @@
 import express from 'express';
-import appRoutes from '../routes/appRoutes.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const appRoutes = require('../routes/appRoutes.cjs');
 import untitled1Service from '../services/Untitled1Service.js';
 import authRoutes from '../modules/auth/authRoutes.js';
 import validadorWebService from '../services/ValidadorWebService.js';
@@ -39,12 +41,18 @@ if (enableTestFallbacks) {
 }
 
 // Rutas principales
-app.use('/api', appRoutes);
+// app.use('/api', appRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api', untitled1Service);
 app.use('/api', validadorWebService);
 app.use('/api', sugerenciasRoutes);
 app.use('/api', rankingRoutes);
+
+// Montar las rutas principales
+app.use('/', appRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/sugerencias', sugerenciasRoutes);
+app.use('/api/ranking', rankingRoutes);
 
 // Servir archivos multimedia subidos
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));

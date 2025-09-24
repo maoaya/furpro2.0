@@ -1,6 +1,9 @@
 // ...existing code...
-import React, { useState } from 'react';
-import { supabase } from '../config/supabase';
+import React, { useState, useEffect, useContext } from 'react';
+import supabase from '../supabaseClient';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext.jsx';
+import { getConfig } from '../config/environment.js';
 const gold = '#FFD700';
 const black = '#222';
 
@@ -12,18 +15,66 @@ export default function LoginRegisterForm() {
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  
+  // Usar el AuthContext para OAuth
+  const { loginWithGoogle, loginWithFacebook } = useContext(AuthContext);
+  
+  // Obtener configuración dinámica
+  const config = getConfig();
+
+  // Escuchar cambios de autenticación
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('🔐 Auth state change:', event, session?.user?.email);
+
+      if (event === 'SIGNED_IN' && session) {
+        setSuccess('¡Inicio de sesión exitoso! Redirigiendo...');
+        setLoading(false);
+
+        // Redirigir después de un breve delay para mostrar el mensaje
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
+      } else if (event === 'SIGNED_OUT') {
+        setError('Sesión cerrada');
+        setTimeout(() => setError(null), 3000);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   const handleLoginSocial = async (provider) => {
     setLoading(true);
     setError(null);
     setSuccess(null);
+
     try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider });
-      if (error) setError(error.message);
+      console.log(`🚀 Iniciando ${provider} OAuth en LoginRegisterForm`);
+      console.log('🌍 Configuración detectada:', config);
+      
+      let result;
+      if (provider === 'google') {
+        result = await loginWithGoogle();
+      } else if (provider === 'facebook') {
+        result = await loginWithFacebook();
+      } else {
+        throw new Error(`Proveedor ${provider} no soportado`);
+      }
+
+      if (result.error) {
+        setError(`Error con ${provider}: ${result.error}`);
+        setLoading(false);
+      } else if (result.redirecting) {
+        setSuccess(`Redirigiendo a ${provider}...`);
+        // La redirección se maneja automáticamente por Supabase
+      }
     } catch (e) {
-      setError(e.message);
+      console.error(`💥 Error inesperado con ${provider}:`, e);
+      setError(`Error inesperado con ${provider}: ${e.message}`);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleEmailForm = () => {
@@ -44,13 +95,15 @@ export default function LoginRegisterForm() {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         setError(error.message);
+        setLoading(false);
       } else {
-        setSuccess('¡Ingreso exitoso!');
+        setSuccess('¡Ingreso exitoso! Redirigiendo...');
+        // La redirección se maneja en el useEffect con onAuthStateChange
       }
     } catch (e) {
       setError(e.message);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleRegister = async (e) => {
@@ -59,16 +112,29 @@ export default function LoginRegisterForm() {
     setError(null);
     setSuccess(null);
     try {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            email_confirm: true
+          }
+        }
+      });
       if (error) {
         setError(error.message);
+        setLoading(false);
       } else {
-        setSuccess('¡Registro exitoso!');
+        setSuccess('¡Registro exitoso! Revisa tu email para confirmar la cuenta. Redirigiendo...');
+        // Para registro, esperamos confirmación de email, pero redirigimos a dashboard
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 2000);
       }
     } catch (e) {
       setError(e.message);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

@@ -8,7 +8,9 @@ import CopilotAyuda from '../components/CopilotAyuda';
 import FutproLogo from '../components/FutproLogo.jsx';
 
 const gold = '#FFD700';
-const black = '#181818';
+const black = '#0a0a0a';
+const darkCard = '#1a1a1a';
+const lightGold = '#FFA500';
 
 function getLikes(id) {
   const likes = JSON.parse(localStorage.getItem('likes') || '{}');
@@ -36,8 +38,15 @@ export default function HomePage() {
   const [commentsState, setCommentsState] = useState({});
   const [commentInputs, setCommentInputs] = useState({});
   const [shareFeedback, setShareFeedback] = useState({});
-  const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [activeSection, setActiveSection] = useState('feed');
+  const [userStats] = useState({
+    partidos: 12,
+    goles: 8,
+    asistencias: 5,
+    cards: 2,
+    nivel: 15
+  });
   const [feedbackNav, setFeedbackNav] = useState('');
 
 
@@ -135,155 +144,920 @@ export default function HomePage() {
   );
 
   return (
-    <div style={{ background: black, minHeight: '100vh', color: gold, display: 'flex' }}>
+    <div style={{ 
+      background: `linear-gradient(135deg, ${black} 0%, #1a1a1a 50%, ${black} 100%)`, 
+      minHeight: '100vh', 
+      color: gold,
+      fontFamily: 'Arial, sans-serif'
+    }}>
       {/* Notificación en tiempo real */}
       {notification && (
         <div style={{
           position: 'fixed',
-          top: 16,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: notification.type === 'error' ? '#b71c1c' : '#232323',
+          top: 20,
+          right: 20,
+          background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
           color: gold,
           border: `2px solid ${gold}`,
-          borderRadius: 12,
-          padding: '14px 32px',
+          borderRadius: 15,
+          padding: '16px 24px',
           zIndex: 1000,
           fontWeight: 'bold',
-          fontSize: 18,
-          boxShadow: '0 2px 12px #0008',
-          minWidth: 320,
-          textAlign: 'center',
-          animation: 'fadeInDown 0.5s',
+          fontSize: 16,
+          boxShadow: '0 8px 32px rgba(255, 215, 0, 0.2)',
+          maxWidth: 350,
+          animation: 'slideInRight 0.5s ease-out'
         }}>
-          {notification.msg || '¡Tienes una nueva notificación!'}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontSize: 20 }}>🔔</span>
+            <span>{notification.msg || '¡Tienes una nueva notificación!'}</span>
+          </div>
         </div>
       )}
-      {/* Menú lateral fijo */}
-      <aside style={{ width: 90, background: '#232323', color: gold, minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 0', boxShadow: '2px 0 12px #0008', position: 'sticky', top: 0, zIndex: 20 }}>
-        <div style={{ marginBottom: 32 }}><FutproLogo size={54} /></div>
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%' }}>
-          <a href="/home" title="Inicio" style={{ color: gold, fontSize: 28, textAlign: 'center' }}>🏠</a>
-          <a href="/perfil" title="Mi perfil" style={{ color: gold, fontSize: 28, textAlign: 'center' }}>👤</a>
-          <a href="/publicaciones" title="Publicaciones" style={{ color: gold, fontSize: 28, textAlign: 'center' }}>📰</a>
-          <a href="/marketplace" title="Marketplace" style={{ color: gold, fontSize: 28, textAlign: 'center' }}>💼</a>
-          <a href="/chat" title="Chat" style={{ color: gold, fontSize: 28, textAlign: 'center' }}>💬</a>
-          <a href="/notificaciones" title="Notificaciones" style={{ color: gold, fontSize: 28, textAlign: 'center' }}>🔔</a>
-          <a href="/torneos" title="Torneos" style={{ color: gold, fontSize: 28, textAlign: 'center' }}>🏆</a>
-          <a href="/equipos" title="Equipos" style={{ color: gold, fontSize: 28, textAlign: 'center' }}>🛡️</a>
-          <a href="/streaming" title="Transmisiones" style={{ color: gold, fontSize: 28, textAlign: 'center' }}>📺</a>
-          <a href="/logout" title="Cerrar sesión" style={{ color: gold, fontSize: 28, textAlign: 'center', marginTop: 32 }}>🚪</a>
-        </nav>
-      </aside>
-      {/* Contenido principal */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        {/* Header superior visual */}
-        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: black, borderBottom: `2px solid ${gold}`, padding: '18px 32px', position: 'sticky', top: 0, zIndex: 10 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-            <span style={{ fontWeight: 'bold', fontSize: 28, color: gold }}>FutPro</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar..." style={{ padding: 6, borderRadius: 8, border: `1px solid ${gold}`, background: black, color: gold, fontSize: 15, width: 180 }} />
-            <a href="/notificaciones" style={{ color: gold, fontSize: 26 }} title="Notificaciones">🔔</a>
-          </div>
-        </header>
-        {/* Accesos directos visuales */}
-        <nav style={{ display: 'flex', justifyContent: 'center', gap: 32, margin: '32px 0 24px 0' }}>
-          <a href="/publicaciones" style={{ color: gold, fontWeight: 'bold', fontSize: 18, textDecoration: 'none' }}>Publicaciones</a>
-          <a href="/marketplace" style={{ color: gold, fontWeight: 'bold', fontSize: 18, textDecoration: 'none' }}>Marketplace</a>
-          <a href="/panel-video" style={{ color: gold, fontWeight: 'bold', fontSize: 18, textDecoration: 'none' }}>Panel de Video</a>
-          <a href="/en-vivos" style={{ color: gold, fontWeight: 'bold', fontSize: 18, textDecoration: 'none' }}>En Vivos</a>
-          <a href="/campanas" style={{ color: gold, fontWeight: 'bold', fontSize: 18, textDecoration: 'none' }}>Campañas</a>
-          <a href="/notificaciones" style={{ color: gold, fontWeight: 'bold', fontSize: 18, textDecoration: 'none' }}>Notificaciones</a>
-        </nav>
-        {/* Feed visual tipo Instagram */}
-        <main style={{ maxWidth: 1100, margin: 'auto', padding: 32 }}>
-          <h1 style={{ fontSize: 36, fontWeight: 'bold', marginBottom: 32, textAlign: 'center' }}>Bienvenido a FutPro</h1>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, justifyContent: 'center' }}>
+
+      {/* Header principal mejorado */}
+      <header style={{
+        background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
+        borderBottom: `2px solid ${gold}`,
+        padding: '20px 32px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        backdropFilter: 'blur(10px)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          maxWidth: '1200px',
+          margin: '0 auto'
+        }}>
+          {/* Logo y título */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <FutproLogo size={48} />
             <div>
-              <h2>Publicaciones</h2>
-              {publicacionesFiltradas.length === 0 && <div>No hay publicaciones aún.</div>}
+              <h1 style={{ 
+                fontSize: 28, 
+                fontWeight: 'bold', 
+                margin: 0,
+                background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
+              }}>
+                FutPro
+              </h1>
+              <p style={{ 
+                fontSize: 14, 
+                color: '#ccc', 
+                margin: 0 
+              }}>
+                ¡Bienvenido de vuelta!
+              </p>
             </div>
-            {publicacionesFiltradas.map(pub => (
-              <div key={pub.id} style={{ background: '#232323', borderRadius: 12, padding: 12, width: 260, boxShadow: '0 2px 8px #FFD70022', position: 'relative' }}>
-                {pub.tipo === 'imagen' && <img src={pub.url} alt={pub.nombre} style={{ width: '100%', borderRadius: 8, marginBottom: 8 }} />}
-                {pub.tipo === 'video' && <video src={pub.url} controls style={{ width: '100%', borderRadius: 8, marginBottom: 8 }} />}
-                <div style={{ fontWeight: 'bold', marginBottom: 4 }}>{pub.nombre}</div>
-                <div style={{ fontSize: 12, color: '#FFD70099', marginBottom: 4 }}>{pub.fecha ? new Date(pub.fecha).toLocaleString() : ''}</div>
-                <div style={{ fontSize: 13, color: '#FFD700cc', marginBottom: 8 }}>{pub.descripcion || ''}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                  <button onClick={() => handleLike(pub.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22 }} title="Me gusta">
-                    <span role="img" aria-label="balón">⚽</span>
-                  </button>
-                  <span style={{ fontWeight: 'bold', fontSize: 16 }}>{likesState[pub.id] || 0}</span>
-                  <span style={{ fontSize: 13, color: '#FFD70099' }}>Me gusta</span>
-                </div>
-                {/* Compartir y URL */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                  <button onClick={() => handleShare(pub.id)} style={{ background: gold, color: black, border: 'none', borderRadius: 8, padding: '4px 12px', fontWeight: 'bold', cursor: 'pointer', fontSize: 14 }}>
-                    Compartir
-                  </button>
-                  <input
-                    value={window.location.origin + pub.url}
-                    readOnly
-                    style={{ width: 120, fontSize: 12, border: `1px solid ${gold}`, borderRadius: 6, background: black, color: gold, padding: '2px 6px' }}
-                    onFocus={e => e.target.select()}
-                  />
-                  {shareFeedback[pub.id] && <span style={{ color: gold, fontWeight: 'bold', fontSize: 13 }}>{shareFeedback[pub.id]}</span>}
-                </div>
-                {/* Comentarios */}
-                <div style={{ marginBottom: 8 }}>
-                  <input
-                    type="text"
-                    placeholder="Agregar comentario..."
-                    value={commentInputs[pub.id] || ''}
-                    onChange={e => setCommentInputs(prev => ({ ...prev, [pub.id]: e.target.value }))}
-                    style={{ width: '70%', padding: 6, borderRadius: 6, border: `1px solid ${gold}`, marginRight: 4 }}
-                  />
-                  <button onClick={() => handleComment(pub.id)} style={{ background: gold, color: black, border: 'none', borderRadius: 6, padding: '6px 14px', fontWeight: 'bold', cursor: 'pointer' }}>Comentar</button>
-                </div>
-                <div style={{ maxHeight: 80, overflowY: 'auto', fontSize: 13, color: gold, background: black, borderRadius: 6, padding: 6 }}>
-                  {(commentsState[pub.id] || []).map((c, i) => (
-                    <div key={i} style={{ marginBottom: 4 }}>
-                      <span style={{ color: gold, fontWeight: 'bold' }}>• </span>{c.text} <span style={{ color: '#FFD70099', fontSize: 11 }}>{c.date ? `(${new Date(c.date).toLocaleString()})` : ''}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
           </div>
-          <div style={{ marginTop: 48, textAlign: 'center' }}>
-            <h2>¡Destacado!</h2>
-            <div>Videos y En Vivos</div>
-            <h2>Chat en Tiempo Real</h2>
-            <button style={{ background: gold, color: black, border: 'none', borderRadius: 8, padding: '14px 32px', fontWeight: 'bold', fontSize: 20, cursor: 'pointer', marginTop: 16 }}>Enviar</button>
+
+          {/* Barra de búsqueda y acciones */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <div style={{ position: 'relative' }}>
+              <input 
+                value={search} 
+                onChange={e => setSearch(e.target.value)} 
+                placeholder="Buscar jugadores, equipos..." 
+                style={{ 
+                  padding: '12px 40px 12px 16px',
+                  borderRadius: 25,
+                  border: `2px solid ${gold}`,
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: gold,
+                  fontSize: 16,
+                  width: 280,
+                  outline: 'none',
+                  transition: 'all 0.3s ease'
+                }}
+                onFocus={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.15)'}
+                onBlur={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.1)'}
+              />
+              <span style={{
+                position: 'absolute',
+                right: 12,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 18,
+                color: gold
+              }}>🔍</span>
+            </div>
+            
+            <button style={{
+              background: 'transparent',
+              border: `2px solid ${gold}`,
+              borderRadius: '50%',
+              width: 48,
+              height: 48,
+              color: gold,
+              fontSize: 20,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.background = gold;
+              e.target.style.color = black;
+            }}
+            onMouseOut={(e) => {
+              e.target.style.background = 'transparent';
+              e.target.style.color = gold;
+            }}
+            >
+              🔔
+            </button>
           </div>
-        </main>
-        {/* Barra de navegación inferior fija */}
-        <nav style={{ position: 'fixed', left: 0, bottom: 0, width: '100vw', background: black, borderTop: `2px solid ${gold}`, display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: 64, zIndex: 30 }}>
-          <button onClick={() => { setFeedbackNav('Navegando a Home...'); setTimeout(()=>{ window.location.href='/'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
-            <span role="img" aria-label="home">🏠</span>
-            <span style={{ fontSize: 12 }}>Home</span>
-          </button>
-          <button onClick={() => { setFeedbackNav('Navegando a Marketplace...'); setTimeout(()=>{ window.location.href='/marketplace'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
-            <span role="img" aria-label="ofertas">💼</span>
-            <span style={{ fontSize: 12 }}>Ofertas</span>
-          </button>
-          <button onClick={() => { setFeedbackNav('Navegando a TV...'); setTimeout(()=>{ window.location.href='/streaming'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
-            <span role="img" aria-label="tv">📺</span>
-            <span style={{ fontSize: 12 }}>TV</span>
-          </button>
-          <button onClick={() => { setFeedbackNav('Navegando a Calendario...'); setTimeout(()=>{ window.location.href='/calendario'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
-            <span role="img" aria-label="calendario">📅</span>
-            <span style={{ fontSize: 12 }}>Calendario</span>
-          </button>
-        </nav>
-        {feedbackNav && <div style={{position:'fixed',bottom:70,left:0,width:'100vw',textAlign:'center',color:gold,fontWeight:'bold',fontSize:18,zIndex:99,background:'#232323cc',padding:'8px 0',borderRadius:8}}>{feedbackNav}</div>}
-        {/* Copilot ayuda */}
-        <div style={{ marginTop: 48 }}>
-          <CopilotAyuda />
         </div>
-      </div>
+      </header>
+      {/* Navegación de secciones */}
+      <nav style={{
+        background: darkCard,
+        padding: '20px 0',
+        borderBottom: `1px solid #333`,
+        position: 'sticky',
+        top: 88,
+        zIndex: 40
+      }}>
+        <div style={{ 
+          maxWidth: '1200px', 
+          margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 40
+        }}>
+          {[
+            { id: 'feed', label: 'Feed', icon: '📰' },
+            { id: 'stats', label: 'Estadísticas', icon: '📊' },
+            { id: 'matches', label: 'Partidos', icon: '⚽' },
+            { id: 'friends', label: 'Amigos', icon: '👥' },
+            { id: 'live', label: 'En Vivo', icon: '📺' }
+          ].map(section => (
+            <button
+              key={section.id}
+              onClick={() => setActiveSection(section.id)}
+              style={{
+                background: activeSection === section.id 
+                  ? `linear-gradient(135deg, ${gold} 0%, ${lightGold} 100%)` 
+                  : 'transparent',
+                color: activeSection === section.id ? black : gold,
+                border: activeSection === section.id ? 'none' : `2px solid #444`,
+                borderRadius: 25,
+                padding: '12px 24px',
+                fontSize: 16,
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                transition: 'all 0.3s ease',
+                minWidth: 140
+              }}
+              onMouseOver={(e) => {
+                if (activeSection !== section.id) {
+                  e.target.style.borderColor = gold;
+                  e.target.style.background = 'rgba(255, 215, 0, 0.1)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (activeSection !== section.id) {
+                  e.target.style.borderColor = '#444';
+                  e.target.style.background = 'transparent';
+                }
+              }}
+            >
+              <span style={{ fontSize: 18 }}>{section.icon}</span>
+              <span>{section.label}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* Contenido principal */}
+      <main style={{ 
+        maxWidth: '1200px', 
+        margin: '0 auto', 
+        padding: '32px 20px 100px 20px',
+        width: '100%'
+      }}>
+        {/* Panel de estadísticas personales */}
+        {activeSection === 'stats' && (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            <h2 style={{ 
+              fontSize: 32, 
+              fontWeight: 'bold', 
+              marginBottom: 30,
+              textAlign: 'center',
+              background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>
+              Mis Estadísticas
+            </h2>
+            
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
+              gap: 25,
+              marginBottom: 40
+            }}>
+              {[
+                { label: 'Partidos Jugados', value: userStats.partidos, icon: '⚽', color: gold },
+                { label: 'Goles', value: userStats.goles, icon: '🥅', color: '#ff6b6b' },
+                { label: 'Asistencias', value: userStats.asistencias, icon: '🅰️', color: '#4ecdc4' },
+                { label: 'Cards Generadas', value: userStats.cards, icon: '🎴', color: lightGold },
+                { label: 'Nivel', value: userStats.nivel, icon: '⭐', color: '#a8e6cf' }
+              ].map((stat, index) => (
+                <div key={index} style={{
+                  background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
+                  borderRadius: 20,
+                  padding: 25,
+                  border: `2px solid ${stat.color}`,
+                  textAlign: 'center',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                  transition: 'transform 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseOver={(e) => e.target.style.transform = 'translateY(-5px)'}
+                onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
+                >
+                  <div style={{ fontSize: 48, marginBottom: 15 }}>{stat.icon}</div>
+                  <div style={{ 
+                    fontSize: 36, 
+                    fontWeight: 'bold', 
+                    color: stat.color,
+                    marginBottom: 8
+                  }}>
+                    {stat.value}
+                  </div>
+                  <div style={{ 
+                    fontSize: 16, 
+                    color: '#ccc',
+                    fontWeight: '500'
+                  }}>
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {/* Feed de publicaciones */}
+        {activeSection === 'feed' && (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            <h2 style={{ 
+              fontSize: 32, 
+              fontWeight: 'bold', 
+              marginBottom: 30,
+              textAlign: 'center',
+              background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>
+              Feed de Publicaciones
+            </h2>
+            
+            {publicacionesFiltradas.length === 0 && (
+              <div style={{
+                textAlign: 'center',
+                padding: 60,
+                background: darkCard,
+                borderRadius: 20,
+                border: `2px solid #333`,
+                marginBottom: 30
+              }}>
+                <div style={{ fontSize: 64, marginBottom: 20 }}>📰</div>
+                <h3 style={{ color: gold, fontSize: 24, marginBottom: 10 }}>No hay publicaciones aún</h3>
+                <p style={{ color: '#ccc', fontSize: 16 }}>¡Sé el primero en compartir algo increíble!</p>
+              </div>
+            )}
+
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', 
+              gap: 30,
+              marginBottom: 40
+            }}>
+              {publicacionesFiltradas.map(pub => (
+                <div key={pub.id} style={{ 
+                  background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
+                  borderRadius: 20, 
+                  padding: 20, 
+                  border: `2px solid #333`,
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)', 
+                  position: 'relative',
+                  transition: 'all 0.3s ease',
+                  overflow: 'hidden'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.borderColor = gold;
+                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(255, 215, 0, 0.2)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.borderColor = '#333';
+                  e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
+                }}
+                >
+                  {/* Contenido multimedia */}
+                  {pub.tipo === 'imagen' && (
+                    <div style={{ position: 'relative', marginBottom: 15 }}>
+                      <img 
+                        src={pub.url} 
+                        alt={pub.nombre} 
+                        style={{ 
+                          width: '100%', 
+                          height: 200,
+                          objectFit: 'cover',
+                          borderRadius: 15
+                        }} 
+                      />
+                      <div style={{
+                        position: 'absolute',
+                        top: 10,
+                        right: 10,
+                        background: 'rgba(0, 0, 0, 0.7)',
+                        borderRadius: 20,
+                        padding: '5px 12px',
+                        fontSize: 12,
+                        color: gold,
+                        fontWeight: 'bold'
+                      }}>
+                        📸 IMAGEN
+                      </div>
+                    </div>
+                  )}
+                  
+                  {pub.tipo === 'video' && (
+                    <div style={{ position: 'relative', marginBottom: 15 }}>
+                      <video 
+                        src={pub.url} 
+                        controls 
+                        style={{ 
+                          width: '100%', 
+                          height: 200,
+                          borderRadius: 15,
+                          objectFit: 'cover'
+                        }} 
+                      />
+                      <div style={{
+                        position: 'absolute',
+                        top: 10,
+                        right: 10,
+                        background: 'rgba(0, 0, 0, 0.7)',
+                        borderRadius: 20,
+                        padding: '5px 12px',
+                        fontSize: 12,
+                        color: gold,
+                        fontWeight: 'bold'
+                      }}>
+                        🎥 VIDEO
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Información del post */}
+                  <div style={{ marginBottom: 15 }}>
+                    <h3 style={{ 
+                      fontWeight: 'bold', 
+                      fontSize: 18,
+                      color: gold,
+                      marginBottom: 8,
+                      lineHeight: 1.4
+                    }}>
+                      {pub.nombre}
+                    </h3>
+                    
+                    <div style={{ 
+                      fontSize: 14, 
+                      color: '#888', 
+                      marginBottom: 10,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8
+                    }}>
+                      <span>🕒</span>
+                      <span>{pub.fecha ? new Date(pub.fecha).toLocaleString() : 'Hace un momento'}</span>
+                    </div>
+                    
+                    <p style={{ 
+                      fontSize: 15, 
+                      color: '#ccc', 
+                      lineHeight: 1.5,
+                      margin: 0
+                    }}>
+                      {pub.descripcion || 'Sin descripción'}
+                    </p>
+                  </div>
+
+                  {/* Acciones del post */}
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between',
+                    marginBottom: 15,
+                    padding: '12px 0',
+                    borderTop: '1px solid #333',
+                    borderBottom: '1px solid #333'
+                  }}>
+                    <button 
+                      onClick={() => handleLike(pub.id)} 
+                      style={{ 
+                        background: 'none', 
+                        border: 'none', 
+                        cursor: 'pointer', 
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        color: gold,
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.transform = 'scale(1.1)';
+                        e.target.style.color = lightGold;
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.transform = 'scale(1)';
+                        e.target.style.color = gold;
+                      }}
+                    >
+                      <span style={{ fontSize: 20 }}>⚽</span>
+                      <span>{likesState[pub.id] || 0}</span>
+                      <span style={{ fontSize: 14 }}>Me gusta</span>
+                    </button>
+
+                    <button 
+                      onClick={() => handleShare(pub.id)} 
+                      style={{ 
+                        background: `linear-gradient(135deg, ${gold} 0%, ${lightGold} 100%)`,
+                        color: black, 
+                        border: 'none', 
+                        borderRadius: 20, 
+                        padding: '8px 16px', 
+                        fontWeight: 'bold', 
+                        cursor: 'pointer', 
+                        fontSize: 14,
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 4px 15px rgba(255, 215, 0, 0.3)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = 'none';
+                      }}
+                    >
+                      📤 Compartir
+                    </button>
+                  </div>
+
+                  {/* Sección de comentarios */}
+                  <div>
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: 10, 
+                      marginBottom: 15 
+                    }}>
+                      <input
+                        type="text"
+                        placeholder="Agregar comentario..."
+                        value={commentInputs[pub.id] || ''}
+                        onChange={e => setCommentInputs(prev => ({ ...prev, [pub.id]: e.target.value }))}
+                        style={{ 
+                          flex: 1,
+                          padding: '10px 15px',
+                          borderRadius: 20,
+                          border: `2px solid #444`,
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          color: '#fff',
+                          fontSize: 14,
+                          outline: 'none',
+                          transition: 'border-color 0.3s ease'
+                        }}
+                        onFocus={(e) => e.target.style.borderColor = gold}
+                        onBlur={(e) => e.target.style.borderColor = '#444'}
+                      />
+                      <button 
+                        onClick={() => handleComment(pub.id)} 
+                        style={{ 
+                          background: gold,
+                          color: black, 
+                          border: 'none', 
+                          borderRadius: 20, 
+                          padding: '10px 20px', 
+                          fontWeight: 'bold', 
+                          cursor: 'pointer',
+                          fontSize: 14,
+                          transition: 'all 0.3s ease'
+                        }}
+                        onMouseOver={(e) => {
+                          e.target.style.background = lightGold;
+                          e.target.style.transform = 'scale(1.05)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.target.style.background = gold;
+                          e.target.style.transform = 'scale(1)';
+                        }}
+                      >
+                        💬
+                      </button>
+                    </div>
+
+                    {/* Lista de comentarios */}
+                    <div style={{ 
+                      maxHeight: 120, 
+                      overflowY: 'auto', 
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      borderRadius: 15,
+                      padding: 12
+                    }}>
+                      {(commentsState[pub.id] || []).length === 0 ? (
+                        <p style={{ 
+                          color: '#666', 
+                          fontSize: 14, 
+                          textAlign: 'center',
+                          margin: 0
+                        }}>
+                          Sin comentarios aún
+                        </p>
+                      ) : (
+                        (commentsState[pub.id] || []).map((c, i) => (
+                          <div key={i} style={{ 
+                            marginBottom: 8,
+                            padding: '8px 12px',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: 10,
+                            borderLeft: `3px solid ${gold}`
+                          }}>
+                            <div style={{ 
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              marginBottom: 4
+                            }}>
+                              <span style={{ 
+                                color: gold, 
+                                fontWeight: 'bold',
+                                fontSize: 14
+                              }}>
+                                Usuario
+                              </span>
+                              <span style={{ 
+                                color: '#888', 
+                                fontSize: 12 
+                              }}>
+                                {c.date ? new Date(c.date).toLocaleTimeString() : 'Ahora'}
+                              </span>
+                            </div>
+                            <p style={{ 
+                              color: '#fff',
+                              fontSize: 14,
+                              margin: 0,
+                              lineHeight: 1.4
+                            }}>
+                              {c.text}
+                            </p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Feedback de compartir */}
+                  {shareFeedback[pub.id] && (
+                    <div style={{
+                      position: 'absolute',
+                      top: 10,
+                      left: 10,
+                      background: 'rgba(0, 200, 0, 0.9)',
+                      color: '#fff',
+                      padding: '5px 12px',
+                      borderRadius: 15,
+                      fontSize: 12,
+                      fontWeight: 'bold',
+                      animation: 'pulse 0.5s ease'
+                    }}>
+                      ✅ {shareFeedback[pub.id]}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {/* Sección de Partidos */}
+        {activeSection === 'matches' && (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            <h2 style={{ 
+              fontSize: 32, 
+              fontWeight: 'bold', 
+              marginBottom: 30,
+              textAlign: 'center',
+              background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>
+              Mis Partidos
+            </h2>
+
+            {/* Próximos partidos */}
+            <div style={{ marginBottom: 40 }}>
+              <h3 style={{ 
+                fontSize: 24, 
+                fontWeight: 'bold', 
+                marginBottom: 20,
+                color: gold,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10
+              }}>
+                <span>🔜</span> Próximos Partidos
+              </h3>
+              
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+                gap: 20
+              }}>
+                {[
+                  {
+                    id: 1,
+                    equipoLocal: 'FC Barcelona',
+                    equipoVisitante: 'Real Madrid',
+                    fecha: '2025-09-25',
+                    hora: '20:00',
+                    estadio: 'Camp Nou',
+                    competicion: 'La Liga'
+                  },
+                  {
+                    id: 2,
+                    equipoLocal: 'Manchester City',
+                    equipoVisitante: 'Liverpool',
+                    fecha: '2025-09-28',
+                    hora: '18:30',
+                    estadio: 'Etihad Stadium',
+                    competicion: 'Premier League'
+                  }
+                ].map(partido => (
+                  <div key={partido.id} style={{
+                    background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
+                    borderRadius: 20,
+                    padding: 25,
+                    border: `2px solid ${gold}`,
+                    boxShadow: '0 8px 32px rgba(255, 215, 0, 0.1)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-5px)';
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(255, 215, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 8px 32px rgba(255, 215, 0, 0.1)';
+                  }}
+                  >
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: 20
+                    }}>
+                      <div style={{
+                        background: lightGold,
+                        color: black,
+                        padding: '5px 15px',
+                        borderRadius: 15,
+                        fontSize: 12,
+                        fontWeight: 'bold'
+                      }}>
+                        {partido.competicion}
+                      </div>
+                      <div style={{ color: '#ccc', fontSize: 14 }}>
+                        📅 {new Date(partido.fecha).toLocaleDateString()}
+                      </div>
+                    </div>
+
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between',
+                      marginBottom: 20
+                    }}>
+                      <div style={{ textAlign: 'center', flex: 1 }}>
+                        <div style={{ fontSize: 18, fontWeight: 'bold', color: '#fff' }}>
+                          {partido.equipoLocal}
+                        </div>
+                        <div style={{ fontSize: 14, color: '#ccc', marginTop: 5 }}>
+                          Local
+                        </div>
+                      </div>
+
+                      <div style={{ 
+                        textAlign: 'center',
+                        padding: '0 20px'
+                      }}>
+                        <div style={{ 
+                          fontSize: 24, 
+                          fontWeight: 'bold', 
+                          color: gold,
+                          marginBottom: 5
+                        }}>
+                          VS
+                        </div>
+                        <div style={{ 
+                          fontSize: 16, 
+                          color: lightGold,
+                          fontWeight: 'bold'
+                        }}>
+                          {partido.hora}
+                        </div>
+                      </div>
+
+                      <div style={{ textAlign: 'center', flex: 1 }}>
+                        <div style={{ fontSize: 18, fontWeight: 'bold', color: '#fff' }}>
+                          {partido.equipoVisitante}
+                        </div>
+                        <div style={{ fontSize: 14, color: '#ccc', marginTop: 5 }}>
+                          Visitante
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ 
+                      textAlign: 'center',
+                      padding: '15px',
+                      background: 'rgba(255, 215, 0, 0.1)',
+                      borderRadius: 15,
+                      border: `1px solid ${gold}`
+                    }}>
+                      <div style={{ fontSize: 14, color: gold, fontWeight: 'bold' }}>
+                        📍 {partido.estadio}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Resultados recientes */}
+            <div>
+              <h3 style={{ 
+                fontSize: 24, 
+                fontWeight: 'bold', 
+                marginBottom: 20,
+                color: gold,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10
+              }}>
+                <span>📊</span> Resultados Recientes
+              </h3>
+              
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
+                gap: 20
+              }}>
+                {[
+                  {
+                    id: 1,
+                    equipoLocal: 'Real Madrid',
+                    equipoVisitante: 'Atletico Madrid',
+                    resultadoLocal: 2,
+                    resultadoVisitante: 1,
+                    fecha: '2025-09-20',
+                    estado: 'Finalizado'
+                  },
+                  {
+                    id: 2,
+                    equipoLocal: 'Barcelona',
+                    equipoVisitante: 'Sevilla',
+                    resultadoLocal: 3,
+                    resultadoVisitante: 0,
+                    fecha: '2025-09-18',
+                    estado: 'Finalizado'
+                  },
+                  {
+                    id: 3,
+                    equipoLocal: 'Valencia',
+                    equipoVisitante: 'Villarreal',
+                    resultadoLocal: 1,
+                    resultadoVisitante: 1,
+                    fecha: '2025-09-15',
+                    estado: 'Finalizado'
+                  }
+                ].map(resultado => (
+                  <div key={resultado.id} style={{
+                    background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
+                    borderRadius: 15,
+                    padding: 20,
+                    border: `1px solid #333`,
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.borderColor = gold;
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.borderColor = '#333';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                  >
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: 15
+                    }}>
+                      <div style={{
+                        background: '#4CAF50',
+                        color: '#fff',
+                        padding: '3px 10px',
+                        borderRadius: 10,
+                        fontSize: 12,
+                        fontWeight: 'bold'
+                      }}>
+                        {resultado.estado}
+                      </div>
+                      <div style={{ color: '#ccc', fontSize: 12 }}>
+                        📅 {new Date(resultado.fecha).toLocaleDateString()}
+                      </div>
+                    </div>
+
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between'
+                    }}>
+                      <div style={{ textAlign: 'left', flex: 1 }}>
+                        <div style={{ fontSize: 16, fontWeight: 'bold', color: '#fff' }}>
+                          {resultado.equipoLocal}
+                        </div>
+                      </div>
+
+                      <div style={{ 
+                        textAlign: 'center',
+                        padding: '0 20px'
+                      }}>
+                        <div style={{ 
+                          fontSize: 24, 
+                          fontWeight: 'bold', 
+                          color: gold
+                        }}>
+                          {resultado.resultadoLocal} - {resultado.resultadoVisitante}
+                        </div>
+                      </div>
+
+                      <div style={{ textAlign: 'right', flex: 1 }}>
+                        <div style={{ fontSize: 16, fontWeight: 'bold', color: '#fff' }}>
+                          {resultado.equipoVisitante}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+      
+      {/* Barra de navegación inferior fija */}
+      <nav style={{ position: 'fixed', left: 0, bottom: 0, width: '100vw', background: black, borderTop: `2px solid ${gold}`, display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: 64, zIndex: 30 }}>
+        <button onClick={() => { setFeedbackNav('Navegando a Home...'); setTimeout(()=>{ window.location.href='/'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
+          <span role="img" aria-label="home">🏠</span>
+          <span style={{ fontSize: 12 }}>Home</span>
+        </button>
+        <button onClick={() => { setFeedbackNav('Navegando a Marketplace...'); setTimeout(()=>{ window.location.href='/marketplace'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
+          <span role="img" aria-label="ofertas">💼</span>
+          <span style={{ fontSize: 12 }}>Ofertas</span>
+        </button>
+        <button onClick={() => { setFeedbackNav('Navegando a TV...'); setTimeout(()=>{ window.location.href='/streaming'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
+          <span role="img" aria-label="tv">📺</span>
+          <span style={{ fontSize: 12 }}>TV</span>
+        </button>
+        <button onClick={() => { setFeedbackNav('Navegando a Calendario...'); setTimeout(()=>{ window.location.href='/calendario'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
+          <span role="img" aria-label="calendario">📅</span>
+          <span style={{ fontSize: 12 }}>Calendario</span>
+        </button>
+      </nav>
+      
+      {feedbackNav && <div style={{position:'fixed',bottom:70,left:0,width:'100vw',textAlign:'center',color:gold,fontWeight:'bold',fontSize:18,zIndex:99,background:'#232323cc',padding:'8px 0',borderRadius:8}}>{feedbackNav}</div>}
     </div>
   );
 }

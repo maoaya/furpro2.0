@@ -1,13 +1,13 @@
-import fs from 'fs';
+const fs = require('fs');
 // LOGIN/REGISTRO SOCIAL FACEBOOK CON VERIFICACIÓN DE ANTIGÜEDAD
-import express from 'express';
+const express = require('express');
 const router = express.Router();
-import { requireAuth } from '../../server/middleware/authMiddleware.js';
-import path from 'path';
-import upload from '../middleware/upload.js';
-import axios from 'axios';
+const { requireAuth } = require('../../server/middleware/authMiddleware');
+const path = require('path');
+const upload = require('../middleware/upload.js');
+const axios = require('axios');
 router.post('/api/auth/login/facebook', async (req, res) => {
-  const { default: supabase } = await import('../supabaseNodeClient.js');
+  const supabase = require('../supabaseNodeClient');
   const { access_token } = req.body;
   if (!access_token) return res.status(400).json({ error: 'Falta access_token de Facebook' });
   try {
@@ -692,3 +692,4 @@ router.put('/api/marketplace/edit/:id', requireAuth, (req, res) => {
   router.handle(req, res);
 });
 
+module.exports = router;

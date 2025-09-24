@@ -32,6 +32,7 @@ export default function DashboardPage() {
   <Button style={{ background: gold, color: black, border: 'none', borderRadius: 8, padding: '10px 18px', fontWeight: 'bold', width: '100%', marginBottom: 12, transition: 'background 0.3s, color 0.3s' }} onClick={() => navigate('/usuarios')}>Usuarios</Button>
   <Button style={{ background: gold, color: black, border: 'none', borderRadius: 8, padding: '10px 18px', fontWeight: 'bold', width: '100%', marginBottom: 12, transition: 'background 0.3s, color 0.3s' }} onClick={() => navigate('/torneos')}>Torneos</Button>
   <Button style={{ background: gold, color: black, border: 'none', borderRadius: 8, padding: '10px 18px', fontWeight: 'bold', width: '100%', marginBottom: 12, transition: 'background 0.3s, color 0.3s' }} onClick={() => navigate('/equipos')}>Equipos</Button>
+  <Button style={{ background: gold, color: black, border: 'none', borderRadius: 8, padding: '10px 18px', fontWeight: 'bold', width: '100%', marginBottom: 12, transition: 'background 0.3s, color 0.3s' }} onClick={() => navigate('/chat')}>💬 Chat IA</Button>
       </aside>
       <main style={{ flex: 1, padding: 32, background: black }}>
         <div style={{ background: gold, color: black, borderRadius: 16, padding: 32, boxShadow: '0 2px 12px #0006', maxWidth: 600, margin: '0 auto' }}>
@@ -58,6 +59,7 @@ export default function DashboardPage() {
         <h2 style={{ color: gold }}>Acciones rápidas</h2>
   <Button style={{ background: gold, color: black, border: 'none', borderRadius: 8, padding: '10px 18px', fontWeight: 'bold', width: '100%', marginBottom: 12, transition: 'background 0.3s, color 0.3s' }} onClick={() => navigate('/actividad')}>Ver actividad</Button>
   <Button style={{ background: gold, color: black, border: 'none', borderRadius: 8, padding: '10px 18px', fontWeight: 'bold', width: '100%', marginBottom: 12, transition: 'background 0.3s, color 0.3s' }} onClick={() => navigate('/reportes')}>Ver reportes</Button>
+  <Button style={{ background: gold, color: black, border: 'none', borderRadius: 8, padding: '10px 18px', fontWeight: 'bold', width: '100%', marginBottom: 12, transition: 'background 0.3s, color 0.3s' }} onClick={() => navigate('/chat')}>🤖 Asistente IA</Button>
       </aside>
     </div>
   );

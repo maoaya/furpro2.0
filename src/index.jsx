@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import FutProApp from './FutProApp.jsx';
-import { AuthProvider } from './AuthContext.jsx';
+import { AuthProvider } from './context/AuthContext';
 
 const container = document.getElementById('root');
 if (container) {

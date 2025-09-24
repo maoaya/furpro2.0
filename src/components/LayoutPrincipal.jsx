@@ -3,7 +3,7 @@ import React from 'react';
 import TopBar from './TopBar';
 import GlobalNav from './GlobalNav';
 import BottomNav from './BottomNav';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../context/AuthContext';
 import LoginSocial from './LoginSocial.jsx';
 import PerfilCompletoForm from './PerfilCompletoForm';
 

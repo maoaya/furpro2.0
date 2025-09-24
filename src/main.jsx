@@ -1,8 +1,7 @@
 // Punto de entrada único de la SPA FutPro
-// Carga el router solo si el usuario está autenticado; sino, muestra Login/Registro
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 
 // Estilos globales
 import './styles/tailwind.css';
@@ -13,25 +12,14 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
 
 // Auth y UI
-import { AuthProvider, useAuth } from './AuthContext.jsx';
-import LoginRegisterForm from './LoginRegisterForm.jsx';
-import AppRouter from './AppRouter';
+import { AuthProvider } from './context/AuthContext';
+import FutProApp from './FutProApp.jsx';
 
-function AuthGate() {
-  const { user, loading } = useAuth();
-  React.useEffect(() => {
-    if (user) {
-      const target = localStorage.getItem('postLoginRedirect') || '/dashboard';
-      localStorage.removeItem('postLoginRedirect');
-      // Solo redirigir si no estamos ya en la página destino
-      if (window.location.pathname !== target) {
-        window.location.replace(target);
-      }
-    }
-  }, [user]);
-
-  if (loading) return <div className="loader" />;
-  return user ? <AppRouter /> : <LoginRegisterForm />;
+// Test de conexión efectiva en desarrollo
+if (window.location.hostname === 'localhost') {
+  import('./utils/test-conexion-efectiva.js').then(({ testConexionEfectiva }) => {
+    testConexionEfectiva();
+  });
 }
 
 const container = document.getElementById('root');
@@ -40,14 +28,14 @@ if (container) {
   root.render(
     <React.StrictMode>
       <I18nextProvider i18n={i18n}>
-        <AuthProvider>
-          <AuthGate />
-        </AuthProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <FutProApp />
+          </AuthProvider>
+        </BrowserRouter>
       </I18nextProvider>
     </React.StrictMode>
   );
 } else {
-  // Si no existe #root, mostramos un error para facilitar el diagnóstico en producción
-  // eslint-disable-next-line no-console
-  console.error('Elemento #root no encontrado en index.html');
+  console.error('❌ No se encontró el elemento #root en el DOM');
 }

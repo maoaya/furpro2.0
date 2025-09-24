@@ -21,6 +21,8 @@ import React, { Suspense, lazy, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider, AuthContext } from '../context/AuthContext';
 import { RoleProvider } from '../context/RoleContext';
+import { useNavigationMonitor } from '../hooks/useNavigationMonitor';
+import NavigationMonitor from '../components/NavigationMonitor';
 
 const RegistroPage = lazy(() => import('./RegistroPage'));
 const RecuperarPassword = lazy(() => import('./RecuperarPassword'));
@@ -59,6 +61,18 @@ export default function AppRouter() {
   const { user } = React.useContext(AuthContext);
   const location = window.location.pathname;
   const navigate = require('react-router-dom').useNavigate?.() || (() => {});
+
+  // Monitoreo de navegación
+  useNavigationMonitor((navigationEvent) => {
+    // Aquí puedes agregar lógica adicional para procesar eventos de navegación
+    if (navigationEvent.to.includes('/registro') && navigationEvent.from !== navigationEvent.to) {
+      console.log('🚨 USUARIO ACCEDIÓ A PÁGINA DE REGISTRO');
+    }
+    if (navigationEvent.from.includes('/registro') && navigationEvent.to !== navigationEvent.from) {
+      console.log('🚨 USUARIO SALIÓ DE PÁGINA DE REGISTRO hacia:', navigationEvent.to);
+    }
+  });
+
   React.useEffect(() => {
     if (user && location === '/') {
       navigate('/home');
@@ -142,6 +156,8 @@ export default function AppRouter() {
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
+          {/* Monitor de navegación para debugging */}
+          <NavigationMonitor />
         </Router>
       </RoleProvider>
     </AuthProvider>
