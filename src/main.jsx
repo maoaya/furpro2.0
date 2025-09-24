@@ -13,7 +13,7 @@ import i18n from './i18n';
 
 // Auth y UI
 import { AuthProvider } from './context/AuthContext';
-import FutProApp from './FutProApp.jsx';
+import FutProAppSimple from './FutProAppSimple.jsx';
 
 // Test de conexión efectiva en desarrollo
 if (window.location.hostname === 'localhost') {
@@ -30,7 +30,7 @@ if (container) {
       <I18nextProvider i18n={i18n}>
         <BrowserRouter>
           <AuthProvider>
-            <FutProApp />
+            <FutProAppSimple />
           </AuthProvider>
         </BrowserRouter>
       </I18nextProvider>

@@ -1,7 +1,7 @@
 import express from 'express';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const appRoutes = require('../routes/appRoutes.cjs');
+// const appRoutes = require('../routes/appRoutes.cjs'); // Comentado temporalmente - archivo problemático
 import untitled1Service from '../services/Untitled1Service.js';
 import authRoutes from '../modules/auth/authRoutes.js';
 import validadorWebService from '../services/ValidadorWebService.js';
@@ -49,7 +49,7 @@ app.use('/api', sugerenciasRoutes);
 app.use('/api', rankingRoutes);
 
 // Montar las rutas principales
-app.use('/', appRoutes);
+// app.use('/', appRoutes); // Comentado temporalmente - archivo problemático
 app.use('/api/auth', authRoutes);
 app.use('/api/sugerencias', sugerenciasRoutes);
 app.use('/api/ranking', rankingRoutes);

@@ -1,20 +1,13 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
-import LoginRegisterForm from './LoginRegisterForm.jsx';
+import FormularioRegistroSimple from './pages/FormularioRegistroSimple.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal';
 
 // Componentes lazy loading
 const Dashboard = React.lazy(() => import('./Dashboard'));
-const ValidarUsuarioForm = React.lazy(() => import('./pages/ValidarUsuarioForm'));
-const RegistroPage = React.lazy(() => import('./pages/RegistroPage'));
-const RegistroSimple = React.lazy(() => import('./pages/RegistroSimple'));
-const AuthCallback = React.lazy(() => import('./components/AuthCallback'));
 const HomePage = React.lazy(() => import('./pages/HomePage'));
-const Inicio = React.lazy(() => import('./pages/Inicio'));
-const Perfil = React.lazy(() => import('./pages/Perfil'));
-const Equipos = React.lazy(() => import('./pages/Equipos'));
-const AuthHomePage = React.lazy(() => import('./pages/AuthHomePage'));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 
 // Componente para manejar redirección post-login
 function PostLoginRedirect() {
