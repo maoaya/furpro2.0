@@ -1,1 +1,13 @@
+# SPA routing - todas las rutas van a index.html
 /*    /index.html   200
+
+# Auth callbacks específicos
+/auth/callback    /index.html   200
+/auth/callback-premium    /index.html   200
+
+# Rutas de registro
+/registro    /index.html   200
+/registro-simple    /index.html   200
+
+# API routes si las hay
+/api/*    /api/:splat   200

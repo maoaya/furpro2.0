@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { conexionEfectiva } from '../services/conexionEfectiva.js';
+import { flujoCompletoRegistro } from '../services/flujoCompletoRegistro.js';
 import FutproLogo from '../components/FutproLogo.jsx';
 
 export default function AuthHomePage() {
@@ -8,27 +9,27 @@ export default function AuthHomePage() {
   const [error, setError] = useState('');
   const [mensaje, setMensaje] = useState('');
 
-  // Funciones OAuth - Conexión Efectiva
+  // Funciones OAuth - Flujo Completo Mejorado
   const handleGoogleAuth = async () => {
     setLoading(true);
     setError('');
-    setMensaje('🚀 Estableciendo conexión con Google...');
+    setMensaje('🚀 Iniciando registro completo con Google...');
     
     try {
-      console.log('🔗 INICIANDO CONEXIÓN EFECTIVA CON GOOGLE...');
-      const resultado = await conexionEfectiva.registrarConGoogle();
+      console.log('🔗 INICIANDO FLUJO COMPLETO CON GOOGLE...');
+      const resultado = await flujoCompletoRegistro.iniciarRegistroCompleto('google');
       
       if (resultado.success) {
         setMensaje('✅ ¡Conexión establecida! Redirigiendo a Google...');
-        // La redirección se maneja automáticamente
+        // La redirección se maneja automáticamente por OAuth
       } else {
-        setError(`Error en conexión: ${resultado.error}`);
+        setError(`Error en registro: ${resultado.error}`);
         setLoading(false);
       }
       
     } catch (error) {
-      console.error('❌ Error estableciendo conexión efectiva:', error);
-      setError('Error al establecer conexión con Google');
+      console.error('❌ Error en flujo completo:', error);
+      setError('Error al iniciar registro con Google');
       setLoading(false);
     }
   };
@@ -36,23 +37,23 @@ export default function AuthHomePage() {
   const handleFacebookAuth = async () => {
     setLoading(true);
     setError('');
-    setMensaje('🚀 Estableciendo conexión con Facebook...');
+    setMensaje('🚀 Iniciando registro completo con Facebook...');
     
     try {
-      console.log('🔗 INICIANDO CONEXIÓN EFECTIVA CON FACEBOOK...');
-      const resultado = await conexionEfectiva.registrarConFacebook();
+      console.log('🔗 INICIANDO FLUJO COMPLETO CON FACEBOOK...');
+      const resultado = await flujoCompletoRegistro.iniciarRegistroCompleto('facebook');
       
       if (resultado.success) {
         setMensaje('✅ ¡Conexión establecida! Redirigiendo a Facebook...');
-        // La redirección se maneja automáticamente
+        // La redirección se maneja automáticamente por OAuth
       } else {
-        setError(`Error en conexión: ${resultado.error}`);
+        setError(`Error en registro: ${resultado.error}`);
         setLoading(false);
       }
       
     } catch (error) {
-      console.error('❌ Error estableciendo conexión efectiva:', error);
-      setError('Error al establecer conexión con Facebook');
+      console.error('❌ Error en flujo completo:', error);
+      setError('Error al iniciar registro con Facebook');
       setLoading(false);
     }
   };

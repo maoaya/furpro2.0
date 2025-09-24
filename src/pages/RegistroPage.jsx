@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import supabase from '../supabaseClient';
 import FutproLogo from '../components/FutproLogo.jsx';
 import { conexionEfectiva } from '../services/conexionEfectiva.js';
+import { flujoCompletoRegistro } from '../services/flujoCompletoRegistro.js';
 
 // CSS para animación de giro
 const spinKeyframes = `
@@ -48,31 +49,67 @@ export default function RegistroPage({ onRegisterSuccess }) {
   const [autoSaving, setAutoSaving] = useState(false);
   const [showOAuthStep, setShowOAuthStep] = useState(false);
 
-  // Recuperar datos temporales al cargar la página
+  // Verificar estado OAuth y recuperar datos al cargar la página
   useEffect(() => {
-    // Primero intentar recuperar progreso guardado
-    const progressData = localStorage.getItem('registroProgreso');
-    const tempData = localStorage.getItem('tempRegistroData');
+    const verificarEstadoInicial = async () => {
+      console.log('🔍 VERIFICANDO ESTADO INICIAL DEL REGISTRO...');
+      
+      try {
+        const estado = await flujoCompletoRegistro.verificarEstadoRegistro();
+        console.log('📊 Estado del registro:', estado);
+        
+        if (estado.estado === 'completo') {
+          console.log('✅ Usuario ya registrado completamente, redirigiendo...');
+          setMsg('¡Ya tienes una cuenta! Redirigiendo al dashboard...');
+          setTimeout(() => navigate('/dashboard'), 2000);
+          return;
+        }
+        
+        if (estado.estado === 'oauth_incompleto') {
+          console.log('⚠️ OAuth exitoso, completando registro...');
+          setMsg('OAuth exitoso! Completa tu perfil para terminar el registro.');
+          
+          // Pre-llenar datos del OAuth si están disponibles
+          if (estado.usuarioOAuth) {
+            const oauthData = estado.usuarioOAuth;
+            setForm(prev => ({
+              ...prev,
+              nombre: oauthData.user_metadata?.full_name || oauthData.email.split('@')[0],
+              avatar_url: oauthData.user_metadata?.avatar_url || null
+            }));
+          }
+        }
+        
+      } catch (error) {
+        console.error('❌ Error verificando estado inicial:', error);
+      }
+      
+      // Recuperar datos temporales como fallback
+      const progressData = localStorage.getItem('registroProgreso');
+      const tempData = localStorage.getItem('tempRegistroData');
+      
+      if (progressData) {
+        try {
+          const parsedProgress = JSON.parse(progressData);
+          console.log('🔄 Recuperando progreso guardado:', parsedProgress);
+          setForm(prev => ({ ...prev, ...parsedProgress }));
+          setCurrentStep(parsedProgress.step || 1);
+        } catch (error) {
+          console.error('❌ Error al recuperar progreso:', error);
+        }
+      } else if (tempData) {
+        try {
+          const parsedData = JSON.parse(tempData);
+          console.log('🔄 Recuperando datos temporales del registro:', parsedData);
+          setForm(prev => ({ ...prev, ...parsedData }));
+        } catch (error) {
+          console.error('❌ Error al recuperar datos temporales:', error);
+        }
+      }
+    };
     
-    if (progressData) {
-      try {
-        const parsedProgress = JSON.parse(progressData);
-        console.log('🔄 Recuperando progreso guardado:', parsedProgress);
-        setForm(parsedProgress);
-        setCurrentStep(parsedProgress.step || 1);
-      } catch (error) {
-        console.error('❌ Error al recuperar progreso:', error);
-      }
-    } else if (tempData) {
-      try {
-        const parsedData = JSON.parse(tempData);
-        console.log('🔄 Recuperando datos temporales del registro:', parsedData);
-        setForm(parsedData);
-      } catch (error) {
-        console.error('❌ Error al recuperar datos temporales:', error);
-      }
-    }
-  }, []);
+    verificarEstadoInicial();
+  }, [navigate]);
 
   // Escuchar cambios de autenticación
   useEffect(() => {
@@ -197,10 +234,9 @@ export default function RegistroPage({ onRegisterSuccess }) {
       return;
     }
 
-    console.log('✅ Validación pasada, guardando datos y mostrando OAuth...');
     setLoading(true);
     setError('');
-    setMsg('Guardando perfil temporalmente...');
+    setMsg('Procesando registro...');
 
     try {
       // Subir imagen si existe
@@ -211,37 +247,57 @@ export default function RegistroPage({ onRegisterSuccess }) {
         console.log('✅ Imagen subida:', avatarUrl);
       }
 
-      // Preparar datos del perfil para guardado temporal
+      // Preparar datos del perfil
       const profileData = {
-        email: form.email || `temp_${Date.now()}@futpro.vip`,
         nombre: form.nombre.trim(),
         edad: parseInt(form.edad),
         peso: form.peso ? parseFloat(form.peso) : null,
         ciudad: form.ciudad.trim(),
         pais: form.pais.trim(),
-        posicion_favorita: form.posicion.trim(),
+        posicion: form.posicion.trim(),
         frecuencia_juego: form.frecuencia_juego,
         avatar_url: avatarUrl || form.avatar_url || null,
         rol: form.rol,
         tipo_usuario: form.tipo_usuario || 'jugador',
-        funciones_adicionales: form.funciones_adicionales || [],
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        activo: true
+        funciones_adicionales: form.funciones_adicionales || []
       };
 
-      console.log('💾 Guardando datos temporalmente:', profileData);
+      console.log('📋 Datos del perfil preparados:', profileData);
 
-      // Guardar datos temporalmente en localStorage
-      localStorage.setItem('pendingProfileData', JSON.stringify(profileData));
+      // Verificar si hay OAuth activo y completar registro
+      const estado = await flujoCompletoRegistro.verificarEstadoRegistro();
+      
+      if (estado.estado === 'oauth_incompleto') {
+        console.log('🔗 OAuth detectado, completando registro...');
+        setMsg('Completando registro con OAuth...');
+        
+        const resultado = await flujoCompletoRegistro.completarRegistroPostOAuth(profileData);
+        
+        if (resultado.success) {
+          setMsg(`✅ ${resultado.message}! Redirigiendo al dashboard...`);
+          limpiarDatosTemporales();
+          
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 2000);
+          
+        } else {
+          throw new Error(resultado.error);
+        }
+        
+      } else {
+        // No hay OAuth, mostrar opciones OAuth
+        console.log('⚠️ No hay OAuth activo, mostrando opciones...');
+        localStorage.setItem('pendingProfileData', JSON.stringify(profileData));
+        setMsg('¡Perfil completado! Ahora selecciona tu método de registro:');
+        setShowOAuthStep(true);
+      }
       
       setLoading(false);
-      setMsg('¡Perfil completado! Ahora selecciona tu método de registro:');
-      setShowOAuthStep(true);
       
     } catch (error) {
       console.error('❌ Error en handleSubmit:', error);
-      setError(error.message || 'Error al procesar el perfil');
+      setError(error.message || 'Error al procesar el registro');
       setLoading(false);
     }
   };
