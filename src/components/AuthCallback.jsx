@@ -12,47 +12,69 @@ export default function AuthCallback() {
       try {
         console.log('🔄 PROCESANDO CALLBACK CON CONEXIÓN EFECTIVA...');
         console.log('🌍 URL actual:', window.location.href);
+        console.log('📋 Datos en localStorage:', {
+          pendingProfile: !!localStorage.getItem('pendingProfileData'),
+          progress: !!localStorage.getItem('registroProgreso'),
+          temp: !!localStorage.getItem('tempRegistroData')
+        });
         
         setStatus('🔗 Estableciendo conexión efectiva...');
         
         // Usar conexión efectiva
         const { conexionEfectiva } = await import('../services/conexionEfectiva.js');
         
-        setStatus('✅ Verificando autenticación...');
+        setStatus('✅ Verificando autenticación y guardando usuario...');
         const resultado = await conexionEfectiva.procesarCallback();
         
         if (resultado.success) {
           console.log('✅ CALLBACK PROCESADO EXITOSAMENTE:', resultado);
           
           if (resultado.user) {
-            setStatus(`¡Registro completado exitosamente! Bienvenido ${resultado.user.nombre || resultado.user.email}!`);
+            setStatus(`¡${resultado.message}! Completando registro...`);
             
-            // Redirigir al dashboard
+            // Guardar datos del usuario en el contexto si es necesario
+            if (window.localStorage) {
+              localStorage.setItem('currentUser', JSON.stringify(resultado.user));
+            }
+            
+            // Redirigir al formulario de registro completo
             setTimeout(() => {
-              navigate('/dashboard');
+              console.log('📝 Redirigiendo al formulario de registro completo...');
+              navigate('/registro', { replace: true });
             }, 2000);
+            
           } else {
             setStatus('¡Bienvenido de vuelta! Redirigiendo...');
             setTimeout(() => {
-              navigate('/dashboard');
-            }, 1500);
+              navigate('/dashboard', { replace: true });
+            }, 2000);
           }
           
         } else {
           console.error('❌ ERROR EN CALLBACK:', resultado.error);
           setError(resultado.error);
-          setStatus('Error en la autenticación');
+          setStatus('Error en la autenticación - Por favor intenta de nuevo');
+          
+          // Redirigir al registro después de mostrar error
+          setTimeout(() => {
+            navigate('/registro', { replace: true });
+          }, 4000);
         }
         
       } catch (err) {
         console.error('💥 ERROR INESPERADO EN CALLBACK:', err);
         setError(err.message || 'Error inesperado');
-        setStatus('Error inesperado en la conexión');
+        setStatus('Error inesperado en la conexión - Redirigiendo...');
+        
+        // Redirigir al registro en caso de error grave
+        setTimeout(() => {
+          navigate('/registro', { replace: true });
+        }, 3000);
       }
     };
 
     // Ejecutar después de un breve delay para permitir que la URL se procese
-    const timer = setTimeout(handleCallback, 1000);
+    const timer = setTimeout(handleCallback, 1500);
     
     return () => clearTimeout(timer);
   }, [navigate]);

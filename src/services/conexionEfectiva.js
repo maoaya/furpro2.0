@@ -87,7 +87,7 @@ export const conexionEfectiva = {
     }
   },
 
-  // Función para procesar el callback
+  // Función para procesar el callback - MEJORADA
   async procesarCallback() {
     console.log('🔄 PROCESANDO CALLBACK DE OAUTH...');
     
@@ -102,29 +102,15 @@ export const conexionEfectiva = {
       if (data.session && data.session.user) {
         console.log('✅ USUARIO AUTENTICADO:', data.session.user.email);
         
-        // Obtener datos pendientes del perfil
-        const perfilPendiente = localStorage.getItem('pendingProfileData');
+        // Verificar si el usuario ya existe
+        const { data: usuarioExistente, error: errorBusqueda } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('id', data.session.user.id)
+          .single();
         
-        if (perfilPendiente) {
-          const datosPerfilConUser = JSON.parse(perfilPendiente);
-          datosPerfilConUser.id = data.session.user.id;
-          datosPerfilConUser.email = data.session.user.email;
-          datosPerfilConUser.auth_provider = data.session.user.app_metadata?.provider;
-          
-          // Guardar en base de datos
-          const { data: usuarioGuardado, error: errorGuardar } = await supabase
-            .from('usuarios')
-            .insert([datosPerfilConUser])
-            .select()
-            .single();
-            
-          if (errorGuardar) {
-            console.error('❌ ERROR AL GUARDAR USUARIO:', errorGuardar);
-            return { success: false, error: errorGuardar.message };
-          }
-          
-          console.log('✅ USUARIO GUARDADO EN BD:', usuarioGuardado);
-          
+        if (usuarioExistente) {
+          console.log('✅ USUARIO EXISTENTE ENCONTRADO:', usuarioExistente);
           // Limpiar datos temporales
           localStorage.removeItem('pendingProfileData');
           localStorage.removeItem('registroProgreso');
@@ -132,16 +118,123 @@ export const conexionEfectiva = {
           
           return { 
             success: true, 
-            user: usuarioGuardado,
-            message: 'Registro completado exitosamente'
+            user: usuarioExistente,
+            message: 'Bienvenido de vuelta'
           };
         }
         
-        return { 
-          success: true, 
-          user: data.session.user,
-          message: 'Usuario existente autenticado'
-        };
+        // Si no existe, crear nuevo usuario con datos del perfil
+        const perfilPendiente = localStorage.getItem('pendingProfileData');
+        
+        if (perfilPendiente) {
+          const datosPerfilConUser = JSON.parse(perfilPendiente);
+          
+          // Preparar datos completos para insert
+          const usuarioCompleto = {
+            id: data.session.user.id,
+            email: data.session.user.email,
+            nombre: datosPerfilConUser.nombre,
+            edad: datosPerfilConUser.edad,
+            peso: datosPerfilConUser.peso,
+            ciudad: datosPerfilConUser.ciudad,
+            pais: datosPerfilConUser.pais,
+            posicion_favorita: datosPerfilConUser.posicion_favorita,
+            frecuencia_juego: datosPerfilConUser.frecuencia_juego,
+            avatar_url: datosPerfilConUser.avatar_url,
+            rol: datosPerfilConUser.rol || 'usuario',
+            tipo_usuario: datosPerfilConUser.tipo_usuario || 'jugador',
+            funciones_adicionales: datosPerfilConUser.funciones_adicionales || [],
+            auth_provider: data.session.user.app_metadata?.provider || 'oauth',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            activo: true
+          };
+          
+          console.log('💾 INSERTANDO USUARIO COMPLETO:', usuarioCompleto);
+          
+          // Guardar en base de datos con retry
+          let intentos = 0;
+          let usuarioGuardado = null;
+          
+          while (intentos < 3) {
+            const { data: resultado, error: errorGuardar } = await supabase
+              .from('usuarios')
+              .insert([usuarioCompleto])
+              .select()
+              .single();
+              
+            if (!errorGuardar) {
+              usuarioGuardado = resultado;
+              break;
+            }
+            
+            console.warn(`⚠️ Intento ${intentos + 1} falló:`, errorGuardar.message);
+            intentos++;
+            
+            if (intentos >= 3) {
+              console.error('❌ ERROR AL GUARDAR USUARIO DESPUÉS DE 3 INTENTOS:', errorGuardar);
+              return { success: false, error: `Error guardando usuario: ${errorGuardar.message}` };
+            }
+            
+            // Esperar un poco antes del siguiente intento
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+          
+          if (usuarioGuardado) {
+            console.log('✅ USUARIO GUARDADO PERMANENTEMENTE:', usuarioGuardado);
+            
+            // Limpiar datos temporales
+            localStorage.removeItem('pendingProfileData');
+            localStorage.removeItem('registroProgreso');  
+            localStorage.removeItem('tempRegistroData');
+            
+            // Confirmación adicional de que el usuario está en BD
+            const { data: confirmacion } = await supabase
+              .from('usuarios')
+              .select('*')
+              .eq('id', usuarioGuardado.id)
+              .single();
+            
+            if (confirmacion) {
+              console.log('✅ CONFIRMACIÓN: Usuario existe en BD:', confirmacion.email);
+            }
+            
+            return { 
+              success: true, 
+              user: usuarioGuardado,
+              message: 'Registro completado exitosamente'
+            };
+          }
+        } else {
+          // No hay datos de perfil pendientes, crear usuario básico
+          const usuarioBasico = {
+            id: data.session.user.id,
+            email: data.session.user.email,
+            nombre: data.session.user.user_metadata?.full_name || data.session.user.email.split('@')[0],
+            auth_provider: data.session.user.app_metadata?.provider || 'oauth',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            activo: true
+          };
+          
+          const { data: usuarioCreado, error: errorCrear } = await supabase
+            .from('usuarios')
+            .insert([usuarioBasico])
+            .select()
+            .single();
+            
+          if (errorCrear) {
+            console.error('❌ ERROR CREANDO USUARIO BÁSICO:', errorCrear);
+            return { success: false, error: errorCrear.message };
+          }
+          
+          console.log('✅ USUARIO BÁSICO CREADO:', usuarioCreado);
+          return { 
+            success: true, 
+            user: usuarioCreado,
+            message: 'Usuario creado exitosamente'
+          };
+        }
       }
       
       return { success: false, error: 'No se encontró sesión activa' };
@@ -175,6 +268,64 @@ export const conexionEfectiva = {
     } catch (err) {
       console.log('❌ Error verificando conexión:', err.message);
       return false;
+    }
+  },
+
+  // Función para verificar si un usuario está registrado permanentemente
+  async verificarUsuarioRegistrado(userId) {
+    console.log('🔍 VERIFICANDO REGISTRO PERMANENTE DEL USUARIO:', userId);
+    
+    try {
+      const { data, error } = await supabase
+        .from('usuarios')
+        .select('*')
+        .eq('id', userId)
+        .single();
+        
+      if (error) {
+        console.log('❌ Usuario no encontrado en BD:', error.message);
+        return { exists: false, error: error.message };
+      }
+      
+      if (data) {
+        console.log('✅ USUARIO CONFIRMADO EN BD:', data.email);
+        return { exists: true, user: data };
+      }
+      
+      return { exists: false, error: 'Usuario no encontrado' };
+      
+    } catch (err) {
+      console.error('💥 Error verificando usuario:', err);
+      return { exists: false, error: err.message };
+    }
+  },
+
+  // Función para obtener estadísticas de registro
+  async obtenerEstadisticasRegistro() {
+    console.log('📊 OBTENIENDO ESTADÍSTICAS DE REGISTRO...');
+    
+    try {
+      const { data, error } = await supabase
+        .from('usuarios')
+        .select('id, email, nombre, auth_provider, created_at')
+        .order('created_at', { ascending: false })
+        .limit(10);
+        
+      if (error) {
+        console.error('❌ Error obteniendo estadísticas:', error);
+        return { success: false, error: error.message };
+      }
+      
+      console.log('✅ ÚLTIMOS USUARIOS REGISTRADOS:', data.length);
+      data.forEach((user, index) => {
+        console.log(`${index + 1}. ${user.email} (${user.auth_provider}) - ${user.created_at}`);
+      });
+      
+      return { success: true, usuarios: data };
+      
+    } catch (err) {
+      console.error('💥 Error obteniendo estadísticas:', err);
+      return { success: false, error: err.message };
     }
   }
 };

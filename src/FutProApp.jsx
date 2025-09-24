@@ -1,108 +1,154 @@
-import React, { useEffect, useState } from 'react';
-import GlobalNav from './components/GlobalNav';
+import React, { useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import LoginRegisterForm from './LoginRegisterForm.jsx';
+import LayoutPrincipal from './components/LayoutPrincipal';
 
-// Importa tus servicios y managers aquí
-// import { AuthService, UIManager, ... } from '../services';
+// Componentes lazy loading
+const Dashboard = React.lazy(() => import('./Dashboard'));
+const ValidarUsuarioForm = React.lazy(() => import('./pages/ValidarUsuarioForm'));
+const RegistroPage = React.lazy(() => import('./pages/RegistroPage'));
+const RegistroSimple = React.lazy(() => import('./pages/RegistroSimple'));
+const AuthCallback = React.lazy(() => import('./components/AuthCallback'));
+const HomePage = React.lazy(() => import('./pages/HomePage'));
+const Inicio = React.lazy(() => import('./pages/Inicio'));
+const Perfil = React.lazy(() => import('./pages/Perfil'));
+const Equipos = React.lazy(() => import('./pages/Equipos'));
+const AuthHomePage = React.lazy(() => import('./pages/AuthHomePage'));
 
-const FutProApp = () => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [mainFeed, setMainFeed] = useState([]);
-  const [liveStreams, setLiveStreams] = useState([]);
-  const [notifications, setNotifications] = useState([]);
-  // ...otros estados
-
-  // Simulación de managers (reemplaza por tus servicios reales)
-  const analyticsManager = {
-    getMainFeedPosts: async () => [/* ...posts */],
-  };
-  const streamManager = {
-    getActiveStreams: async () => [/* ...streams */],
-  };
-  const notificationManager = {
-    getUserNotifications: async () => [/* ...notificaciones */],
-  };
+// Componente para manejar redirección post-login
+function PostLoginRedirect() {
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    // Cargar datos iniciales
-    const fetchData = async () => {
-      setMainFeed(await analyticsManager.getMainFeedPosts());
-      setLiveStreams(await streamManager.getActiveStreams());
-      setNotifications(await notificationManager.getUserNotifications());
-    };
-    fetchData();
-  }, []);
+    const targetPath = localStorage.getItem('postLoginRedirect');
+    if (targetPath && location.pathname !== targetPath) {
+      console.log(`🔄 Navegando a: ${targetPath}`);
+      localStorage.removeItem('postLoginRedirect');
+      navigate(targetPath, { replace: true });
+    }
+  }, [navigate, location.pathname]);
 
-  // Renderizar cards tipo TikTok
-  const renderMainFeed = () => (
-    <div id="mainFeed">
-      {mainFeed.map((post, idx) => (
-        <div className="tiktok-card" key={idx}>
-          {post.videoUrl ? (
-            <video src={post.videoUrl} controls autoPlay loop style={{ width: '100%', maxHeight: 420, objectFit: 'cover' }} />
-          ) : (
-            <img src={post.imageUrl} alt="post" style={{ width: '100%', maxHeight: 420, objectFit: 'cover' }} />
-          )}
-          <div className="card-content" style={{ padding: '18px 24px' }}>
-            <div className="card-user" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <img src={post.userAvatar} style={{ width: 40, height: 40, borderRadius: '50%', border: '2px solid #FFD700' }} alt="avatar" />
-              <span style={{ fontWeight: 600 }}>{post.userName}</span>
-            </div>
-            <div className="card-desc" style={{ margin: '12px 0', fontSize: '1.1em' }}>{post.description}</div>
-            <div className="card-actions" style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
-              <button className="btn-reaction"><i className="fa-solid fa-heart"></i> {post.likes}</button>
-              <button className="btn-reaction"><i className="fa-solid fa-comment"></i> {post.comments}</button>
-              <button className="btn-reaction"><i className="fa-solid fa-share"></i></button>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  return null;
+}
 
-  // Renderizar transmisiones en vivo
-  const renderLiveStreams = () => (
-    <div id="liveStreamsPanel">
-      {liveStreams.map((stream, idx) => (
-        <div className="stream-card animated-stream" key={idx} style={{ background: '#181818', borderRadius: 16, padding: '12px 18px', boxShadow: '0 2px 8px #FFD70022', display: 'flex', alignItems: 'center', gap: 16, animation: 'fadeInUp 0.7s' }}>
-          <img src={stream.thumbnail} style={{ width: 60, height: 60, borderRadius: 12, objectFit: 'cover' }} alt="stream" />
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 600, color: '#FFD700' }}>{stream.title}</div>
-            <div style={{ fontSize: '0.95em', color: '#fff' }}>{stream.viewers} espectadores</div>
-          </div>
-          <button className="btn-primary" onClick={() => window.open(stream.url, '_blank')}><i className="fa-solid fa-play"></i> Ver</button>
-        </div>
-      ))}
-    </div>
-  );
+// Componente protegido que requiere autenticación
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
 
-  // Renderizar notificaciones
-  const renderNotifications = () => (
-    <div id="notificationsPanel">
-      {notifications.map((n, idx) => (
-        <div className="notif-card" key={idx} style={{ background: '#222', borderRadius: 12, padding: '12px 18px', boxShadow: '0 2px 8px #FFD70022', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <i className="fa-solid fa-bell" style={{ color: '#FFD700', fontSize: '1.3em' }}></i>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 600 }}>{n.title}</div>
-            <div style={{ fontSize: '0.95em', color: '#fff' }}>{n.message}</div>
-          </div>
-          <span style={{ fontSize: '0.85em', color: '#FFD700' }}>{n.date}</span>
-        </div>
-      ))}
-    </div>
-  );
+  useEffect(() => {
+    if (!loading && !user) {
+      console.log('❌ Usuario no autenticado, redirigiendo a login');
+      navigate('/', { replace: true });
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        background: '#1a1a1a',
+        color: '#FFD700',
+        fontSize: '18px'
+      }}>
+        🚀 Cargando FutPro...
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // El useEffect ya manejó la redirección
+  }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#181818' }}>
-      <GlobalNav />
-      <div style={{ flex: 1, padding: '0 0 0 0', background: '#181818' }}>
-        {renderMainFeed()}
-        {renderLiveStreams()}
-        {renderNotifications()}
-        {/* Agrega aquí los demás paneles y componentes */}
-      </div>
-    </div>
+    <LayoutPrincipal>
+      <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Cargando página...</div>}>
+        <PostLoginRedirect />
+        {children}
+      </React.Suspense>
+    </LayoutPrincipal>
   );
-};
+}
 
-export default FutProApp;
+export default function FutProApp() {
+  const { user, loading } = useAuth();
+  
+  console.log('🎯 FutProApp render:', loading ? 'Cargando...' : (user ? `Usuario: ${user.email}` : 'Sin usuario'));
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        background: '#1a1a1a',
+        color: '#FFD700',
+        fontSize: '18px'
+      }}>
+        🚀 Inicializando FutPro...
+      </div>
+    );
+  }
+
+  return (
+    <Routes>      
+      {/* Rutas públicas (sin autenticación) */}
+      <Route path="/registro" element={
+        <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Cargando registro...</div>}>
+          <RegistroPage />
+        </React.Suspense>
+      } />
+      
+      <Route path="/registro-simple" element={
+        <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Cargando registro...</div>}>
+          <RegistroSimple />
+        </React.Suspense>
+      } />
+      
+      {/* Callback para OAuth (Google/Facebook) */}
+      <Route path="/auth/callback" element={
+        <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Procesando autenticación...</div>}>
+          <AuthCallback />
+        </React.Suspense>
+      } />
+      
+      {/* Rutas protegidas principales */}
+      <Route path="/dashboard" element={
+        <ProtectedRoute><Dashboard /></ProtectedRoute>
+      } />
+      
+      <Route path="/validar-usuario" element={
+        <ProtectedRoute><ValidarUsuarioForm /></ProtectedRoute>
+      } />
+      
+      <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+      <Route path="/inicio" element={<ProtectedRoute><Inicio /></ProtectedRoute>} />
+      <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
+      <Route path="/equipos" element={<ProtectedRoute><Equipos /></ProtectedRoute>} />
+      
+      {/* Ruta por defecto */}
+      <Route path="/" element={
+        user ? <ProtectedRoute><HomePage /></ProtectedRoute> : (
+          <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Cargando...</div>}>
+            <AuthHomePage />
+          </React.Suspense>
+        )
+      } />
+      
+      {/* Catch-all para rutas no encontradas */}
+      <Route path="*" element={
+        user ? <ProtectedRoute><HomePage /></ProtectedRoute> : (
+          <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Cargando...</div>}>
+            <AuthHomePage />
+          </React.Suspense>
+        )
+      } />
+    </Routes>
+  );
+}
