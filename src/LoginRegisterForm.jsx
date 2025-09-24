@@ -64,7 +64,7 @@ const LoginRegisterForm = () => {
 
           {/* Eliminado formulario de email/contraseña; solo botones sociales */}
 
-          {(tab === 'login' || tab === 'register') && (
+          {tab === 'login' && (
             <div style={{ marginTop: 14 }}>
               <div style={{ color: '#888', fontSize: 12, textAlign: 'center', margin: '10px 0' }}>Continúa con</div>
               <button type="button" className="btn-outline" style={{ width: '100%', marginBottom: 10 }} onClick={handleGoogleLogin} disabled={loading}>
@@ -74,11 +74,48 @@ const LoginRegisterForm = () => {
                 <i className="fab fa-facebook"></i> Facebook
               </button>
               {error && <div style={{ color: '#ff6b6b', marginTop: 8 }}>{error}</div>}
-              {tab === 'register' && (
-                <div style={{ textAlign: 'center', marginTop: 10 }}>
-                  <span style={{ color: '#aaa', fontSize: 12 }}>Tras registrarte te llevamos al formulario de inscripción.</span>
-                </div>
-              )}
+            </div>
+          )}
+
+          {tab === 'register' && (
+            <div style={{ marginTop: 14 }}>
+              <div style={{ color: '#888', fontSize: 12, textAlign: 'center', margin: '10px 0' }}>Opciones de registro</div>
+              
+              {/* Registro completo */}
+              <button 
+                type="button" 
+                onClick={() => window.location.href = '/registro'}
+                style={{ 
+                  width: '100%', 
+                  marginBottom: 10, 
+                  padding: '12px',
+                  background: '#FFD700', 
+                  color: '#222', 
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}
+              >
+                📝 Registro Completo
+              </button>
+              
+              <div style={{ color: '#666', fontSize: 11, textAlign: 'center', margin: '8px 0' }}>o continúa con</div>
+              
+              {/* OAuth buttons */}
+              <button type="button" className="btn-outline" style={{ width: '100%', marginBottom: 10 }} onClick={handleGoogleLogin} disabled={loading}>
+                <i className="fab fa-google"></i> Google
+              </button>
+              <button type="button" className="btn-outline" style={{ width: '100%' }} onClick={handleFacebookLogin} disabled={loading}>
+                <i className="fab fa-facebook"></i> Facebook
+              </button>
+              {error && <div style={{ color: '#ff6b6b', marginTop: 8 }}>{error}</div>}
+              
+              <div style={{ textAlign: 'center', marginTop: 10 }}>
+                <span style={{ color: '#aaa', fontSize: 12 }}>
+                  Recomendamos el registro completo para mejor experiencia
+                </span>
+              </div>
             </div>
           )}
         </>

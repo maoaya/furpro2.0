@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import LoginRegisterForm from './LoginRegisterForm.jsx';
+import RegistroCompleto from './pages/RegistroCompleto.jsx';
 import HomePage from './pages/HomePage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal.jsx';
@@ -110,6 +111,9 @@ export default function FutProAppDefinitivo() {
           </LayoutPrincipal>
         </ProtectedRoute>
       } />
+      
+      {/* Registro completo */}
+      <Route path="/registro" element={<RegistroCompleto />} />
       
       {/* Home/Feed */}
       <Route path="/home" element={
