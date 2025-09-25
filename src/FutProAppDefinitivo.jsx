@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import TestPage from './pages/TestPage.jsx';
 import LoginRegisterForm from './LoginRegisterForm.jsx';
 import RegistroCompleto from './pages/RegistroCompleto.jsx';
 import HomePage from './pages/HomePage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal.jsx';
+import CallbackPage from './pages/CallbackPage.jsx';
+import PageInDevelopment from './components/PageInDevelopment.jsx';
 
 // Componente protegido simple
 function ProtectedRoute({ children }) {
@@ -48,13 +51,18 @@ export default function FutProAppDefinitivo() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Manejar redirección post-login
+  // Manejar redirección post-login y post-registro
   useEffect(() => {
-    if (user && location.pathname === '/') {
+    if (user) {
+      const userRegistrado = localStorage.getItem('userRegistrado');
       const redirectTarget = localStorage.getItem('postLoginRedirect') || '/dashboard';
-      console.log(`✅ Usuario autenticado, redirigiendo a: ${redirectTarget}`);
-      localStorage.removeItem('postLoginRedirect');
-      navigate(redirectTarget, { replace: true });
+      
+      if (location.pathname === '/' || location.pathname === '/registro') {
+        console.log(`✅ Usuario autenticado, redirigiendo a: ${redirectTarget}`);
+        localStorage.removeItem('postLoginRedirect');
+        localStorage.removeItem('userRegistrado');
+        navigate(redirectTarget, { replace: true });
+      }
     }
   }, [user, location.pathname, navigate]);
 
@@ -115,11 +123,77 @@ export default function FutProAppDefinitivo() {
       {/* Registro completo */}
       <Route path="/registro" element={<RegistroCompleto />} />
       
+      {/* Callback para OAuth */}
+      <Route path="/auth/callback" element={<CallbackPage />} />
+      
       {/* Home/Feed */}
       <Route path="/home" element={
         <ProtectedRoute>
           <LayoutPrincipal>
             <HomePage />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+      
+      {/* Usuarios */}
+      <Route path="/usuarios" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="👥 Gestión de Usuarios" icon="👥" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+      
+      {/* Torneos */}
+      <Route path="/torneos" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="🏆 Gestión de Torneos" icon="🏆" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+      
+      {/* Equipos */}
+      <Route path="/equipos" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="⚽ Gestión de Equipos" icon="⚽" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+      
+      {/* Chat IA */}
+      <Route path="/chat" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="💬 Chat con IA" icon="💬" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+      
+      {/* Perfil */}
+      <Route path="/perfil" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="👤 Mi Perfil" icon="👤" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+      
+      {/* Notificaciones */}
+      <Route path="/notificaciones" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="🔔 Notificaciones" icon="🔔" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+      
+      {/* Búsqueda */}
+      <Route path="/buscar/:query" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="🔍 Resultados de Búsqueda" icon="🔍" />
           </LayoutPrincipal>
         </ProtectedRoute>
       } />

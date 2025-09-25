@@ -1,27 +1,81 @@
 // TopBar con logo, búsqueda y notificaciones
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function TopBar() {
+  const navigate = useNavigate();
+
   return (
-    <header className="top-bar" role="banner" aria-label="Barra superior FutPro">
-      <div className="top-bar__logo" onClick={()=>window.location.hash='#home'}>
-        <img src="/assets/logo-futpro.png" alt="Logo FutPro" className="top-bar__logo-img" tabIndex={0} aria-label="Logo FutPro" />
-        <span className="top-bar__logo-text" tabIndex={0} aria-label="Nombre FutPro">FutPro</span>
+    <header style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      background: '#222',
+      color: '#FFD700',
+      padding: '15px 20px',
+      borderBottom: '2px solid #FFD700'
+    }}>
+      <div 
+        onClick={() => navigate('/dashboard')}
+        style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          cursor: 'pointer' 
+        }}
+      >
+        <div style={{
+          fontSize: '24px',
+          fontWeight: 'bold',
+          color: '#FFD700'
+        }}>
+          ⚽ FutPro
+        </div>
       </div>
-      <input type="text" placeholder="Buscar..." className="top-bar__search" aria-label="Buscar"
-        tabIndex={0} aria-live="polite"
-        onKeyDown={e=>{if(e.key==='Enter'){window.location.hash='#search/'+e.target.value}}}
+      
+      <input 
+        type="text" 
+        placeholder="Buscar..." 
+        style={{
+          padding: '8px 15px',
+          borderRadius: '20px',
+          border: '1px solid #444',
+          background: '#333',
+          color: '#fff',
+          width: '300px'
+        }}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            navigate(`/buscar/${e.target.value}`);
+          }
+        }}
       />
-      <div className="top-bar__buttons">
-        <button className="top-bar__button" aria-label="Notificaciones" tabIndex={0} aria-live="polite"
-          onClick={()=>window.location.hash='#notifications'}>
-          <i className="fa-solid fa-bell" aria-hidden="true"></i>
-          <span className="sr-only">Notificaciones</span>
+      
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button 
+          onClick={() => navigate('/notificaciones')}
+          style={{
+            background: 'transparent',
+            border: '1px solid #FFD700',
+            color: '#FFD700',
+            padding: '8px 12px',
+            borderRadius: '8px',
+            cursor: 'pointer'
+          }}
+        >
+          🔔
         </button>
-        <button className="top-bar__button" aria-label="Mensajes" tabIndex={0} aria-live="polite"
-          onClick={()=>window.location.hash='#chat'}>
-          <i className="fa-solid fa-envelope" aria-hidden="true"></i>
-          <span className="sr-only">Mensajes</span>
+        <button 
+          onClick={() => navigate('/chat')}
+          style={{
+            background: 'transparent',
+            border: '1px solid #FFD700',
+            color: '#FFD700',
+            padding: '8px 12px',
+            borderRadius: '8px',
+            cursor: 'pointer'
+          }}
+        >
+          💬
         </button>
       </div>
     </header>

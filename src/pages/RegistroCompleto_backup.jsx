@@ -20,8 +20,8 @@ export default function RegistroCompleto() {
     peso: '',
     ciudad: '',
     pais: 'España',
-    posicion: 'Delantero Centro',
-    frecuencia_juego: '3',
+    posicion: 'Delantero',
+    frecuencia_juego: 'Semanal',
     avatar_url: null,
     rol: 'usuario',
     tipo_usuario: 'jugador'
@@ -42,11 +42,21 @@ export default function RegistroCompleto() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validar tamaño (máximo 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setError('La imagen debe ser menor a 5MB');
         return;
       }
+
+      // Validar tipo
+      if (!file.type.startsWith('image/')) {
+        setError('Solo se permiten archivos de imagen');
+        return;
+      }
+
       setForm({ ...form, avatar_url: file });
+
+      // Crear preview
       const reader = new FileReader();
       reader.onload = (e) => setPreviewImage(e.target.result);
       reader.readAsDataURL(file);
@@ -81,6 +91,7 @@ export default function RegistroCompleto() {
 
   const nextStep = () => {
     if (currentStep === 1) {
+      // Validar paso 1: Información básica
       if (!form.nombre?.trim()) {
         setError('El nombre es obligatorio');
         return;
@@ -101,6 +112,7 @@ export default function RegistroCompleto() {
         setError('La contraseña debe tener al menos 6 caracteres');
         return;
       }
+      // Validar formato de email
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(form.email)) {
         setError('Por favor ingresa un email válido');
@@ -109,6 +121,7 @@ export default function RegistroCompleto() {
     }
 
     if (currentStep === 2) {
+      // Validar paso 2: Información deportiva
       if (!form.posicion) {
         setError('La posición es obligatoria');
         return;
@@ -136,76 +149,6 @@ export default function RegistroCompleto() {
     setError('');
   };
 
-  const handleDirectRegistration = async () => {
-    setLoading(true);
-    setError('');
-    setMsg('Registrando directamente en la base de datos...');
-
-    try {
-      // Validaciones
-      if (!form.nombre || !form.email || !form.password) {
-        setError('Por favor completa todos los campos obligatorios');
-        setLoading(false);
-        return;
-      }
-
-      // Subir imagen si existe
-      let avatarUrl = null;
-      if (form.avatar_url && typeof form.avatar_url === 'object') {
-        setMsg('Subiendo imagen de perfil...');
-        avatarUrl = await uploadImage(form.avatar_url);
-      }
-
-      // Generar ID único para el usuario
-      const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // Crear perfil directamente en la base de datos
-      const perfilData = {
-        id: userId,
-        nombre: form.nombre.trim(),
-        email: form.email.toLowerCase().trim(),
-        edad: parseInt(form.edad) || null,
-        peso: form.peso ? parseFloat(form.peso) : null,
-        ciudad: form.ciudad?.trim() || null,
-        pais: form.pais?.trim() || 'España',
-        posicion: form.posicion,
-        frecuencia_juego: form.frecuencia_juego,
-        avatar_url: avatarUrl,
-        rol: form.rol,
-        tipo_usuario: form.tipo_usuario,
-        estado: 'pendiente_verificacion',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-
-      setMsg('Creando perfil de jugador...');
-      const { error: perfilError } = await supabase
-        .from('usuarios')
-        .insert([perfilData]);
-
-      if (perfilError) {
-        console.error('❌ Error creando perfil directo:', perfilError);
-        setError(`Error: ${perfilError.message}`);
-        setLoading(false);
-        return;
-      }
-
-      setMsg('¡Usuario registrado! Te contactaremos para activar tu cuenta.');
-      localStorage.removeItem('tempRegistroData');
-      localStorage.removeItem('registroProgreso');
-      
-      setTimeout(() => {
-        navigate('/', { replace: true });
-      }, 4000);
-
-    } catch (error) {
-      console.error('💥 Error en registro directo:', error);
-      setError(`Error: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -213,6 +156,7 @@ export default function RegistroCompleto() {
     setMsg('');
 
     try {
+      // Validaciones finales
       if (!form.nombre || !form.email || !form.password) {
         setError('Por favor completa todos los campos obligatorios');
         setLoading(false);
@@ -225,6 +169,7 @@ export default function RegistroCompleto() {
         return;
       }
 
+      // Paso 1: Subir imagen primero si existe
       let avatarUrl = null;
       if (form.avatar_url && typeof form.avatar_url === 'object') {
         console.log('📸 Subiendo imagen de perfil...');
@@ -235,51 +180,40 @@ export default function RegistroCompleto() {
         }
       }
 
+      // Paso 2: Registrar usuario en Supabase Auth
       console.log('📧 Registrando usuario en Supabase Auth...');
       setMsg('Creando cuenta de usuario...');
       
-      // Intentar registro con configuración simplificada
       const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: form.email.toLowerCase().trim(),
+        email: form.email,
         password: form.password,
         options: {
           data: {
-            nombre: form.nombre.trim()
-          }
+            nombre: form.nombre,
+            edad: parseInt(form.edad),
+            posicion: form.posicion
+          },
+          emailRedirectTo: `${window.location.origin}/dashboard`
         }
       });
 
       if (authError) {
         console.error('❌ Error en Auth:', authError);
-        console.log('🔍 Detalles del error:', {
-          message: authError.message,
-          status: authError.status,
-          statusText: authError.statusText
-        });
-        
-        // Manejar errores específicos
-        if (authError.message?.includes('captcha') || 
-            authError.message?.includes('verification') ||
-            authError.message?.includes('signup_disabled') ||
-            authError.status === 429) {
-          setError('Demasiados intentos de registro. Espera 5 minutos e intenta nuevamente.');
-        } else if (authError.message?.includes('already registered') || 
-                   authError.message?.includes('User already registered')) {
-          setError('Este email ya está registrado. Ve al login para iniciar sesión.');
-          setTimeout(() => {
-            navigate('/', { replace: true });
-          }, 3000);
-          return;
-        } else if (authError.status === 422) {
-          setError('Email o contraseña no válidos. Verifica los datos ingresados.');
+        // Manejar errores específicos de captcha
+        if (authError.message?.includes('captcha') || authError.message?.includes('verification')) {
+          setError('Error de verificación. Por favor intenta nuevamente en unos minutos.');
+        } else if (authError.message?.includes('already registered')) {
+          setError('Este email ya está registrado. ¿Quieres iniciar sesión?');
         } else {
-          setError(`Error: ${authError.message || 'Error de conexión. Intenta nuevamente.'}`);
+          setError(`Error de registro: ${authError.message}`);
         }
         setLoading(false);
         return;
       }
 
       console.log('✅ Usuario registrado en Auth:', authData.user?.email);
+
+      // Paso 3: Crear perfil completo en tabla usuarios
       console.log('👤 Creando perfil en base de datos...');
       setMsg('Completando perfil de jugador...');
       
@@ -312,37 +246,16 @@ export default function RegistroCompleto() {
       }
 
       console.log('✅ REGISTRO COMPLETADO EXITOSAMENTE');
-      setMsg('¡Registro exitoso! Bienvenido a FutPro. Serás redirigido al dashboard...');
+      setMsg('¡Registro exitoso! Te hemos enviado un email de verificación. Serás redirigido al login...');
       
       // Limpiar datos temporales
       localStorage.removeItem('tempRegistroData');
       localStorage.removeItem('registroProgreso');
       
-      // Calcular calificación basada en frecuencia de juego
-      const frecuencia = parseInt(form.frecuencia_juego);
-      let calificacion = 50; // Base
-      if (frecuencia >= 7) calificacion = 95;
-      else if (frecuencia >= 6) calificacion = 90;
-      else if (frecuencia >= 5) calificacion = 85;
-      else if (frecuencia >= 4) calificacion = 75;
-      else if (frecuencia >= 3) calificacion = 65;
-      else if (frecuencia >= 2) calificacion = 55;
-      
-      // Guardar datos del usuario para navegación
-      localStorage.setItem('userRegistrado', JSON.stringify({
-        id: authData.user.id,
-        nombre: form.nombre,
-        email: form.email,
-        calificacion: calificacion,
-        registrado: true
-      }));
-      
-      // Redirigir al dashboard
-      setTimeout(() => {
-        navigate('/dashboard', { replace: true });
-      }, 3000);
-
-    } catch (error) {
+        // Redirigir después de 4 segundos
+        setTimeout(() => {
+          navigate('/', { replace: true });
+        }, 4000);    } catch (error) {
       console.error('💥 Error inesperado:', error);
       setError(`Error inesperado: ${error.message}. Por favor intenta nuevamente.`);
     } finally {
@@ -409,28 +322,6 @@ export default function RegistroCompleto() {
             fontWeight: 'bold'
           }}>
             ❌ {error}
-            {error.includes('Demasiados intentos') && (
-              <div style={{ marginTop: '10px' }}>
-                <button
-                  onClick={() => {
-                    setError('');
-                    handleDirectRegistration();
-                  }}
-                  style={{
-                    background: '#ff6b35',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '4px',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                    marginTop: '8px'
-                  }}
-                >
-                  🚀 Registro Directo (Sin verificación email)
-                </button>
-              </div>
-            )}
           </div>
         )}
 
@@ -468,10 +359,36 @@ export default function RegistroCompleto() {
         <form onSubmit={handleSubmit}>
           {/* PASO 1: Información básica */}
           {currentStep === 1 && (
+            <div style={{
+            background: 'rgba(255, 0, 0, 0.1)',
+            border: '1px solid #ff4444',
+            color: '#ff8888',
+            padding: '15px',
+            borderRadius: '8px',
+            marginBottom: '20px'
+          }}>
+            {error}
+          </div>
+        )}
+
+        {msg && (
+          <div style={{
+            background: 'rgba(0, 255, 136, 0.1)',
+            border: '1px solid #00ff88',
+            color: '#88ffaa',
+            padding: '15px',
+            borderRadius: '8px',
+            marginBottom: '20px'
+          }}>
+            {msg}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          {/* PASO 1: Datos básicos */}
+          {currentStep === 1 && (
             <div>
-              <h2 style={{ color: gold, marginBottom: '20px', fontSize: '20px' }}>
-                📝 Información Básica
-              </h2>
+              <h3 style={{ color: gold, marginBottom: '20px' }}>Información Básica</h3>
               
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
@@ -492,6 +409,7 @@ export default function RegistroCompleto() {
                     fontSize: '16px'
                   }}
                   placeholder="Tu nombre completo"
+                  required
                 />
               </div>
 
@@ -514,51 +432,55 @@ export default function RegistroCompleto() {
                     fontSize: '16px'
                   }}
                   placeholder="tu@email.com"
+                  required
                 />
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-                  Contraseña *
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: `2px solid #444`,
-                    borderRadius: '8px',
-                    background: '#333',
-                    color: '#fff',
-                    fontSize: '16px'
-                  }}
-                  placeholder="Mínimo 6 caracteres"
-                />
-              </div>
-
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-                  Confirmar contraseña *
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: `2px solid #444`,
-                    borderRadius: '8px',
-                    background: '#333',
-                    color: '#fff',
-                    fontSize: '16px'
-                  }}
-                  placeholder="Repite tu contraseña"
-                />
+              <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
+                    Contraseña *
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: `2px solid #444`,
+                      borderRadius: '8px',
+                      background: '#333',
+                      color: '#fff',
+                      fontSize: '16px'
+                    }}
+                    placeholder="Mínimo 6 caracteres"
+                    required
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
+                    Confirmar contraseña *
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={form.confirmPassword}
+                    onChange={handleChange}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: `2px solid #444`,
+                      borderRadius: '8px',
+                      background: '#333',
+                      color: '#fff',
+                      fontSize: '16px'
+                    }}
+                    placeholder="Repite tu contraseña"
+                    required
+                  />
+                </div>
               </div>
 
               <button
@@ -584,11 +506,9 @@ export default function RegistroCompleto() {
           {/* PASO 2: Información deportiva */}
           {currentStep === 2 && (
             <div>
-              <h2 style={{ color: gold, marginBottom: '20px', fontSize: '20px' }}>
-                ⚽ Información Deportiva
-              </h2>
-
-              <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+              <h3 style={{ color: gold, marginBottom: '20px' }}>Información Deportiva</h3>
+              
+              <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
                 <div style={{ flex: 1 }}>
                   <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
                     Edad
@@ -654,25 +574,16 @@ export default function RegistroCompleto() {
                     fontSize: '16px'
                   }}
                 >
-                  <option value="Portero">🥅 Portero</option>
-                  <option value="Defensa Central">🛡️ Defensa Central</option>
-                  <option value="Lateral Derecho">➡️ Lateral Derecho</option>
-                  <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
-                  <option value="Libero">🔒 Libero</option>
-                  <option value="Pivote">⚙️ Pivote</option>
-                  <option value="Mediocentro">🎯 Mediocentro</option>
-                  <option value="Mediocentro Ofensivo">🔥 Mediocentro Ofensivo</option>
-                  <option value="Extremo Derecho">🚀 Extremo Derecho</option>
-                  <option value="Extremo Izquierdo">⚡ Extremo Izquierdo</option>
-                  <option value="Media Punta">💎 Media Punta</option>
-                  <option value="Delantero Centro">🎯 Delantero Centro</option>
-                  <option value="Segundo Delantero">⭐ Segundo Delantero</option>
+                  <option value="Portero">Portero</option>
+                  <option value="Defensa">Defensa</option>
+                  <option value="Mediocampista">Mediocampista</option>
+                  <option value="Delantero">Delantero</option>
                 </select>
               </div>
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-                  ¿Cuántos días juegas por semana? (Afecta tu calificación)
+                  ¿Con qué frecuencia juegas?
                 </label>
                 <select
                   name="frecuencia_juego"
@@ -688,13 +599,12 @@ export default function RegistroCompleto() {
                     fontSize: '16px'
                   }}
                 >
-                  <option value="1">🔥 1 día por semana (Casual)</option>
-                  <option value="2">⚡ 2 días por semana (Aficionado)</option>
-                  <option value="3">🎯 3 días por semana (Regular)</option>
-                  <option value="4">� 4 días por semana (Dedicado)</option>
-                  <option value="5">🏆 5 días por semana (Serio)</option>
-                  <option value="6">⭐ 6 días por semana (Semi-Pro)</option>
-                  <option value="7">👑 7 días por semana (Profesional)</option>
+                  <option value="Diario">Diario</option>
+                  <option value="Varias veces por semana">Varias veces por semana</option>
+                  <option value="Semanal">Semanal</option>
+                  <option value="Quincenal">Quincenal</option>
+                  <option value="Mensual">Mensual</option>
+                  <option value="Ocasional">Ocasional</option>
                 </select>
               </div>
 
@@ -719,13 +629,13 @@ export default function RegistroCompleto() {
                   type="button"
                   onClick={nextStep}
                   style={{
-                    flex: 1,
+                    flex: 2,
                     padding: '15px',
                     background: gold,
                     color: black,
                     border: 'none',
                     borderRadius: '8px',
-                    fontSize: '16px',
+                    fontSize: '18px',
                     fontWeight: 'bold',
                     cursor: 'pointer'
                   }}
@@ -739,10 +649,8 @@ export default function RegistroCompleto() {
           {/* PASO 3: Foto y ubicación */}
           {currentStep === 3 && (
             <div>
-              <h2 style={{ color: gold, marginBottom: '20px', fontSize: '20px' }}>
-                📸 Foto y Ubicación
-              </h2>
-
+              <h3 style={{ color: gold, marginBottom: '20px' }}>Foto y Ubicación</h3>
+              
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
                   Foto de perfil (opcional)
@@ -754,43 +662,36 @@ export default function RegistroCompleto() {
                   accept="image/*"
                   style={{ display: 'none' }}
                 />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  style={{
-                    width: '100%',
-                    padding: '15px',
-                    background: '#444',
-                    color: '#fff',
-                    border: `2px dashed ${gold}`,
-                    borderRadius: '8px',
-                    fontSize: '16px',
-                    cursor: 'pointer',
-                    marginBottom: '10px'
-                  }}
+                <div style={{
+                  border: `2px dashed #444`,
+                  borderRadius: '8px',
+                  padding: '20px',
+                  textAlign: 'center',
+                  cursor: 'pointer'
+                }}
+                onClick={() => fileInputRef.current?.click()}
                 >
-                  📷 Seleccionar imagen
-                </button>
-                
-                {previewImage && (
-                  <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-                    <p style={{ color: gold, marginBottom: '10px' }}>Preview</p>
+                  {previewImage ? (
                     <img
                       src={previewImage}
-                      alt="Vista previa"
+                      alt="Preview"
                       style={{
-                        width: '120px',
-                        height: '120px',
+                        width: '100px',
+                        height: '100px',
                         borderRadius: '50%',
-                        objectFit: 'cover',
-                        border: `3px solid ${gold}`
+                        objectFit: 'cover'
                       }}
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div>
+                      <div style={{ fontSize: '48px', marginBottom: '10px' }}>📸</div>
+                      <p style={{ color: '#ccc' }}>Click para subir foto</p>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', gap: '15px', marginBottom: '30px' }}>
                 <div style={{ flex: 1 }}>
                   <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
                     Ciudad

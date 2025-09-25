@@ -1,54 +1,128 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from './Button';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const gold = '#FFD700';
-const black = '#181818';
-
-const menu = [
-  {
-    label: 'Inicio',
-    path: '#feed',
-    icon: '🏠',
-  },
-  {
-    label: 'Mi Perfil',
-    path: '#perfil',
-    icon: '�',
-  },
-  {
-    label: 'Subir',
-    path: '#subir',
-    icon: '⬆️',
-  },
-  {
-    label: 'Explorar',
-    path: '#explorar',
-    icon: '�',
-  },
-  {
-    label: 'Salir',
-    path: '#logout',
-    icon: '�',
-  },
-];
 
 export default function GlobalNav({ open = true, onToggle }) {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const menu = [
+    {
+      label: 'Dashboard',
+      path: '/dashboard',
+      icon: '🏠',
+    },
+    {
+      label: 'Mi Perfil',
+      path: '/perfil',
+      icon: '👤',
+    },
+    {
+      label: 'Usuarios',
+      path: '/usuarios',
+      icon: '👥',
+    },
+    {
+      label: 'Torneos',
+      path: '/torneos',
+      icon: '🏆',
+    },
+    {
+      label: 'Equipos',
+      path: '/equipos',
+      icon: '⚽',
+    },
+    {
+      label: 'Chat IA',
+      path: '/chat',
+      icon: '💬',
+    },
+  ];
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/', { replace: true });
+  };
+
   return (
-    <nav className="global-nav" style={{ width: open ? 220 : 60, transition: 'width 0.2s', background: '#222', color: '#fff', height: '100vh', position: 'fixed', left: 0, top: 0, zIndex: 10 }}>
-      <button onClick={onToggle} style={{ background: 'none', border: 'none', color: '#FFD700', fontSize: 24, margin: 10 }}>
+    <nav style={{ 
+      width: open ? 220 : 60, 
+      transition: 'width 0.2s', 
+      background: '#222', 
+      color: '#fff', 
+      borderRight: `2px solid ${gold}`,
+      padding: '10px 0'
+    }}>
+      <button 
+        onClick={onToggle} 
+        style={{ 
+          background: 'none', 
+          border: 'none', 
+          color: gold, 
+          fontSize: 24, 
+          margin: 10,
+          cursor: 'pointer'
+        }}
+      >
         {open ? '⏪' : '⏩'}
       </button>
+      
       {open && (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {menu.map(item => (
-            <li key={item.label} style={{ margin: '18px 0' }}>
-              <a href={item.path} style={{ color: '#fff', textDecoration: 'none', fontSize: 18 }}>
-                <span style={{ marginRight: 10 }}>{item.icon}</span>{item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <div>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            {menu.map(item => (
+              <li key={item.label} style={{ margin: '0' }}>
+                <button
+                  onClick={() => navigate(item.path)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#fff',
+                    padding: '15px 20px',
+                    width: '100%',
+                    textAlign: 'left',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = '#333'}
+                  onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                >
+                  <span>{item.icon}</span>
+                  {item.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+          
+          <div style={{ marginTop: '20px', padding: '0 20px' }}>
+            <button
+              onClick={handleLogout}
+              style={{
+                background: '#ff4444',
+                border: 'none',
+                color: '#fff',
+                padding: '12px 15px',
+                width: '100%',
+                borderRadius: '8px',
+                fontSize: '16px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                justifyContent: 'center'
+              }}
+            >
+              <span>🚪</span>
+              Salir
+            </button>
+          </div>
+        </div>
       )}
     </nav>
   );
