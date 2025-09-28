@@ -1,14 +1,28 @@
-# Netlify simple config
+# Netlify optimized config for FutPro VIP
 [build]
   publish = "."
+  command = ""
+  
+[build.environment]
+  NODE_VERSION = "18"
 
-# Single Page App redirect
+# SPA redirects for React Router
 [[redirects]]
-  from = "/*"
+  from = "/home/*"
+  to = "/index.html"
+  status = 200
+  
+[[redirects]]
+  from = "/perfil/*"
   to = "/index.html"
   status = 200
 
-# Auth callback específico
+[[redirects]]
+  from = "/dashboard/*"
+  to = "/index.html"
+  status = 200
+
+# Auth callback específico para Supabase
 [[redirects]]
   from = "/auth/callback"
   to = "/index.html"
@@ -20,7 +34,20 @@
   to = "/index.html"
   status = 200
 
-# Security headers and PWA headers
+# API proxy para evitar CORS (si es necesario)
+[[redirects]]
+  from = "/api/*"
+  to = "https://your-supabase-url.supabase.co/rest/v1/:splat"
+  status = 200
+  headers = {Authorization = "Bearer YOUR_ANON_KEY"}
+
+# Catch-all redirect (debe ir al final)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security headers optimized for auth app
 [[headers]]
   for = "/manifest.json"
   [headers.values]
@@ -35,14 +62,81 @@
     Cache-Control = "no-cache"
 
 [[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Main security headers
+[[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
+    X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://*.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self'"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=()"
+
+# Preload critical resources
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Link = "</assets/index.css>; rel=preload; as=style, </assets/index.js>; rel=preload; as=script"
+
+# Edge Functions for form handling (if needed)
+[functions]
+  directory = "netlify/functions"
+
+# Form handling
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+# Error pages
+[[redirects]]
+  from = "/404"
+  to = "/index.html"
+  status = 404
+  
+[[redirects]]
+  from = "/500"  
+  to = "/index.html"
+  status = 500
+
+# Force HTTPS
+[[redirects]]
+  from = "http://futpro.vip/*"
+  to = "https://futpro.vip/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.futpro.vip/*"
+  to = "https://futpro.vip/:splat"
+  status = 301
+  force = true
