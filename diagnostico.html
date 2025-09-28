@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutPro - Diagnóstico</title>
+    <style>
+        body {
+            background: #181818;
+            color: #FFD700;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #222;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #FFD700;
+        }
+        .test-item {
+            background: #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #FFD700;
+        }
+        .success { border-left-color: #28a745; color: #28a745; }
+        .error { border-left-color: #dc3545; color: #dc3545; }
+        .warning { border-left-color: #ffc107; color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 FutPro - Diagnóstico del Sistema</h1>
+        <p>Verificando configuración...</p>
+        
+        <div id="diagnostics">
+            <div class="test-item">🔄 Ejecutando pruebas...</div>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <h3>📋 Información del Entorno</h3>
+            <div class="test-item">
+                <strong>URL:</strong> <span id="current-url"></span><br>
+                <strong>Protocolo:</strong> <span id="protocol"></span><br>
+                <strong>Hostname:</strong> <span id="hostname"></span><br>
+                <strong>Timestamp:</strong> <span id="timestamp"></span>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="runFullDiagnostic()" style="background: #FFD700; color: #222; border: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                🔍 Ejecutar Diagnóstico Completo
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Información básica
+        document.getElementById('current-url').textContent = window.location.href;
+        document.getElementById('protocol').textContent = window.location.protocol;
+        document.getElementById('hostname').textContent = window.location.hostname;
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        
+        function addTest(message, type = 'test-item') {
+            const diagnostics = document.getElementById('diagnostics');
+            const div = document.createElement('div');
+            div.className = `test-item ${type}`;
+            div.innerHTML = message;
+            diagnostics.appendChild(div);
+        }
+        
+        function runBasicTests() {
+            const diagnostics = document.getElementById('diagnostics');
+            diagnostics.innerHTML = '';
+            
+            // Test 1: Variables de entorno
+            const supabaseUrl = 'https://qqrxetxcglwrejtblwut.supabase.co';
+            const hasSupabaseUrl = !!supabaseUrl;
+            addTest(`✅ Supabase URL: ${hasSupabaseUrl ? 'Configurada' : 'Faltante'}`, hasSupabaseUrl ? 'success' : 'error');
+            
+            // Test 2: DOM
+            const rootElement = document.getElementById('root');
+            addTest(`${rootElement ? '✅' : '❌'} Elemento #root: ${rootElement ? 'Encontrado' : 'No encontrado'}`, rootElement ? 'success' : 'error');
+            
+            // Test 3: Conectividad Supabase
+            addTest('🔄 Probando conexión a Supabase...', 'warning');
+            fetch('https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/', { method: 'HEAD' })
+                .then(response => {
+                    addTest(`${response.ok ? '✅' : '❌'} Supabase: ${response.ok ? 'Conectado' : 'Error ' + response.status}`, response.ok ? 'success' : 'error');
+                })
+                .catch(error => {
+                    addTest(`❌ Supabase Error: ${error.message}`, 'error');
+                });
+            
+            // Test 4: Scripts
+            const scripts = document.querySelectorAll('script');
+            addTest(`📜 Scripts cargados: ${scripts.length}`, scripts.length > 0 ? 'success' : 'warning');
+            
+            // Test 5: CSS
+            const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
+            addTest(`🎨 Hojas de estilo: ${stylesheets.length}`, stylesheets.length > 0 ? 'success' : 'warning');
+        }
+        
+        function runFullDiagnostic() {
+            addTest('🚀 Iniciando diagnóstico completo...', 'warning');
+            
+            // Verificar errores de consola
+            const errors = [];
+            const originalError = console.error;
+            console.error = function(...args) {
+                errors.push(args.join(' '));
+                originalError.apply(console, args);
+            };
+            
+            // Intentar cargar React
+            try {
+                addTest('🔄 Verificando React...', 'warning');
+                if (typeof React !== 'undefined') {
+                    addTest('✅ React: Disponible', 'success');
+                } else {
+                    addTest('❌ React: No encontrado', 'error');
+                }
+            } catch (e) {
+                addTest(`❌ Error React: ${e.message}`, 'error');
+            }
+            
+            // Mostrar errores capturados
+            setTimeout(() => {
+                if (errors.length > 0) {
+                    addTest(`❌ Errores detectados: ${errors.length}`, 'error');
+                    errors.forEach(error => {
+                        addTest(`🔸 ${error}`, 'error');
+                    });
+                } else {
+                    addTest('✅ No se detectaron errores de JavaScript', 'success');
+                }
+            }, 2000);
+        }
+        
+        // Ejecutar tests básicos al cargar
+        setTimeout(runBasicTests, 1000);
+        
+        // Capturar errores globales
+        window.addEventListener('error', (event) => {
+            addTest(`❌ Error global: ${event.error?.message || event.message}`, 'error');
+        });
+        
+        window.addEventListener('unhandledrejection', (event) => {
+            addTest(`❌ Promise rejected: ${event.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>
