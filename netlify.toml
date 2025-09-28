@@ -1,7 +1,7 @@
-# Netlify config for FutPro.vip - SPA + PWA
+# Netlify config for FutPro.vip - Static HTML
 [build]
-  command = "npm run build"
-  publish = "dist"
+  command = "echo 'Static site - no build needed'"
+  publish = "."
 
 # Environment variables para producción
 [build.environment]
