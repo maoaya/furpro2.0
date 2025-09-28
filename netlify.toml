@@ -1,15 +1,6 @@
-# Netlify config for FutPro.vip - Static HTML
+# Netlify simple config
 [build]
-  command = "echo 'Static site - no build needed'"
   publish = "."
-
-# Environment variables para producción
-[build.environment]
-  NODE_ENV = "production"
-  VITE_APP_URL = "https://futpro.vip"
-  VITE_API_URL = "https://futpro.vip/api"
-  VITE_OAUTH_CALLBACK_URL_PRODUCTION = "https://futpro.vip/auth/callback"
-  VITE_BASE_URL_PRODUCTION = "https://futpro.vip"
 
 # Single Page App redirect
 [[redirects]]
