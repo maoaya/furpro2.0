@@ -55,12 +55,14 @@ export default function FutProAppDefinitivo() {
   useEffect(() => {
     if (user) {
       const userRegistrado = localStorage.getItem('userRegistrado');
-      const redirectTarget = localStorage.getItem('postLoginRedirect') || '/dashboard';
+      const redirectTarget = localStorage.getItem('postLoginRedirect') || '/home';
       
       if (location.pathname === '/' || location.pathname === '/registro') {
         console.log(`✅ Usuario autenticado, redirigiendo a: ${redirectTarget}`);
+        console.log('📝 Datos de usuario registrado:', userRegistrado);
+        
         localStorage.removeItem('postLoginRedirect');
-        localStorage.removeItem('userRegistrado');
+        // No eliminar userRegistrado inmediatamente, puede ser útil
         navigate(redirectTarget, { replace: true });
       }
     }

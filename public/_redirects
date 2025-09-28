@@ -1,7 +1,7 @@
 # SPA routing - todas las rutas van a index.html
 /*    /index.html   200
 
-# Auth callbacks específicos
+# Auth callbacks específicos para OAuth
 /auth/callback    /index.html   200
 /auth/callback-premium    /index.html   200
 
@@ -9,5 +9,21 @@
 /registro    /index.html   200
 /registro-simple    /index.html   200
 
+# Rutas principales de la app
+/home    /index.html   200
+/dashboard    /index.html   200
+/perfil    /index.html   200
+/usuarios    /index.html   200
+/torneos    /index.html   200
+/equipos    /index.html   200
+/chat    /index.html   200
+/notificaciones    /index.html   200
+
 # API routes si las hay
 /api/*    /api/:splat   200
+
+# Headers de seguridad para OAuth
+/auth/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

@@ -5,9 +5,26 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
+# Headers específicos para OAuth
 /auth/*
   Cache-Control: no-cache
+  X-Robots-Tag: noindex
 
+# Headers para assets estáticos
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Headers para manifest y service worker
+/manifest.json
+  Content-Type: application/manifest+json
+  Cache-Control: public, max-age=0, must-revalidate
+
+/sw.js
+  Content-Type: application/javascript
+  Service-Worker-Allowed: /
+  Cache-Control: no-cache
+
+# Headers para API routes
 /api/*
   Access-Control-Allow-Origin: https://futpro.vip
   Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS

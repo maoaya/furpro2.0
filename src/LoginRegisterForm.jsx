@@ -14,13 +14,53 @@ const TabButton = ({ active, onClick, children }) => (
 );
 
 const LoginRegisterForm = () => {
-  const { loginWithGoogle, loginWithFacebook, user, loading, logout } = useAuth();
+  const { login, loginWithGoogle, loginWithFacebook, user, loading, logout } = useAuth();
   const [error, setError] = useState('');
   const [tab, setTab] = useState('login'); // login | register
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Manejar cambios en el formulario
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    if (error) setError('');
+  };
+
+  // Login con email/password
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    if (!formData.email || !formData.password) {
+      setError('Por favor completa todos los campos');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const result = await login(formData.email, formData.password);
+      if (result.success) {
+        console.log('✅ Login exitoso, redirigiendo...');
+        localStorage.setItem('postLoginRedirect', '/home');
+        // La redirección se maneja en FutProAppDefinitivo
+      } else {
+        setError(result.error || 'Error al iniciar sesión');
+      }
+    } catch (err) {
+      setError('Error inesperado al iniciar sesión');
+      console.error('Error en login:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Definir destino tras login según pestaña activa
   const setRedirectTarget = () => {
-    const target = tab === 'register' ? '/validar-usuario' : '/dashboard';
+    const target = tab === 'register' ? '/home' : '/home';
     localStorage.setItem('postLoginRedirect', target);
   };
 
@@ -62,18 +102,76 @@ const LoginRegisterForm = () => {
             <TabButton active={tab === 'register'} onClick={() => setTab('register')}>Registrarse</TabButton>
           </div>
 
-          {/* Eliminado formulario de email/contraseña; solo botones sociales */}
-
           {tab === 'login' && (
             <div style={{ marginTop: 14 }}>
-              <div style={{ color: '#888', fontSize: 12, textAlign: 'center', margin: '10px 0' }}>Continúa con</div>
+              {/* Formulario de login con email/password */}
+              <form onSubmit={handleEmailLogin} style={{ marginBottom: '20px' }}>
+                <div style={{ marginBottom: '12px' }}>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: '1px solid #444',
+                      borderRadius: '8px',
+                      background: '#333',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                <div style={{ marginBottom: '16px' }}>
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Contraseña"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: '1px solid #444',
+                      borderRadius: '8px',
+                      background: '#333',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#FFD700',
+                    color: '#222',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    opacity: isSubmitting ? 0.7 : 1
+                  }}
+                >
+                  {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                </button>
+              </form>
+
+              <div style={{ color: '#888', fontSize: 12, textAlign: 'center', margin: '10px 0' }}>o continúa con</div>
               <button type="button" className="btn-outline" style={{ width: '100%', marginBottom: 10 }} onClick={handleGoogleLogin} disabled={loading}>
                 <i className="fab fa-google"></i> Google
               </button>
               <button type="button" className="btn-outline" style={{ width: '100%' }} onClick={handleFacebookLogin} disabled={loading}>
                 <i className="fab fa-facebook"></i> Facebook
               </button>
-              {error && <div style={{ color: '#ff6b6b', marginTop: 8 }}>{error}</div>}
+              {error && <div style={{ color: '#ff6b6b', marginTop: 8, fontSize: '14px', textAlign: 'center' }}>{error}</div>}
             </div>
           )}
 

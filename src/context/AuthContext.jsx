@@ -94,7 +94,18 @@ export const AuthProvider = ({ children }) => {
                   setEquipoId(null);
                   setUserProfile({ ...profileData, id: session.user.id, email: session.user.email });
                   localStorage.removeItem('pendingProfileData');
-                  console.log('✅ Perfil creado desde datos pendientes');
+                  console.log('✅ Perfil creado desde datos pendientes del registro completo');
+                  
+                  // Marcar como usuario completado desde registro OAuth
+                  localStorage.setItem('userRegistrado', JSON.stringify({
+                    id: session.user.id,
+                    nombre: profileData.nombre,
+                    email: session.user.email,
+                    registrado: true,
+                    fromCompleteRegistration: true
+                  }));
+                } else {
+                  console.error('❌ Error insertando perfil pendiente:', insertError);
                 }
               } catch (error) {
                 console.error('Error al crear perfil desde datos pendientes:', error);
@@ -131,7 +142,7 @@ export const AuthProvider = ({ children }) => {
     if (error) {
       setError(error.message);
       setLoading(false);
-      return false;
+      return { success: false, error: error.message };
     }
     
     if (data.user) {
@@ -145,21 +156,28 @@ export const AuthProvider = ({ children }) => {
         .single();
         
       if (userData) {
-        setRole(userData.rol || 'player');
+        setRole(userData.rol || 'usuario');
         setEquipoId(userData.equipoId || null);
         setUserProfile(userData);
+        console.log('✅ Usuario logueado con perfil completo:', userData.nombre);
       } else {
-        setRole('player');
+        setRole('usuario');
         setEquipoId(null);
         setUserProfile(null);
+        console.log('⚠️ Usuario logueado sin perfil en BD');
       }
       
       // Guardar sesión en localStorage
       localStorage.setItem('session', JSON.stringify(data.user));
+      localStorage.setItem('userLoggedIn', JSON.stringify({
+        id: data.user.id,
+        email: data.user.email,
+        timestamp: new Date().toISOString()
+      }));
     }
     
     setLoading(false);
-    return true;
+    return { success: true, user: data.user };
   };
 
   const completeUserProfile = async (profileData) => {

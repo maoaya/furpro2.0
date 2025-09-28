@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import FutproLogo from '../components/FutproLogo.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const gold = '#FFD700';
 const black = '#222';
@@ -10,6 +11,7 @@ const darkCard = '#1a1a1a';
 export default function RegistroCompleto() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const { loginWithGoogle, loginWithFacebook } = useAuth();
 
   const [form, setForm] = useState({
     nombre: '',
@@ -136,6 +138,123 @@ export default function RegistroCompleto() {
     setError('');
   };
 
+  // Manejar OAuth después de completar los datos del formulario
+  const handleOAuthComplete = async (provider) => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      // Validar que tenemos datos mínimos del formulario
+      if (!form.nombre?.trim()) {
+        setError('Por favor completa al menos tu nombre antes de usar OAuth');
+        setLoading(false);
+        return;
+      }
+
+      // Guardar datos del formulario para completar después del OAuth
+      const profileData = {
+        nombre: form.nombre.trim(),
+        edad: parseInt(form.edad) || null,
+        peso: form.peso ? parseFloat(form.peso) : null,
+        ciudad: form.ciudad?.trim() || null,
+        pais: form.pais?.trim() || 'España',
+        posicion: form.posicion || 'Delantero Centro',
+        frecuencia_juego: form.frecuencia_juego || '3',
+        rol: form.rol,
+        tipo_usuario: form.tipo_usuario
+      };
+
+      // Guardar en localStorage para completar después del OAuth
+      localStorage.setItem('pendingProfileData', JSON.stringify(profileData));
+      localStorage.setItem('postLoginRedirect', '/home');
+      
+      console.log('📝 Datos guardados para OAuth:', {
+        profileData,
+        redirect: '/home'
+      });
+
+      console.log(`🚀 Iniciando OAuth con ${provider} desde registro completo`);
+      setMsg(`Conectando con ${provider}...`);
+
+      // Iniciar OAuth
+      if (provider === 'google') {
+        const result = await loginWithGoogle();
+        if (result?.error) {
+          setError(`Error con Google: ${result.error}`);
+          setLoading(false);
+        } else {
+          console.log('✅ OAuth Google iniciado correctamente');
+        }
+      } else if (provider === 'facebook') {
+        const result = await loginWithFacebook();
+        if (result?.error) {
+          setError(`Error con Facebook: ${result.error}`);
+          setLoading(false);
+        } else {
+          console.log('✅ OAuth Facebook iniciado correctamente');
+        }
+      }
+    } catch (error) {
+      console.error('Error en OAuth desde registro:', error);
+      setError(`Error: ${error.message}`);
+      setLoading(false);
+    }
+  };
+
+  // Componente de botones OAuth
+  const OAuthButtons = () => (
+    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+      <button
+        type="button"
+        onClick={() => handleOAuthComplete('google')}
+        disabled={loading}
+        style={{
+          flex: 1,
+          padding: '12px',
+          background: '#4285f4',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          cursor: loading ? 'not-allowed' : 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          opacity: loading ? 0.7 : 1
+        }}
+      >
+        <i className="fab fa-google"></i>
+        Google
+      </button>
+      <button
+        type="button"
+        onClick={() => handleOAuthComplete('facebook')}
+        disabled={loading}
+        style={{
+          flex: 1,
+          padding: '12px',
+          background: '#1877f2',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          cursor: loading ? 'not-allowed' : 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          opacity: loading ? 0.7 : 1
+        }}
+      >
+        <i className="fab fa-facebook-f"></i>
+        Facebook
+      </button>
+    </div>
+  );
+
   const handleDirectRegistration = async () => {
     setLoading(true);
     setError('');
@@ -238,49 +357,41 @@ export default function RegistroCompleto() {
       console.log('📧 Registrando usuario en Supabase Auth...');
       setMsg('Creando cuenta de usuario...');
       
-      // Intentar registro con configuración simplificada
+      // Registro en Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: form.email.toLowerCase().trim(),
         password: form.password,
         options: {
           data: {
-            nombre: form.nombre.trim()
+            nombre: form.nombre.trim(),
+            full_name: form.nombre.trim()
           }
         }
       });
 
       if (authError) {
         console.error('❌ Error en Auth:', authError);
-        console.log('🔍 Detalles del error:', {
-          message: authError.message,
-          status: authError.status,
-          statusText: authError.statusText
-        });
         
         // Manejar errores específicos
-        if (authError.message?.includes('captcha') || 
-            authError.message?.includes('verification') ||
-            authError.message?.includes('signup_disabled') ||
-            authError.status === 429) {
-          setError('Demasiados intentos de registro. Espera 5 minutos e intenta nuevamente.');
-        } else if (authError.message?.includes('already registered') || 
-                   authError.message?.includes('User already registered')) {
+        if (authError.message?.includes('already registered') || 
+           authError.message?.includes('User already registered')) {
           setError('Este email ya está registrado. Ve al login para iniciar sesión.');
-          setTimeout(() => {
-            navigate('/', { replace: true });
-          }, 3000);
+          setTimeout(() => navigate('/', { replace: true }), 3000);
           return;
-        } else if (authError.status === 422) {
-          setError('Email o contraseña no válidos. Verifica los datos ingresados.');
+        } else if (authError.message?.includes('signup_disabled')) {
+          setError('El registro está temporalmente deshabilitado. Intenta más tarde.');
         } else {
-          setError(`Error: ${authError.message || 'Error de conexión. Intenta nuevamente.'}`);
+          setError(`Error de registro: ${authError.message}`);
         }
         setLoading(false);
         return;
       }
 
+      // Si llegamos aquí, el registro en Auth fue exitoso
       console.log('✅ Usuario registrado en Auth:', authData.user?.email);
-      console.log('👤 Creando perfil en base de datos...');
+      console.log('👤 Usuario ID:', authData.user?.id);
+      
+      // Crear perfil en la base de datos
       setMsg('Completando perfil de jugador...');
       
       const perfilData = {
@@ -294,25 +405,31 @@ export default function RegistroCompleto() {
         posicion: form.posicion,
         frecuencia_juego: form.frecuencia_juego,
         avatar_url: avatarUrl,
-        rol: form.rol,
-        tipo_usuario: form.tipo_usuario,
+        rol: form.rol || 'usuario',
+        tipo_usuario: form.tipo_usuario || 'jugador',
+        estado: 'activo',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
 
-      const { error: perfilError } = await supabase
+      console.log('📝 Datos del perfil a insertar:', perfilData);
+      
+      const { data: insertData, error: perfilError } = await supabase
         .from('usuarios')
-        .insert([perfilData]);
+        .insert([perfilData])
+        .select();
 
       if (perfilError) {
         console.error('❌ Error creando perfil:', perfilError);
-        setError(`Error creando perfil: ${perfilError.message}. Contacta soporte.`);
+        setError(`Error creando perfil: ${perfilError.message}`);
         setLoading(false);
         return;
       }
 
-      console.log('✅ REGISTRO COMPLETADO EXITOSAMENTE');
-      setMsg('¡Registro exitoso! Bienvenido a FutPro. Serás redirigido al dashboard...');
+      console.log('✅ Perfil creado exitosamente:', insertData);
+      console.log('🎉 REGISTRO COMPLETADO EXITOSAMENTE');
+      
+      setMsg('¡Registro exitoso! Bienvenido a FutPro. Redirigiendo a tu dashboard...');
       
       // Limpiar datos temporales
       localStorage.removeItem('tempRegistroData');
@@ -328,22 +445,23 @@ export default function RegistroCompleto() {
       else if (frecuencia >= 3) calificacion = 65;
       else if (frecuencia >= 2) calificacion = 55;
       
-      // Guardar datos del usuario para navegación
+      // Guardar datos del usuario registrado
       localStorage.setItem('userRegistrado', JSON.stringify({
         id: authData.user.id,
         nombre: form.nombre,
         email: form.email,
         calificacion: calificacion,
-        registrado: true
+        registrado: true,
+        timestamp: new Date().toISOString()
       }));
       
-      // Redirigir al dashboard
+      // Redirigir al home (dashboard principal)
       setTimeout(() => {
-        navigate('/dashboard', { replace: true });
-      }, 3000);
+        navigate('/home', { replace: true });
+      }, 2500);
 
     } catch (error) {
-      console.error('💥 Error inesperado:', error);
+      console.error('💥 Error inesperado en registro:', error);
       setError(`Error inesperado: ${error.message}. Por favor intenta nuevamente.`);
     } finally {
       setLoading(false);
@@ -869,6 +987,36 @@ export default function RegistroCompleto() {
                   {loading ? 'Registrando...' : 'Completar Registro ✅'}
                 </button>
               </div>
+
+              {/* Separador con opciones rápidas OAuth */}
+              <div style={{ 
+                margin: '30px 0 20px 0', 
+                textAlign: 'center',
+                position: 'relative'
+              }}>
+                <div style={{
+                  height: '1px',
+                  background: '#444',
+                  margin: '0 auto',
+                  position: 'relative'
+                }}>
+                  <span style={{
+                    background: darkCard,
+                    color: '#ccc',
+                    padding: '0 15px',
+                    fontSize: '14px',
+                    position: 'absolute',
+                    left: '50%',
+                    top: '-8px',
+                    transform: 'translateX(-50%)'
+                  }}>
+                    o termina rápido con
+                  </span>
+                </div>
+              </div>
+
+              {/* Botones OAuth finales */}
+              <OAuthButtons />
             </div>
           )}
         </form>

@@ -1,11 +1,31 @@
-# Netlify config for SPA + PWA
+# Netlify config for FutPro.vip - SPA + PWA
 [build]
   command = "npm run build"
   publish = "dist"
 
+# Environment variables para producción
+[build.environment]
+  NODE_ENV = "production"
+  VITE_APP_URL = "https://futpro.vip"
+  VITE_API_URL = "https://futpro.vip/api"
+  VITE_OAUTH_CALLBACK_URL_PRODUCTION = "https://futpro.vip/auth/callback"
+  VITE_BASE_URL_PRODUCTION = "https://futpro.vip"
+
 # Single Page App redirect
 [[redirects]]
   from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Auth callback específico
+[[redirects]]
+  from = "/auth/callback"
+  to = "/index.html"
+  status = 200
+
+# OAuth endpoints
+[[redirects]]
+  from = "/auth/*"
   to = "/index.html"
   status = 200
 
