@@ -29,8 +29,8 @@ export default function CallbackPage() {
           localStorage.removeItem('postLoginRedirect');
           navigate(postLoginRedirect, { replace: true });
         } else {
-          console.log('📍 Redirigiendo al dashboard por defecto');
-          navigate('/dashboard', { replace: true });
+          console.log('📍 Redirigiendo al Home por defecto');
+          navigate('/home', { replace: true });
         }
       } else if (!loading) {
         console.log('❌ No se encontró usuario después del callback');

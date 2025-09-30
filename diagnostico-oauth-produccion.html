@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico OAuth - FutPro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #FFD700;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            border: 2px solid #FFD700;
+            border-radius: 20px;
+            padding: 30px;
+        }
+        h1 { color: #FFD700; text-align: center; margin-bottom: 30px; }
+        h2 { color: #FFA500; border-bottom: 2px solid #FFD700; padding-bottom: 10px; }
+        .error-box {
+            background: #4a1a1a;
+            border: 2px solid #ff4444;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success-box {
+            background: #1a4a1a;
+            border: 2px solid #44ff44;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background: #4a4a1a;
+            border: 2px solid #ffaa44;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .url-box {
+            background: #333;
+            border: 1px solid #FFD700;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: monospace;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        button {
+            background: #FFD700;
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover { background: #FFA500; }
+        .step {
+            background: #333;
+            border-left: 4px solid #FFD700;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Diagnóstico OAuth - FutPro</h1>
+        
+        <div class="error-box">
+            <h3>❌ Error Detectado</h3>
+            <p><strong>Código:</strong> <span id="errorCode">server_error / unexpected_failure</span></p>
+            <p><strong>Descripción:</strong> Unable to exchange external code</p>
+            <p><strong>Causa:</strong> URLs no autorizadas en Google Console</p>
+        </div>
+
+        <h2>🔧 Solución Inmediata</h2>
+        
+        <div class="step">
+            <h3>PASO 1: Google Console</h3>
+            <p>Ve a Google Console y configura las URLs:</p>
+            <button onclick="window.open('https://console.developers.google.com/apis/credentials', '_blank')">
+                🔗 Abrir Google Console
+            </button>
+            
+            <p><strong>Client ID:</strong></p>
+            <div class="url-box">760210878835-beg6ir3v4m9d7oss3koda80td4j8mifk.apps.googleusercontent.com</div>
+            
+            <p><strong>URLs a agregar en "URIs de redirección autorizados":</strong></p>
+            <div class="url-box">https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback</div>
+            <div class="url-box">https://futpro.vip/auth/callback</div>
+            <div class="url-box">https://futpro.vip/</div>
+        </div>
+
+        <div class="step">
+            <h3>PASO 2: Supabase</h3>
+            <p>Verifica la configuración de Supabase:</p>
+            <button onclick="window.open('https://supabase.com/dashboard/project/qqrxetxcglwrejtblwut/auth/url-configuration', '_blank')">
+                🔗 Abrir Supabase Dashboard
+            </button>
+            
+            <p><strong>Site URL:</strong></p>
+            <div class="url-box">https://futpro.vip</div>
+            
+            <p><strong>Redirect URLs:</strong></p>
+            <div class="url-box">https://futpro.vip/auth/callback<br>https://futpro.vip/<br>https://futpro.vip/home</div>
+        </div>
+
+        <div class="step">
+            <h3>PASO 3: Probar</h3>
+            <p>Después de configurar, espera 2-3 minutos y prueba:</p>
+            <button onclick="window.location.href = 'https://futpro.vip/'">
+                🚀 Volver a FutPro
+            </button>
+            <button onclick="testOAuth()">
+                🧪 Probar OAuth
+            </button>
+        </div>
+
+        <div class="warning-box">
+            <h3>⚠️ Información Técnica</h3>
+            <p><strong>URL actual:</strong> <span id="currentUrl"></span></p>
+            <p><strong>Hostname:</strong> <span id="hostname"></span></p>
+            <p><strong>Protocolo:</strong> <span id="protocol"></span></p>
+        </div>
+
+        <h2>📋 Estado de la Configuración</h2>
+        <div id="configStatus"></div>
+    </div>
+
+    <script>
+        // Obtener información de la URL actual
+        document.getElementById('currentUrl').textContent = window.location.href;
+        document.getElementById('hostname').textContent = window.location.hostname;
+        document.getElementById('protocol').textContent = window.location.protocol;
+
+        // Extraer código de error de la URL si existe
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorDescription = urlParams.get('error_description');
+        if (errorDescription) {
+            document.getElementById('errorCode').textContent = decodeURIComponent(errorDescription);
+        }
+
+        // Función para probar OAuth
+        function testOAuth() {
+            console.log('Iniciando prueba de OAuth...');
+            window.location.href = 'https://futpro.vip/auth/test';
+        }
+
+        // Verificar configuración
+        function checkConfig() {
+            const status = document.getElementById('configStatus');
+            const isProduction = window.location.hostname === 'futpro.vip';
+            
+            if (isProduction) {
+                status.innerHTML = `
+                    <div class="warning-box">
+                        <h3>🔍 Entorno de Producción Detectado</h3>
+                        <p>✅ Hostname: futpro.vip</p>
+                        <p>✅ HTTPS: ${window.location.protocol === 'https:' ? 'Sí' : 'No'}</p>
+                        <p>⚠️ Configuración OAuth: Requiere verificación manual</p>
+                    </div>
+                `;
+            } else {
+                status.innerHTML = `
+                    <div class="success-box">
+                        <h3>🔧 Entorno de Desarrollo</h3>
+                        <p>ℹ️ Este diagnóstico es para producción (futpro.vip)</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Ejecutar verificación al cargar
+        checkConfig();
+    </script>
+</body>
+</html>

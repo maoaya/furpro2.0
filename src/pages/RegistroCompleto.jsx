@@ -355,10 +355,28 @@ export default function RegistroCompleto() {
       }
 
       console.log('📧 Registrando usuario en Supabase Auth...');
+      
+      // En desarrollo, no usar captcha para evitar problemas
+      const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      let captchaToken = null;
+      
+      if (!isDevelopment) {
+        // Solo usar captcha en producción
+        try {
+          const mod = await import('../utils/captcha.js');
+          captchaToken = (await mod.getCaptchaTokenSafe?.()) || null;
+          if (captchaToken) console.log('🛡️ captchaToken obtenido');
+        } catch (e) {
+          console.warn('No se pudo cargar captcha utilitario:', e?.message);
+        }
+      } else {
+        console.log('🔧 Modo desarrollo: omitiendo captcha');
+      }
+      
       setMsg('Creando cuenta de usuario...');
       
-      // Registro en Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Registro en Supabase Auth - sin captcha en desarrollo
+      const authOptions = {
         email: form.email.toLowerCase().trim(),
         password: form.password,
         options: {
@@ -367,7 +385,14 @@ export default function RegistroCompleto() {
             full_name: form.nombre.trim()
           }
         }
-      });
+      };
+      
+      // Solo agregar captcha en producción
+      if (!isDevelopment && captchaToken) {
+        authOptions.options.captchaToken = captchaToken;
+      }
+      
+      const { data: authData, error: authError } = await supabase.auth.signUp(authOptions);
 
       if (authError) {
         console.error('❌ Error en Auth:', authError);
@@ -380,6 +405,8 @@ export default function RegistroCompleto() {
           return;
         } else if (authError.message?.includes('signup_disabled')) {
           setError('El registro está temporalmente deshabilitado. Intenta más tarde.');
+        } else if (authError.message?.toLowerCase().includes('captcha')) {
+          setError('Error de registro: la verificación de seguridad falló. Por favor recarga la página e inténtalo de nuevo. Si el problema persiste, intenta con el botón "Iniciar con Google".');
         } else {
           setError(`Error de registro: ${authError.message}`);
         }
@@ -390,6 +417,29 @@ export default function RegistroCompleto() {
       // Si llegamos aquí, el registro en Auth fue exitoso
       console.log('✅ Usuario registrado en Auth:', authData.user?.email);
       console.log('👤 Usuario ID:', authData.user?.id);
+
+      // Asegurar sesión activa (Supabase puede no iniciar sesión si requiere confirmación de email)
+      let session = authData.session || null;
+      if (!session) {
+        console.log('🔐 No hay sesión tras el signUp. Intentando iniciar sesión automáticamente...');
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: form.email.toLowerCase().trim(),
+          password: form.password
+        });
+        if (signInError) {
+          console.warn('⚠️ No se pudo iniciar sesión automáticamente:', signInError.message);
+          if (signInError.message?.toLowerCase().includes('email') && signInError.message?.toLowerCase().includes('confirm')) {
+            setMsg('Te enviamos un correo de verificación. Confirma tu email y luego inicia sesión.');
+            // Guardar intención de navegación
+            localStorage.setItem('postLoginRedirect', '/home');
+            setLoading(false);
+            return;
+          }
+        } else {
+          session = signInData.session;
+          console.log('🔓 Sesión iniciada automáticamente');
+        }
+      }
       
       // Crear perfil en la base de datos
       setMsg('Completando perfil de jugador...');
@@ -455,10 +505,15 @@ export default function RegistroCompleto() {
         timestamp: new Date().toISOString()
       }));
       
-      // Redirigir al home (dashboard principal)
+      // Marcar que el registro está completo y forzar actualización del contexto
+      localStorage.setItem('registroCompleto', 'true');
+      localStorage.setItem('authCompleted', 'true');
+      
+      // Esperar un poco más para que el contexto se actualice y luego navegar
       setTimeout(() => {
+        console.log('🔄 Navegando a /home después del registro completo');
         navigate('/home', { replace: true });
-      }, 2500);
+      }, 3000);
 
     } catch (error) {
       console.error('💥 Error inesperado en registro:', error);

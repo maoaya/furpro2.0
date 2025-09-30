@@ -34,7 +34,7 @@ export default function LoginRegisterForm() {
 
         // Redirigir después de un breve delay para mostrar el mensaje
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/home');
         }, 1500);
       } else if (event === 'SIGNED_OUT') {
         setError('Sesión cerrada');
@@ -126,9 +126,9 @@ export default function LoginRegisterForm() {
         setLoading(false);
       } else {
         setSuccess('¡Registro exitoso! Revisa tu email para confirmar la cuenta. Redirigiendo...');
-        // Para registro, esperamos confirmación de email, pero redirigimos a dashboard
+        // Para registro, esperamos confirmación de email, pero redirigimos a home
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/home');
         }, 2000);
       }
     } catch (e) {

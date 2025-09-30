@@ -84,7 +84,7 @@ Write-Host ""
 
 Write-Host "📝 CONFIGURACIONES REQUERIDAS EN GOOGLE CLOUD:" -ForegroundColor Yellow
 Write-Host "  1. Ve a: https://console.cloud.google.com/apis/credentials" -ForegroundColor White
-Write-Host "  2. Authorized redirect URIs: https://futpro.vip/auth/callback" -ForegroundColor White
+Write-Host "  2. Authorized redirect URIs: https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback" -ForegroundColor White
 Write-Host ""
 
 Write-Host "📝 CONFIGURACIONES REQUERIDAS EN FACEBOOK DEVELOPERS:" -ForegroundColor Yellow
@@ -95,7 +95,7 @@ Write-Host ""
 Write-Host "📝 VARIABLES DE ENTORNO EN NETLIFY DASHBOARD:" -ForegroundColor Yellow
 Write-Host "  VITE_SUPABASE_URL = https://qqrxetxcglwrejtblwut.supabase.co" -ForegroundColor White
 Write-Host "  VITE_SUPABASE_ANON_KEY = [tu-anon-key]" -ForegroundColor White
-Write-Host "  VITE_GOOGLE_CLIENT_ID = 760210878835-beg6ir3v4m9d7oss3koda80td4j8mifk.apps.googleusercontent.com" -ForegroundColor White
+Write-Host "  VITE_GOOGLE_CLIENT_ID = 760210878835-2beijt9lbg88q1139admgklb69f4s2a4.apps.googleusercontent.com" -ForegroundColor White
 Write-Host "  VITE_FACEBOOK_CLIENT_ID = 1077339444513908" -ForegroundColor White
 Write-Host "  VITE_APP_URL = https://futpro.vip" -ForegroundColor White
 Write-Host ""

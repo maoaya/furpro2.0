@@ -37,7 +37,7 @@ Get-ChildItem "dist" | Format-Table Name, Length, LastWriteTime
 Write-Host ""
 Write-Host "🌐 URLs importantes para configurar en Supabase:" -ForegroundColor Magenta
 Write-Host "  - Sitio web: https://futpro.vip" -ForegroundColor White
-Write-Host "  - OAuth callback: https://futpro.vip/auth/callback" -ForegroundColor White
+Write-Host "  - OAuth callback (Supabase): https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback" -ForegroundColor White
 Write-Host "  - Premium callback: https://futpro.vip/auth/callback-premium" -ForegroundColor White
 Write-Host ""
 Write-Host "📋 Para desplegar:" -ForegroundColor Yellow

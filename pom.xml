@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.0</version>
+        <version>3.5.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <properties>
@@ -30,13 +30,13 @@
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
-            <version>3.1.0</version>
+            <version>3.2.0</version>
         </dependency>
         <!-- Hibernate Core (proveedor JPA) -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>6.2.7.Final</version>
+            <version>6.6.3.Final</version>
         </dependency>
         <!-- H2 Database (puedes cambiar por MySQL, PostgreSQL, etc.) -->
         <dependency>
@@ -61,4 +61,3 @@
     </build>
 
 </project>
-

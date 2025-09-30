@@ -18,18 +18,17 @@ export const getConfig = () => {
   });
 
   // Determinar URL base correcta
+  // En desarrollo, usar el origen actual (p.ej. Vite en 5173). En prod, fijar dominio.
   const baseUrl = isProduction 
     ? (window.location.hostname === 'futpro.vip' ? 'https://futpro.vip' : window.location.origin)
-    : 'http://localhost:3000';
+    : window.location.origin;
 
   return {
     // URLs base
     baseUrl,
     
     // URLs de callback para OAuth
-    oauthCallbackUrl: isProduction 
-      ? `${baseUrl}/auth/callback`
-      : 'http://localhost:3000/auth/callback',
+      oauthCallbackUrl: `${baseUrl}/auth/callback`,
     
     // URLs específicas para home después del login
     homeRedirectUrl: isProduction 
@@ -58,7 +57,8 @@ export const getConfig = () => {
     enableDebugLogs: isDevelopment,
     
     // URLs de API
-    apiUrl: isProduction ? `${baseUrl}/api` : 'http://localhost:3000/api',
+  // API del backend local corre en 3000; en prod va bajo el mismo dominio
+  apiUrl: isProduction ? `${baseUrl}/api` : 'http://localhost:3000/api',
   };
 };
 

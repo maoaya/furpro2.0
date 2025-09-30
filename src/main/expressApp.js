@@ -1,12 +1,10 @@
 import express from 'express';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
 // const appRoutes = require('../routes/appRoutes.cjs'); // Comentado temporalmente - archivo problemático
 import untitled1Service from '../services/Untitled1Service.js';
 import authRoutes from '../modules/auth/authRoutes.js';
 import validadorWebService from '../services/ValidadorWebService.js';
 import { apiLimiter } from '../middleware/rateLimit.js';
-const { limpiarEntrada, sugerirConIA } = require('../../limpiador.js');
+import { limpiarEntrada, sugerirConIA } from '../../limpiador.js';
 import webpush from 'web-push';
 import path from 'path';
 import sugerenciasRoutes from '../routes/sugerenciasRoutes.js';

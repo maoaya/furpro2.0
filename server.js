@@ -10,8 +10,6 @@ let io;
 const server = http.createServer(app);
 export { app, server };
 
-
-
 // WebSocket para notificaciones y comentarios en tiempo real (solo si no es test)
 if (process.env.NODE_ENV !== 'test') {
   const { WebSocketServer } = await import('ws');
@@ -31,10 +29,7 @@ if (process.env.NODE_ENV !== 'test') {
     });
     socket.on('disconnect', () => {});
   });
-  const PORT = 3000;
-  server.listen(PORT, () => {
-    console.log(`Servidor escuchando en http://localhost:${PORT}`);
-  });
+  // Importante: el listen se realiza únicamente en start.js para evitar doble arranque
 }
 
 

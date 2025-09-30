@@ -2,13 +2,14 @@ import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import TestPage from './pages/TestPage.jsx';
-import LoginRegisterForm from './LoginRegisterForm.jsx';
+import LoginRegisterForm from './pages/LoginRegisterForm.jsx';
 import RegistroCompleto from './pages/RegistroCompleto.jsx';
 import HomePage from './pages/HomePage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal.jsx';
 import CallbackPage from './pages/CallbackPage.jsx';
 import PageInDevelopment from './components/PageInDevelopment.jsx';
+import OAuthLiveTest from './pages/OAuthLiveTest.jsx';
 
 // Componente protegido simple
 function ProtectedRoute({ children }) {
@@ -17,8 +18,28 @@ function ProtectedRoute({ children }) {
 
   useEffect(() => {
     if (!loading && !user) {
+      // Verificar si hay un registro recién completado
+      const registroCompleto = localStorage.getItem('registroCompleto');
+      const authCompleted = localStorage.getItem('authCompleted');
+      
+      if (registroCompleto === 'true' || authCompleted === 'true') {
+        console.log('⏳ Registro recién completado, esperando actualización del contexto...');
+        // Dar más tiempo para que el contexto se actualice
+        setTimeout(() => {
+          if (!user) {
+            console.log('❌ Usuario no autenticado después del registro, redirigiendo al login');
+            localStorage.removeItem('registroCompleto');
+            navigate('/', { replace: true });
+          }
+        }, 2000);
+        return;
+      }
+      
       console.log('❌ Usuario no autenticado, redirigiendo al login');
       navigate('/', { replace: true });
+    } else if (user) {
+      // Limpiar marcadores cuando el usuario está autenticado
+      localStorage.removeItem('registroCompleto');
     }
   }, [user, loading, navigate]);
 
@@ -127,6 +148,9 @@ export default function FutProAppDefinitivo() {
       
       {/* Callback para OAuth */}
       <Route path="/auth/callback" element={<CallbackPage />} />
+
+  {/* Live test de OAuth en el dominio actual */}
+  <Route path="/auth/test" element={<OAuthLiveTest />} />
       
       {/* Home/Feed */}
       <Route path="/home" element={
@@ -226,7 +250,7 @@ export default function FutProAppDefinitivo() {
                 Tu cuenta ha sido creada correctamente. Ya puedes acceder a todas las funcionalidades de FutPro.
               </p>
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate('/home')}
                 style={{
                   background: '#FFD700',
                   color: '#1a1a1a',
@@ -238,7 +262,7 @@ export default function FutProAppDefinitivo() {
                   cursor: 'pointer'
                 }}
               >
-                Ir al Dashboard
+                Ir al Inicio
               </button>
             </div>
           </div>

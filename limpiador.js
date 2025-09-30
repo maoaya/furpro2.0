@@ -1,45 +1,39 @@
+// limpiador.js (ESM)
+// Utilidad para limpiar entradas peligrosas y sugerir mejoras con IA (opcional)
 
+import OpenAI from 'openai';
 
-// limpiador.js
-// Utilidad para limpiar entradas peligrosas y sugerir mejoras con IA (Copilot)
+export function limpiarEntrada(texto) {
+  if (typeof texto !== 'string') return '';
+  let limpio = texto.replace(/<[^>]*>?/gm, '');
+  limpio = limpio.replace(/(on\w+\s*=\s*["'][^"']*["'])/gi, '');
+  limpio = limpio.replace(/(javascript:|data:|vbscript:)/gi, '');
+  limpio = limpio.replace(/(--|;|\/\*|\*\/|xp_|exec|union|select|insert|update|delete|drop|alter|create)/gi, '');
+  limpio = limpio.replace(/[\u{1F600}-\u{1F6FF}]/gu, '');
+  return limpio.trim();
+}
 
-let sugerirConIA;
-if (process.env.NODE_ENV === 'test') {
-  // Mock para tests: no llama a OpenAI
-  sugerirConIA = async () => 'Sugerencia IA simulada para test';
-} else {
+export async function sugerirConIA(prompt) {
+  // En tests devolvemos una sugerencia simulada
+  if (process.env.NODE_ENV === 'test') {
+    return 'Sugerencia IA simulada para test';
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
-  if (apiKey) {
-    require('openai/shims/node');
-    const OpenAI = require('openai');
+  if (!apiKey) {
+    return 'Sugerencia IA no disponible (sin OPENAI_API_KEY)';
+  }
+
+  try {
     const openai = new OpenAI({ apiKey });
-    sugerirConIA = async (prompt) => {
-      const response = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 100,
-      });
-      return response.choices[0].message.content.trim();
-    };
-  } else {
-    // Sin API key, devolvemos un mensaje neutral y evitamos llamadas externas
-    sugerirConIA = async () => 'Sugerencia IA no disponible (sin OPENAI_API_KEY)';
+    const response = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: `${prompt || ''}` }],
+      max_tokens: 100,
+    });
+    return response.choices?.[0]?.message?.content?.trim() || '';
+  } catch (e) {
+    // Evitar romper el flujo si falla la IA
+    return 'Sugerencia IA no disponible (error al llamar a OpenAI)';
   }
 }
-
-function limpiarEntrada(texto) {
-  texto = texto.replace(/<[^>]*>?/gm, '');
-  texto = texto.replace(/(on\w+\s*=\s*["'][^"']*["'])/gi, '');
-  texto = texto.replace(/(javascript:|data:|vbscript:)/gi, '');
-  texto = texto.replace(/(--|;|\/\*|\*\/|xp_|exec|union|select|insert|update|delete|drop|alter|create)/gi, '');
-  texto = texto.replace(/[\u{1F600}-\u{1F6FF}]/gu, '');
-  texto = texto.trim();
-  return texto;
-}
-
-
-
-module.exports = {
-  limpiarEntrada,
-  sugerirConIA
-};

@@ -22,12 +22,12 @@ export default defineConfig(({ command, mode }) => {
       }
     },
     server: {
-      port: 3000,
+      port: 5173,
       host: '0.0.0.0',
       open: true
     },
     preview: {
-      port: 3000,
+      port: 4173,
       host: '0.0.0.0'
     },
     resolve: {
@@ -39,7 +39,7 @@ export default defineConfig(({ command, mode }) => {
       global: 'globalThis',
       // Variables de entorno específicas para producción
       __IS_PRODUCTION__: isProduction,
-      __BASE_URL__: JSON.stringify(isProduction ? 'https://futpro.vip' : 'http://localhost:3000')
+      __BASE_URL__: JSON.stringify(isProduction ? 'https://futpro.vip' : 'http://localhost:5173')
     },
     optimizeDeps: {
       include: ['react', 'react-dom', '@supabase/supabase-js']
