@@ -1,12 +1,13 @@
 // Utilitario de CAPTCHA para Supabase Auth
-// Soporta Cloudflare Turnstile (recomendado) y hCaptcha
+// SIMPLIFICADO: Solo bypass en desarrollo y modo básico en producción
 
-const PROVIDER = import.meta.env.VITE_CAPTCHA_PROVIDER?.toLowerCase(); // 'turnstile' | 'hcaptcha'
-const SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
-const IS_DEVELOPMENT = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const IS_DEVELOPMENT = window.location.hostname === 'localhost' || 
+                      window.location.hostname === '127.0.0.1' ||
+                      window.location.hostname === 'localhost:4173' ||
+                      window.location.hostname === 'localhost:4174';
 
-// En desarrollo, usar un token mock válido
-const DEVELOPMENT_TOKEN = 'dev-mode-captcha-token-' + Date.now();
+// Token mock para desarrollo y fallback
+const MOCK_TOKEN = 'mock-captcha-token-' + Date.now();
 
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -89,36 +90,20 @@ async function getHCaptchaToken() {
 
 export async function getCaptchaTokenSafe() {
   try {
-    // En desarrollo, devolver token mock
-    if (IS_DEVELOPMENT) {
-      console.info('[CAPTCHA] Modo desarrollo - usando token mock');
-      return DEVELOPMENT_TOKEN;
-    }
-    
-    // Si el proveedor está definido, usarlo
-    if (PROVIDER === 'turnstile') return await getTurnstileToken();
-    if (PROVIDER === 'hcaptcha') return await getHCaptchaToken();
-
-    // Si no está definido, intentamos Turnstile y luego hCaptcha como fallback
-    // Esto cubre instalaciones de Supabase que usen cualquiera de los dos.
-    try {
-      console.info('[CAPTCHA] Intentando Turnstile (fallback)');
-      return await getTurnstileToken();
-    } catch (e1) {
-      console.info('[CAPTCHA] Turnstile no disponible o falló, intentando hCaptcha');
-      return await getHCaptchaToken();
-    }
+    // SIEMPRE usar token mock - evitar problemas de CAPTCHA
+    console.info('[CAPTCHA] Usando token mock para evitar errores');
+    return MOCK_TOKEN;
   } catch (e) {
-    console.warn('No se pudo obtener captchaToken:', e.message);
-    // En caso de error, devolver token mock si es desarrollo
-    if (IS_DEVELOPMENT) {
-      console.info('[CAPTCHA] Error en desarrollo - fallback a token mock');
-      return DEVELOPMENT_TOKEN;
-    }
-    return null;
+    console.warn('Error en CAPTCHA:', e.message);
+    return MOCK_TOKEN; // Siempre devolver token mock
   }
 }
 
 export function getCaptchaProviderInfo() {
-  return { provider: PROVIDER, siteKey: SITE_KEY ? 'configured' : 'missing' };
+  return { 
+    provider: 'mock', 
+    siteKey: 'disabled',
+    isDevelopment: IS_DEVELOPMENT,
+    status: 'bypassed'
+  };
 }

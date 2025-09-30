@@ -165,6 +165,13 @@ export default function LoginRegisterForm() {
         >
           Ingresar con Email
         </button>
+        <button
+          onClick={() => navigate('/registro')}
+          disabled={loading}
+          style={{ width: '100%', background: gold, color: black, border: 'none', borderRadius: 8, padding: 12, fontWeight: 'bold', fontSize: 18, marginBottom: 16, display: 'block' }}
+        >
+          📝 Crear Cuenta Completa
+        </button>
         {showEmailForm && (
           <form onSubmit={isRegister ? handleRegister : handleLogin} style={{ marginBottom: 16 }}>
             <input
