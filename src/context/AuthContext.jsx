@@ -254,10 +254,13 @@ export const AuthProvider = ({ children }) => {
         console.error('- Error completo:', error);
         
         if (error.message.includes('403') || error.message.includes('forbidden')) {
-          console.error('🚨 ERROR 403 - CONFIGURACIÓN DE SUPABASE:');
-          console.error('1. Ve a: https://supabase.com/dashboard/project/qqrxetxcglwrejtblwut/auth/url-configuration');
-          console.error('2. Site URL: http://localhost:3000');
-          console.error('3. Redirect URLs: http://localhost:3000/auth/callback');
+          console.error('🚨 ERROR 403 - CONFIGURACIÓN OAUTH:');
+          const supabaseCallback = (import.meta?.env?.VITE_SUPABASE_URL ? `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/callback` : 'https://TU_PROYECTO.supabase.co/auth/v1/callback');
+          console.error(`Google: agrega http://localhost:5174 y http://localhost:5173 en Authorized JavaScript origins, y ${supabaseCallback} en Authorized redirect URIs.`);
+          console.error('Supabase: Allowed Redirect URLs debe incluir:');
+          console.error('- http://localhost:5174/auth/callback');
+          console.error('- http://localhost:5173/auth/callback');
+          console.error('- https://futpro.vip/auth/callback');
         }
         
         setError(error.message);

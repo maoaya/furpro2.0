@@ -25,8 +25,9 @@ export const diagnosticarOAuth = () => {
   
   console.log('\n📱 URLs que se deben configurar en Supabase:');
   console.log('Para desarrollo:');
-  console.log('- http://localhost:3000/auth/callback');
-  console.log('- http://localhost:3000/auth/callback-premium');
+  console.log('- http://localhost:5174/auth/callback');
+  console.log('- http://localhost:5173/auth/callback');
+  console.log('- https://futpro.vip/auth/callback');
   console.log('Para producción:');
   console.log('- https://futpro.vip/auth/callback');
   console.log('- https://futpro.vip/auth/callback-premium');

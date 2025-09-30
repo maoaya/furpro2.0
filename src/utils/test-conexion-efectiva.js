@@ -16,9 +16,9 @@ const testConexionEfectiva = async () => {
       
       // Mostrar URLs importantes
       console.log('🌐 URLs configuradas:');
-      console.log('  - Aplicación: http://localhost:3000');
-      console.log('  - Registro: http://localhost:3000/registro');
-      console.log('  - Callback: http://localhost:3000/auth/callback');
+  console.log('  - Aplicación: http://localhost:5174');
+  console.log('  - Registro: http://localhost:5174/registro');
+  console.log('  - Callback: http://localhost:5174/auth/callback');
       
       return true;
     } else {

@@ -2,6 +2,7 @@
 // Optimización específica para dispositivos iOS y Android
 
 import { supabase } from '../config/supabase.js';
+import { getConfig } from '../config/environment.js';
 
 export class MobileManager {
     constructor() {
@@ -12,8 +13,9 @@ export class MobileManager {
         this.device = this.getDeviceInfo();
         
         // Configuración específica para iOS
+        const { oauthCallbackUrl } = getConfig();
         this.iosConfig = {
-            callbackUrl: 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback',
+            callbackUrl: oauthCallbackUrl,
             universalLinks: 'futpro://auth/callback',
             customScheme: 'futpro',
             bundleId: 'com.futpro.app'

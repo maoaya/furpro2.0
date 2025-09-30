@@ -70,7 +70,7 @@ async function testManualConexion() {
   
   try {
     // Verificar si Supabase está disponible
-    const supabaseUrl = 'https://qqrxetxcglwrejtblwut.supabase.co';
+  const supabaseUrl = (typeof import !== 'undefined' && typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL) || 'https://TU_SUPABASE_URL.supabase.co';
     const response = await fetch(supabaseUrl + '/rest/v1/', {
       method: 'HEAD'
     });

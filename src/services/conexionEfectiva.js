@@ -1,24 +1,18 @@
-// Conexión real y efectiva - Sistema completo OAuth para PRODUCCIÓN
-import { createClient } from '@supabase/supabase-js';
-
-// Configuración directa y efectiva
-const supabaseUrl = 'https://qqrxetxcglwrejtblwut.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8';
-
-// Cliente Supabase configurado
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Conexión real y efectiva - Sistema completo OAuth (frontend)
+import supabase from '../supabaseClient';
+import { getConfig } from '../config/environment.js';
 
 // Detección automática de entorno
 const detectarEntorno = () => {
   const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-  const esProduccion = hostname === 'futpro.vip' || hostname === 'www.futpro.vip';
-  
+  const config = getConfig();
+  const baseUrl = config.baseUrl; // origen actual en dev, dominio en prod
   return {
-    esProduccion,
-    esDesarrollo: !esProduccion,
+    esProduccion: config.isProduction,
+    esDesarrollo: config.isDevelopment,
     hostname,
-    baseUrl: esProduccion ? 'https://futpro.vip' : 'http://localhost:3000',
-    callbackUrl: esProduccion ? 'https://futpro.vip/auth/callback' : 'http://localhost:3000/auth/callback'
+    baseUrl,
+    callbackUrl: config.oauthCallbackUrl
   };
 };
 

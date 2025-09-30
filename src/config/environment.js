@@ -30,15 +30,11 @@ export const getConfig = () => {
     // URLs de callback para OAuth
       oauthCallbackUrl: `${baseUrl}/auth/callback`,
     
-    // URLs específicas para home después del login
-    homeRedirectUrl: isProduction 
-      ? `${baseUrl}/home`
-      : 'http://localhost:3000/home',
+    // URLs específicas para home después del login (usar SIEMPRE el mismo origen del frontend)
+    homeRedirectUrl: `${baseUrl}/home`,
     
-    // URLs de callback premium
-    premiumCallbackUrl: isProduction 
-      ? `${baseUrl}/auth/callback-premium`
-      : 'http://localhost:3000/auth/callback-premium',
+    // URLs de callback premium (usar SIEMPRE el mismo origen del frontend)
+    premiumCallbackUrl: `${baseUrl}/auth/callback-premium`,
     
     // Configuraciones de Supabase
     supabaseUrl: import.meta.env.VITE_SUPABASE_URL,

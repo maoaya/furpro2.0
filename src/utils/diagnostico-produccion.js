@@ -43,7 +43,7 @@ console.log('- VITE_OAUTH_CALLBACK_URL:', import.meta.env.VITE_OAUTH_CALLBACK_UR
 // 5. Verificar cliente Supabase
 try {
   const { createClient } = await import('@supabase/supabase-js');
-  const supabaseUrl = 'https://qqrxetxcglwrejtblwut.supabase.co';
+  const supabaseUrl = import.meta?.env?.VITE_SUPABASE_URL || '(definir VITE_SUPABASE_URL)';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8';
   
   const supabase = createClient(supabaseUrl, supabaseKey);

@@ -1,5 +1,7 @@
 // 🔐 FutPro - Servicio de Autenticación
-import { supabase, updateUserRole } from '../config/supabase.js'
+import supabase from '../supabaseClient';
+import { updateUserRole } from '../config/supabase.js';
+import { getConfig } from '../config/environment.js';
 
 export class AuthService {
   constructor() {
@@ -102,11 +104,12 @@ export class AuthService {
       // Detectar si es móvil para optimizar configuración
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const { oauthCallbackUrl } = getConfig();
       
       const config = {
         provider: 'google',
         options: {
-          redirectTo: 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback',
+          redirectTo: oauthCallbackUrl,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent'
@@ -147,10 +150,11 @@ export class AuthService {
 
   async signInWithFacebook() {
     try {
+      const { oauthCallbackUrl } = getConfig();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'facebook',
         options: {
-          redirectTo: 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback',
+          redirectTo: oauthCallbackUrl,
           scopes: 'email,public_profile',
           queryParams: {
             display: 'popup',
