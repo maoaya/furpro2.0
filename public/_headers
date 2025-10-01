@@ -24,6 +24,10 @@
   Service-Worker-Allowed: /
   Cache-Control: no-cache
 
+# Asegurar que el HTML principal no se cachee en clientes/proxies
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
 # Headers para API routes
 /api/*
   Access-Control-Allow-Origin: https://futpro.vip
