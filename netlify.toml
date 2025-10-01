@@ -48,11 +48,12 @@
   status = 200
   headers = {Authorization = "Bearer YOUR_ANON_KEY"}
 
-# Catch-all redirect (debe ir al final)
+# Catch-all redirect (debe ir al final) - EXCLUIR funciones de Netlify
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = false
 
 # Security headers optimized for auth app
 [[headers]]
