@@ -9,6 +9,8 @@
   SECRETS_SCAN_ENABLED = "false"
   SECRETS_SCAN_OMIT_PATHS = ".env,.env.example,README.md,*.md,scripts/*,deploy-*,src/*" 
   SECRETS_SCAN_OMIT_KEYS = "SUPABASE_JWT_SECRET,SUPABASE_SERVICE_ROLE_KEY,VITE_APP_URL,JWT_SECRET,SERVICE_ROLE"
+  # Activar auto-confirmación de signup (frontend leerá este flag)
+  VITE_AUTO_CONFIRM_SIGNUP = "true"
 
 # SPA redirects for React Router
 [[redirects]]
