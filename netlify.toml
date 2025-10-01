@@ -3,6 +3,7 @@
   # Copiar .env.netlify a un archivo que Vite cargue en producción y luego construir
   command = "bash -lc 'cp .env.netlify .env.production || cp .env.netlify .env; npm run build'"
   publish = "dist"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18"
@@ -105,8 +106,6 @@
     Link = "</assets/index.css>; rel=preload; as=style, </assets/index.js>; rel=preload; as=script"
 
 # Edge Functions for form handling (if needed)
-[functions]
-  directory = "netlify/functions"
 
 # (Opcional) Edge Functions
 
