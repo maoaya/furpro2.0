@@ -4,6 +4,7 @@ import supabase from '../supabaseClient';
 import FutproLogo from '../components/FutproLogo.jsx';
 import { getConfig } from '../config/environment';
 import { signUpWithAutoConfirm } from '../utils/autoConfirmSignup';
+import { signupBypass } from '../api/signupBypass';
 
 const gold = '#FFD700';
 const black = '#222';
@@ -86,6 +87,41 @@ export default function RegistroFuncionando() {
           setError('Este email ya está registrado. Ve al login para iniciar sesión.');
           setTimeout(() => navigate('/'), 3000);
           return;
+        } else if (String(result.error?.message || '').toLowerCase().includes('captcha')) {
+          console.warn('🛡️ CAPTCHA bloqueó el registro. Usando bypass con Function...');
+          setSuccess('Verificación bloqueada. Intentando crear cuenta de forma segura...');
+          const bypass = await signupBypass({
+            email: form.email.toLowerCase().trim(),
+            password: form.password,
+            nombre: form.nombre.trim()
+          });
+          if (!bypass.ok) {
+            setError('Error de seguridad: ' + (bypass.error || 'No se pudo crear la cuenta. Intenta más tarde.'));
+            setLoading(false);
+            return;
+          }
+          // Intentar iniciar sesión ahora que el usuario existe
+          const { data: signInData2, error: signInErr2 } = await supabase.auth.signInWithPassword({
+            email: form.email.toLowerCase().trim(),
+            password: form.password
+          });
+          if (signInErr2) {
+            console.warn('⚠️ No se pudo iniciar sesión tras bypass, redirigiendo a magic link...', signInErr2.message);
+            if (bypass.redirectLink) {
+              window.location.assign(bypass.redirectLink);
+              return;
+            }
+            setError('Cuenta creada, pero no se pudo iniciar sesión automáticamente. Ve al login.');
+            setLoading(false);
+            return;
+          }
+          // Login ok → marcar auth y seguir flujo normal
+          if (config?.autoConfirmSignup) {
+            localStorage.setItem('registroCompleto', 'true');
+            localStorage.setItem('authCompleted', 'true');
+            setTimeout(() => navigate('/home', { replace: true }), 1200);
+            return;
+          }
         } else {
           setError(`Error: ${result.error.message}`);
         }
