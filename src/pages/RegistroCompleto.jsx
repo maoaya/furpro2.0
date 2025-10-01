@@ -313,10 +313,12 @@ export default function RegistroCompleto() {
       setMsg('¡Usuario registrado! Te contactaremos para activar tu cuenta.');
       localStorage.removeItem('tempRegistroData');
       localStorage.removeItem('registroProgreso');
+      // Asegurar intención de navegación a home
+      localStorage.setItem('postLoginRedirect', '/home');
       
       setTimeout(() => {
-        navigate('/', { replace: true });
-      }, 4000);
+        navigate('/home', { replace: true });
+      }, 1500);
 
     } catch (error) {
       console.error('💥 Error en registro directo:', error);
@@ -331,6 +333,10 @@ export default function RegistroCompleto() {
     setLoading(true);
     setError('');
     setMsg('');
+
+    // Asegurar redirección post-login consistente
+    localStorage.setItem('postLoginRedirect', '/home');
+    localStorage.setItem('postLoginRedirectReason', 'signup-full');
 
     try {
       if (!form.nombre || !form.email || !form.password) {
@@ -494,11 +500,11 @@ export default function RegistroCompleto() {
       localStorage.setItem('registroCompleto', 'true');
       localStorage.setItem('authCompleted', 'true');
       
-      // Esperar un poco más para que el contexto se actualice y luego navegar
+      // Esperar un poco para que el contexto se actualice y luego navegar
       setTimeout(() => {
         console.log('🔄 Navegando a /home después del registro completo');
         navigate('/home', { replace: true });
-      }, 2000);
+      }, 1500);
 
     } catch (error) {
       console.error('💥 Error inesperado en registro:', error);

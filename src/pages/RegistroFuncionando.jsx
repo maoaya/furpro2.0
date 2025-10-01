@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import FutproLogo from '../components/FutproLogo.jsx';
+import { getConfig } from '../config/environment';
 
 const gold = '#FFD700';
 const black = '#222';
 
 export default function RegistroFuncionando() {
   const navigate = useNavigate();
+  const config = getConfig();
   
   const [form, setForm] = useState({
     nombre: '',
@@ -33,6 +35,10 @@ export default function RegistroFuncionando() {
     setSuccess('');
 
     try {
+      // Asegurar redirección post-login consistente
+      localStorage.setItem('postLoginRedirect', '/home');
+      localStorage.setItem('postLoginRedirectReason', 'signup-email');
+
       // Validaciones básicas
       if (!form.nombre || !form.email || !form.password) {
         setError('Por favor completa todos los campos');
@@ -84,6 +90,11 @@ export default function RegistroFuncionando() {
       console.log('✅ Usuario registrado:', authData.user?.email);
       setSuccess('¡Registro exitoso! Redirigiendo...');
 
+      // Guardar algunos metadatos útiles
+      if (authData?.user?.email) {
+        localStorage.setItem('lastAuthUserEmail', authData.user.email);
+      }
+
       // Crear perfil básico en tabla usuarios
       if (authData.user) {
         const perfilData = {
@@ -107,10 +118,11 @@ export default function RegistroFuncionando() {
         }
       }
 
-      // Redirigir después de 2 segundos
+      // Redirigir después de una breve pausa para UX
       setTimeout(() => {
+        // Intentamos usar la ruta SPA para mantener el estado del router
         navigate('/home', { replace: true });
-      }, 2000);
+      }, 1500);
 
     } catch (error) {
       console.error('💥 Error inesperado:', error);
