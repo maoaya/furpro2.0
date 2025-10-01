@@ -1,25 +1,53 @@
-# Auth callbacks específicos para OAuth
-/auth/callback    /index.html   200
-/auth/callback-premium    /index.html   200
+# FutPro 2.0 - Redirects para Sistema de Autenticación Unificado
+# Actualizado: 1 de octubre de 2025
 
-# Rutas de registro
-/registro    /index.html   200
-/registro-simple    /index.html   200
+# === RUTAS DE AUTENTICACIÓN UNIFICADA ===
+/auth                 /index.html   200
+/auth/*               /index.html   200
 
-# Rutas principales de la app
-/home    /index.html   200
-/dashboard    /index.html   200
-/perfil    /index.html   200
-/usuarios    /index.html   200
-/torneos    /index.html   200
-/equipos    /index.html   200
-/chat    /index.html   200
-/notificaciones    /index.html   200
+# OAuth callbacks optimizados
+/auth/callback        /index.html   200
+/oauth/callback       /index.html   200
+/callback             /index.html   200
 
-# API routes si las hay
-/api/*    /api/:splat   200
+# === RUTAS DE AUTENTICACIÓN LEGACY ===
+/login                /index.html   200
+/login/*              /index.html   200
+/registro             /index.html   200
+/registro/*           /index.html   200
+/registro-completo    /index.html   200
 
-# SPA routing - todas las rutas van a index.html (EXCEPTO funciones de Netlify)
-/*    /index.html   200
+# === RUTAS PRINCIPALES DE LA APLICACIÓN ===
+/home                 /index.html   200
+/home/*               /index.html   200
+/inicio               /index.html   200
+/inicio/*             /index.html   200
 
-# (Los headers para /auth/* fueron movidos a netlify.toml)
+# Dashboard y páginas principales
+/dashboard            /index.html   200
+/dashboard/*          /index.html   200
+/perfil               /index.html   200
+/perfil/*             /index.html   200
+
+# Módulos funcionales
+/usuarios             /index.html   200
+/usuarios/*           /index.html   200
+/torneos              /index.html   200
+/torneos/*            /index.html   200
+/equipos              /index.html   200
+/equipos/*            /index.html   200
+
+# Funcionalidades adicionales
+/chat                 /index.html   200
+/chat/*               /index.html   200
+/notificaciones       /index.html   200
+/notificaciones/*     /index.html   200
+/validar-usuario      /index.html   200
+/test                 /index.html   200
+
+# === API PROXY (SI ES NECESARIO) ===
+/api/*                /api/:splat   200
+
+# === SPA ROUTING CATCH-ALL ===
+# Esta regla debe ir al final para capturar todas las rutas no especificadas
+/*                    /index.html   200
