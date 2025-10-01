@@ -545,11 +545,30 @@ export default function RegistroCompleto() {
       localStorage.setItem('registroCompleto', 'true');
       localStorage.setItem('authCompleted', 'true');
       
-      // Esperar un poco para que el contexto se actualice y luego navegar
+      // Mensaje de éxito y esperar un poco para que el contexto se actualice
+      console.log('🎉 REGISTRO COMPLETADO - Preparando navegación...');
+      
+      // Navegación más robusta con múltiples intentos
+      const navigateToHome = () => {
+        try {
+          console.log('🔄 Navegando a /home después del registro completo');
+          navigate('/home', { replace: true });
+        } catch (navError) {
+          console.warn('⚠️ Error en navigate, intentando con window.location');
+          window.location.href = '/home';
+        }
+      };
+      
+      // Intentar navegación inmediata
+      setTimeout(navigateToHome, 1000);
+      
+      // Fallback por si falla la primera navegación
       setTimeout(() => {
-        console.log('🔄 Navegando a /home después del registro completo');
-        navigate('/home', { replace: true });
-      }, 1500);
+        if (window.location.pathname !== '/home') {
+          console.log('🔄 Navegación fallback ejecutándose...');
+          navigateToHome();
+        }
+      }, 3000);
 
     } catch (error) {
       console.error('💥 Error inesperado en registro:', error);

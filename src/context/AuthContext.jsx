@@ -16,37 +16,49 @@ export const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       setLoading(true);
       
-      // Intentar obtener sesión actual de Supabase
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
-      if (session && session.user) {
-        setUser(session.user);
+      try {
+        // Intentar obtener sesión actual de Supabase
+        const { data: { session }, error } = await supabase.auth.getSession();
         
-        // Obtener rol y equipoId desde la base de datos
-        const { data: userData, error: userError } = await supabase
-          .from('usuarios')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
+        if (session && session.user) {
+          console.log('✅ Sesión encontrada:', session.user.email);
+          setUser(session.user);
           
-        if (userData) {
-          setRole(userData.rol || 'player');
-          setEquipoId(userData.equipoId || null);
-          setUserProfile(userData);
+          // Obtener rol y equipoId desde la base de datos
+          const { data: userData, error: userError } = await supabase
+            .from('usuarios')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+            
+          if (userData) {
+            setRole(userData.rol || 'player');
+            setEquipoId(userData.equipoId || null);
+            setUserProfile(userData);
+            console.log('✅ Perfil de usuario cargado:', userData.nombre);
+          } else {
+            console.log('⚠️ No se encontró perfil de usuario, estableciendo valores por defecto');
+            setRole('player');
+            setEquipoId(null);
+            setUserProfile(null);
+          }
+          
+          // Guardar en localStorage
+          localStorage.setItem('session', JSON.stringify(session.user));
+          localStorage.setItem('authCompleted', 'true');
         } else {
-          setRole('player');
+          // No hay sesión activa
+          console.log('❌ No hay sesión activa');
+          setUser(null);
+          setRole('guest');
           setEquipoId(null);
           setUserProfile(null);
+          localStorage.removeItem('session');
+          localStorage.removeItem('authCompleted');
         }
-        
-        // Guardar en localStorage
-        localStorage.setItem('session', JSON.stringify(session.user));
-      } else {
-        // No hay sesión activa
-        setUser(null);
-        setRole('guest');
-        setEquipoId(null);
-        localStorage.removeItem('session');
+      } catch (error) {
+        console.error('❌ Error al inicializar autenticación:', error);
+        setError(error.message);
       }
       
       setLoading(false);
@@ -57,6 +69,8 @@ export const AuthProvider = ({ children }) => {
     // Escuchar cambios en el estado de autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('🔄 Cambio en autenticación:', event, session?.user?.email);
+        
         if (session && session.user) {
           setUser(session.user);
           
@@ -71,6 +85,7 @@ export const AuthProvider = ({ children }) => {
             setRole(userData.rol || 'player');
             setEquipoId(userData.equipoId || null);
             setUserProfile(userData);
+            console.log('✅ Perfil actualizado desde AuthStateChange:', userData.nombre);
           } else {
             // Si no hay datos del usuario, verificar si hay datos pendientes del perfil
             const pendingData = localStorage.getItem('pendingProfileData');

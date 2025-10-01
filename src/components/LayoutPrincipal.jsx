@@ -3,6 +3,7 @@ import React from 'react';
 import TopBar from './TopBar';
 import GlobalNav from './GlobalNav';
 import BottomNav from './BottomNav';
+import StatusDisplay from './StatusDisplay';
 import { useAuth } from '../context/AuthContext';
 import LoginSocial from './LoginSocial.jsx';
 import PerfilCompletoForm from './PerfilCompletoForm';
@@ -24,6 +25,7 @@ export default function LayoutPrincipal({ children }) {
   }
   return (
     <div style={{display:'flex',flexDirection:'column',minHeight:'100vh'}}>
+      <StatusDisplay />
       <TopBar />
       <div style={{display:'flex',flex:1}}>
         <GlobalNav />

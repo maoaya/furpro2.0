@@ -1,13 +1,26 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, BrowserRouter } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
-import FormularioRegistroSimple from './pages/FormularioRegistroSimple.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal';
 
-// Componentes lazy loading
-const Dashboard = React.lazy(() => import('./Dashboard'));
-const HomePage = React.lazy(() => import('./pages/HomePage'));
-const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+// Componentes principales
+import HomePage from './pages/HomePage';
+import RegistroCompleto from './pages/RegistroCompleto';
+import LoginRegisterForm from './pages/LoginRegisterForm';
+import AuthPageUnificada from './pages/AuthPageUnificada';
+import CallbackPage from './pages/CallbackPage';
+import CallbackPageOptimized from './pages/CallbackPageOptimized';
+import ValidarUsuarioForm from './pages/ValidarUsuarioForm';
+import TorneosPage from './pages/TorneosPage';
+import UsuariosPage from './pages/UsuariosPage';
+import EquiposPage from './pages/EquiposPage';
+import PerfilPage from './pages/PerfilPage';
+import TestRegistroFlow from './components/TestRegistroFlow';
+import StatusMonitor from './components/StatusMonitor';
+
+// Componentes lazy loading opcionales
+const Dashboard = React.lazy(() => import('./Dashboard').catch(() => ({ default: HomePage })));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage').catch(() => ({ default: HomePage })));
 
 // Componente para manejar redirección post-login
 function PostLoginRedirect() {
@@ -90,58 +103,48 @@ export default function FutProApp() {
   }
 
   return (
-    <Routes>      
-      {/* Rutas públicas (sin autenticación) */}
-      <Route path="/registro" element={
-        <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Cargando registro...</div>}>
-          <RegistroPage />
-        </React.Suspense>
-      } />
-      
-      <Route path="/registro-simple" element={
-        <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Cargando registro...</div>}>
-          <RegistroSimple />
-        </React.Suspense>
-      } />
-      
-      {/* Callback para OAuth (Google/Facebook) */}
-      <Route path="/auth/callback" element={
-        <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Procesando autenticación...</div>}>
-          <AuthCallback />
-        </React.Suspense>
-      } />
-      
-      {/* Rutas protegidas principales */}
-      <Route path="/dashboard" element={
-        <ProtectedRoute><Dashboard /></ProtectedRoute>
-      } />
-      
-      <Route path="/validar-usuario" element={
-        <ProtectedRoute><ValidarUsuarioForm /></ProtectedRoute>
-      } />
-      
-      <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-      <Route path="/inicio" element={<ProtectedRoute><Inicio /></ProtectedRoute>} />
-      <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
-      <Route path="/equipos" element={<ProtectedRoute><Equipos /></ProtectedRoute>} />
-      
-      {/* Ruta por defecto */}
-      <Route path="/" element={
-        user ? <ProtectedRoute><HomePage /></ProtectedRoute> : (
-          <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Cargando...</div>}>
-            <AuthHomePage />
-          </React.Suspense>
-        )
-      } />
-      
-      {/* Catch-all para rutas no encontradas */}
-      <Route path="*" element={
-        user ? <ProtectedRoute><HomePage /></ProtectedRoute> : (
-          <React.Suspense fallback={<div style={{color:'#FFD700',padding:24}}>Cargando...</div>}>
-            <AuthHomePage />
-          </React.Suspense>
-        )
-      } />
-    </Routes>
+    <BrowserRouter>
+      <StatusMonitor />
+      <Routes>      
+        {/* Rutas públicas (sin autenticación) */}
+        <Route path="/auth" element={<AuthPageUnificada />} />
+        <Route path="/registro" element={<RegistroCompleto />} />
+        <Route path="/registro-completo" element={<RegistroCompleto />} />
+        <Route path="/login" element={<LoginRegisterForm />} />
+        <Route path="/login-legacy" element={<LoginRegisterForm />} />
+        <Route path="/test" element={<TestRegistroFlow />} />
+        
+        {/* Callback para OAuth (Google/Facebook) - Versión optimizada */}
+        <Route path="/auth/callback" element={<CallbackPageOptimized />} />
+        <Route path="/callback" element={<CallbackPage />} />
+        <Route path="/oauth/callback" element={<CallbackPageOptimized />} />
+        
+        {/* Rutas protegidas principales */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute><Dashboard /></ProtectedRoute>
+        } />
+        
+        <Route path="/validar-usuario" element={
+          <ProtectedRoute><ValidarUsuarioForm /></ProtectedRoute>
+        } />
+        
+        <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path="/inicio" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path="/perfil" element={<ProtectedRoute><PerfilPage /></ProtectedRoute>} />
+        <Route path="/equipos" element={<ProtectedRoute><EquiposPage /></ProtectedRoute>} />
+        <Route path="/torneos" element={<ProtectedRoute><TorneosPage /></ProtectedRoute>} />
+        <Route path="/usuarios" element={<ProtectedRoute><UsuariosPage /></ProtectedRoute>} />
+        
+        {/* Ruta por defecto - Usa la nueva página de autenticación unificada */}
+        <Route path="/" element={
+          user ? <ProtectedRoute><HomePage /></ProtectedRoute> : <AuthPageUnificada />
+        } />
+        
+        {/* Catch-all para rutas no encontradas */}
+        <Route path="*" element={
+          user ? <ProtectedRoute><HomePage /></ProtectedRoute> : <AuthPageUnificada />
+        } />
+      </Routes>
+    </BrowserRouter>
   );
 }

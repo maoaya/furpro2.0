@@ -1,4 +1,71 @@
-# Netlify optimized config for FutPro VIP
+# Netlify optimized config for FutPro VI# === RUTAS PRINCIPALES DE LA APLICACIÓN ===
+
+# HomePage y rutas principales
+[[redirects]]
+  from = "/home/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/inicio/*"
+  to = "/index.html"
+  status = 200
+  
+[[redirects]]
+  from = "/perfil/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/torneos/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/equipos/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/usuarios/*"
+  to = "/index.html"
+  status = 200
+
+# === RUTAS DE AUTENTICACIÓN LEGACY ===
+
+[[redirects]]
+  from = "/login/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/registro/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/callback/*"
+  to = "/index.html"
+  status = 200
+
+# API proxy para evitar CORS (si es necesario)
+[[redirects]]
+  from = "/api/*"
+  to = "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/:splat"
+  status = 200
+  headers = {Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.kXZzpXZQf3rS_LRNnWf0Bz7r4Ik8vqhAoTKxGzgwWFA"}
+
+# Catch-all redirect (debe ser el último)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = falsee Autenticación Unificado
 [build]
   # Copiar .env.netlify a un archivo que Vite cargue en producción y luego construir
   command = "bash -lc 'cp .env.netlify .env.production || cp .env.netlify .env; npm run build'"
@@ -13,29 +80,26 @@
   # Activar auto-confirmación de signup (frontend leerá este flag)
   VITE_AUTO_CONFIRM_SIGNUP = "true"
 
-# SPA redirects for React Router
+# === RUTAS DE AUTENTICACIÓN UNIFICADA ===
+
+# Página principal de autenticación
 [[redirects]]
-  from = "/home/*"
-  to = "/index.html"
-  status = 200
-  
-[[redirects]]
-  from = "/perfil/*"
+  from = "/auth"
   to = "/index.html"
   status = 200
 
-[[redirects]]
-  from = "/dashboard/*"
-  to = "/index.html"
-  status = 200
-
-# Auth callback específico para Supabase
+# Callbacks OAuth optimizados
 [[redirects]]
   from = "/auth/callback"
   to = "/index.html"
   status = 200
 
-# OAuth endpoints
+[[redirects]]
+  from = "/oauth/callback"
+  to = "/index.html"
+  status = 200
+
+# Todas las rutas de autenticación
 [[redirects]]
   from = "/auth/*"
   to = "/index.html"
