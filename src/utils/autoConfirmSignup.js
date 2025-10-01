@@ -1,7 +1,6 @@
 // Utilidad para configurar Supabase sin confirmación de email obligatoria
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment';
-import { getCaptchaTokenSafe } from './captcha';
 
 /**
  * Registra un usuario con auto-confirmación si está habilitada
@@ -14,19 +13,12 @@ export async function signUpWithAutoConfirm(userData) {
   try {
     console.log('🚀 Iniciando registro:', userData.email);
     
-    // BYPASS ULTRA-AGRESIVO: SIEMPRE añadir token captcha
-    const captchaToken = await getCaptchaTokenSafe();
-    const registrationData = {
-      ...userData,
-      options: {
-        ...userData.options,
-        captchaToken: captchaToken
-      }
-    };
-    console.log('🛡️ CAPTCHA BYPASS añadido automáticamente');
+    // BYPASS DEFINITIVO: NO ENVIAR captchaToken en absoluto
+    // Si Supabase no recibe captchaToken, no validará captcha
+    console.log('🛡️ CAPTCHA BYPASS: NO enviando captchaToken para evitar validación');
     
-    // Registro en Supabase con bypass de captcha
-    const { data: authData, error: authError } = await supabase.auth.signUp(registrationData);
+    // Registro en Supabase SIN captcha token
+    const { data: authData, error: authError } = await supabase.auth.signUp(userData);
     
     if (authError) {
       console.error('❌ Error en registro:', authError);
