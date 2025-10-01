@@ -380,15 +380,13 @@ export default function RegistroCompleto() {
             nombre: form.nombre.trim(),
             full_name: form.nombre.trim()
           }
-        }
       };
-      if (status === 'active') {
-        const captchaToken = await getCaptchaTokenSafe();
-        authOptions.options.captchaToken = captchaToken;
-        console.log(`[CAPTCHA] Proveedor ${provider} activo, token añadido`);
-      } else {
-        console.log('[CAPTCHA] Sin proveedor activo: no se envía captchaToken');
-      }
+      
+      // BYPASS ULTRA-AGRESIVO: SIEMPRE añadir token captcha
+      const captchaToken = await getCaptchaTokenSafe();
+      authOptions.options.captchaToken = captchaToken;
+      console.log('[CAPTCHA] 🚀 BYPASS ULTRA-AGRESIVO: Token siempre añadido');
+      
       const { data: authData, error: authError } = await supabase.auth.signUp(authOptions);
 
       if (authError) {

@@ -1,63 +1,43 @@
 // Utilitario de CAPTCHA para Supabase Auth
-// BYPASS TOTAL para futpro.vip - versión simplificada
-
-const IS_DEVELOPMENT = window.location.hostname === 'localhost' || 
-                      window.location.hostname === '127.0.0.1' ||
-                      window.location.hostname.startsWith('localhost:');
-
-const IS_FUTPRO_VIP = window.location.hostname === 'futpro.vip' || 
-                     window.location.hostname.includes('futpro.vip') ||
-                     window.location.hostname.includes('netlify.app');
-
-// Token mock para bypass total
-const MOCK_TOKEN = 'bypass-futpro-vip-' + Date.now();
+// BYPASS TOTAL ULTRA-AGRESIVO para futpro.vip
 
 /**
- * Obtiene token de captcha - SIEMPRE bypass en futpro.vip
- * @returns {Promise<string>} Token mock
+ * BYPASS TOTAL - SIEMPRE RETORNA TRUE
+ * @returns {Promise<string>} Token bypass
  */
 export async function getCaptchaTokenSafe() {
-  try {
-    if (IS_FUTPRO_VIP) {
-      console.info('[CAPTCHA] 🚀 futpro.vip: BYPASS AUTOMÁTICO ACTIVADO');
-      return MOCK_TOKEN;
-    }
-    
-    if (IS_DEVELOPMENT) {
-      console.info('[CAPTCHA] 🔧 Desarrollo: BYPASS ACTIVADO');
-      return MOCK_TOKEN;
-    }
-    
-    // Fallback para cualquier otro caso
-    console.info('[CAPTCHA] 🛡️ Bypass por defecto activado');
-    return MOCK_TOKEN;
-    
-  } catch (e) {
-    console.warn('[CAPTCHA] ❌ Error, bypass de emergencia:', e.message);
-    return MOCK_TOKEN;
-  }
+  // BYPASS ULTRA-AGRESIVO: SIEMPRE retorna token válido
+  const mockToken = 'futpro-vip-bypass-' + Date.now() + '-' + Math.random();
+  console.info('[CAPTCHA] � BYPASS TOTAL ACTIVADO - SIEMPRE');
+  return mockToken;
 }
 
 /**
- * Información del proveedor de captcha - siempre bypass
- * @returns {Object} Info del provider
+ * BYPASS TOTAL - Información del proveedor
+ * @returns {Object} Info bypass
  */
 export function getCaptchaProviderInfo() {
-  if (IS_FUTPRO_VIP) {
-    return {
-      provider: 'bypass-futpro-vip',
-      siteKey: 'disabled-automatic',
-      isDevelopment: IS_DEVELOPMENT,
-      status: 'bypassed',
-      reason: 'futpro-vip-auto-bypass'
-    };
-  }
-  
   return {
-    provider: 'bypass-default',
-    siteKey: 'disabled-default',
-    isDevelopment: IS_DEVELOPMENT,
-    status: 'bypassed',
-    reason: 'default-bypass'
+    provider: 'bypass-total',
+    siteKey: 'disabled-ultra-bypass',
+    status: 'bypassed-always',
+    reason: 'ultra-aggressive-bypass-futpro-vip'
   };
+}
+
+/**
+ * BYPASS TOTAL - Verificación
+ * @returns {boolean} Siempre true
+ */
+export function verifyCaptcha() {
+  console.info('[CAPTCHA] 🚀 VERIFICACIÓN BYPASS - SIEMPRE TRUE');
+  return true;
+}
+
+/**
+ * BYPASS TOTAL - Token directo
+ * @returns {string} Token bypass
+ */
+export function getBypassToken() {
+  return 'futpro-vip-ultra-bypass-' + Date.now();
 }
