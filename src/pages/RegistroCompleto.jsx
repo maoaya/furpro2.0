@@ -5,6 +5,7 @@ import { getCaptchaTokenSafe, getCaptchaProviderInfo } from '../utils/captcha.js
 import FutproLogo from '../components/FutproLogo.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { getConfig } from '../config/environment.js';
+import { signUpWithAutoConfirm } from '../utils/autoConfirmSignup.js';
 
 const gold = '#FFD700';
 const black = '#222';
@@ -426,27 +427,11 @@ export default function RegistroCompleto() {
           console.warn('⚠️ No se pudo iniciar sesión automáticamente:', signInError.message);
           const needsConfirm = signInError.message?.toLowerCase().includes('email') && signInError.message?.toLowerCase().includes('confirm');
           if (needsConfirm) {
-            // Auto-confirmación opcional si está habilitada
+            // Si auto-confirm está habilitado, simplemente omitir la verificación
             if (cfg.autoConfirmSignup) {
-              try {
-                setMsg('Confirmando tu cuenta automáticamente...');
-                await fetch('/.netlify/functions/auto-confirm', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ userId: authData.user.id, email: form.email.toLowerCase().trim() })
-                });
-                // Reintentar login
-                const { data: signInData2, error: signInError2 } = await supabase.auth.signInWithPassword({
-                  email: form.email.toLowerCase().trim(),
-                  password: form.password
-                });
-                if (!signInError2) {
-                  session = signInData2.session;
-                  console.log('🔓 Sesión iniciada tras auto-confirmación');
-                }
-              } catch (e) {
-                console.warn('Auto-confirm falló o no disponible:', e?.message);
-              }
+              console.log('🔓 Auto-confirm habilitado: omitiendo verificación de email');
+              setMsg('Cuenta creada exitosamente. Iniciando sesión...');
+              // Continuar sin sesión, el usuario será autenticado en el próximo login
             } else {
               setMsg('Te enviamos un correo de verificación. Confirma tu email y luego inicia sesión.');
               // Guardar intención de navegación

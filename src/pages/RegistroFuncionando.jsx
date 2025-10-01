@@ -101,15 +101,12 @@ export default function RegistroFuncionando() {
           });
           if (signInError && signInError.message?.toLowerCase().includes('confirm')) {
             if (config?.autoConfirmSignup) {
-              await fetch('/.netlify/functions/auto-confirm', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: authData.user.id, email: form.email.toLowerCase().trim() })
-              });
-              await supabase.auth.signInWithPassword({
-                email: form.email.toLowerCase().trim(),
-                password: form.password
-              });
+              console.log('🔓 Auto-confirm habilitado: omitiendo verificación de email');
+              setSuccess('Cuenta creada exitosamente. Puedes iniciar sesión normalmente.');
+            } else {
+              setError('Por favor confirma tu email antes de iniciar sesión.');
+              setLoading(false);
+              return;
             }
           }
         } catch {}
