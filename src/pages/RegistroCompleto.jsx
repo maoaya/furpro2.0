@@ -37,6 +37,9 @@ export default function RegistroCompleto() {
   const [msg, setMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [hideAutoConfirmBanner, setHideAutoConfirmBanner] = useState(
+    typeof window !== 'undefined' ? localStorage.getItem('hideAutoConfirmBanner') === 'true' : false
+  );
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -559,6 +562,35 @@ export default function RegistroCompleto() {
         maxWidth: '600px',
         boxShadow: `0 20px 60px rgba(0, 0, 0, 0.5)`
       }}>
+        {/* Banner QA: auto-confirm activo */}
+        {cfg.autoConfirmSignup && !hideAutoConfirmBanner && (
+          <div style={{
+            background: '#1e3a8a',
+            color: '#fff',
+            border: `1px solid ${gold}`,
+            borderRadius: '8px',
+            padding: '10px 12px',
+            marginBottom: '16px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: '12px'
+          }}>
+            <span>Modo QA: la verificación por email está desactivada (auto-confirm activo)</span>
+            <button
+              type="button"
+              onClick={() => { localStorage.setItem('hideAutoConfirmBanner', 'true'); setHideAutoConfirmBanner(true); }}
+              style={{
+                background: 'transparent',
+                color: gold,
+                border: `1px solid ${gold}`,
+                borderRadius: '6px',
+                padding: '2px 8px',
+                cursor: 'pointer'
+              }}
+            >Ocultar</button>
+          </div>
+        )}
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
           <FutproLogo size={80} />
