@@ -48,6 +48,7 @@ export const getConfig = () => {
     isProduction,
     isDevelopment,
     isNetlify,
+  autoConfirmSignup: (import.meta.env.VITE_AUTO_CONFIRM_SIGNUP === 'true'),
     
     // Configuraciones de debug
     enableDebugLogs: isDevelopment,

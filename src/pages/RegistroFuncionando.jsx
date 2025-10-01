@@ -87,8 +87,30 @@ export default function RegistroFuncionando() {
         return;
       }
 
-      console.log('✅ Usuario registrado:', authData.user?.email);
+  console.log('✅ Usuario registrado:', authData.user?.email);
       setSuccess('¡Registro exitoso! Redirigiendo...');
+      // Intentar iniciar sesión si Supabase requiere confirmación y autoConfirm está activo
+      if (!authData.session) {
+        try {
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+            email: form.email.toLowerCase().trim(),
+            password: form.password
+          });
+          if (signInError && signInError.message?.toLowerCase().includes('confirm')) {
+            if (config?.autoConfirmSignup) {
+              await fetch('/.netlify/functions/auto-confirm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: authData.user.id, email: form.email.toLowerCase().trim() })
+              });
+              await supabase.auth.signInWithPassword({
+                email: form.email.toLowerCase().trim(),
+                password: form.password
+              });
+            }
+          }
+        } catch {}
+      }
 
       // Guardar algunos metadatos útiles
       if (authData?.user?.email) {
