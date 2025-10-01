@@ -3,7 +3,7 @@
   # Copiar .env.netlify a un archivo que Vite cargue en producción y luego construir
   command = "bash -lc 'cp .env.netlify .env.production || cp .env.netlify .env; npm run build'"
   publish = "dist"
-  functions = "netlify/functions"
+  functions = "functions"
 
 [build.environment]
   NODE_VERSION = "18"
