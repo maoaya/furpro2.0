@@ -2,10 +2,6 @@
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment';
 
-// Utilidad para configurar Supabase sin confirmación de email obligatoria
-import supabase from '../supabaseClient';
-import { getConfig } from '../config/environment';
-
 /**
  * Registra un usuario con auto-confirmación si está habilitada
  * @param {Object} userData - Datos del usuario (email, password, options)
@@ -61,47 +57,6 @@ export async function signUpWithAutoConfirm(userData) {
       };
     }
     
-  } catch (error) {
-    console.error('💥 Error inesperado en registro:', error);
-    return { success: false, error };
-  }
-}
-          } else {
-            throw signInError;
-          }
-        } else {
-          console.log('🔓 Sesión iniciada automáticamente');
-          return {
-            success: true,
-            user: authData.user,
-            session: signInData.session,
-            needsEmailConfirmation: false,
-            message: 'Cuenta creada e iniciada sesión exitosamente.'
-          };
-        }
-      } catch (loginError) {
-        console.warn('⚠️ No se pudo iniciar sesión automáticamente:', loginError.message);
-        // Continuar sin error si auto-confirm está activo
-        return {
-          success: true,
-          user: authData.user,
-          session: null,
-          needsEmailConfirmation: false,
-          message: 'Cuenta creada exitosamente. Puedes iniciar sesión normalmente.'
-        };
-      }
-    } else {
-      // Comportamiento normal
-      return {
-        success: true,
-        user: authData.user,
-        session: authData.session,
-        needsEmailConfirmation: !authData.session,
-        message: authData.session ? 
-          'Cuenta creada e iniciada sesión exitosamente.' : 
-          'Cuenta creada. Verifica tu email para activarla.'
-      };
-    }
   } catch (error) {
     console.error('💥 Error inesperado en registro:', error);
     return { success: false, error };
