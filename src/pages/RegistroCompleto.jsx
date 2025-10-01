@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { getConfig } from '../config/environment.js';
 import { signUpWithAutoConfirm } from '../utils/autoConfirmSignup.js';
 import { signupBypass } from '../api/signupBypass';
+import { ensureHomeNavigation } from '../utils/redirectStabilizer';
 
 const gold = '#FFD700';
 const black = '#222';
@@ -459,16 +460,16 @@ export default function RegistroCompleto() {
           if (needsConfirm) {
             // Si auto-confirm está habilitado, simplemente omitir la verificación
             if (cfg.autoConfirmSignup) {
-              console.log('🔓 Auto-confirm habilitado: omitiendo verificación de email');
+              console.log('🏠 Auto-confirm habilitado: omitiendo verificación de email');
               setMsg('Cuenta creada exitosamente. Iniciando sesión...');
-              // Continuar sin sesión, el usuario será autenticado en el próximo login
-            } else {
-              setMsg('Te enviamos un correo de verificación. Confirma tu email y luego inicia sesión.');
-              // Guardar intención de navegación
-              localStorage.setItem('postLoginRedirect', '/home');
-              setLoading(false);
-              return;
             }
+
+            // Señales y navegación estable
+            localStorage.setItem('registroCompleto', 'true');
+            localStorage.setItem('authCompleted', 'true');
+            setTimeout(() => ensureHomeNavigation(navigate, { target: '/home' }), 300);
+
+            return;
           }
         } else {
           session = signInData.session;

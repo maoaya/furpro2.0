@@ -5,6 +5,7 @@ import FutproLogo from '../components/FutproLogo.jsx';
 import { getConfig } from '../config/environment';
 import { signUpWithAutoConfirm } from '../utils/autoConfirmSignup';
 import { signupBypass } from '../api/signupBypass';
+import { ensureHomeNavigation } from '../utils/redirectStabilizer';
 
 const gold = '#FFD700';
 const black = '#222';
@@ -167,8 +168,8 @@ export default function RegistroFuncionando() {
           localStorage.setItem('registroCompleto', 'true');
           localStorage.setItem('authCompleted', 'true');
         setTimeout(() => {
-          navigate('/home', { replace: true });
-        }, 1500);
+          ensureHomeNavigation(navigate, { target: '/home' });
+        }, 300);
       } else {
         // Comportamiento normal: ir a login si no hay sesión
         if (result.session) {
