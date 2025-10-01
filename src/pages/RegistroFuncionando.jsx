@@ -127,6 +127,9 @@ export default function RegistroFuncionando() {
       // Auto-confirm está activo, ir directo a /home sin importar si hay sesión
       if (config?.autoConfirmSignup) {
         console.log('🏠 Auto-confirm activo: redirigiendo a /home');
+          // Marcar que el registro está completo para que ProtectedRoute no redirija inmediatamente
+          localStorage.setItem('registroCompleto', 'true');
+          localStorage.setItem('authCompleted', 'true');
         setTimeout(() => {
           navigate('/home', { replace: true });
         }, 1500);

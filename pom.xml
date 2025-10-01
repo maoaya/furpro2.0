@@ -1,3 +1,8 @@
+<!--
+    NOTA: Este pom.xml es legacy y no se usa en el proyecto React actual.
+    El proyecto principal está en package.json y se despliega con Netlify.
+    Las advertencias de este archivo se pueden ignorar.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -9,7 +14,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.6</version> <!-- Actualizada según sugerencia -->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <properties>

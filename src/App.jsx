@@ -25,6 +25,7 @@ import NotFoundPage from './pages/NotFoundPage';
 
 
 import BottomNav from './components/BottomNav';
+import HomePage from './pages/HomePage';
 
 function Layout({ children }) {
   return (
@@ -43,6 +44,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Layout><FeedPage /></Layout>} />
+        <Route path="/home" element={<Layout><HomePage /></Layout>} />
         <Route path="/perfil/:userId" element={<Layout><PerfilPage /></Layout>} />
         <Route path="/notificaciones" element={<Layout><NotificationsPage /></Layout>} />
         <Route path="/admin" element={<Layout><AdminPanelPage /></Layout>} />
