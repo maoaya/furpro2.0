@@ -17,6 +17,7 @@ import EquiposPage from './pages/EquiposPage';
 import PerfilPage from './pages/PerfilPage';
 import TestRegistroFlow from './components/TestRegistroFlow';
 import StatusMonitor from './components/StatusMonitor';
+import AuthDiagnostic from './components/AuthDiagnostic';
 
 // Componentes lazy loading opcionales
 const Dashboard = React.lazy(() => import('./Dashboard').catch(() => ({ default: HomePage })));
@@ -105,6 +106,7 @@ export default function FutProApp() {
   return (
     <BrowserRouter>
       <StatusMonitor />
+      <AuthDiagnostic />
       <Routes>      
         {/* Rutas públicas (sin autenticación) */}
         <Route path="/auth" element={<AuthPageUnificada />} />

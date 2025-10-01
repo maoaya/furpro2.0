@@ -81,23 +81,85 @@ const AuthPageUnificada = () => {
       console.log('📝 Registrando usuario con email...');
       setSuccess('Creando cuenta...');
 
-      // 1. Registrar en Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // 1. Registrar en Supabase Auth con configuración optimizada para producción
+      const signUpOptions = {
         email: formData.email.toLowerCase().trim(),
         password: formData.password,
         options: {
           data: {
             nombre: formData.nombre.trim(),
-            full_name: `${formData.nombre} ${formData.apellido}`.trim()
-          }
+            apellido: formData.apellido.trim(),
+            full_name: `${formData.nombre} ${formData.apellido}`.trim(),
+            avatar_url: null
+          },
+          // Configuración para producción - auto confirmación si está habilitada
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          shouldCreateUser: true
         }
-      });
+      };
+
+      console.log('🔄 Enviando registro a Supabase...', { email: signUpOptions.email });
+      
+      const { data: authData, error: authError } = await supabase.auth.signUp(signUpOptions);
 
       if (authError) {
         console.error('❌ Error en Auth:', authError);
         
-        if (authError.message?.includes('already registered')) {
+        // Manejo específico de errores comunes
+        if (authError.message?.includes('already registered') || authError.message?.includes('already been registered')) {
           setError('Este email ya está registrado. Intenta hacer login.');
+          return;
+        }
+        
+        if (authError.message?.includes('Invalid email')) {
+          setError('Email inválido. Verifica el formato.');
+          return;
+        }
+        
+        if (authError.message?.includes('Password')) {
+          setError('La contraseña debe tener al menos 6 caracteres.');
+          return;
+        }
+        
+        if (authError.message?.includes('502') || authError.message?.includes('bypass')) {
+          console.warn('⚠️ Error 502 detectado, intentando método alternativo...');
+          setSuccess('Reintentando registro...');
+          
+          // Método alternativo: intentar login directo si el usuario ya existe
+          const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+            email: formData.email.toLowerCase().trim(),
+            password: formData.password
+          });
+          
+          if (!loginError && loginData.user) {
+            console.log('✅ Login exitoso como método alternativo');
+            setSuccess('¡Acceso exitoso!');
+            
+            // Continuar con el flujo normal
+            const userData = {
+              id: loginData.user.id,
+              email: loginData.user.email,
+              nombre: formData.nombre,
+              apellido: formData.apellido
+            };
+            
+            handleSuccessfulAuth(userData, navigate);
+            return;
+          }
+        }
+        
+        // Error genérico
+        setError(`Error en registro: ${authError.message}`);
+        return;
+      }
+
+      if (!authData.user) {
+        setError('No se pudo crear la cuenta. Intenta nuevamente.');
+        return;
+      }
+
+      console.log('✅ Usuario registrado en Auth:', authData.user.email);
+      setSuccess('Cuenta creada. Configurando perfil...');
           return;
         }
         
