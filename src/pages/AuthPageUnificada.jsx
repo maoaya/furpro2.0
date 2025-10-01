@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment.js';
 import { handleSuccessfulAuth } from '../utils/navigationUtils.js';
+import { robustSignUp, robustSignIn, createUserProfile } from '../utils/authUtils.js';
 
 const AuthPageUnificada = () => {
   const navigate = useNavigate();
@@ -82,149 +83,71 @@ const AuthPageUnificada = () => {
       console.log('📝 Registrando usuario con email...');
       setSuccess('Creando cuenta...');
 
-      // 1. Registrar en Supabase Auth con configuración optimizada para producción
-      const signUpOptions = {
-        email: formData.email.toLowerCase().trim(),
-        password: formData.password,
-        options: {
-          data: {
-            nombre: formData.nombre.trim(),
-            apellido: formData.apellido.trim(),
-            full_name: `${formData.nombre} ${formData.apellido}`.trim(),
-            avatar_url: null
-          },
-          // Configuración para producción - auto confirmación si está habilitada
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          shouldCreateUser: true
+      // Usar función robusta de signup que maneja errores 502
+      const signupResult = await robustSignUp(
+        formData.email,
+        formData.password,
+        {
+          nombre: formData.nombre.trim(),
+          apellido: formData.apellido.trim()
         }
-      };
+      );
 
-      console.log('🔄 Enviando registro a Supabase...', { email: signUpOptions.email });
+      if (!signupResult.success) {
+        console.error('❌ Error en signup robusto:', signupResult.error);
+        setError(`Error en registro: ${signupResult.error}`);
+        return;
+      }
+
+      console.log(`✅ Signup exitoso con método: ${signupResult.method}`);
       
-      const { data: authData, error: authError } = await supabase.auth.signUp(signUpOptions);
-
-      if (authError) {
-        console.error('❌ Error en Auth:', authError);
-        
-        // Manejo específico de errores comunes
-        if (authError.message?.includes('already registered') || authError.message?.includes('already been registered')) {
-          setError('Este email ya está registrado. Intenta hacer login.');
-          return;
-        }
-        
-        if (authError.message?.includes('Invalid email')) {
-          setError('Email inválido. Verifica el formato.');
-          return;
-        }
-        
-        if (authError.message?.includes('Password')) {
-          setError('La contraseña debe tener al menos 6 caracteres.');
-          return;
-        }
-        
-        if (authError.message?.includes('502') || authError.message?.includes('bypass')) {
-          console.warn('⚠️ Error 502 detectado, intentando método alternativo...');
-          setSuccess('Reintentando registro...');
-          
-          // Método alternativo: intentar login directo si el usuario ya existe
-          const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-            email: formData.email.toLowerCase().trim(),
-            password: formData.password
-          });
-          
-          if (!loginError && loginData.user) {
-            console.log('✅ Login exitoso como método alternativo');
-            setSuccess('¡Acceso exitoso!');
-            
-            // Continuar con el flujo normal
-            const userData = {
-              id: loginData.user.id,
-              email: loginData.user.email,
-              nombre: formData.nombre,
-              apellido: formData.apellido
-            };
-            
-            handleSuccessfulAuth(userData, navigate);
-            return;
-          }
-        }
-        
-        // Error genérico
-        setError(`Error en registro: ${authError.message}`);
-        return;
+      if (signupResult.message) {
+        setSuccess(signupResult.message);
+      } else {
+        setSuccess('Cuenta creada. Configurando perfil...');
       }
 
-      if (!authData.user) {
-        setError('No se pudo crear la cuenta. Intenta nuevamente.');
-        return;
-      }
+      const userData = signupResult.data.user;
 
-      console.log('✅ Usuario registrado en Auth:', authData.user.email);
-      setSuccess('Cuenta creada. Configurando perfil...');
-          return;
+      // Crear perfil usando función robusta
+      if (signupResult.method === 'signup' || signupResult.method === 'simple-signup') {
+        const profileResult = await createUserProfile({
+          id: userData.id,
+          email: userData.email,
+          nombre: formData.nombre.trim(),
+          apellido: formData.apellido?.trim() || ''
+        });
+
+        if (!profileResult.success) {
+          console.warn('⚠️ Error creando perfil:', profileResult.error);
+          // Continuar aunque falle el perfil
+        } else {
+          console.log('✅ Perfil creado exitosamente');
         }
-        
-        setError(`Error de registro: ${authError.message}`);
-        return;
       }
 
-      console.log('✅ Usuario registrado en Auth:', authData.user?.email);
-
-      // 2. Crear perfil en la tabla usuarios
-      const perfilData = {
-        id: authData.user.id,
-        email: formData.email.toLowerCase().trim(),
-        nombre: formData.nombre.trim(),
-        apellido: formData.apellido?.trim() || '',
-        rol: 'usuario',
-        tipo_usuario: 'jugador',
-        estado: 'activo',
-        posicion: 'Por definir',
-        frecuencia_juego: 1,
-        pais: 'España',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+      // Preparar datos del usuario para navegación
+      const userDataForNav = {
+        id: userData.id,
+        email: userData.email,
+        nombre: formData.nombre,
+        apellido: formData.apellido
       };
 
-      const { data: profileData, error: profileError } = await supabase
-        .from('usuarios')
-        .insert([perfilData])
-        .select();
-
-      if (profileError) {
-        console.error('❌ Error creando perfil:', profileError);
-        // Continuar aunque falle el perfil
-      } else {
-        console.log('✅ Perfil creado exitosamente');
-      }
-
-      // 3. Intentar iniciar sesión automáticamente
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: formData.email.toLowerCase().trim(),
-        password: formData.password
-      });
-
-      if (signInError) {
-        console.warn('⚠️ No se pudo iniciar sesión automáticamente, pero cuenta creada');
-        setSuccess('¡Cuenta creada exitosamente! Por favor inicia sesión.');
-        setIsLogin(true);
-        return;
-      }
-
-      console.log('✅ Sesión iniciada automáticamente');
+      console.log('✅ Registro completado, iniciando navegación...');
       setSuccess('¡Registro exitoso! Bienvenido a FutPro...');
       
       // Guardar datos del usuario
       localStorage.setItem('userRegistrado', JSON.stringify({
-        id: authData.user.id,
-        email: formData.email,
+        id: userData.id,
+        email: userData.email,
         nombre: formData.nombre,
         registrado: true,
         timestamp: new Date().toISOString()
       }));
 
-      // Navegar a HomePage
-      navigateToHome();
+      // Usar función de navegación robusta
+      handleSuccessfulAuth(userDataForNav, navigate);
 
     } catch (error) {
       console.error('💥 Error inesperado:', error);
@@ -250,30 +173,27 @@ const AuthPageUnificada = () => {
       console.log('🔐 Iniciando sesión con email...');
       setSuccess('Iniciando sesión...');
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email.toLowerCase().trim(),
-        password: formData.password
-      });
+      // Usar función robusta de login
+      const loginResult = await robustSignIn(formData.email, formData.password);
 
-      if (error) {
-        console.error('❌ Error en login:', error);
-        setError(`Error de login: ${error.message}`);
+      if (!loginResult.success) {
+        console.error('❌ Error en login robusto:', loginResult.error);
+        setError(`Error de login: ${loginResult.error}`);
         return;
       }
 
-      console.log('✅ Login exitoso:', data.user?.email);
+      console.log('✅ Login exitoso:', loginResult.data.user?.email);
       setSuccess('¡Login exitoso! Bienvenido de vuelta...');
       
-      // Guardar datos del usuario
-      localStorage.setItem('userRegistrado', JSON.stringify({
-        id: data.user.id,
-        email: data.user.email,
-        loginSuccess: true,
-        timestamp: new Date().toISOString()
-      }));
+      const userData = {
+        id: loginResult.data.user.id,
+        email: loginResult.data.user.email,
+        nombre: loginResult.data.user.user_metadata?.nombre || 'Usuario',
+        apellido: loginResult.data.user.user_metadata?.apellido || ''
+      };
 
-      // Navegar a HomePage
-      navigateToHome();
+      // Usar función de navegación robusta
+      handleSuccessfulAuth(userData, navigate);
 
     } catch (error) {
       console.error('💥 Error inesperado en login:', error);
