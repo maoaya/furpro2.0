@@ -4,11 +4,51 @@
 const IS_DEVELOPMENT = window.location.hostname === 'localhost' || 
                       window.location.hostname === '127.0.0.1' ||
                       window.location.hostname.startsWith('localhost:');
-const PROVIDER = (typeof import !== 'undefined' && typeof import.meta !== 'undefined' && import.meta.env?.VITE_CAPTCHA_PROVIDER) || '';
-const SITE_KEY = (typeof import !== 'undefined' && typeof import.meta !== 'undefined' && import.meta.env?.VITE_CAPTCHA_SITE_KEY) || '';
+
+// Función segura para obtener variables de entorno
+function getEnvVar(name) {
+  try {
+    // En Vite, las variables están en import.meta.env
+    if (typeof globalThis !== 'undefined' && globalThis.import && globalThis.import.meta && globalThis.import.meta.env) {
+      return globalThis.import.meta.env[name];
+    }
+    // Fallback para diferentes entornos
+    if (typeof window !== 'undefined' && window.import && window.import.meta && window.import.meta.env) {
+      return window.import.meta.env[name];
+    }
+    return '';
+  } catch (e) {
+    return '';
+  }
+}
+
+const PROVIDER = getEnvVar('VITE_CAPTCHA_PROVIDER') || '';
+const SITE_KEY = getEnvVar('VITE_CAPTCHA_SITE_KEY') || '';
+const AUTO_CONFIRM = getEnvVar('VITE_AUTO_CONFIRM_SIGNUP') || '';
 
 // Token mock para desarrollo y fallback
 const MOCK_TOKEN = 'mock-captcha-token-' + Date.now();
+
+// Función para verificar si auto-confirm está activo
+function isAutoConfirmActive() {
+  try {
+    // Verificar variable de entorno directamente
+    if (AUTO_CONFIRM === 'true' || AUTO_CONFIRM === true) {
+      return true;
+    }
+    
+    // Fallback: verificar si estamos en modo desarrollo
+    if (IS_DEVELOPMENT) {
+      return true;
+    }
+    
+    return false;
+  } catch (e) {
+    // Si hay error, usar desarrollo como fallback seguro
+    console.warn('[CAPTCHA] Error verificando auto-confirm, usando desarrollo:', e.message);
+    return IS_DEVELOPMENT;
+  }
+}
 
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -91,28 +131,54 @@ async function getHCaptchaToken() {
 
 export async function getCaptchaTokenSafe() {
   try {
-    // Si estamos en producción y hay proveedor configurado, obtener token real
-    const isProd = !IS_DEVELOPMENT;
-    if (isProd && PROVIDER && SITE_KEY) {
-      console.info(`[CAPTCHA] Intentando obtener token real con ${PROVIDER}`);
-      if (PROVIDER.toLowerCase() === 'turnstile') {
-        return await getTurnstileToken();
-      }
-      if (PROVIDER.toLowerCase() === 'hcaptcha') {
-        return await getHCaptchaToken();
-      }
-      console.warn('[CAPTCHA] Proveedor no reconocido, usando bypass');
-    } else {
-      console.info('[CAPTCHA] Modo dev o sin configuración: usando bypass');
+    // PRIORIDAD 1: Si auto-confirm está activo, SIEMPRE usar bypass
+    if (isAutoConfirmActive()) {
+      console.info('[CAPTCHA] ✅ Auto-confirm activo: bypass forzado de captcha');
+      return MOCK_TOKEN;
     }
+    
+    // PRIORIDAD 2: Si estamos en desarrollo, usar bypass
+    if (IS_DEVELOPMENT) {
+      console.info('[CAPTCHA] ✅ Modo desarrollo: bypass de captcha');
+      return MOCK_TOKEN;
+    }
+    
+    // PRIORIDAD 3: Si no hay configuración de captcha, usar bypass
+    if (!PROVIDER || !SITE_KEY) {
+      console.info('[CAPTCHA] ✅ Sin configuración captcha: bypass');
+      return MOCK_TOKEN;
+    }
+    
+    // ÚLTIMO RECURSO: Intentar captcha real en producción
+    console.info(`[CAPTCHA] ⚠️ Intentando captcha real con ${PROVIDER}`);
+    if (PROVIDER.toLowerCase() === 'turnstile') {
+      return await getTurnstileToken();
+    }
+    if (PROVIDER.toLowerCase() === 'hcaptcha') {
+      return await getHCaptchaToken();
+    }
+    
+    console.warn('[CAPTCHA] ⚠️ Proveedor no reconocido, usando bypass');
     return MOCK_TOKEN;
+    
   } catch (e) {
-    console.warn('Error en CAPTCHA, usando bypass:', e.message);
+    console.warn('[CAPTCHA] ❌ Error en captcha, usando bypass:', e.message);
     return MOCK_TOKEN;
   }
 }
 
 export function getCaptchaProviderInfo() {
+  // Verificar si auto-confirm está activo
+  if (isAutoConfirmActive()) {
+    return {
+      provider: 'bypass-auto-confirm',
+      siteKey: 'disabled-auto-confirm',
+      isDevelopment: IS_DEVELOPMENT,
+      status: 'bypassed',
+      reason: 'auto-confirm-active'
+    };
+  }
+  
   const isProd = !IS_DEVELOPMENT;
   return {
     provider: PROVIDER || 'mock',
