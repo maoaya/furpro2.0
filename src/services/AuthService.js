@@ -117,6 +117,8 @@ export class AuthService {
           scopes: 'email profile'
         }
       };
+      // Marcar redirect objetivo
+      try { localStorage.setItem('postLoginRedirect', '/home'); } catch {}
 
       // Configuración específica para móviles
       if (isMobile) {
@@ -162,6 +164,7 @@ export class AuthService {
           }
         }
       })
+      try { localStorage.setItem('postLoginRedirect', '/home'); } catch {}
 
       if (error) throw error
 

@@ -1,10 +1,11 @@
 // Utilitario de CAPTCHA para Supabase Auth
-// SIMPLIFICADO: Solo bypass en desarrollo y modo básico en producción
+// En producción usa Turnstile/hCaptcha si se configuran las envs; en dev usa bypass
 
 const IS_DEVELOPMENT = window.location.hostname === 'localhost' || 
                       window.location.hostname === '127.0.0.1' ||
-                      window.location.hostname === 'localhost:4173' ||
-                      window.location.hostname === 'localhost:4174';
+                      window.location.hostname.startsWith('localhost:');
+const PROVIDER = (typeof import !== 'undefined' && typeof import.meta !== 'undefined' && import.meta.env?.VITE_CAPTCHA_PROVIDER) || '';
+const SITE_KEY = (typeof import !== 'undefined' && typeof import.meta !== 'undefined' && import.meta.env?.VITE_CAPTCHA_SITE_KEY) || '';
 
 // Token mock para desarrollo y fallback
 const MOCK_TOKEN = 'mock-captcha-token-' + Date.now();
@@ -90,20 +91,33 @@ async function getHCaptchaToken() {
 
 export async function getCaptchaTokenSafe() {
   try {
-    // SIEMPRE usar token mock - evitar problemas de CAPTCHA
-    console.info('[CAPTCHA] Usando token mock para evitar errores');
+    // Si estamos en producción y hay proveedor configurado, obtener token real
+    const isProd = !IS_DEVELOPMENT;
+    if (isProd && PROVIDER && SITE_KEY) {
+      console.info(`[CAPTCHA] Intentando obtener token real con ${PROVIDER}`);
+      if (PROVIDER.toLowerCase() === 'turnstile') {
+        return await getTurnstileToken();
+      }
+      if (PROVIDER.toLowerCase() === 'hcaptcha') {
+        return await getHCaptchaToken();
+      }
+      console.warn('[CAPTCHA] Proveedor no reconocido, usando bypass');
+    } else {
+      console.info('[CAPTCHA] Modo dev o sin configuración: usando bypass');
+    }
     return MOCK_TOKEN;
   } catch (e) {
-    console.warn('Error en CAPTCHA:', e.message);
-    return MOCK_TOKEN; // Siempre devolver token mock
+    console.warn('Error en CAPTCHA, usando bypass:', e.message);
+    return MOCK_TOKEN;
   }
 }
 
 export function getCaptchaProviderInfo() {
-  return { 
-    provider: 'mock', 
-    siteKey: 'disabled',
+  const isProd = !IS_DEVELOPMENT;
+  return {
+    provider: PROVIDER || 'mock',
+    siteKey: SITE_KEY || 'disabled',
     isDevelopment: IS_DEVELOPMENT,
-    status: 'bypassed'
+    status: (isProd && PROVIDER && SITE_KEY) ? 'active' : 'bypassed'
   };
 }

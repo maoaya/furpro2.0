@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
+import { getCaptchaTokenSafe, getCaptchaProviderInfo } from '../utils/captcha.js';
 import FutproLogo from '../components/FutproLogo.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -354,11 +355,11 @@ export default function RegistroCompleto() {
         }
       }
 
-      // REGISTRO DIRECTO SIN CAPTCHA - SOLUCION DEFINITIVA
+      // REGISTRO DIRECTO CON BYPASS DE CAPTCHA
       console.log('� Registrando usuario directamente...');
       setMsg('Creando cuenta de usuario...');
-      
-      // Registro en Supabase Auth - SIN captcha para evitar errores
+      // Obtener token mock siempre
+      const { status, provider } = getCaptchaProviderInfo();
       const authOptions = {
         email: form.email.toLowerCase().trim(),
         password: form.password,
@@ -369,10 +370,13 @@ export default function RegistroCompleto() {
           }
         }
       };
-      
-      // NO agregar captcha por ahora para evitar errores
-      console.log('🚫 CAPTCHA deshabilitado temporalmente');
-      
+      if (status === 'active') {
+        const captchaToken = await getCaptchaTokenSafe();
+        authOptions.options.captchaToken = captchaToken;
+        console.log(`[CAPTCHA] Proveedor ${provider} activo, token añadido`);
+      } else {
+        console.log('[CAPTCHA] Sin proveedor activo: no se envía captchaToken');
+      }
       const { data: authData, error: authError } = await supabase.auth.signUp(authOptions);
 
       if (authError) {
@@ -387,7 +391,7 @@ export default function RegistroCompleto() {
         } else if (authError.message?.includes('signup_disabled')) {
           setError('El registro está temporalmente deshabilitado. Intenta más tarde.');
         } else if (authError.message?.toLowerCase().includes('captcha')) {
-          setError('Error de registro: la verificación de seguridad falló. Por favor recarga la página e inténtalo de nuevo. Si el problema persiste, intenta con el botón "Iniciar con Google".');
+          setError('Error de registro: la verificación de seguridad falló. Se está forzando el bypass, intenta de nuevo. Si el problema persiste, contacta soporte.');
         } else {
           setError(`Error de registro: ${authError.message}`);
         }
@@ -494,7 +498,7 @@ export default function RegistroCompleto() {
       setTimeout(() => {
         console.log('🔄 Navegando a /home después del registro completo');
         navigate('/home', { replace: true });
-      }, 3000);
+      }, 2000);
 
     } catch (error) {
       console.error('💥 Error inesperado en registro:', error);
