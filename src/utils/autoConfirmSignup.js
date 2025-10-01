@@ -2,6 +2,10 @@
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment';
 
+// Utilidad para configurar Supabase sin confirmación de email obligatoria
+import supabase from '../supabaseClient';
+import { getConfig } from '../config/environment';
+
 /**
  * Registra un usuario con auto-confirmación si está habilitada
  * @param {Object} userData - Datos del usuario (email, password, options)
@@ -23,31 +27,45 @@ export async function signUpWithAutoConfirm(userData) {
     
     console.log('✅ Usuario registrado:', authData.user?.email);
     
-    // Si auto-confirm está habilitado y no hay sesión activa
-    if (config.autoConfirmSignup && !authData.session) {
-      console.log('🔓 Auto-confirm habilitado: intentando iniciar sesión directamente');
-      
-      try {
-        // Intentar login directo (puede fallar si requiere confirmación)
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email: userData.email,
-          password: userData.password
-        });
-        
-        if (signInError) {
-          const needsConfirm = signInError.message?.toLowerCase().includes('email') && 
-                              signInError.message?.toLowerCase().includes('confirm');
-          
-          if (needsConfirm) {
-            console.log('📧 Confirmación de email requerida, pero auto-confirm está activo');
-            // En lugar de fallar, permitir que continúe
-            return {
-              success: true,
-              user: authData.user,
-              session: null,
-              needsEmailConfirmation: false, // Lo marcamos como false para omitir
-              message: 'Cuenta creada exitosamente. Puedes iniciar sesión normalmente.'
-            };
+    // Si auto-confirm está habilitado, SIEMPRE continuar sin importar si hay sesión
+    if (config.autoConfirmSignup) {
+      console.log('🔓 Auto-confirm habilitado: omitiendo verificación de email completamente');
+      return {
+        success: true,
+        user: authData.user,
+        session: authData.session, // Puede ser null, no importa
+        needsEmailConfirmation: false,
+        message: 'Cuenta creada exitosamente. Redirigiendo a inicio...',
+        autoConfirmActive: true
+      };
+    }
+    
+    // Si auto-confirm NO está habilitado, seguir comportamiento normal
+    if (!authData.session) {
+      console.log('📧 Se requiere confirmación de email');
+      return {
+        success: true,
+        user: authData.user,
+        session: null,
+        needsEmailConfirmation: true,
+        message: 'Cuenta creada. Verifica tu email para activarla.'
+      };
+    } else {
+      console.log('🔓 Sesión iniciada automáticamente');
+      return {
+        success: true,
+        user: authData.user,
+        session: authData.session,
+        needsEmailConfirmation: false,
+        message: 'Cuenta creada e iniciada sesión exitosamente.'
+      };
+    }
+    
+  } catch (error) {
+    console.error('💥 Error inesperado en registro:', error);
+    return { success: false, error };
+  }
+}
           } else {
             throw signInError;
           }

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import FutproLogo from '../components/FutproLogo.jsx';
 import { getConfig } from '../config/environment';
+import { signUpWithAutoConfirm } from '../utils/autoConfirmSignup';
 
 const gold = '#FFD700';
 const black = '#222';
@@ -64,8 +65,8 @@ export default function RegistroFuncionando() {
       console.log('🚀 Iniciando registro...');
       setSuccess('Registrando usuario...');
 
-      // Registro directo en Supabase AUTH - SIN CAPTCHA
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Usar utilidad de auto-confirm para manejo inteligente
+      const registroData = {
         email: form.email.toLowerCase().trim(),
         password: form.password,
         options: {
@@ -74,53 +75,31 @@ export default function RegistroFuncionando() {
             full_name: form.nombre.trim()
           }
         }
-      });
+      };
 
-      if (authError) {
-        console.error('❌ Error en registro:', authError);
+      const result = await signUpWithAutoConfirm(registroData);
+
+      if (!result.success) {
+        console.error('❌ Error en registro:', result.error);
         
-        if (authError.message?.includes('already registered')) {
+        if (result.error.message?.includes('already registered')) {
           setError('Este email ya está registrado. Ve al login para iniciar sesión.');
           setTimeout(() => navigate('/'), 3000);
           return;
         } else {
-          setError(`Error: ${authError.message}`);
+          setError(`Error: ${result.error.message}`);
         }
         setLoading(false);
         return;
       }
 
-  console.log('✅ Usuario registrado:', authData.user?.email);
-      setSuccess('¡Registro exitoso! Redirigiendo...');
-      // Intentar iniciar sesión si Supabase requiere confirmación y autoConfirm está activo
-      if (!authData.session) {
-        try {
-          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-            email: form.email.toLowerCase().trim(),
-            password: form.password
-          });
-          if (signInError && signInError.message?.toLowerCase().includes('confirm')) {
-            if (config?.autoConfirmSignup) {
-              console.log('🔓 Auto-confirm habilitado: omitiendo verificación de email');
-              setSuccess('Cuenta creada exitosamente. Puedes iniciar sesión normalmente.');
-            } else {
-              setError('Por favor confirma tu email antes de iniciar sesión.');
-              setLoading(false);
-              return;
-            }
-          }
-        } catch {}
-      }
+      console.log('✅ Usuario registrado exitosamente');
+      setSuccess(result.message || '¡Registro exitoso! Redirigiendo...');
 
-      // Guardar algunos metadatos útiles
-      if (authData?.user?.email) {
-        localStorage.setItem('lastAuthUserEmail', authData.user.email);
-      }
-
-      // Crear perfil básico en tabla usuarios
-      if (authData.user) {
+      // Crear perfil básico en tabla usuarios si tenemos el usuario
+      if (result.user) {
         const perfilData = {
-          id: authData.user.id,
+          id: result.user.id,
           email: form.email.toLowerCase().trim(),
           nombre: form.nombre.trim(),
           created_at: new Date().toISOString(),
@@ -140,11 +119,30 @@ export default function RegistroFuncionando() {
         }
       }
 
-      // Redirigir después de una breve pausa para UX
-      setTimeout(() => {
-        // Intentamos usar la ruta SPA para mantener el estado del router
-        navigate('/home', { replace: true });
-      }, 1500);
+      // Guardar metadatos útiles
+      if (result.user?.email) {
+        localStorage.setItem('lastAuthUserEmail', result.user.email);
+      }
+
+      // Auto-confirm está activo, ir directo a /home sin importar si hay sesión
+      if (config?.autoConfirmSignup) {
+        console.log('🏠 Auto-confirm activo: redirigiendo a /home');
+        setTimeout(() => {
+          navigate('/home', { replace: true });
+        }, 1500);
+      } else {
+        // Comportamiento normal: ir a login si no hay sesión
+        if (result.session) {
+          setTimeout(() => {
+            navigate('/home', { replace: true });
+          }, 1500);
+        } else {
+          setSuccess('Registro exitoso. Por favor confirma tu email antes de iniciar sesión.');
+          setTimeout(() => {
+            navigate('/', { replace: true });
+          }, 3000);
+        }
+      }
 
     } catch (error) {
       console.error('💥 Error inesperado:', error);
