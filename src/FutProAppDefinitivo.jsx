@@ -11,6 +11,7 @@ import LayoutPrincipal from './components/LayoutPrincipal.jsx';
 import CallbackPage from './pages/CallbackPage.jsx';
 import PageInDevelopment from './components/PageInDevelopment.jsx';
 import OAuthLiveTest from './pages/OAuthLiveTest.jsx';
+import DebugConfig from './pages/DebugConfig.jsx';
 
 // Componente protegido simple
 function ProtectedRoute({ children }) {
@@ -147,6 +148,7 @@ export default function FutProAppDefinitivo() {
       {/* Registro completo */}
       <Route path="/registro" element={<RegistroFuncionando />} />
       <Route path="/registro-completo" element={<RegistroCompleto />} />
+      <Route path="/debug-config" element={<DebugConfig />} />
       
       {/* Callback para OAuth */}
       <Route path="/auth/callback" element={<CallbackPage />} />
