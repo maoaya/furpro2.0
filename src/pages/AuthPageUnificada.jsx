@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment.js';
+import { handleSuccessfulAuth } from '../utils/navigationUtils.js';
 
 const AuthPageUnificada = () => {
   const navigate = useNavigate();
