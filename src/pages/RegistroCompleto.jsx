@@ -380,6 +380,7 @@ export default function RegistroCompleto() {
             nombre: form.nombre.trim(),
             full_name: form.nombre.trim()
           }
+        }
       };
       
       // BYPASS ULTRA-AGRESIVO: SIEMPRE añadir token captcha
