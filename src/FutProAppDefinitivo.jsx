@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import TestPage from './pages/TestPage.jsx';
@@ -17,33 +17,45 @@ import DebugConfig from './pages/DebugConfig.jsx';
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [graceMode, setGraceMode] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
-      // Verificar si hay un registro recién completado
-      const registroCompleto = localStorage.getItem('registroCompleto');
-      const authCompleted = localStorage.getItem('authCompleted');
-      
-      if (registroCompleto === 'true' || authCompleted === 'true') {
-        console.log('⏳ Registro recién completado, esperando actualización del contexto...');
-        // Dar más tiempo para que el contexto se actualice
-        setTimeout(() => {
-          if (!user) {
-            console.log('❌ Usuario no autenticado después del registro, redirigiendo al login');
-            localStorage.removeItem('registroCompleto');
-            navigate('/', { replace: true });
-          }
-        }, 2000);
+    if (loading) return;
+
+    if (!user) {
+      const registroCompleto = localStorage.getItem('registroCompleto') === 'true';
+      const authCompleted = localStorage.getItem('authCompleted') === 'true';
+
+      if (registroCompleto || authCompleted) {
+        // Permitir acceso temporal mientras se establece la sesión
+        if (!graceMode) {
+          console.log('🟡 ProtectedRoute: modo gracia activo tras registro, permitiendo acceso temporal a la ruta protegida');
+          setGraceMode(true);
+          // Limpiar modo gracia si tras 2 minutos no hay sesión
+          const t = setTimeout(() => {
+            if (!user) {
+              console.log('⏱️ Fin del modo gracia sin sesión activa. Volviendo al login.');
+              setGraceMode(false);
+              localStorage.removeItem('registroCompleto');
+              localStorage.removeItem('authCompleted');
+              navigate('/', { replace: true });
+            }
+          }, 120000);
+          return () => clearTimeout(t);
+        }
         return;
       }
-      
+
       console.log('❌ Usuario no autenticado, redirigiendo al login');
       navigate('/', { replace: true });
-    } else if (user) {
-      // Limpiar marcadores cuando el usuario está autenticado
-      localStorage.removeItem('registroCompleto');
+      return;
     }
-  }, [user, loading, navigate]);
+
+    // Usuario autenticado: limpiar marcadores y modo gracia
+    if (graceMode) setGraceMode(false);
+    localStorage.removeItem('registroCompleto');
+    localStorage.removeItem('authCompleted');
+  }, [user, loading, navigate, graceMode]);
 
   if (loading) {
     return (
@@ -64,7 +76,7 @@ function ProtectedRoute({ children }) {
     );
   }
 
-  if (!user) return null;
+  if (!user && !graceMode) return null;
 
   return children;
 }
@@ -79,13 +91,13 @@ export default function FutProAppDefinitivo() {
     if (user) {
       const userRegistrado = localStorage.getItem('userRegistrado');
       const redirectTarget = localStorage.getItem('postLoginRedirect') || '/home';
-      
-      if (location.pathname === '/' || location.pathname === '/registro') {
+
+      const shouldRedirectFrom = ['/', '/registro', '/registro-completo', '/auth/callback'];
+      if (shouldRedirectFrom.includes(location.pathname)) {
         console.log(`✅ Usuario autenticado, redirigiendo a: ${redirectTarget}`);
         console.log('📝 Datos de usuario registrado:', userRegistrado);
-        
+
         localStorage.removeItem('postLoginRedirect');
-        // No eliminar userRegistrado inmediatamente, puede ser útil
         navigate(redirectTarget, { replace: true });
       }
     }
