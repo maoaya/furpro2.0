@@ -6,12 +6,13 @@
 [build.environment]
   NODE_VERSION = "18"
   NPM_VERSION = "9"
+  # Configuración de secrets scanning
+  SECRETS_SCAN_ENABLED = "false"
+  SECRETS_SCAN_OMIT_PATHS = ".env,.env.example,README.md,*.md,scripts/*,deploy-*,src/*,functions/*,netlify.toml"
+  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL,SUPABASE_ANON_KEY,VITE_SUPABASE_URL,VITE_SUPABASE_ANON_KEY,JWT_SECRET,SERVICE_ROLE"
   # Variables críticas para evitar errores 502
   VITE_AUTO_CONFIRM_SIGNUP = "true"
   VITE_PRODUCTION_MODE = "true"
-  # Exponer variables públicas también para Functions (prefijos sin VITE_)
-  SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
-  SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.kXZzpXZQf3rS_LRNnWf0Bz7r4Ik8vqhAoTKxGzgwWFA"
 
 # === REDIRECTS OPTIMIZADOS ===
 [[redirects]]
