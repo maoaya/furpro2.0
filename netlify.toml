@@ -9,6 +9,9 @@
   # Variables críticas para evitar errores 502
   VITE_AUTO_CONFIRM_SIGNUP = "true"
   VITE_PRODUCTION_MODE = "true"
+  # Exponer variables públicas también para Functions (prefijos sin VITE_)
+  SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
+  SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.kXZzpXZQf3rS_LRNnWf0Bz7r4Ik8vqhAoTKxGzgwWFA"
 
 # === REDIRECTS OPTIMIZADOS ===
 [[redirects]]
@@ -32,6 +35,12 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
+  status = 200
+
+# Rutas para funciones explícitas (opcional)
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
   status = 200
 
 # === HEADERS ANTI-502 OPTIMIZADOS ===

@@ -38,12 +38,37 @@ export const robustSignUp = async (email, password, additionalData = {}) => {
 
             // Manejo específico de errores
             if (authError) {
-                console.warn(`⚠️ Error en intento ${attempt}:`, authError.message);
-                
-                // Error 502 específico
-                if (authError.message?.includes('502') || 
-                    authError.message?.includes('bypass') ||
-                    authError.message?.includes('Bad Gateway')) {
+              console.warn(`⚠️ Error en intento ${attempt}:`, authError.message);
+
+              // Fallback vía función Netlify (signup-proxy)
+              try {
+                const resp = await fetch('/.netlify/functions/signup-proxy', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email,
+                    password,
+                    metadata: {
+                      nombre: additionalData.nombre || '',
+                      apellido: additionalData.apellido || ''
+                    }
+                  })
+                });
+                const json = await resp.json();
+                if (resp.ok && json?.data?.user) {
+                  console.log('✅ Signup vía Netlify Function exitoso');
+                  return { success: true, data: json.data, method: 'netlify-signup', attempt };
+                } else {
+                  console.warn('⚠️ Fallback Netlify signup falló:', json?.error || json);
+                }
+              } catch (fnErr) {
+                console.warn('⚠️ Error llamando a función Netlify signup:', fnErr.message);
+              }
+
+              // Error 502 específico
+              if (authError.message?.includes('502') || 
+                  authError.message?.includes('bypass') ||
+                  authError.message?.includes('Bad Gateway')) {
                     
                     console.log('🔄 Error 502 detectado, probando estrategia alternativa...');
                     
@@ -160,29 +185,44 @@ export const robustSignUp = async (email, password, additionalData = {}) => {
  * Función robusta de login
  */
 export const robustSignIn = async (email, password) => {
-    console.log('🔐 Iniciando login robusto para:', email);
-    
-    try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email.toLowerCase().trim(),
-            password: password
+  console.log('🔐 Iniciando login robusto para:', email);
+  
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.toLowerCase().trim(),
+      password: password
+    });
+
+    if (error) {
+      // Fallback vía función Netlify (signin-proxy)
+      try {
+        const resp = await fetch('/.netlify/functions/signin-proxy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
         });
-
-        if (error) {
-            return { success: false, error: error.message };
+        const json = await resp.json();
+        if (resp.ok && json?.data?.user) {
+          console.log('✅ Login vía Netlify Function exitoso');
+          return { success: true, data: json.data, method: 'netlify-signin' };
         }
+      } catch (fnErr) {
+        console.warn('⚠️ Error llamando a función Netlify signin:', fnErr.message);
+      }
 
-        if (data.user) {
-            console.log('✅ Login exitoso');
-            return { success: true, data, method: 'password-login' };
-        }
-
-        return { success: false, error: 'No se recibieron datos del usuario' };
-
-    } catch (networkError) {
-        console.error('💥 Error de red en login:', networkError);
-        return { success: false, error: `Error de red: ${networkError.message}` };
+      return { success: false, error: error.message };
     }
+
+    if (data.user) {
+      console.log('✅ Login exitoso');
+      return { success: true, data, method: 'password-login' };
+    }
+
+    return { success: false, error: 'No se recibieron datos del usuario' };
+  } catch (networkError) {
+    console.error('💥 Error de red en login:', networkError);
+    return { success: false, error: `Error de red: ${networkError.message}` };
+  }
 };
 
 /**
