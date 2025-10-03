@@ -1,4 +1,7 @@
-# Netlify Production Config - Fixed Domain Issue
+# Netlify Prod  VITE_PRODUCTION_MODE = "true"
+  # Force rebuild con timestamp
+  NETLIFY_BUILD_ID = "production-fix-2025-10-03-v8-FINAL"
+  # Supabase envs para build en Netlify (frontend)on Config - Fixed Domain Issue
 # Configuración corregida para resolver ERR_CONNECTION_REFUSED
 
 [build]
@@ -14,10 +17,14 @@
   VITE_AUTO_CONFIRM_SIGNUP = "true"
   VITE_PRODUCTION_MODE = "true"
   # Force rebuild con timestamp
-  NETLIFY_BUILD_ID = "production-fix-2025-10-03-v7-DEPLOY-NOW"
+  NETLIFY_BUILD_ID = "production-fix-2025-10-03-v9-ERROR-502-FIX"
   # Supabase envs para build en Netlify (frontend)
   VITE_SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
   VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8"
+  # Nota: SUPABASE_SERVICE_ROLE_KEY debe configurarse en Netlify Dashboard
+  # Variables de entorno para funciones Netlify (backend)
+  SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
+  SUPABASE_SERVICE_ROLE_KEY = ""
 
 [functions]
   directory = "functions"
