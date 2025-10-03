@@ -14,7 +14,7 @@
   VITE_AUTO_CONFIRM_SIGNUP = "true"
   VITE_PRODUCTION_MODE = "true"
   # Force rebuild con timestamp
-  NETLIFY_BUILD_ID = "production-fix-2025-10-02-v6"
+  NETLIFY_BUILD_ID = "production-fix-2025-10-03-v7-DEPLOY-NOW"
   # Supabase envs para build en Netlify (frontend)
   VITE_SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
   VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8"

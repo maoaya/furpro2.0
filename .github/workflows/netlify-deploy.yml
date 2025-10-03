@@ -1,8 +1,7 @@
 name: Deploy to Netlify (futpro.vip)
 
 on:
-  push:
-    branches: [ "master" ]
+  workflow_dispatch:
 
 concurrency:
   group: netlify-deploy
