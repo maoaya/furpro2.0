@@ -1,7 +1,8 @@
-# Netlify Deploy Emergency Config
-# Configuración de emergencia para resolver ERR_CONNECTION_REFUSED
+# Netlify Production Config - Fixed Domain Issue
+# Configuración corregida para resolver ERR_CONNECTION_REFUSED
 
 [build]
+  base = "."
   publish = "dist"
   command = "npm run build"
   ignore = "false"
@@ -12,15 +13,16 @@
   SECRETS_SCAN_ENABLED = "false"
   VITE_AUTO_CONFIRM_SIGNUP = "true"
   VITE_PRODUCTION_MODE = "true"
-  # Force rebuild
-  NETLIFY_BUILD_ID = "emergency-deploy-2025-10-02"
+  # Force rebuild con timestamp
+  NETLIFY_BUILD_ID = "production-fix-2025-10-02-v3"
+  # Supabase envs para build en Netlify (frontend)
+  VITE_SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8"
+
+[functions]
+  directory = "functions"
 
 # Custom domain settings
-[[redirects]]
-  from = "https://futpro.vip/*"
-  to = "https://furpro20.netlify.app/:splat"
-  status = 301
-  force = true
 
 [[redirects]]
   from = "/auth/*"
@@ -51,6 +53,3 @@
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
     Access-Control-Allow-Headers = "*"
-
-[functions]
-  directory = "functions"
