@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Test Navegación Post-Auth - FutPro</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #FFD700;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #181818;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #FFD700;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: #222;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 4px solid #FFD700;
+        }
+        .test-button {
+            background: #FFD700;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 10px 10px 0;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            background: #FFA500;
+            transform: translateY(-2px);
+        }
+        .test-button:disabled {
+            background: #666;
+            color: #999;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            word-break: break-word;
+        }
+        .success { border-left: 4px solid #28a745; }
+        .error { border-left: 4px solid #dc3545; }
+        .warning { border-left: 4px solid #ffc107; }
+        .info { border-left: 4px solid #17a2b8; }
+        .emoji { font-size: 1.2em; margin-right: 8px; }
+        .navigation-test {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Test de Navegación Post-Autenticación</h1>
+            <p>Herramienta para verificar que la navegación a HomePage funciona correctamente</p>
+        </div>
+
+        <div class="test-section">
+            <h3><span class="emoji">🔍</span>Estado de la Aplicación</h3>
+            <div class="navigation-test">
+                <button class="test-button" onclick="checkAppStatus()">Verificar Estado</button>
+                <button class="test-button" onclick="clearLocalStorage()">Limpiar LocalStorage</button>
+                <button class="test-button" onclick="checkAuthFlow()">Test AuthFlow</button>
+            </div>
+            <div id="app-status" class="status info">
+                <strong>📊 Estado:</strong> Esperando verificación...
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3><span class="emoji">🔄</span>Tests de Navegación</h3>
+            <div class="navigation-test">
+                <button class="test-button" onclick="testDirectNavigation()">Navegación Directa</button>
+                <button class="test-button" onclick="testWithDelay()">Navegación con Delay</button>
+                <button class="test-button" onclick="testWindowLocation()">Window.location</button>
+                <button class="test-button" onclick="testMultipleMethods()">Métodos Múltiples</button>
+            </div>
+            <div id="navigation-status" class="status info">
+                <strong>🎯 Navegación:</strong> Esperando test...
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3><span class="emoji">🔐</span>Simulación de Autenticación</h3>
+            <div class="navigation-test">
+                <button class="test-button" onclick="simulateAuth()">Simular Login</button>
+                <button class="test-button" onclick="simulateOAuth()">Simular OAuth</button>
+                <button class="test-button" onclick="simulateRegistration()">Simular Registro</button>
+            </div>
+            <div id="auth-status" class="status info">
+                <strong>🔑 Auth:</strong> Sin simulación activa...
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3><span class="emoji">📈</span>Resultados</h3>
+            <div id="results" class="status info">
+                <strong>📋 Resultados:</strong> Ejecuta los tests para ver resultados...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = [];
+
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `status ${type}`;
+            element.innerHTML = message;
+        }
+
+        function addResult(test, success, details) {
+            const timestamp = new Date().toLocaleTimeString();
+            testResults.push({ test, success, details, timestamp });
+            updateResults();
+        }
+
+        function updateResults() {
+            const resultsElement = document.getElementById('results');
+            let html = '<strong>📋 Resultados de Tests:</strong><br><br>';
+            
+            testResults.forEach((result, index) => {
+                const icon = result.success ? '✅' : '❌';
+                const status = result.success ? 'exitoso' : 'fallido';
+                html += `${icon} <strong>${result.test}</strong> - ${status} (${result.timestamp})<br>`;
+                if (result.details) {
+                    html += `&nbsp;&nbsp;&nbsp;&nbsp;${result.details}<br>`;
+                }
+                html += '<br>';
+            });
+
+            resultsElement.innerHTML = html;
+            resultsElement.className = 'status info';
+        }
+
+        async function checkAppStatus() {
+            updateStatus('app-status', '<strong>📊 Estado:</strong> Verificando...', 'info');
+            
+            try {
+                // Verificar si la app está corriendo
+                const response = await fetch('http://localhost:3000/health').catch(() => null);
+                const serverRunning = response && response.ok;
+                
+                const authCompleted = localStorage.getItem('authCompleted');
+                const loginSuccess = localStorage.getItem('loginSuccess');
+                const userSession = localStorage.getItem('session');
+                
+                const status = `
+                    <strong>📊 Estado de la Aplicación:</strong><br>
+                    🖥️ Servidor: ${serverRunning ? '✅ Activo (puerto 3000)' : '❌ Inactivo'}<br>
+                    🔐 Auth Completada: ${authCompleted ? '✅ Sí' : '❌ No'}<br>
+                    ✅ Login Success: ${loginSuccess ? '✅ Sí' : '❌ No'}<br>
+                    👤 Sesión de Usuario: ${userSession ? '✅ Guardada' : '❌ No encontrada'}<br>
+                    📍 Página actual: ${window.location.pathname}<br>
+                    🌐 Host: ${window.location.hostname}
+                `;
+                
+                updateStatus('app-status', status, serverRunning ? 'success' : 'warning');
+                addResult('Estado de App', serverRunning, `Servidor ${serverRunning ? 'activo' : 'inactivo'}`);
+                
+            } catch (error) {
+                updateStatus('app-status', `<strong>❌ Error:</strong> ${error.message}`, 'error');
+                addResult('Estado de App', false, error.message);
+            }
+        }
+
+        function clearLocalStorage() {
+            const keysToRemove = [
+                'authCompleted', 'loginSuccess', 'session', 'userEmail', 'userId',
+                'postLoginRedirect', 'registroCompleto', 'authPending', 'userRegistrado'
+            ];
+            
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+            
+            updateStatus('app-status', '<strong>🧹 LocalStorage limpiado:</strong> Todos los marcadores de auth eliminados', 'success');
+            addResult('Limpiar Storage', true, `${keysToRemove.length} claves eliminadas`);
+        }
+
+        async function testDirectNavigation() {
+            updateStatus('navigation-status', '<strong>🎯 Navegación:</strong> Probando navegación directa...', 'info');
+            
+            try {
+                // Simular que hay un usuario autenticado
+                localStorage.setItem('authCompleted', 'true');
+                localStorage.setItem('loginSuccess', 'true');
+                
+                // Intentar navegación
+                const startTime = Date.now();
+                window.location.href = '/home';
+                
+                // Si llegamos aquí, la navegación fue iniciada
+                const duration = Date.now() - startTime;
+                addResult('Navegación Directa', true, `Iniciada en ${duration}ms`);
+                
+            } catch (error) {
+                updateStatus('navigation-status', `<strong>❌ Error:</strong> ${error.message}`, 'error');
+                addResult('Navegación Directa', false, error.message);
+            }
+        }
+
+        async function testWithDelay() {
+            updateStatus('navigation-status', '<strong>🎯 Navegación:</strong> Probando con delay...', 'info');
+            
+            try {
+                localStorage.setItem('authCompleted', 'true');
+                
+                setTimeout(() => {
+                    try {
+                        window.location.href = '/home';
+                        addResult('Navegación con Delay', true, 'Ejecutada después de 1s');
+                    } catch (error) {
+                        addResult('Navegación con Delay', false, error.message);
+                    }
+                }, 1000);
+                
+                updateStatus('navigation-status', '<strong>⏱️ Navegación programada:</strong> Ejecutándose en 1 segundo...', 'warning');
+                
+            } catch (error) {
+                updateStatus('navigation-status', `<strong>❌ Error:</strong> ${error.message}`, 'error');
+                addResult('Navegación con Delay', false, error.message);
+            }
+        }
+
+        function testWindowLocation() {
+            updateStatus('navigation-status', '<strong>🎯 Navegación:</strong> Probando window.location.replace...', 'info');
+            
+            try {
+                localStorage.setItem('authCompleted', 'true');
+                window.location.replace('/home');
+                addResult('Window.location.replace', true, 'Método ejecutado');
+            } catch (error) {
+                updateStatus('navigation-status', `<strong>❌ Error:</strong> ${error.message}`, 'error');
+                addResult('Window.location.replace', false, error.message);
+            }
+        }
+
+        async function testMultipleMethods() {
+            updateStatus('navigation-status', '<strong>🎯 Navegación:</strong> Probando múltiples métodos...', 'info');
+            
+            const methods = [
+                { name: 'history.pushState', exec: () => history.pushState({}, '', '/home') },
+                { name: 'window.location.assign', exec: () => window.location.assign('/home') },
+                { name: 'window.location.href', exec: () => window.location.href = '/home' }
+            ];
+            
+            let successCount = 0;
+            
+            for (const method of methods) {
+                try {
+                    await new Promise(resolve => {
+                        setTimeout(() => {
+                            method.exec();
+                            successCount++;
+                            resolve();
+                        }, 100);
+                    });
+                } catch (error) {
+                    console.warn(`Método ${method.name} falló:`, error);
+                }
+            }
+            
+            const success = successCount > 0;
+            addResult('Métodos Múltiples', success, `${successCount}/${methods.length} métodos exitosos`);
+            updateStatus('navigation-status', 
+                `<strong>📊 Métodos múltiples:</strong> ${successCount}/${methods.length} exitosos`, 
+                success ? 'success' : 'error'
+            );
+        }
+
+        function simulateAuth() {
+            updateStatus('auth-status', '<strong>🔑 Auth:</strong> Simulando login exitoso...', 'info');
+            
+            // Simular datos de login exitoso
+            const mockUser = {
+                id: 'test-user-123',
+                email: 'test@futpro.com',
+                name: 'Usuario Test'
+            };
+            
+            localStorage.setItem('authCompleted', 'true');
+            localStorage.setItem('loginSuccess', 'true');
+            localStorage.setItem('userEmail', mockUser.email);
+            localStorage.setItem('userId', mockUser.id);
+            localStorage.setItem('session', JSON.stringify(mockUser));
+            
+            updateStatus('auth-status', 
+                `<strong>✅ Login simulado:</strong> Usuario ${mockUser.email} autenticado`, 
+                'success'
+            );
+            addResult('Simulación Login', true, `Usuario ${mockUser.email} creado`);
+            
+            // Intentar navegación automática
+            setTimeout(() => {
+                testDirectNavigation();
+            }, 1000);
+        }
+
+        function simulateOAuth() {
+            updateStatus('auth-status', '<strong>🔑 Auth:</strong> Simulando OAuth exitoso...', 'info');
+            
+            const mockOAuthUser = {
+                id: 'oauth-user-456',
+                email: 'oauth@futpro.com',
+                provider: 'google',
+                name: 'OAuth User'
+            };
+            
+            localStorage.setItem('authCompleted', 'true');
+            localStorage.setItem('loginSuccess', 'true');
+            localStorage.setItem('userRegistrado', JSON.stringify({
+                ...mockOAuthUser,
+                oauthSuccess: true,
+                timestamp: new Date().toISOString()
+            }));
+            
+            updateStatus('auth-status', 
+                `<strong>✅ OAuth simulado:</strong> ${mockOAuthUser.provider} - ${mockOAuthUser.email}`, 
+                'success'
+            );
+            addResult('Simulación OAuth', true, `Provider: ${mockOAuthUser.provider}`);
+        }
+
+        function simulateRegistration() {
+            updateStatus('auth-status', '<strong>🔑 Auth:</strong> Simulando registro exitoso...', 'info');
+            
+            const mockNewUser = {
+                id: 'new-user-789',
+                email: 'nuevo@futpro.com',
+                nombre: 'Usuario Nuevo',
+                apellido: 'Test'
+            };
+            
+            localStorage.setItem('authCompleted', 'true');
+            localStorage.setItem('registroCompleto', 'true');
+            localStorage.setItem('userRegistrado', JSON.stringify({
+                ...mockNewUser,
+                registroExitoso: true,
+                timestamp: new Date().toISOString()
+            }));
+            
+            updateStatus('auth-status', 
+                `<strong>✅ Registro simulado:</strong> ${mockNewUser.nombre} ${mockNewUser.apellido}`, 
+                'success'
+            );
+            addResult('Simulación Registro', true, `Usuario ${mockNewUser.email} registrado`);
+        }
+
+        async function checkAuthFlow() {
+            updateStatus('app-status', '<strong>📊 Estado:</strong> Verificando AuthFlow...', 'info');
+            
+            try {
+                // Verificar si AuthFlowManager está disponible
+                const hasAuthFlowManager = window.authFlowManager || 
+                    (window.parent && window.parent.authFlowManager);
+                
+                const hasNavigationUtils = localStorage.getItem('navigationUtilsLoaded') === 'true';
+                
+                const status = `
+                    <strong>🔧 AuthFlow Status:</strong><br>
+                    📦 AuthFlowManager: ${hasAuthFlowManager ? '✅ Disponible' : '❌ No encontrado'}<br>
+                    🧭 NavigationUtils: ${hasNavigationUtils ? '✅ Cargado' : '❌ No verificado'}<br>
+                    📍 Ruta actual: ${window.location.pathname}<br>
+                    🔄 History length: ${history.length}<br>
+                    🌐 Origin: ${window.location.origin}
+                `;
+                
+                updateStatus('app-status', status, hasAuthFlowManager ? 'success' : 'warning');
+                addResult('Check AuthFlow', hasAuthFlowManager, hasAuthFlowManager ? 'Manager disponible' : 'Manager no encontrado');
+                
+            } catch (error) {
+                updateStatus('app-status', `<strong>❌ Error:</strong> ${error.message}`, 'error');
+                addResult('Check AuthFlow', false, error.message);
+            }
+        }
+
+        // Auto-check al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(checkAppStatus, 500);
+        });
+
+        // Verificar navegación actual
+        if (window.location.pathname === '/home') {
+            updateStatus('navigation-status', 
+                '<strong>🎉 ¡ÉXITO!</strong> Ya estás en HomePage (/home)', 
+                'success'
+            );
+            addResult('Verificación Actual', true, 'Ya estás en HomePage');
+        }
+    </script>
+</body>
+</html>

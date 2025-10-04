@@ -17,8 +17,25 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       
       try {
+        console.log('🔄 AuthContext: Inicializando autenticación...');
+        
+        // Verificar localStorage primero para indicaciones de auth exitosa
+        const authCompleted = localStorage.getItem('authCompleted') === 'true';
+        const loginSuccess = localStorage.getItem('loginSuccess') === 'true';
+        const userSession = localStorage.getItem('session');
+        
+        if (authCompleted || loginSuccess || userSession) {
+          console.log('📝 Indicadores de auth encontrados en localStorage:', {
+            authCompleted, loginSuccess, hasSession: !!userSession
+          });
+        }
+        
         // Intentar obtener sesión actual de Supabase
         const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('❌ Error obteniendo sesión:', error);
+        }
         
         if (session && session.user) {
           console.log('✅ Sesión encontrada:', session.user.email);
@@ -46,8 +63,32 @@ export const AuthProvider = ({ children }) => {
           // Guardar en localStorage
           localStorage.setItem('session', JSON.stringify(session.user));
           localStorage.setItem('authCompleted', 'true');
+          
+        } else if (authCompleted || loginSuccess) {
+          // Hay indicadores de auth pero no sesión - intentar refresh
+          console.log('🔄 Indicadores de auth sin sesión, intentando refresh...');
+          
+          const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+          
+          if (refreshData.session?.user) {
+            console.log('✅ Sesión recuperada tras refresh:', refreshData.session.user.email);
+            setUser(refreshData.session.user);
+            localStorage.setItem('session', JSON.stringify(refreshData.session.user));
+          } else {
+            console.log('❌ No se pudo recuperar sesión tras refresh');
+            // Mantener loading más tiempo para dar chance a auth state change
+            setTimeout(() => {
+              const stillNoUser = !localStorage.getItem('session');
+              if (stillNoUser) {
+                console.log('⏱️ Timeout: limpiando indicadores de auth sin sesión válida');
+                localStorage.removeItem('authCompleted');
+                localStorage.removeItem('loginSuccess');
+              }
+            }, 5000);
+          }
+          
         } else {
-          // No hay sesión activa
+          // No hay sesión activa ni indicadores
           console.log('❌ No hay sesión activa');
           setUser(null);
           setRole('guest');

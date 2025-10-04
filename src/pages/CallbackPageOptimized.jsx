@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import supabase from '../supabaseClient';
+import { authFlowManager, handleAuthenticationSuccess } from '../utils/authFlowManager.js';
 
 export default function CallbackPageOptimized() {
   const navigate = useNavigate();
@@ -81,38 +82,32 @@ export default function CallbackPageOptimized() {
           }
         }
 
-        // Marcar autenticación como completa
-        localStorage.setItem('authCompleted', 'true');
-        localStorage.setItem('userRegistrado', JSON.stringify({
-          id: user.id,
-          email: user.email,
+        console.log('🎉 OAuth callback procesado. Usando AuthFlowManager...');
+        setStatus('¡Éxito! Configurando navegación...');
+
+        // Usar el nuevo AuthFlowManager para navegación robusta
+        const resultado = await handleAuthenticationSuccess(user, navigate, {
           nombre: user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
-          oauthSuccess: true,
-          provider: user.app_metadata?.provider,
-          timestamp: new Date().toISOString()
-        }));
+          provider: user.app_metadata?.provider
+        });
 
-        console.log('🎉 OAuth callback completado exitosamente');
-        setStatus('¡Éxito! Redirigiendo a tu dashboard...');
-
-        // Navegación robusta a HomePage
-        setTimeout(() => {
-          try {
-            console.log('🔄 Navegando a /home desde callback');
-            navigate('/home', { replace: true });
-          } catch (navError) {
-            console.log('🔄 Fallback: navegando con window.location');
-            window.location.href = '/home';
-          }
-        }, 1500);
-
-        // Fallback adicional
-        setTimeout(() => {
-          if (window.location.pathname !== '/home') {
-            console.log('🔄 Segundo fallback ejecutándose');
-            window.location.href = '/home';
-          }
-        }, 3000);
+        if (resultado.success) {
+          console.log('✅ Navegación exitosa con AuthFlowManager');
+          setStatus('¡Redirigiendo a tu dashboard!');
+        } else {
+          console.log('⚠️ Problema con AuthFlowManager, usando fallback');
+          setStatus('Finalizando configuración...');
+          
+          // Fallback al método anterior
+          localStorage.setItem('authCompleted', 'true');
+          setTimeout(() => {
+            try {
+              navigate('/home', { replace: true });
+            } catch (navError) {
+              window.location.href = '/home';
+            }
+          }, 1000);
+        }
 
       } catch (error) {
         console.error('💥 Error inesperado en callback:', error);

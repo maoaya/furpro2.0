@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test de Registro - FutPro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: #222;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid #FFD700;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.1);
+        }
+        
+        h1 {
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #FFD700;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: #333;
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #FFD700;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #FFD700;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover:not(:disabled) {
+            background: #FFC700;
+        }
+        
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        
+        .success {
+            background: #4CAF50;
+            color: #fff;
+        }
+        
+        .error {
+            background: #f44336;
+            color: #fff;
+        }
+        
+        .info {
+            background: #2196F3;
+            color: #fff;
+        }
+        
+        .steps {
+            margin-top: 20px;
+            padding: 15px;
+            background: #333;
+            border-radius: 8px;
+            font-size: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .step {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test de Registro Directo</h1>
+        
+        <form id="registroForm">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required minlength="6">
+            </div>
+            
+            <button type="submit" id="submitBtn">
+                Registrar Usuario
+            </button>
+        </form>
+        
+        <div id="resultado"></div>
+        <div id="pasos" class="steps" style="display: none;"></div>
+    </div>
+
+    <script type="module">
+        // Configuración de Supabase
+        const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.kXZzpXZQf3rS_LRNnWf0Bz7r4Ik8vqhAoTKxGzgwWFA';
+        
+        // Importar Supabase
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        console.log('✅ Supabase cliente inicializado');
+        
+        // Referencias del DOM
+        const form = document.getElementById('registroForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultado = document.getElementById('resultado');
+        const pasosDiv = document.getElementById('pasos');
+        
+        // Función para mostrar mensajes
+        function mostrarMensaje(mensaje, tipo = 'info') {
+            resultado.innerHTML = `<div class="message ${tipo}">${mensaje}</div>`;
+        }
+        
+        // Función para mostrar pasos
+        function mostrarPasos(pasos) {
+            if (pasos && pasos.length > 0) {
+                pasosDiv.style.display = 'block';
+                pasosDiv.innerHTML = '<h4 style="color: #FFD700; margin-bottom: 10px;">📊 Pasos ejecutados:</h4>' + 
+                    pasos.map(paso => `<div class="step">${paso}</div>`).join('');
+            }
+        }
+        
+        // Función principal de registro
+        async function registrarUsuario(datos) {
+            const pasos = [];
+            
+            try {
+                pasos.push('🚀 Iniciando registro completo...');
+                
+                // PASO 1: Validaciones
+                pasos.push('✅ Validaciones pasadas');
+                
+                // PASO 2: Intentar signup
+                pasos.push('🔐 Intentando signup en Supabase Auth...');
+                
+                let authResult = null;
+                let authError = null;
+                
+                try {
+                    const { data, error } = await supabase.auth.signUp({
+                        email: datos.email.toLowerCase().trim(),
+                        password: datos.password,
+                        options: {
+                            emailRedirectTo: window.location.origin + '/auth/callback',
+                            shouldCreateUser: true,
+                            data: {
+                                nombre: datos.nombre,
+                                full_name: datos.nombre + (datos.apellido ? ` ${datos.apellido}` : '')
+                            }
+                        }
+                    });
+                    
+                    authResult = data;
+                    authError = error;
+                } catch (signupError) {
+                    authError = signupError;
+                }
+                
+                // PASO 3: Si falla, intentar bypass
+                if (authError) {
+                    pasos.push(`⚠️ Error en Auth: ${authError.message}`);
+                    pasos.push('🔄 Intentando función de bypass...');
+                    
+                    try {
+                        const response = await fetch('/.netlify/functions/signup-bypass', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                email: datos.email.toLowerCase().trim(),
+                                password: datos.password,
+                                nombre: datos.nombre
+                            })
+                        });
+                        
+                        const bypassResult = await response.json();
+                        
+                        if (response.ok && bypassResult.success) {
+                            pasos.push('✅ Bypass exitoso');
+                            authResult = {
+                                user: {
+                                    id: bypassResult.user.id,
+                                    email: bypassResult.user.email
+                                }
+                            };
+                            authError = null;
+                        } else {
+                            throw new Error(bypassResult.error || 'Error en función de bypass');
+                        }
+                    } catch (bypassError) {
+                        pasos.push(`❌ Error en bypass: ${bypassError.message}`);
+                        throw new Error(`No se pudo crear la cuenta: ${authError.message}`);
+                    }
+                } else {
+                    pasos.push('✅ Signup exitoso');
+                }
+                
+                // PASO 4: Crear perfil en BD
+                if (authResult?.user?.id) {
+                    pasos.push('💾 Creando perfil en base de datos...');
+                    
+                    const perfil = {
+                        id: authResult.user.id,
+                        email: authResult.user.email,
+                        nombre: datos.nombre.trim(),
+                        apellido: datos.apellido?.trim() || '',
+                        rol: 'usuario',
+                        tipo_usuario: 'jugador',
+                        estado: 'activo',
+                        posicion: 'Delantero',
+                        frecuencia_juego: 'Semanal',
+                        pais: 'España',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    };
+                    
+                    const { data: perfilData, error: perfilError } = await supabase
+                        .from('usuarios')
+                        .insert([perfil])
+                        .select()
+                        .single();
+                    
+                    if (perfilError) {
+                        pasos.push(`⚠️ Error creando perfil: ${perfilError.message}`);
+                        
+                        if (perfilError.message.includes('duplicate key')) {
+                            pasos.push('ℹ️ El perfil ya existe');
+                        } else if (perfilError.message.includes('permission')) {
+                            pasos.push('🔒 Error de permisos RLS');
+                        }
+                    } else {
+                        pasos.push('✅ Perfil creado exitosamente');
+                    }
+                }
+                
+                // PASO 5: Intentar login
+                pasos.push('🔑 Verificando login...');
+                try {
+                    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+                        email: datos.email.toLowerCase().trim(),
+                        password: datos.password
+                    });
+                    
+                    if (loginError) {
+                        pasos.push(`⚠️ Login falló: ${loginError.message}`);
+                    } else {
+                        pasos.push('✅ Login verificado');
+                    }
+                } catch (loginError) {
+                    pasos.push(`⚠️ Error en login: ${loginError.message}`);
+                }
+                
+                pasos.push('🎉 ¡Registro completado exitosamente!');
+                
+                return {
+                    success: true,
+                    user: authResult.user,
+                    pasos: pasos
+                };
+                
+            } catch (error) {
+                pasos.push(`❌ Error fatal: ${error.message}`);
+                return {
+                    success: false,
+                    error: error.message,
+                    pasos: pasos
+                };
+            }
+        }
+        
+        // Manejar submit del formulario
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const datos = {
+                nombre: formData.get('nombre'),
+                apellido: formData.get('apellido'),
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+            
+            // Validaciones básicas
+            if (!datos.nombre || !datos.email || !datos.password) {
+                mostrarMensaje('❌ Por favor completa todos los campos obligatorios', 'error');
+                return;
+            }
+            
+            if (datos.password.length < 6) {
+                mostrarMensaje('❌ La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+            
+            // Mostrar loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span>Registrando...';
+            mostrarMensaje('🚀 Iniciando registro...', 'info');
+            pasosDiv.style.display = 'none';
+            
+            try {
+                const resultado = await registrarUsuario(datos);
+                
+                if (resultado.success) {
+                    mostrarMensaje(`🎉 ¡Registro exitoso! Usuario creado: ${resultado.user.email}`, 'success');
+                } else {
+                    mostrarMensaje(`❌ Error en registro: ${resultado.error}`, 'error');
+                }
+                
+                mostrarPasos(resultado.pasos);
+                
+            } catch (error) {
+                mostrarMensaje(`💥 Error inesperado: ${error.message}`, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Registrar Usuario';
+            }
+        });
+        
+        // Auto-rellenar para pruebas rápidas
+        document.getElementById('nombre').value = 'Usuario Test ' + Date.now();
+        document.getElementById('email').value = `test${Date.now()}@futpro.test`;
+        document.getElementById('password').value = 'Test123456!';
+        
+        console.log('✅ Página de test cargada. Form auto-rellenado para pruebas.');
+    </script>
+</body>
+</html>

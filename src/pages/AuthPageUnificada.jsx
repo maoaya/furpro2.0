@@ -5,6 +5,8 @@ import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment.js';
 import { handleSuccessfulAuth } from '../utils/navigationUtils.js';
 import { robustSignUp, robustSignIn, createUserProfile } from '../utils/authUtils.js';
+import { registrarUsuarioCompleto } from '../utils/registroCompleto.js';
+import { authFlowManager, handleAuthenticationSuccess, handleCompleteRegistration } from '../utils/authFlowManager.js';
 
 const AuthPageUnificada = () => {
   const navigate = useNavigate();
@@ -23,38 +25,80 @@ const AuthPageUnificada = () => {
     apellido: ''
   });
 
-  // Si el usuario ya está autenticado, redirigir a home
+  // Si el usuario ya está autenticado, redirigir a home inmediatamente
   useEffect(() => {
     if (user) {
       console.log('✅ Usuario ya autenticado, redirigiendo a home...');
-      navigate('/home', { replace: true });
+      
+      // Marcar inmediatamente como autenticado
+      localStorage.setItem('authCompleted', 'true');
+      localStorage.setItem('loginSuccess', 'true');
+      
+      // Navegación inmediata
+      setTimeout(() => {
+        navigate('/home', { replace: true });
+      }, 100);
     }
   }, [user, navigate]);
 
-  // Función para navegar a HomePage después del éxito
-  const navigateToHome = () => {
-    console.log('🎉 Autenticación exitosa! Navegando a HomePage...');
-    
-    // Marcar autenticación completa
-    localStorage.setItem('authCompleted', 'true');
-    localStorage.setItem('loginSuccess', 'true');
-    
-    // Múltiples intentos de navegación para asegurar éxito
-    setTimeout(() => {
-      try {
-        navigate('/home', { replace: true });
-      } catch (error) {
-        console.log('🔄 Fallback: navegando con window.location');
-        window.location.href = '/home';
+  // Efecto adicional para detectar cambios en localStorage que indiquen auth exitosa
+  useEffect(() => {
+    const checkAuthStatus = () => {
+      const authCompleted = localStorage.getItem('authCompleted') === 'true';
+      const loginSuccess = localStorage.getItem('loginSuccess') === 'true';
+      const userSession = localStorage.getItem('session');
+      
+      if ((authCompleted || loginSuccess || userSession) && !user) {
+        console.log('🔄 Indicadores de auth detectados sin usuario, verificando...');
+        // Dar un poco de tiempo para que el AuthContext se actualice
+        setTimeout(() => {
+          if (!user) {
+            console.log('⚠️ Forzando navegación debido a indicadores de auth');
+            navigate('/home', { replace: true });
+          }
+        }, 2000);
       }
-    }, 500);
+    };
+
+    // Verificar inmediatamente
+    checkAuthStatus();
     
-    // Fallback adicional
-    setTimeout(() => {
-      if (window.location.pathname !== '/home') {
-        window.location.href = '/home';
+    // Verificar cada 3 segundos durante los primeros 15 segundos
+    const interval = setInterval(checkAuthStatus, 3000);
+    setTimeout(() => clearInterval(interval), 15000);
+    
+    return () => clearInterval(interval);
+  }, [user, navigate]);
+
+  // Función para navegar a HomePage después del éxito - MEJORADA
+  const navigateToHome = async () => {
+    console.log('🎉 Autenticación exitosa! Usando AuthFlowManager...');
+    
+    try {
+      // Usar el nuevo manager de flujo
+      const result = await authFlowManager.handlePostLoginFlow(user, navigate);
+      
+      if (result.success) {
+        console.log('✅ Navegación exitosa con AuthFlowManager');
+      } else {
+        console.log('⚠️ Problema con AuthFlowManager, usando fallback');
+        // Fallback al método anterior
+        localStorage.setItem('authCompleted', 'true');
+        localStorage.setItem('loginSuccess', 'true');
+        
+        setTimeout(() => {
+          try {
+            navigate('/home', { replace: true });
+          } catch (error) {
+            window.location.href = '/home';
+          }
+        }, 500);
       }
-    }, 2000);
+    } catch (error) {
+      console.error('❌ Error con AuthFlowManager:', error);
+      // Fallback de emergencia
+      window.location.href = '/home';
+    }
   };
 
   // REGISTRO CON EMAIL Y PASSWORD
@@ -80,74 +124,26 @@ const AuthPageUnificada = () => {
         return;
       }
 
-      console.log('📝 Registrando usuario con email...');
+      console.log('📝 Iniciando registro con AuthFlowManager mejorado...');
       setSuccess('Creando cuenta...');
 
-      // Usar función robusta de signup que maneja errores 502
-      const signupResult = await robustSignUp(
-        formData.email,
-        formData.password,
-        {
-          nombre: formData.nombre.trim(),
-          apellido: formData.apellido.trim()
-        }
-      );
+      // Usar el nuevo manager de flujo completo
+      const resultado = await handleCompleteRegistration({
+        email: formData.email,
+        password: formData.password,
+        nombre: formData.nombre.trim(),
+        apellido: formData.apellido?.trim() || ''
+      }, navigate);
 
-      if (!signupResult.success) {
-        console.error('❌ Error en signup robusto:', signupResult.error);
-        setError(`Error en registro: ${signupResult.error}`);
+      if (!resultado.success) {
+        console.error('❌ Error en registro completo:', resultado.error);
+        setError(`Error en registro: ${resultado.error}`);
         return;
       }
 
-      console.log(`✅ Signup exitoso con método: ${signupResult.method}`);
-      
-      if (signupResult.message) {
-        setSuccess(signupResult.message);
-      } else {
-        setSuccess('Cuenta creada. Configurando perfil...');
-      }
-
-      const userData = signupResult.data.user;
-
-      // Crear perfil usando función robusta
-      if (signupResult.method === 'signup' || signupResult.method === 'simple-signup') {
-        const profileResult = await createUserProfile({
-          id: userData.id,
-          email: userData.email,
-          nombre: formData.nombre.trim(),
-          apellido: formData.apellido?.trim() || ''
-        });
-
-        if (!profileResult.success) {
-          console.warn('⚠️ Error creando perfil:', profileResult.error);
-          // Continuar aunque falle el perfil
-        } else {
-          console.log('✅ Perfil creado exitosamente');
-        }
-      }
-
-      // Preparar datos del usuario para navegación
-      const userDataForNav = {
-        id: userData.id,
-        email: userData.email,
-        nombre: formData.nombre,
-        apellido: formData.apellido
-      };
-
-      console.log('✅ Registro completado, iniciando navegación...');
-      setSuccess('¡Registro exitoso! Bienvenido a FutPro...');
-      
-      // Guardar datos del usuario
-      localStorage.setItem('userRegistrado', JSON.stringify({
-        id: userData.id,
-        email: userData.email,
-        nombre: formData.nombre,
-        registrado: true,
-        timestamp: new Date().toISOString()
-      }));
-
-      // Usar función de navegación robusta
-      handleSuccessfulAuth(userDataForNav, navigate);
+      // Éxito - el manager se encarga de la navegación
+      console.log('✅ Registro y navegación completados');
+      setSuccess(resultado.message || 'Cuenta creada exitosamente! Redirigiendo...');
 
     } catch (error) {
       console.error('💥 Error inesperado:', error);
@@ -182,9 +178,10 @@ const AuthPageUnificada = () => {
         return;
       }
 
-      console.log('✅ Login exitoso:', loginResult.data.user?.email);
-      setSuccess('¡Login exitoso! Bienvenido de vuelta...');
-      
+      console.log('✅ Login exitoso con email/password');
+      setSuccess('¡Login exitoso! Redirigiendo...');
+
+      // Usar el nuevo AuthFlowManager para manejo post-login
       const userData = {
         id: loginResult.data.user.id,
         email: loginResult.data.user.email,
@@ -192,10 +189,13 @@ const AuthPageUnificada = () => {
         apellido: loginResult.data.user.user_metadata?.apellido || ''
       };
 
-      // Usar función de navegación robusta
-      handleSuccessfulAuth(userData, navigate);
-
-    } catch (error) {
+      // Usar el nuevo manager para navegación robusta
+      const resultado = await handleAuthenticationSuccess(loginResult.data.user, navigate, userData);
+      
+      if (!resultado.success) {
+        console.log('⚠️ Problema con AuthFlowManager, usando fallback');
+        handleSuccessfulAuth(userData, navigate);
+      }    } catch (error) {
       console.error('💥 Error inesperado en login:', error);
       setError(`Error inesperado: ${error.message}`);
     } finally {

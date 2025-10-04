@@ -109,15 +109,3 @@ exports.handler = async (event) => {
     };
   }
 };
-      statusCode: 200,
-      body: JSON.stringify({
-        ok: true,
-        userId: created.user?.id,
-        email: created.user?.email,
-        action_link: linkData?.properties?.action_link || linkData?.action_link
-      })
-    };
-  } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
-  }
-};
