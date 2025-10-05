@@ -1,1 +1,20 @@
-"FORCE_DEPLOY: Fix Vue error en build React - 5oct2025" 
+"# FORCE NETLIFY DEPLOYMENT 
+# Este archivo força rebuild do projeto principal FUTPRO
+
+TIMESTAMP: 2025-10-05 15:45:00
+VERSION: FORCE-v12-NODE20-TRIPLE-CONFIG
+CONTEXT: Node.js v20 enforcement with netlify.toml + .nvmrc + .node-version
+STATUS: CRITICAL - Triple Node version configuration active
+BUILD_TRIGGER: Forced rebuild for path-scurry v20 compatibility
+
+[ÚLTIMA ATUALIZAÇÃO]
+- netlify.toml: NODE_VERSION = "20.0.0"
+- .nvmrc: "20"
+- .node-version: "v20.0.0"
+- package.json: engines node >= 20.0.0
+- vite.config.js: Vue modules excluded
+
+[COMMIT REQUIRED]
+git add .
+git commit -m "Force Node.js v20 triple config - critical path-scurry fix"
+git push origin main" 

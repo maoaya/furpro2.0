@@ -1,4 +1,17 @@
-# Netlify Prod  VITE_PRODUCTION_MODE = "true"
+# Netl[build]
+  base = "."
+  publish = "dist"
+  command = "npm ci && npm run build"
+  # Netlify build habilitado (sin ignore) para que "Deploys from GitHub" actualice el dominio
+
+[build.environment]
+  NODE_VERSION = "20.0.0"
+  NPM_VERSION = "10"
+  SECRETS_SCAN_ENABLED = "false"
+  VITE_AUTO_CONFIRM_SIGNUP = "true"
+  VITE_PRODUCTION_MODE = "true"
+  # Force rebuild con timestamp
+  NETLIFY_BUILD_ID = "production-fix-2025-10-05-v11-NODE20-FORCE"_PRODUCTION_MODE = "true"
   # Force rebuild con timestamp
   NETLIFY_BUILD_ID = "production-fix-2025-10-03-v8-FINAL"
   # Supabase envs para build en Netlify (frontend)on Config - Fixed Domain Issue
