@@ -21,7 +21,8 @@
     "netlify:redeploy": "powershell -ExecutionPolicy Bypass -File ./netlify-clear-cache.ps1 -Branch master",
     "test": "jest",
     "test:backend": "jest testing/",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "audit:full": "npm audit --json > audit-latest.json || echo audit finished"
   },
   "dependencies": {
     "@cypress/react": "^9.0.1",
