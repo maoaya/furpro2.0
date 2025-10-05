@@ -4,12 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { getConfig } from '../config/environment.js';
 const gold = '#FFD700';
-import React, { useState, useEffect, useContext } from 'react';
-import supabase from '../supabaseClient';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext.jsx';
-import { getConfig } from '../config/environment.js';
-const gold = '#FFD700';
 const black = '#222';
 
 export default function LoginRegisterForm() {

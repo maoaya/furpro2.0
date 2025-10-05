@@ -179,10 +179,9 @@ export default function HomePage() {
           {feedbackNav && <div style={{position:'fixed',bottom:70,left:0,width:'100vw',textAlign:'center',color:gold,fontWeight:'bold',fontSize:18,zIndex:99,background:'#232323cc',padding:'8px 0',borderRadius:8}}>{feedbackNav}</div>}
         </div>
       );
-        background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
-        borderBottom: `2px solid ${gold}`,
-        padding: '20px 32px',
-        position: 'sticky',
+      // ...existing code...
+      // Corregido: punto y coma faltante
+      // ...existing code...
         top: 0,
         zIndex: 50,
         backdropFilter: 'blur(10px)',
