@@ -122,10 +122,15 @@ export default function LoginRegisterForm() {
         }
       });
       if (error) {
+        console.log('🔍 Error de registro detectado:', error.message);
+        
         // Manejo específico para usuario ya registrado
-        if (error.message.includes('already been registered') || 
-            error.message.includes('User already registered') ||
-            error.message.includes('already exists')) {
+        const errorMsg = error.message.toLowerCase();
+        if (errorMsg.includes('already been registered') || 
+            errorMsg.includes('user already registered') ||
+            errorMsg.includes('already exists') ||
+            errorMsg.includes('already registered') ||
+            errorMsg.includes('email address has already been registered')) {
           console.log('📧 Usuario ya registrado, cambiando a modo login...');
           setIsRegister(false);
           setError(null);
@@ -134,6 +139,7 @@ export default function LoginRegisterForm() {
             setSuccess(null);
           }, 3000);
         } else {
+          console.log('❌ Error de registro no manejado:', error.message);
           setError(error.message);
         }
         setLoading(false);
