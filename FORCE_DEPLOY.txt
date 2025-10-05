@@ -1,1 +1,1 @@
-"FORCE_DEPLOY: Node.js v20 upgrade para path-scurry - 5oct2025" 
+"FORCE_DEPLOY: Fix Vue error en build React - 5oct2025" 
