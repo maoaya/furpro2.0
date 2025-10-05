@@ -147,36 +147,39 @@ export default function HomePage() {
     <div style={{ 
       background: `linear-gradient(135deg, ${black} 0%, #1a1a1a 50%, ${black} 100%)`, 
       minHeight: '100vh', 
-      color: gold,
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      {/* Notificación en tiempo real */}
-      {notification && (
-        <div style={{
-          position: 'fixed',
-          top: 20,
-          right: 20,
-          background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
+      const { useNavigate } = require('react-router-dom');
+      const navigate = useNavigate();
+      // ...existing code...
+      return (
+        <div style={{ 
+          background: `linear-gradient(135deg, ${black} 0%, #1a1a1a 50%, ${black} 100%)`, 
+          minHeight: '100vh', 
           color: gold,
-          border: `2px solid ${gold}`,
-          borderRadius: 15,
-          padding: '16px 24px',
-          zIndex: 1000,
-          fontWeight: 'bold',
-          fontSize: 16,
-          boxShadow: '0 8px 32px rgba(255, 215, 0, 0.2)',
-          maxWidth: 350,
-          animation: 'slideInRight 0.5s ease-out'
+          fontFamily: 'Arial, sans-serif'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ fontSize: 20 }}>🔔</span>
-            <span>{notification.msg || '¡Tienes una nueva notificación!'}</span>
-          </div>
+          {/* ...existing code... */}
+          {/* Barra de navegación inferior fija */}
+          <nav style={{ position: 'fixed', left: 0, bottom: 0, width: '100vw', background: black, borderTop: `2px solid ${gold}`, display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: 64, zIndex: 30 }}>
+            <button onClick={() => { setFeedbackNav('Navegando a Home...'); setTimeout(()=>{ navigate('/'); }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
+              <span role="img" aria-label="home">🏠</span>
+              <span style={{ fontSize: 12 }}>Home</span>
+            </button>
+            <button onClick={() => { setFeedbackNav('Navegando a Marketplace...'); setTimeout(()=>{ navigate('/marketplace'); }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
+              <span role="img" aria-label="ofertas">💼</span>
+              <span style={{ fontSize: 12 }}>Ofertas</span>
+            </button>
+            <button onClick={() => { setFeedbackNav('Navegando a TV...'); setTimeout(()=>{ navigate('/streaming'); }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
+              <span role="img" aria-label="tv">📺</span>
+              <span style={{ fontSize: 12 }}>TV</span>
+            </button>
+            <button onClick={() => { setFeedbackNav('Navegando a Calendario...'); setTimeout(()=>{ navigate('/calendario'); }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
+              <span role="img" aria-label="calendario">📅</span>
+              <span style={{ fontSize: 12 }}>Calendario</span>
+            </button>
+          </nav>
+          {feedbackNav && <div style={{position:'fixed',bottom:70,left:0,width:'100vw',textAlign:'center',color:gold,fontWeight:'bold',fontSize:18,zIndex:99,background:'#232323cc',padding:'8px 0',borderRadius:8}}>{feedbackNav}</div>}
         </div>
-      )}
-
-      {/* Header principal mejorado */}
-      <header style={{
+      );
         background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
         borderBottom: `2px solid ${gold}`,
         padding: '20px 32px',
