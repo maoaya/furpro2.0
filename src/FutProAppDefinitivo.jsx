@@ -163,44 +163,46 @@ function ProtectedRoute({ children }) {
 
   useEffect(() => {
     if (loading) return;
-
     const now = Date.now();
-    
-    // Evitar verificaciones demasiado frecuentes
     if (now - lastCheck < 1000) return;
     setLastCheck(now);
-
+    // Log visual y de consola
+    const logDiv = document.createElement('div');
+    logDiv.style.position = 'fixed';
+    logDiv.style.top = '10px';
+    logDiv.style.right = '10px';
+    logDiv.style.background = '#FFD700';
+    logDiv.style.color = '#222';
+    logDiv.style.padding = '12px 20px';
+    logDiv.style.borderRadius = '10px';
+    logDiv.style.zIndex = '99999';
+    logDiv.style.fontWeight = 'bold';
+    logDiv.style.boxShadow = '0 2px 12px #FFD70055';
+    logDiv.innerText = user ? `🔒 ProtectedRoute: Usuario autenticado (${user.email})` : '🔒 ProtectedRoute: Usuario NO autenticado';
+    document.body.appendChild(logDiv);
+    setTimeout(() => { logDiv.remove(); }, 3500);
+    // ...existing logic...
     if (!user) {
       const registroCompleto = localStorage.getItem('registroCompleto') === 'true';
       const authCompleted = localStorage.getItem('authCompleted') === 'true';
       const loginSuccess = localStorage.getItem('loginSuccess') === 'true';
       const userSession = localStorage.getItem('session');
-
-      // Verificar múltiples indicadores de autenticación exitosa
       const hasAuthIndicators = registroCompleto || authCompleted || loginSuccess || userSession;
-
       if (hasAuthIndicators) {
         console.log('🟡 ProtectedRoute: Indicadores de auth encontrados, activando modo gracia');
         console.log('📝 Indicadores:', { registroCompleto, authCompleted, loginSuccess, hasSession: !!userSession });
-        
         if (!graceMode) {
           setGraceMode(true);
-          
-          // Intentar refrescar la sesión de Supabase
           supabase.auth.getSession().then(({ data: { session }, error }) => {
             if (session?.user) {
               console.log('✅ Sesión Supabase encontrada durante modo gracia');
-              // El AuthContext debería actualizar automáticamente
             } else {
               console.log('⚠️ No se encontró sesión Supabase en modo gracia');
             }
           }).catch((authError) => {
             console.log('⚠️ Error verificando sesión Supabase:', authError);
           });
-          
-          // Timeout más largo para Netlify (entorno más lento)
           const graceTimeout = window.location.hostname.includes('netlify') ? 180000 : 120000;
-          
           const timeoutId = setTimeout(() => {
             if (!user) {
               console.log('⏱️ Fin del modo gracia - timeout alcanzado');
@@ -211,24 +213,18 @@ function ProtectedRoute({ children }) {
               navigate('/', { replace: true });
             }
           }, graceTimeout);
-          
           return () => clearTimeout(timeoutId);
         }
         return;
       }
-
       console.log('❌ Usuario no autenticado y sin indicadores, redirigiendo al login');
       navigate('/', { replace: true });
       return;
     }
-
-    // Usuario autenticado: limpiar marcadores y modo gracia
     if (graceMode) {
       console.log('✅ Usuario autenticado, desactivando modo gracia');
       setGraceMode(false);
     }
-    
-    // Limpiar marcadores de autenticación temporal
     localStorage.removeItem('registroCompleto');
     localStorage.removeItem('authCompleted');
   }, [user, loading, navigate, graceMode, lastCheck]);
