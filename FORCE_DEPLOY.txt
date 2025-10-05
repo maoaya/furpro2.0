@@ -1,1 +1,1 @@
-"FORCE_DEPLOY: Redirecci¢n ultra-agresiva tras autenticaci¢n - 5oct2025" 
+"FORCE_DEPLOY: Navegaci¢n SPA con React Router en barra inferior - 5oct2025" 
