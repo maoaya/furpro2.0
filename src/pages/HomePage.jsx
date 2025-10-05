@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import mediaService from '../services/mediaService';
 import commentService from '../services/commentService';
 import { useWebSocketNotifications } from '../hooks/useWebSocketNotifications';
@@ -33,6 +34,7 @@ function addComment(id, text) {
 }
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const [publicaciones, setPublicaciones] = useState([]);
   const [likesState, setLikesState] = useState({});
   const [commentsState, setCommentsState] = useState({});
@@ -147,12 +149,9 @@ export default function HomePage() {
     <div style={{ 
       background: `linear-gradient(135deg, ${black} 0%, #1a1a1a 50%, ${black} 100%)`, 
       minHeight: '100vh', 
-      const { useNavigate } = require('react-router-dom');
-      const navigate = useNavigate();
-      // ...existing code...
-      return (
-        <div style={{ 
-          background: `linear-gradient(135deg, ${black} 0%, #1a1a1a 50%, ${black} 100%)`, 
+      color: gold,
+      fontFamily: 'Arial, sans-serif'
+    }}> 
           minHeight: '100vh', 
           color: gold,
           fontFamily: 'Arial, sans-serif'
