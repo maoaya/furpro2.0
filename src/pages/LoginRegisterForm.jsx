@@ -122,7 +122,20 @@ export default function LoginRegisterForm() {
         }
       });
       if (error) {
-        setError(error.message);
+        // Manejo específico para usuario ya registrado
+        if (error.message.includes('already been registered') || 
+            error.message.includes('User already registered') ||
+            error.message.includes('already exists')) {
+          console.log('📧 Usuario ya registrado, cambiando a modo login...');
+          setIsRegister(false);
+          setError(null);
+          setSuccess('Este email ya está registrado. Cambiando a modo de ingreso...');
+          setTimeout(() => {
+            setSuccess(null);
+          }, 3000);
+        } else {
+          setError(error.message);
+        }
         setLoading(false);
       } else {
         setSuccess('¡Registro exitoso! Revisa tu email para confirmar la cuenta. Redirigiendo...');
