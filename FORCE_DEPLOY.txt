@@ -1,3 +1,1 @@
-# Archivo para forzar despliegue automático en Netlify
-# Última actualización: 5 de octubre de 2025 - OVERRIDE TOTAL ERROR USUARIO
-# Timestamp: 12:10 PM - ACTUALIZACIÓN MANUAL NETLIFY
+"FORCE_DEPLOY: Navegaci�n inmediata tras login/registro exitoso - 5oct2025" 
