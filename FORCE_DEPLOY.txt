@@ -1,1 +1,1 @@
-"FORCE_DEPLOY: Fix error sintaxis HomePage l¡nea 150 - 5oct2025" 
+"FORCE_DEPLOY: Fix redirecci¢n tras login exitoso - 5oct2025" 
