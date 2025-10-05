@@ -13,21 +13,30 @@ export default function CallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       console.log('🔄 Procesando callback OAuth...');
-      
       // Esperar un poco para que el AuthContext procese la sesión
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
+      // Logs detallados de localStorage y sesión
+      const ls = {
+        userRegistrado: localStorage.getItem('userRegistrado'),
+        postLoginRedirect: localStorage.getItem('postLoginRedirect'),
+        registroCompleto: localStorage.getItem('registroCompleto'),
+        authCompleted: localStorage.getItem('authCompleted'),
+        loginSuccess: localStorage.getItem('loginSuccess'),
+        session: localStorage.getItem('session'),
+        userEmail: localStorage.getItem('userEmail'),
+        userId: localStorage.getItem('userId')
+      };
+      console.log('🗃️ Estado localStorage:', ls);
+      console.log('🔑 Estado user:', user);
+      console.log('⏳ Estado loading:', loading);
+
       if (user) {
         console.log('✅ Usuario autenticado via OAuth:', user.email);
-        
-        // Verificar si el usuario necesita completar su perfil
-        const userRegistrado = localStorage.getItem('userRegistrado');
-        const postLoginRedirect = localStorage.getItem('postLoginRedirect');
-        
-        if (postLoginRedirect) {
-          console.log('📍 Redirigiendo a:', postLoginRedirect);
+        if (ls.postLoginRedirect) {
+          console.log('📍 Redirigiendo a:', ls.postLoginRedirect);
           localStorage.removeItem('postLoginRedirect');
-          navigate(postLoginRedirect, { replace: true });
+          navigate(ls.postLoginRedirect, { replace: true });
         } else {
           console.log('📍 Redirigiendo al Home por defecto');
           navigate('/home', { replace: true });
@@ -36,7 +45,6 @@ export default function CallbackPage() {
         console.log('❌ No se encontró usuario después del callback');
         navigate('/', { replace: true });
       }
-      
       setProcessing(false);
     };
 
