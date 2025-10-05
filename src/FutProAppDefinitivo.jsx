@@ -58,13 +58,16 @@ function AuthAwareLoginPage() {
           console.log('⚠️ Error verificando sesión Supabase:', error);
         }
 
-        // Si hay indicadores pero no sesión, forzar navegación en Netlify
+        // Si hay indicadores pero no sesión, forzar navegación inmediatamente
         const isNetlify = window.location.hostname.includes('netlify') || window.location.hostname.includes('futpro.vip');
         if (isNetlify) {
-          console.log('🌐 Netlify detectado con indicadores de auth, navegando forzadamente...');
+          console.log('🌐 Netlify detectado con indicadores de auth, navegando inmediatamente...');
+          navigate('/home', { replace: true });
+          
+          // Fallback con window.location
           setTimeout(() => {
             window.location.href = '/home';
-          }, 2000);
+          }, 500);
           
           // Mostrar mensaje temporal
           setChecking(false);

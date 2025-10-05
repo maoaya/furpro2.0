@@ -1,2 +1,2 @@
 # Archivo para forzar despliegue automático en Netlify
-# Última actualización: 5 de octubre de 2025
+# Última actualización: 5 de octubre de 2025 - Fix navegación post-auth

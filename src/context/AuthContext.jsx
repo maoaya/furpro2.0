@@ -41,6 +41,14 @@ export const AuthProvider = ({ children }) => {
           console.log('✅ Sesión encontrada:', session.user.email);
           setUser(session.user);
           
+          // Establecer indicadores si no están presentes
+          if (!authCompleted) {
+            localStorage.setItem('authCompleted', 'true');
+            localStorage.setItem('loginSuccess', 'true');
+            localStorage.setItem('userEmail', session.user.email);
+            localStorage.setItem('userId', session.user.id);
+          }
+          
           // Obtener rol y equipoId desde la base de datos
           const { data: userData, error: userError } = await supabase
             .from('usuarios')
