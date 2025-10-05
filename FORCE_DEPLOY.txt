@@ -1,2 +1,3 @@
 # Archivo para forzar despliegue automático en Netlify
-# Última actualización: 5 de octubre de 2025 - Fix error usuario ya registrado
+# Última actualización: 5 de octubre de 2025 - Actualización manual Netlify
+# Timestamp: 11:55 AM
