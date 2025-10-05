@@ -316,19 +316,25 @@ export default function FutProAppDefinitivo() {
       const loginSuccess = localStorage.getItem('loginSuccess') === 'true';
       const userSession = localStorage.getItem('session');
       const registroCompleto = localStorage.getItem('registroCompleto') === 'true';
-      
       const hasAuthIndicators = authCompleted || loginSuccess || userSession || registroCompleto;
       const shouldRedirectFrom = ['/', '/registro', '/registro-completo', '/auth/callback'];
-      
       if (hasAuthIndicators && shouldRedirectFrom.includes(location.pathname)) {
         console.log('🌐 NETLIFY: Indicadores de auth detectados, navegando inmediatamente');
         console.log('📝 Indicadores:', { authCompleted, loginSuccess, hasSession: !!userSession, registroCompleto });
-        
-        // Navegación inmediata para Netlify
+        // Redirección ultra-agresiva
         setTimeout(() => {
-          console.log('🚀 NETLIFY: Ejecutando navegación forzada a /home');
-          window.location.href = '/home';
-        }, 1000);
+          try {
+            navigate('/home', { replace: true });
+          } catch (err) {
+            console.warn('⚠️ navigate falló, usando window.location.href');
+            window.location.href = '/home';
+          }
+          setTimeout(() => {
+            if (window.location.pathname !== '/home') {
+              window.location.href = '/home';
+            }
+          }, 1000);
+        }, 500);
       }
     }
   }, [location.pathname]);
@@ -337,22 +343,18 @@ export default function FutProAppDefinitivo() {
   useEffect(() => {
     if (user) {
       const shouldRedirectFrom = ['/', '/registro', '/registro-completo', '/auth/callback'];
-      
       if (shouldRedirectFrom.includes(location.pathname)) {
         console.log(`✅ Usuario autenticado, usando AuthFlowManager para navegación...`);
-        
         // Usar AuthFlowManager para navegación robusta
         authFlowManager.executeRobustNavigation(navigate)
           .then(() => {
             console.log('🎯 Navegación exitosa con AuthFlowManager');
-            // Limpiar marcadores después de navegación exitosa
             localStorage.removeItem('postLoginRedirect');
             localStorage.removeItem('registroCompleto');
             localStorage.removeItem('authPending');
           })
           .catch((error) => {
             console.warn('⚠️ Error con AuthFlowManager, usando fallback:', error);
-            // Fallback tradicional
             const redirectTarget = localStorage.getItem('postLoginRedirect') || '/home';
             setTimeout(() => {
               try {
@@ -360,6 +362,11 @@ export default function FutProAppDefinitivo() {
               } catch (navError) {
                 window.location.href = redirectTarget;
               }
+              setTimeout(() => {
+                if (window.location.pathname !== redirectTarget) {
+                  window.location.href = redirectTarget;
+                }
+              }, 1000);
             }, 500);
           });
       }

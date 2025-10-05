@@ -88,10 +88,22 @@ export default function LoginRegisterForm() {
       } else {
         setSuccess('¡Ingreso exitoso! Redirigiendo...');
         setLoading(false);
-        // Navegación inmediata tras login exitoso
+        // Log y redirección ultra-agresiva
+        console.log('🚀 LOGIN: Usuario autenticado, forzando redirección a /home');
         setTimeout(() => {
-          navigate('/home');
-        }, 800);
+          try {
+            navigate('/home');
+          } catch (err) {
+            console.warn('⚠️ navigate falló, usando window.location.href');
+            window.location.href = '/home';
+          }
+          // Fallback siempre
+          setTimeout(() => {
+            if (window.location.pathname !== '/home') {
+              window.location.href = '/home';
+            }
+          }, 1000);
+        }, 500);
       }
     } catch (e) {
       setError(e.message);
@@ -148,10 +160,22 @@ export default function LoginRegisterForm() {
         console.log('✅ Registro exitoso sin errores');
         setSuccess('¡Registro exitoso! Revisa tu email para confirmar. Redirigiendo...');
         setLoading(false);
-        // Navegación inmediata tras registro exitoso
+        // Log y redirección ultra-agresiva
+        console.log('🚀 REGISTRO: Usuario registrado, forzando redirección a /home');
         setTimeout(() => {
-          navigate('/home');
-        }, 800);
+          try {
+            navigate('/home');
+          } catch (err) {
+            console.warn('⚠️ navigate falló, usando window.location.href');
+            window.location.href = '/home';
+          }
+          // Fallback siempre
+          setTimeout(() => {
+            if (window.location.pathname !== '/home') {
+              window.location.href = '/home';
+            }
+          }, 1000);
+        }, 500);
       }
       
     } catch (e) {

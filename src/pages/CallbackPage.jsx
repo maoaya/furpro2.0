@@ -33,34 +33,31 @@ export default function CallbackPage() {
 
       if (user) {
         console.log('✅ Usuario autenticado via OAuth:', user.email);
-        
         // Establecer todos los indicadores de autenticación exitosa
         localStorage.setItem('authCompleted', 'true');
         localStorage.setItem('loginSuccess', 'true');
         localStorage.setItem('userEmail', user.email);
         localStorage.setItem('userId', user.id);
         localStorage.setItem('session', JSON.stringify(user));
-        
-        console.log('� Indicadores de autenticación establecidos');
-        
+        console.log('🚀 CALLBACK: Forzando redirección ultra-agresiva a /home');
         const targetRoute = ls.postLoginRedirect || '/home';
-        console.log('📍 Navegando a:', targetRoute);
-        
         if (ls.postLoginRedirect) {
           localStorage.removeItem('postLoginRedirect');
         }
-        
-        // Navegación múltiple para asegurar que funcione
-        navigate(targetRoute, { replace: true });
-        
-        // Fallback con window.location si navigate no funciona
+        // Redirección ultra-agresiva
         setTimeout(() => {
-          if (window.location.pathname !== targetRoute) {
-            console.log('� Fallback: usando window.location.href');
+          try {
+            navigate(targetRoute, { replace: true });
+          } catch (err) {
+            console.warn('⚠️ navigate falló, usando window.location.href');
             window.location.href = targetRoute;
           }
-        }, 1000);
-        
+          setTimeout(() => {
+            if (window.location.pathname !== targetRoute) {
+              window.location.href = targetRoute;
+            }
+          }, 1000);
+        }, 500);
       } else if (!loading) {
         console.log('❌ No se encontró usuario después del callback');
         navigate('/', { replace: true });
