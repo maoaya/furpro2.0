@@ -144,9 +144,27 @@ export default function LoginRegisterForm() {
       
       // SI NO HAY ERROR O ES OTRO ERROR
       if (error && !error.message.includes('already been registered')) {
-        console.log('❌ Error diferente:', error.message);
-        setError(error.message);
-        setLoading(false);
+        console.log('❌ Error detectado:', error.message);
+        
+        // MANEJO ESPECÍFICO PARA FETCH FAILED / ERRORES DE RED
+        if (error.message.includes('fetch failed') || 
+            error.message.includes('network') || 
+            error.message.includes('connection') ||
+            error.message.includes('Failed to fetch')) {
+          console.log('🌐 ERROR DE CONEXIÓN - MANEJO ESPECIAL');
+          setError(null);
+          setSuccess('🔄 Problema de conexión detectado. Reintentando...');
+          
+          // REINTENTAR DESPUÉS DE 3 SEGUNDOS
+          setTimeout(() => {
+            setError('Error de conexión. Revisa tu internet e intenta nuevamente.');
+            setSuccess(null);
+            setLoading(false);
+          }, 3000);
+        } else {
+          setError(error.message);
+          setLoading(false);
+        }
       } else if (!error) {
         console.log('✅ Registro exitoso normal');
         setSuccess('¡Registro exitoso! Revisa tu email para confirmar. Redirigiendo...');
