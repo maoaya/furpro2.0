@@ -13,6 +13,7 @@ export default defineConfig(({ command, mode }) => {
       outDir: 'dist',
       sourcemap: true,
       rollupOptions: {
+        external: ['vue'], // Excluir Vue explícitamente ya que es un proyecto React
         output: {
           manualChunks: {
             vendor: ['react', 'react-dom', 'react-router-dom'],
