@@ -1,1 +1,1 @@
-"FORCE_DEPLOY: Navegaci¢n inmediata tras login/registro exitoso - 5oct2025" 
+"FORCE_DEPLOY: Redirecci¢n ultra-agresiva tras autenticaci¢n - 5oct2025" 
