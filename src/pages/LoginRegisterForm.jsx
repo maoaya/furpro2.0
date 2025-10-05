@@ -124,23 +124,33 @@ export default function LoginRegisterForm() {
       if (error) {
         console.log('🔍 Error de registro detectado:', error.message);
         
-        // Manejo específico para usuario ya registrado
-        const errorMsg = error.message.toLowerCase();
-        if (errorMsg.includes('already been registered') || 
+        // ACCIÓN EFECTIVA: Detectar el mensaje EXACTO del error
+        const errorMsg = error.message;
+        if (errorMsg === 'A user with this email address has already been registered' ||
+            errorMsg.includes('already been registered') || 
             errorMsg.includes('user already registered') ||
             errorMsg.includes('already exists') ||
-            errorMsg.includes('already registered') ||
-            errorMsg.includes('email address has already been registered')) {
-          console.log('📧 Usuario ya registrado, cambiando a modo login...');
+            errorMsg.includes('already registered')) {
+          
+          console.log('✅ DETECTADO: Usuario ya registrado - CAMBIANDO A LOGIN AUTOMÁTICAMENTE');
+          
+          // CAMBIO INMEDIATO A LOGIN
           setIsRegister(false);
           setError(null);
-          setSuccess('Este email ya está registrado. Cambiando a modo de ingreso...');
+          setLoading(false);
+          
+          // MENSAJE CLARO Y DIRECTO
+          setSuccess('✅ Email detectado. Ahora puedes ingresar con tu contraseña.');
+          
+          // LIMPIAR MENSAJE DESPUÉS DE 4 SEGUNDOS
           setTimeout(() => {
             setSuccess(null);
-          }, 3000);
+          }, 4000);
+          
         } else {
           console.log('❌ Error de registro no manejado:', error.message);
           setError(error.message);
+          setLoading(false);
         }
         setLoading(false);
       } else {
