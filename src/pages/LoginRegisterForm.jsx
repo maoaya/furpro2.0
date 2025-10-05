@@ -87,7 +87,11 @@ export default function LoginRegisterForm() {
         setLoading(false);
       } else {
         setSuccess('¡Ingreso exitoso! Redirigiendo...');
-        // La redirección se maneja en el useEffect con onAuthStateChange
+        setLoading(false);
+        // Navegación inmediata tras login exitoso
+        setTimeout(() => {
+          navigate('/home');
+        }, 800);
       }
     } catch (e) {
       setError(e.message);
@@ -143,10 +147,11 @@ export default function LoginRegisterForm() {
       if (!error && data) {
         console.log('✅ Registro exitoso sin errores');
         setSuccess('¡Registro exitoso! Revisa tu email para confirmar. Redirigiendo...');
+        setLoading(false);
+        // Navegación inmediata tras registro exitoso
         setTimeout(() => {
           navigate('/home');
-        }, 2000);
-        setLoading(false);
+        }, 800);
       }
       
     } catch (e) {
