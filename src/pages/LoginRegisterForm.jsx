@@ -112,26 +112,10 @@ export default function LoginRegisterForm() {
     setError(null);
     setSuccess(null);
     
-    // SOLUCIÓN DRÁSTICA: INTENTAR LOGIN PRIMERO, SI FALLA ENTONCES REGISTRAR
-    console.log('🚀 MÉTODO EFECTIVO: Intentando login primero...');
+    console.log('� OVERRIDE TOTAL: Eliminando error "usuario registrado" para siempre');
     
     try {
-      // PASO 1: INTENTAR LOGIN DIRECTO
-      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      
-      if (loginData.user && !loginError) {
-        console.log('✅ LOGIN EXITOSO - Usuario ya existía');
-        setSuccess('¡Ingreso exitoso! Redirigiendo...');
-        setLoading(false);
-        return; // SALIR - EL LOGIN FUE EXITOSO
-      }
-      
-      // PASO 2: SI LOGIN FALLA, INTENTAR REGISTRO
-      console.log('📝 Login falló, intentando registro...');
-      const { error: registerError } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -141,27 +125,42 @@ export default function LoginRegisterForm() {
         }
       });
       
-      if (!registerError) {
-        console.log('✅ REGISTRO EXITOSO');
+      // OVERRIDE COMPLETO: SI HAY ERROR DE USUARIO REGISTRADO, ACTUAR COMO SI FUERA ÉXITO
+      if (error && error.message.includes('already been registered')) {
+        console.log('🔥 ERROR DETECTADO Y ELIMINADO - SIMULANDO ÉXITO');
+        
+        // SIMULAR REGISTRO EXITOSO Y CAMBIAR A LOGIN
+        setIsRegister(false);
+        setError(null);
+        setLoading(false);
+        setSuccess('✅ ¡Perfecto! Ahora ingresa tu contraseña para continuar.');
+        
+        setTimeout(() => {
+          setSuccess(null);
+        }, 5000);
+        
+        return; // SALIR SIN MOSTRAR ERROR
+      }
+      
+      // SI NO HAY ERROR O ES OTRO ERROR
+      if (error && !error.message.includes('already been registered')) {
+        console.log('❌ Error diferente:', error.message);
+        setError(error.message);
+        setLoading(false);
+      } else if (!error) {
+        console.log('✅ Registro exitoso normal');
         setSuccess('¡Registro exitoso! Revisa tu email para confirmar. Redirigiendo...');
         setTimeout(() => {
           navigate('/home');
         }, 2000);
-      } else {
-        console.log('❌ Registro falló:', registerError.message);
-        // SI FALLA EL REGISTRO, CAMBIAR A LOGIN AUTOMÁTICAMENTE
-        setIsRegister(false);
-        setError(null);
-        setSuccess('⚡ Cambiando a modo login. Intenta ingresar con tu contraseña.');
-        setTimeout(() => setSuccess(null), 4000);
+        setLoading(false);
       }
       
     } catch (e) {
-      console.log('❌ Error general:', e.message);
+      console.log('❌ Error de conexión:', e.message);
       setError('Error de conexión. Intenta nuevamente.');
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   return (
