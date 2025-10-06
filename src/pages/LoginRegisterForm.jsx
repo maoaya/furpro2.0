@@ -209,7 +209,13 @@ export default function LoginRegisterForm() {
             <button onClick={() => setShowEmailForm(true)} style={{ width: '100%', padding: '12px', background: 'transparent', color: gold, border: `2px solid ${gold}`, borderRadius: '8px', fontSize: '16px', cursor: 'pointer', fontWeight: 'bold' }}>Usar Email y Contraseña</button>
           </>
         )}
+        {showEmailForm && (          </>
+        )}
         {showEmailForm && (<button onClick={() => { setShowEmailForm(false); setIsRegister(false); setError(null); setSuccess(null); }} style={{ width: '100%', padding: '8px', background: 'transparent', color: '#ccc', border: 'none', borderRadius: '8px', fontSize: '14px', cursor: 'pointer', marginTop: '10px' }}>← Volver a opciones de ingreso</button>)}
+      </div>
+    </div>
+  );
+})}
       </div>
     </div>
   );
