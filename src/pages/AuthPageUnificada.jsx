@@ -11,7 +11,8 @@ import { authFlowManager, handleAuthenticationSuccess, handleCompleteRegistratio
 const AuthPageUnificada = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false); // CAMBIAR A FALSE POR DEFECTO (MOSTRAR REGISTRO)
+  const [showEmailForm, setShowEmailForm] = useState(true); // CAMBIAR A TRUE (MOSTRAR FORMULARIO SIEMPRE)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');

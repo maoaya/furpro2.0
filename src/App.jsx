@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import SidebarMenu from './components/SidebarMenu';
 import FeedPage from './pages/FeedPage';
 import PerfilPage from './pages/PerfilPage';
@@ -22,7 +23,8 @@ import LogrosPage from './pages/LogrosPage';
 import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
 import ComparativasPage from './pages/ComparativasPage';
 import NotFoundPage from './pages/NotFoundPage';
-
+import AuthPageUnificada from './pages/AuthPageUnificada';
+import AuthCallback from './pages/AuthCallback';
 
 import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
@@ -41,13 +43,22 @@ function Layout({ children }) {
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Layout><FeedPage /></Layout>} />
-        <Route path="/home" element={<Layout><HomePage /></Layout>} />
-        <Route path="/perfil/:userId" element={<Layout><PerfilPage /></Layout>} />
-        <Route path="/notificaciones" element={<Layout><NotificationsPage /></Layout>} />
-        <Route path="/admin" element={<Layout><AdminPanelPage /></Layout>} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Rutas de autenticación - SIN Layout */}
+          <Route path="/login" element={<AuthPageUnificada />} />
+          <Route path="/register" element={<AuthPageUnificada />} />
+          <Route path="/auth" element={<AuthPageUnificada />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          
+          {/* Rutas principales - CON Layout */}
+          <Route path="/" element={<AuthPageUnificada />} />
+          <Route path="/home" element={<Layout><HomePage /></Layout>} />
+          <Route path="/feed" element={<Layout><FeedPage /></Layout>} />
+          <Route path="/perfil/:userId" element={<Layout><PerfilPage /></Layout>} />
+          <Route path="/notificaciones" element={<Layout><NotificationsPage /></Layout>} />
+          <Route path="/admin" element={<Layout><AdminPanelPage /></Layout>} />
         <Route path="/equipo/:id" element={<Layout><EquipoDetallePage /></Layout>} />
         <Route path="/torneo/:id" element={<Layout><TorneoDetallePage /></Layout>} />
         <Route path="/usuario/:id" element={<Layout><UsuarioDetallePage /></Layout>} />
@@ -63,14 +74,13 @@ export default function App() {
         <Route path="/soporte" element={<Layout><SupportPage /></Layout>} />
         <Route path="/logros" element={<Layout><LogrosPage /></Layout>} />
         <Route path="/estadisticas-avanzadas" element={<Layout><EstadisticasAvanzadasPage /></Layout>} />
-        <Route path="/comparativas" element={<Layout><ComparativasPage /></Layout>} />
-        <Route path="*" element={<Layout><NotFoundPage /></Layout>} />
-      </Routes>
-    </Router>
+          <Route path="/comparativas" element={<Layout><ComparativasPage /></Layout>} />
+          <Route path="*" element={<Layout><NotFoundPage /></Layout>} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
-}
-
-// Test unitario básico
+}// Test unitario básico
 import { render, screen } from '@testing-library/react';
 describe('App', () => {
   it('renderiza el layout y SidebarMenu', () => {
