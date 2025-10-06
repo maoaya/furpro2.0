@@ -22,7 +22,14 @@ const AuthPageUnificada = () => {
     password: '',
     confirmPassword: '',
     nombre: '',
-    apellido: ''
+    apellido: '',
+    edad: '',
+    telefono: '',
+    posicion: '',
+    equipoFavorito: '',
+    experiencia: '',
+    ubicacion: '',
+    disponibilidad: ''
   });
 
   // Si el usuario ya está autenticado, redirigir a home inmediatamente
@@ -109,8 +116,10 @@ const AuthPageUnificada = () => {
     setSuccess('');
 
     try {
-      if (!formData.email || !formData.password || !formData.nombre) {
-        setError('Por favor completa todos los campos obligatorios');
+      if (!formData.email || !formData.password || !formData.nombre || !formData.apellido || 
+          !formData.edad || !formData.telefono || !formData.posicion || !formData.experiencia || 
+          !formData.ubicacion || !formData.disponibilidad) {
+        setError('Por favor completa todos los campos obligatorios marcados con *');
         return;
       }
 
@@ -124,6 +133,17 @@ const AuthPageUnificada = () => {
         return;
       }
 
+      // Validaciones específicas adicionales
+      if (formData.edad < 16 || formData.edad > 60) {
+        setError('La edad debe estar entre 16 y 60 años');
+        return;
+      }
+
+      if (formData.telefono.length < 10) {
+        setError('El teléfono debe tener al menos 10 dígitos');
+        return;
+      }
+
       console.log('📝 Iniciando registro con AuthFlowManager mejorado...');
       setSuccess('Creando cuenta...');
 
@@ -132,7 +152,14 @@ const AuthPageUnificada = () => {
         email: formData.email,
         password: formData.password,
         nombre: formData.nombre.trim(),
-        apellido: formData.apellido?.trim() || ''
+        apellido: formData.apellido?.trim() || '',
+        edad: parseInt(formData.edad),
+        telefono: formData.telefono.trim(),
+        posicion: formData.posicion,
+        equipoFavorito: formData.equipoFavorito?.trim() || '',
+        experiencia: formData.experiencia,
+        ubicacion: formData.ubicacion.trim(),
+        disponibilidad: formData.disponibilidad
       }, navigate);
 
       if (!resultado.success) {
@@ -312,10 +339,34 @@ const AuthPageUnificada = () => {
           <h2 style={{ 
             color: '#FFD700', 
             fontSize: '24px',
-            margin: '0 0 20px 0'
+            margin: '0 0 10px 0'
           }}>
             {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
           </h2>
+          
+          {/* Información sobre las funciones de la app para nuevos usuarios */}
+          {!isLogin && (
+            <div style={{
+              background: 'rgba(255, 215, 0, 0.1)',
+              border: '1px solid #FFD700',
+              borderRadius: '8px',
+              padding: '15px',
+              marginTop: '15px',
+              textAlign: 'left'
+            }}>
+              <h4 style={{ color: '#FFD700', margin: '0 0 10px 0', fontSize: '16px' }}>
+                🎯 Con tu cuenta podrás:
+              </h4>
+              <ul style={{ color: '#ccc', fontSize: '14px', margin: '0', paddingLeft: '20px' }}>
+                <li>🏆 Crear y unirte a equipos</li>
+                <li>📅 Organizar partidos y campeonatos</li>
+                <li>💬 Chat con jugadores y equipos</li>
+                <li>📍 Encontrar jugadores cerca de ti</li>
+                <li>📊 Estadísticas y rankings</li>
+                <li>🎮 Marketplace de equipamiento</li>
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Mensajes */}
@@ -368,7 +419,7 @@ const AuthPageUnificada = () => {
               gap: '10px'
             }}
           >
-            🔐 {isLogin ? 'Entrar' : 'Registrarse'} con Google
+            🔐 {isLogin ? 'Entrar rápido' : 'Registro rápido'} con Google
           </button>
 
           <button
@@ -391,8 +442,19 @@ const AuthPageUnificada = () => {
               gap: '10px'
             }}
           >
-            📘 {isLogin ? 'Entrar' : 'Registrarse'} con Facebook
+            📘 {isLogin ? 'Entrar rápido' : 'Registro rápido'} con Facebook
           </button>
+          
+          {!isLogin && (
+            <p style={{ 
+              color: '#999', 
+              fontSize: '12px', 
+              textAlign: 'center', 
+              margin: '10px 0 0 0' 
+            }}>
+              💡 Con OAuth solo necesitas confirmar algunos datos adicionales
+            </p>
+          )}
         </div>
 
         {/* Divisor */}
@@ -424,41 +486,208 @@ const AuthPageUnificada = () => {
         <form onSubmit={isLogin ? handleEmailLogin : handleEmailRegister}>
           {!isLogin && (
             <>
-              <input
-                type="text"
-                name="nombre"
-                placeholder="Nombre *"
-                value={formData.nombre}
-                onChange={handleInputChange}
-                required
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  marginBottom: '12px',
-                  background: '#333',
-                  border: '1px solid #555',
-                  borderRadius: '6px',
-                  color: 'white',
-                  fontSize: '16px'
-                }}
-              />
-              <input
-                type="text"
-                name="apellido"
-                placeholder="Apellido"
-                value={formData.apellido}
-                onChange={handleInputChange}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  marginBottom: '12px',
-                  background: '#333',
-                  border: '1px solid #555',
-                  borderRadius: '6px',
-                  color: 'white',
-                  fontSize: '16px'
-                }}
-              />
+              {/* Información Personal */}
+              <div style={{ marginBottom: '20px' }}>
+                <h3 style={{ color: '#FFD700', fontSize: '18px', marginBottom: '15px' }}>
+                  👤 Información Personal
+                </h3>
+                
+                <input
+                  type="text"
+                  name="nombre"
+                  placeholder="Nombre *"
+                  value={formData.nombre}
+                  onChange={handleInputChange}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    marginBottom: '12px',
+                    background: '#333',
+                    border: '1px solid #555',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontSize: '16px'
+                  }}
+                />
+                
+                <input
+                  type="text"
+                  name="apellido"
+                  placeholder="Apellido *"
+                  value={formData.apellido}
+                  onChange={handleInputChange}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    marginBottom: '12px',
+                    background: '#333',
+                    border: '1px solid #555',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontSize: '16px'
+                  }}
+                />
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input
+                    type="number"
+                    name="edad"
+                    placeholder="Edad *"
+                    value={formData.edad}
+                    onChange={handleInputChange}
+                    required
+                    min="16"
+                    max="60"
+                    style={{
+                      flex: '1',
+                      padding: '12px',
+                      marginBottom: '12px',
+                      background: '#333',
+                      border: '1px solid #555',
+                      borderRadius: '6px',
+                      color: 'white',
+                      fontSize: '16px'
+                    }}
+                  />
+                  
+                  <input
+                    type="tel"
+                    name="telefono"
+                    placeholder="Teléfono *"
+                    value={formData.telefono}
+                    onChange={handleInputChange}
+                    required
+                    style={{
+                      flex: '2',
+                      padding: '12px',
+                      marginBottom: '12px',
+                      background: '#333',
+                      border: '1px solid #555',
+                      borderRadius: '6px',
+                      color: 'white',
+                      fontSize: '16px'
+                    }}
+                  />
+                </div>
+
+                <input
+                  type="text"
+                  name="ubicacion"
+                  placeholder="Ciudad/Ubicación *"
+                  value={formData.ubicacion}
+                  onChange={handleInputChange}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    marginBottom: '12px',
+                    background: '#333',
+                    border: '1px solid #555',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontSize: '16px'
+                  }}
+                />
+              </div>
+
+              {/* Información Futbolística */}
+              <div style={{ marginBottom: '20px' }}>
+                <h3 style={{ color: '#FFD700', fontSize: '18px', marginBottom: '15px' }}>
+                  ⚽ Información Futbolística
+                </h3>
+                
+                <select
+                  name="posicion"
+                  value={formData.posicion}
+                  onChange={handleInputChange}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    marginBottom: '12px',
+                    background: '#333',
+                    border: '1px solid #555',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontSize: '16px'
+                  }}
+                >
+                  <option value="">Selecciona tu posición *</option>
+                  <option value="portero">🥅 Portero</option>
+                  <option value="defensa">🛡️ Defensa</option>
+                  <option value="mediocampo">⚡ Mediocampo</option>
+                  <option value="delantero">🎯 Delantero</option>
+                  <option value="multiple">🔄 Múltiples posiciones</option>
+                </select>
+
+                <select
+                  name="experiencia"
+                  value={formData.experiencia}
+                  onChange={handleInputChange}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    marginBottom: '12px',
+                    background: '#333',
+                    border: '1px solid #555',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontSize: '16px'
+                  }}
+                >
+                  <option value="">Nivel de experiencia *</option>
+                  <option value="principiante">🌱 Principiante</option>
+                  <option value="amateur">⚽ Amateur</option>
+                  <option value="intermedio">🏆 Intermedio</option>
+                  <option value="avanzado">🥇 Avanzado</option>
+                  <option value="profesional">👑 Profesional</option>
+                </select>
+
+                <input
+                  type="text"
+                  name="equipoFavorito"
+                  placeholder="Equipo favorito (opcional)"
+                  value={formData.equipoFavorito}
+                  onChange={handleInputChange}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    marginBottom: '12px',
+                    background: '#333',
+                    border: '1px solid #555',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontSize: '16px'
+                  }}
+                />
+
+                <select
+                  name="disponibilidad"
+                  value={formData.disponibilidad}
+                  onChange={handleInputChange}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    marginBottom: '12px',
+                    background: '#333',
+                    border: '1px solid #555',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontSize: '16px'
+                  }}
+                >
+                  <option value="">Disponibilidad de horarios *</option>
+                  <option value="mananas">🌅 Mañanas</option>
+                  <option value="tardes">🌞 Tardes</option>
+                  <option value="noches">🌙 Noches</option>
+                  <option value="fines_semana">📅 Solo fines de semana</option>
+                  <option value="flexible">🔄 Horario flexible</option>
+                </select>
+              </div>
             </>
           )}
 
@@ -527,7 +756,7 @@ const AuthPageUnificada = () => {
             style={{
               width: '100%',
               padding: '14px',
-              background: '#FFD700',
+              background: loading ? '#999' : '#FFD700',
               color: '#222',
               border: 'none',
               borderRadius: '6px',
@@ -535,12 +764,34 @@ const AuthPageUnificada = () => {
               fontWeight: 'bold',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.7 : 1,
-              marginBottom: '20px'
+              marginBottom: '20px',
+              transition: 'all 0.3s ease'
             }}
           >
             {loading ? '⏳ Procesando...' : 
-             isLogin ? '🔐 Iniciar Sesión' : '📝 Crear Cuenta'}
+             isLogin ? '🔐 Iniciar Sesión' : '📝 Crear mi cuenta FutPro'}
           </button>
+          
+          {/* Información adicional para registro */}
+          {!isLogin && (
+            <div style={{
+              background: 'rgba(76, 175, 80, 0.1)',
+              border: '1px solid #4CAF50',
+              borderRadius: '6px',
+              padding: '12px',
+              marginBottom: '15px',
+              textAlign: 'center'
+            }}>
+              <p style={{ 
+                color: '#4CAF50', 
+                fontSize: '14px', 
+                margin: '0',
+                fontWeight: 'bold'
+              }}>
+                ✅ Cuenta 100% gratuita • Sin publicidad • Datos seguros
+              </p>
+            </div>
+          )}
         </form>
 
         {/* Toggle entre login y registro */}
@@ -555,7 +806,14 @@ const AuthPageUnificada = () => {
                 password: '',
                 confirmPassword: '',
                 nombre: '',
-                apellido: ''
+                apellido: '',
+                edad: '',
+                telefono: '',
+                posicion: '',
+                equipoFavorito: '',
+                experiencia: '',
+                ubicacion: '',
+                disponibilidad: ''
               });
             }}
             style={{
