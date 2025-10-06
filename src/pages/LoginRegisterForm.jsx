@@ -209,68 +209,7 @@ export default function LoginRegisterForm() {
             <button onClick={() => setShowEmailForm(true)} style={{ width: '100%', padding: '12px', background: 'transparent', color: gold, border: `2px solid ${gold}`, borderRadius: '8px', fontSize: '16px', cursor: 'pointer', fontWeight: 'bold' }}>Usar Email y Contraseña</button>
           </>
         )}
-        {showEmailForm && (          </>
-        )}
         {showEmailForm && (<button onClick={() => { setShowEmailForm(false); setIsRegister(false); setError(null); setSuccess(null); }} style={{ width: '100%', padding: '8px', background: 'transparent', color: '#ccc', border: 'none', borderRadius: '8px', fontSize: '14px', cursor: 'pointer', marginTop: '10px' }}>← Volver a opciones de ingreso</button>)}
-      </div>
-    </div>
-  );
-})}
-      </div>
-    </div>
-  );
-}
-              color: '#666' 
-            }}>
-              <hr style={{ flex: 1, border: 'none', borderTop: '1px solid #333' }} />
-              <span style={{ padding: '0 15px', fontSize: '14px' }}>o</span>
-              <hr style={{ flex: 1, border: 'none', borderTop: '1px solid #333' }} />
-            </div>
-
-            {/* Botón para mostrar formulario email */}
-            <button
-              onClick={() => setShowEmailForm(true)}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: 'transparent',
-                color: gold,
-                border: `2px solid ${gold}`,
-                borderRadius: '8px',
-                fontSize: '16px',
-                cursor: 'pointer',
-                fontWeight: 'bold'
-              }}
-            >
-              Usar Email y Contraseña
-            </button>
-          </>
-        )}
-
-        {/* Link para volver */}
-        {showEmailForm && (
-          <button
-            onClick={() => {
-              setShowEmailForm(false);
-              setIsRegister(false);
-              setError(null);
-              setSuccess(null);
-            }}
-            style={{
-              width: '100%',
-              padding: '8px',
-              background: 'transparent',
-              color: '#ccc',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              cursor: 'pointer',
-              marginTop: '10px'
-            }}
-          >
-            ← Volver a opciones de ingreso
-          </button>
-        )}
       </div>
     </div>
   );
