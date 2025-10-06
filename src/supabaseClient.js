@@ -1,9 +1,11 @@
 
 import { createClient } from '@supabase/supabase-js';
+import { getConfig } from './config/environment.js';
 
-// Configuración robusta para producción
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Configuración robusta para producción usando environment.js
+const config = getConfig();
+const SUPABASE_URL = config.supabaseUrl;
+const SUPABASE_KEY = config.supabaseAnonKey;
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
     console.error('❌ Variables de entorno de Supabase faltantes');

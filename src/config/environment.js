@@ -1,4 +1,15 @@
 // Configuración dinámica para producción
+// Variables de configuración - compatibles con Jest y navegador
+let SUPABASE_URL, SUPABASE_ANON_KEY, GOOGLE_CLIENT_ID, FACEBOOK_CLIENT_ID;
+
+// En Jest/Node.js, usar process.env (definido en jest.setup.js)
+if (typeof process !== 'undefined' && process.env) {
+  SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+  SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
+  GOOGLE_CLIENT_ID = process.env.VITE_GOOGLE_CLIENT_ID;
+  FACEBOOK_CLIENT_ID = process.env.VITE_FACEBOOK_CLIENT_ID;
+}
+
 export const getConfig = () => {
   const isProduction = window.location.hostname === 'futpro.vip' || 
                       window.location.hostname.includes('futpro.vip') ||
@@ -36,19 +47,19 @@ export const getConfig = () => {
     // URLs de callback premium (usar SIEMPRE el mismo origen del frontend)
     premiumCallbackUrl: `${baseUrl}/auth/callback-premium`,
     
-    // Configuraciones de Supabase
-    supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
-    supabaseKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+    // Configuraciones de Supabase - Compatible con Jest y navegador
+    supabaseUrl: SUPABASE_URL || 'https://qqrxetxcglwrejtblwut.supabase.co',
+    supabaseAnonKey: SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU4MzQwMTQsImV4cCI6MjA0MTQxMDAxNH0.WaJRwm3fGSoOZzYpU5xhMc82rP6FqJKM52kQGYlXJz8',
     
-    // OAuth credentials
-    googleClientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-    facebookClientId: import.meta.env.VITE_FACEBOOK_CLIENT_ID,
+    // OAuth credentials - Compatible con Jest y navegador  
+    googleClientId: GOOGLE_CLIENT_ID || '760210878835-bnl2k6qfb4vuhm9v6fqpj1dqh5kul6d8.apps.googleusercontent.com',
+    facebookClientId: FACEBOOK_CLIENT_ID || '',
     
     // Flags de entorno
     isProduction,
     isDevelopment,
     isNetlify,
-  autoConfirmSignup: (import.meta.env.VITE_AUTO_CONFIRM_SIGNUP === 'true'),
+    autoConfirmSignup: (typeof process !== 'undefined' && process.env?.VITE_AUTO_CONFIRM_SIGNUP === 'true'),
     
     // Configuraciones de debug
     enableDebugLogs: isDevelopment,

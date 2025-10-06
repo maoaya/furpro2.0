@@ -294,7 +294,7 @@ export const AuthProvider = ({ children }) => {
       
       console.log('🚀 DIAGNÓSTICO GOOGLE OAUTH:');
       console.log('- Callback URL:', callbackUrl);
-      console.log('- Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+      console.log('- Supabase URL:', config.supabaseUrl);
       console.log('- Entorno:', config.isProduction ? 'Producción' : 'Desarrollo');
       console.log('- Hostname:', window.location.hostname);
       console.log('🌍 Configuración completa:', config);
@@ -319,7 +319,7 @@ export const AuthProvider = ({ children }) => {
         
         if (error.message.includes('403') || error.message.includes('forbidden')) {
           console.error('🚨 ERROR 403 - CONFIGURACIÓN OAUTH:');
-          const supabaseCallback = (import.meta?.env?.VITE_SUPABASE_URL ? `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/callback` : 'https://TU_PROYECTO.supabase.co/auth/v1/callback');
+          const supabaseCallback = `${config.supabaseUrl}/auth/v1/callback`;
           console.error(`Google: agrega http://localhost:5174 y http://localhost:5173 en Authorized JavaScript origins, y ${supabaseCallback} en Authorized redirect URIs.`);
           console.error('Supabase: Allowed Redirect URLs debe incluir:');
           console.error('- http://localhost:5174/auth/callback');
