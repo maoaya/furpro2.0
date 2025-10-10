@@ -3,16 +3,15 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import TestPage from './pages/TestPage.jsx';
 import LoginRegisterForm from './pages/LoginRegisterForm.jsx';
-import RegistroCompleto from './pages/RegistroCompleto.jsx';
 import RegistroFuncionando from './pages/RegistroFuncionando.jsx';
+import RegistroNuevo from './pages/RegistroNuevo.jsx';
+import RegistroTemporal from './pages/RegistroTemporal.jsx';
 import HomePage from './pages/HomePage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal.jsx';
 import CallbackPage from './pages/CallbackPage.jsx';
 import PageInDevelopment from './components/PageInDevelopment.jsx';
 import OAuthLiveTest from './pages/OAuthLiveTest.jsx';
-import DebugConfig from './pages/DebugConfig.jsx';
-import NetlifyAuthDebug from './pages/NetlifyAuthDebug.jsx';
 import { authFlowManager } from './utils/authFlowManager.js';
 import supabase from './supabaseClient.js';
 
@@ -414,9 +413,8 @@ export default function FutProAppDefinitivo() {
       
       {/* Registro completo */}
       <Route path="/registro" element={<RegistroFuncionando />} />
-      <Route path="/registro-completo" element={<RegistroCompleto />} />
-      <Route path="/debug-config" element={<DebugConfig />} />
-    <Route path="/netlify-debug" element={<NetlifyAuthDebug />} />
+      <Route path="/registro-completo" element={<RegistroTemporal />} />
+      <Route path="/registro-nuevo" element={<RegistroNuevo />} />
       
       {/* Callback para OAuth */}
       <Route path="/auth/callback" element={<CallbackPage />} />
