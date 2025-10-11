@@ -1,2158 +1,802 @@
-import React, { useState, useRef } from 'react';import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import supabase from '../supabaseClient';
 
-import { useNavigate } from 'react-router-dom';import { useNavigate } from 'react-router-dom';
+export default function RegistroCompleto() {
+  console.log('🔧 RegistroCompleto cargado (versión limpia sin duplicados)');
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
-import supabase from '../supabaseClient';import supabase from '../supabaseClient';
+  const [paso, setPaso] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [previewImagen, setPreviewImagen] = useState(null);
+  const [autoSaving, setAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
 
-
-
-export default function RegistroCompleto() {export default function RegistroCompleto() {
-
-  console.log('🔥 REGISTRO COMPLETO CON ESTADISTICAS Y AUTENTICACION CARGADO');  console.log('🔥 REGISTRO COMPLETO CON ESTADISTICAS Y AUTENTICACION CARGADO');
-
-  const navigate = useNavigate();  const navigate = useNavigate();
-
-  const fileInputRef = useRef(null);  const fileInputRef = useRef(null);
-
+  const [formData, setFormData] = useState({
+    // Paso 1: Datos básicos
+    email: '',
+    password: '',
+    confirmPassword: '',
     
-
-  const [paso, setPaso] = useState(1);  const [paso, setPaso] = useState(1);
-
-  const [loading, setLoading] = useState(false);  const [loading, setLoading] = useState(false);
-
-  const [error, setError] = useState('');  const [error, setError] = useState('');
-
-  const [success, setSuccess] = useState('');  const [success, setSuccess] = useState('');
-
+    // Paso 2: Información personal
+    nombre: '',
+    apellido: '',
+    edad: 18,
+    telefono: '',
+    pais: 'México',
+    ubicacion: '',
     
-
-  // Estado del formulario completo para estadísticas de card  // Estado del formulario completo para estadísticas de card
-
-  const [formData, setFormData] = useState({  const [formData, setFormData] = useState({
-
-    // Datos básicos (Paso 1)    // Datos básicos (Paso 1)
-
-    email: '',    email: '',
-
-    password: '',    password: '',
-
-    confirmPassword: '',    confirmPassword: '',
-
-        
-
-    // Información personal (Paso 2)    // Paso 2: Información personal
-
-    nombre: '',    nombre: '',
-
-    apellido: '',    apellido: '',
-
-    edad: 18,    edad: 18,
-
-    telefono: '',    telefono: '',
-
-    pais: 'México',    pais: 'México',
-
-    ciudad: '',    ubicacion: '',
-
-        
-
-    // Información futbolística para estadísticas (Paso 3)    // Paso 3: Información futbolística
-
-    posicion: '',    posicion: '',
-
-    experiencia: '',    experiencia: '',
-
-    equipoFavorito: '',    equipoFavorito: '',
-
-    peso: '',    peso: '',
-
-    altura: '',    
-
-    pieDominante: 'derecho',    // Paso 4: Disponibilidad
-
-        disponibilidad: '',
-
-    // Estadísticas para la card (Paso 4)    vecesJuegaPorSemana: '',
-
-    goles: 0,    horariosPreferidos: '',
-
-    asistencias: 0,    
-
-    partidosJugados: 0,    // Paso 5: Foto de perfil
-
-    minutosTotales: 0,    foto: null
-
-    tarjetasAmarillas: 0,  });
-
-    tarjetasRojas: 0,  };
-
+    // Paso 3: Información futbolística
+    posicion: '',
+    experiencia: '',
+    equipoFavorito: '',
+    peso: '',
     
+    // Paso 4: Disponibilidad
+    disponibilidad: '',
+    vecesJuegaPorSemana: '',
+    horariosPreferidos: '',
+    
+    // Paso 5: Foto de perfil
+    foto: null
+  });
 
-    // Disponibilidad (Paso 5)  const handleImageChange = (e) => {
-
-    disponibilidad: '',    const file = e.target.files[0];
-
-    vecesJuegaPorSemana: '2-3',    if (file) {
-
-    horariosPreferidos: '',      if (file.size > 5 * 1024 * 1024) {
-
-            setError('La imagen debe ser menor a 5MB');
-
-    // Foto de perfil (Paso 6)        return;
-
-    foto: null      }
-
-  });      setForm({ ...form, avatar_url: file });
-
-        const reader = new FileReader();
-
-  const [previewImagen, setPreviewImagen] = useState(null);      reader.onload = (e) => setPreviewImage(e.target.result);
-
-      reader.readAsDataURL(file);
-
-  const handleChange = (e) => {    }
-
-    const { name, value, type } = e.target;  };
-
-    setFormData(prev => ({
-
-      ...prev,  const uploadImage = async (file) => {
-
-      [name]: type === 'number' ? Number(value) : value    try {
-
-    }));      const fileExt = file.name.split('.').pop();
-
-    if (error) setError('');      const fileName = `${Date.now()}.${fileExt}`;
-
-  };      const filePath = `avatars/${fileName}`;
-
-
-
-  const handleFileChange = (e) => {      const { error: uploadError } = await supabase.storage
-
-    const file = e.target.files[0];        .from('avatars')
-
-    if (file) {        .upload(filePath, file);
-
-      // Validar tamaño (máximo 5MB)
-
-      if (file.size > 5 * 1024 * 1024) {      if (uploadError) {
-
-        setError('La imagen debe ser menor a 5MB');        console.warn('⚠️ Error subiendo imagen:', uploadError);
-
-        return;        return null;
-
-      }      }
-
-      
-
-      // Validar formato      const { data } = supabase.storage
-
-      if (!file.type.startsWith('image/')) {        .from('avatars')
-
-        setError('Por favor selecciona una imagen válida');        .getPublicUrl(filePath);
-
-        return;
-
-      }      return data.publicUrl;
-
-          } catch (error) {
-
-      setFormData(prev => ({ ...prev, foto: file }));      console.warn('⚠️ Error en upload:', error);
-
-            return null;
-
-      // Crear preview    }
-
-      const reader = new FileReader();  };
-
-      reader.onloadend = () => {
-
-        setPreviewImagen(reader.result);  const nextStep = () => {
-
-      };    if (currentStep === 1) {
-
-      reader.readAsDataURL(file);      if (!form.nombre?.trim()) {
-
-    }        setError('El nombre es obligatorio');
-
-  };        return;
-
+  // Auto-guardado cada 30 segundos
+  useEffect(() => {
+    const autoSaveInterval = setInterval(() => {
+      if (paso > 1 && formData.email && formData.nombre) {
+        autoGuardarProgreso();
       }
+    }, 30000);
 
-  const validarPaso = () => {      if (!form.email?.trim()) {
+    return () => clearInterval(autoSaveInterval);
+  }, [paso, formData]);
 
-    switch (paso) {        setError('El email es obligatorio');
-
-      case 1:        return;
-
-        if (!formData.email || !formData.password || !formData.confirmPassword) {      }
-
-          setError('Por favor completa todos los campos');      if (!form.password) {
-
-          return false;        setError('La contraseña es obligatoria');
-
-        }        return;
-
-        if (formData.password !== formData.confirmPassword) {      }
-
-          setError('Las contraseñas no coinciden');      if (form.password !== form.confirmPassword) {
-
-          return false;        setError('Las contraseñas no coinciden');
-
-        }        return;
-
-        if (formData.password.length < 6) {      }
-
-          setError('La contraseña debe tener al menos 6 caracteres');      if (form.password.length < 6) {
-
-          return false;        setError('La contraseña debe tener al menos 6 caracteres');
-
-        }        return;
-
-        break;      }
-
-      case 2:      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!formData.nombre || !formData.apellido || !formData.edad || !formData.telefono || !formData.ciudad) {      if (!emailRegex.test(form.email)) {
-
-          setError('Por favor completa todos los campos');        setError('Por favor ingresa un email válido');
-
-          return false;        return;
-
-        }      }
-
-        if (formData.edad < 16 || formData.edad > 60) {    }
-
-          setError('La edad debe estar entre 16 y 60 años');
-
-          return false;    if (currentStep === 2) {
-
-        }      if (!form.posicion) {
-
-        break;        setError('La posición es obligatoria');
-
-      case 3:        return;
-
-        if (!formData.posicion || !formData.experiencia || !formData.peso || !formData.altura) {      }
-
-          setError('Por favor completa todos los campos');      if (!form.frecuencia_juego) {
-
-          return false;        setError('La frecuencia de juego es obligatoria');
-
-        }        return;
-
-        break;      }
-
-      case 4:      if (form.edad < 13 || form.edad > 60) {
-
-        // Las estadísticas pueden ser 0, no necesitan validación estricta        setError('La edad debe estar entre 13 y 60 años');
-
-        if (formData.partidosJugados < 0 || formData.goles < 0 || formData.asistencias < 0) {        return;
-
-          setError('Las estadísticas no pueden ser negativas');      }
-
-          return false;      if (form.peso && (form.peso < 30 || form.peso > 150)) {
-
-        }        setError('El peso debe estar entre 30 y 150 kg');
-
-        break;        return;
-
-      case 5:      }
-
-        if (!formData.disponibilidad || !formData.horariosPreferidos) {    }
-
-          setError('Por favor completa todos los campos');    
-
-          return false;    setCurrentStep(currentStep + 1);
-
-        }    setError('');
-
-        break;  };
-
+  // Cargar progreso guardado al montar el componente
+  useEffect(() => {
+    const datosSalvados = localStorage.getItem('futpro_registro_progreso');
+    if (datosSalvados) {
+      try {
+        const datos = JSON.parse(datosSalvados);
+        setFormData(prev => ({ ...prev, ...datos }));
+        setLastSaved(new Date().toLocaleTimeString());
+      } catch (e) {
+        console.log('Error cargando datos guardados:', e);
+      }
     }
+  }, []);
 
-    return true;  const prevStep = () => {
-
-  };    setCurrentStep(currentStep - 1);
-
-    setError('');
-
-  const siguientePaso = () => {  };
-
-    if (validarPaso()) {
-
-      setError('');  // Manejar OAuth después de completar los datos del formulario
-
-      setPaso(paso + 1);  const handleOAuthComplete = async (provider) => {
-
-    }    setLoading(true);
-
-  };    setError('');
-
+  const autoGuardarProgreso = async () => {
+    if (!formData.email || !formData.nombre) return;
     
-
-  const anteriorPaso = () => {    try {
-
-    setPaso(paso - 1);      // Validar que tenemos datos mínimos del formulario
-
-    setError('');      if (!form.nombre?.trim()) {
-
-  };        setError('Por favor completa al menos tu nombre antes de usar OAuth');
-
-        setLoading(false);
-
-  const subirFoto = async (file) => {        return;
-
-    if (!file) return null;      }
-
-    
-
-    const fileExt = file.name.split('.').pop();      // Guardar datos del formulario para completar después del OAuth
-
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;      const profileData = {
-
-    const filePath = `fotos-perfil/${fileName}`;        nombre: form.nombre.trim(),
-
-            edad: parseInt(form.edad) || null,
-
-    const { data, error } = await supabase.storage        peso: form.peso ? parseFloat(form.peso) : null,
-
-      .from('futpro-storage')        ciudad: form.ciudad?.trim() || null,
-
-      .upload(filePath, file);        pais: form.pais?.trim() || 'España',
-
-            posicion: form.posicion || 'Delantero Centro',
-
-    if (error) {        frecuencia_juego: form.frecuencia_juego || '3',
-
-      console.error('Error subiendo foto:', error);        rol: form.rol,
-
-      return null;        tipo_usuario: form.tipo_usuario
-
-    }      };
-
-    
-
-    // Obtener URL pública      // Guardar en localStorage para completar después del OAuth
-
-    const { data: { publicUrl } } = supabase.storage      localStorage.setItem('pendingProfileData', JSON.stringify(profileData));
-
-      .from('futpro-storage')      localStorage.setItem('postLoginRedirect', '/home');
-
-      .getPublicUrl(filePath);      
-
-          console.log('📝 Datos guardados para OAuth:', {
-
-    return publicUrl;        profileData,
-
-  };        redirect: '/home'
-
-      });
-
-  const registrarUsuario = async () => {
-
-    setLoading(true);      console.log(`🚀 Iniciando OAuth con ${provider} desde registro completo`);
-
-    setError('');      setMsg(`Conectando con ${provider}...`);
-
-    
-
-    try {      // Iniciar OAuth
-
-      console.log('🚀 Iniciando registro con autenticación Supabase...');      if (provider === 'google') {
-
-              const result = await loginWithGoogle();
-
-      // 1. Registrar usuario en Supabase Auth        if (result?.error) {
-
-      const { data: authData, error: authError } = await supabase.auth.signUp({          setError(`Error con Google: ${result.error}`);
-
-        email: formData.email,          setLoading(false);
-
-        password: formData.password,        } else {
-
-        options: {          console.log('✅ OAuth Google iniciado correctamente');
-
-          data: {        }
-
-            nombre: formData.nombre,      } else if (provider === 'facebook') {
-
-            apellido: formData.apellido        const result = await loginWithFacebook();
-
-          }        if (result?.error) {
-
-        }          setError(`Error con Facebook: ${result.error}`);
-
-      });          setLoading(false);
-
-              } else {
-
-      if (authError) {          console.log('✅ OAuth Facebook iniciado correctamente');
-
-        throw new Error(`Error de autenticación: ${authError.message}`);        }
-
-      }      }
-
-          } catch (error) {
-
-      console.log('✅ Usuario registrado en Auth:', authData.user?.id);      console.error('Error en OAuth desde registro:', error);
-
-            setError(`Error: ${error.message}`);
-
-      // 2. Subir foto si existe      setLoading(false);
-
-      let fotoUrl = null;    }
-
-      if (formData.foto) {  };
-
-        console.log('📸 Subiendo foto de perfil...');
-
-        fotoUrl = await subirFoto(formData.foto);  // Componente de botones OAuth
-
-        if (fotoUrl) {  const OAuthButtons = () => (
-
-          console.log('✅ Foto subida exitosamente:', fotoUrl);    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-
-        }      <button
-
-      }        type="button"
-
-              onClick={() => handleOAuthComplete('google')}
-
-      // 3. Guardar datos completos en la tabla usuarios        disabled={loading}
-
-      const datosUsuario = {        style={{
-
-        id: authData.user.id,          flex: 1,
-
-        email: formData.email,          padding: '12px',
-
-        nombre: formData.nombre,          background: '#4285f4',
-
-        apellido: formData.apellido,          color: '#fff',
-
-        edad: formData.edad,          border: 'none',
-
-        telefono: formData.telefono,          borderRadius: '8px',
-
-        pais: formData.pais,          fontSize: '14px',
-
-        ciudad: formData.ciudad,          fontWeight: 'bold',
-
-        posicion: formData.posicion,          cursor: loading ? 'not-allowed' : 'pointer',
-
-        experiencia: formData.experiencia,          display: 'flex',
-
-        equipo_favorito: formData.equipoFavorito,          alignItems: 'center',
-
-        peso: formData.peso,          justifyContent: 'center',
-
-        altura: formData.altura,          gap: '8px',
-
-        pie_dominante: formData.pieDominante,          opacity: loading ? 0.7 : 1
-
-        goles: formData.goles,        }}
-
-        asistencias: formData.asistencias,      >
-
-        partidos_jugados: formData.partidosJugados,        <i className="fab fa-google"></i>
-
-        minutos_totales: formData.minutosTotales,        Google
-
-        tarjetas_amarillas: formData.tarjetasAmarillas,      </button>
-
-        tarjetas_rojas: formData.tarjetasRojas,      <button
-
-        disponibilidad: formData.disponibilidad,        type="button"
-
-        veces_juega_por_semana: formData.vecesJuegaPorSemana,        onClick={() => handleOAuthComplete('facebook')}
-
-        horarios_preferidos: formData.horariosPreferidos,        disabled={loading}
-
-        foto_perfil: fotoUrl,        style={{
-
-        estado: 'activo',          flex: 1,
-
-        fecha_registro: new Date().toISOString(),          padding: '12px',
-
-        rol: 'usuario'          background: '#1877f2',
-
-      };          color: '#fff',
-
-                border: 'none',
-
-      const { data: userData, error: userError } = await supabase          borderRadius: '8px',
-
-        .from('usuarios')          fontSize: '14px',
-
-        .insert([datosUsuario])          fontWeight: 'bold',
-
-        .select()          cursor: loading ? 'not-allowed' : 'pointer',
-
-        .single();          display: 'flex',
-
-                alignItems: 'center',
-
-      if (userError) {          justifyContent: 'center',
-
-        throw new Error(`Error guardando datos: ${userError.message}`);          gap: '8px',
-
-      }          opacity: loading ? 0.7 : 1
-
-              }}
-
-      console.log('✅ Datos guardados en base de datos:', userData);      >
-
-              <i className="fab fa-facebook-f"></i>
-
-      // 4. Marcar como registro completo        Facebook
-
-      localStorage.setItem('registroCompleto', 'true');      </button>
-
-      localStorage.setItem('authCompleted', 'true');    </div>
-
-      localStorage.setItem('userLoggedIn', JSON.stringify(userData));  );
-
-      
-
-      setSuccess('¡Registro completado exitosamente! Redirigiendo...');  const handleDirectRegistration = async () => {
-
-          setLoading(true);
-
-      // 5. Redireccionar a la card de perfil con datos    setError('');
-
-      setTimeout(() => {    setMsg('Registrando directamente en la base de datos...');
-
-        try {
-
-          navigate('/perfil-card', {     try {
-
-            state: {       // Validaciones
-
-              newUser: true,       if (!form.nombre || !form.email || !form.password) {
-
-              userData: userData         setError('Por favor completa todos los campos obligatorios');
-
-            }         setLoading(false);
-
-          });        return;
-
-        } catch (navError) {      }
-
-          console.warn('Error con navigate, usando window.location...');
-
-          window.location.href = '/perfil-card';      // Subir imagen si existe
-
-        }      let avatarUrl = null;
-
-      }, 2000);      if (form.avatar_url && typeof form.avatar_url === 'object') {
-
-              setMsg('Subiendo imagen de perfil...');
-
-    } catch (error) {        avatarUrl = await uploadImage(form.avatar_url);
-
-      console.error('❌ Error en registro:', error);      }
-
-      setError(error.message || 'Error durante el registro. Intenta de nuevo.');
-
-    } finally {      // Generar ID único para el usuario
-
-      setLoading(false);      const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    }      
-
-  };      // Crear perfil directamente en la base de datos
-
-      const perfilData = {
-
-  const handleSubmit = (e) => {        id: userId,
-
-    e.preventDefault();        nombre: form.nombre.trim(),
-
-    if (paso < 6) {        email: form.email.toLowerCase().trim(),
-
-      siguientePaso();        edad: parseInt(form.edad) || null,
-
-    } else {        peso: form.peso ? parseFloat(form.peso) : null,
-
-      registrarUsuario();        ciudad: form.ciudad?.trim() || null,
-
-    }        pais: form.pais?.trim() || 'España',
-
-  };        posicion: form.posicion,
-
-        frecuencia_juego: form.frecuencia_juego,
-
-  const renderPaso = () => {        avatar_url: avatarUrl,
-
-    switch (paso) {        rol: form.rol,
-
-      case 1:        tipo_usuario: form.tipo_usuario,
-
-        return (        estado: 'pendiente_verificacion',
-
-          <div>        created_at: new Date().toISOString(),
-
-            <h3 style={{ color: '#FFD700', marginBottom: '20px' }}>Paso 1: Datos de Acceso</h3>        updated_at: new Date().toISOString()
-
-                  };
-
-            <div style={{ marginBottom: '15px' }}>
-
-              <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>      setMsg('Creando perfil de jugador...');
-
-                📧 Email *      const { error: perfilError } = await supabase
-
-              </label>        .from('usuarios')
-
-              <input        .insert([perfilData]);
-
-                type="email"
-
-                name="email"      if (perfilError) {
-
-                value={formData.email}        console.error('❌ Error creando perfil directo:', perfilError);
-
-                onChange={handleChange}        setError(`Error: ${perfilError.message}`);
-
-                required        setLoading(false);
-
-                style={inputStyle}        return;
-
-                placeholder="tu@email.com"      }
-
-              />
-
-            </div>      setMsg('¡Usuario registrado! Te contactaremos para activar tu cuenta.');
-
-      localStorage.removeItem('tempRegistroData');
-
-            <div style={{ marginBottom: '15px' }}>      localStorage.removeItem('registroProgreso');
-
-              <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>      // Asegurar intención de navegación a home
-
-                🔒 Contraseña *      localStorage.setItem('postLoginRedirect', '/home');
-
-              </label>      
-
-              <input      setTimeout(() => {
-
-                type="password"        navigate('/home', { replace: true });
-
-                name="password"      }, 1500);
-
-                value={formData.password}
-
-                onChange={handleChange}    } catch (error) {
-
-                required      console.error('💥 Error en registro directo:', error);
-
-                style={inputStyle}      setError(`Error: ${error.message}`);
-
-                placeholder="Mínimo 6 caracteres"    } finally {
-
-              />      setLoading(false);
-
-            </div>    }
-
+    setAutoSaving(true);
+    try {
+      localStorage.setItem('futpro_registro_progreso', JSON.stringify(formData));
+      setLastSaved(new Date().toLocaleTimeString());
+    } catch (error) {
+      console.log('Error auto-guardando:', error);
+    } finally {
+      setAutoSaving(false);
+    }
   };
 
-            <div style={{ marginBottom: '15px' }}>
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
 
-              <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>  const handleSubmit = async (e) => {
+    // Auto-guardar cuando el usuario escriba
+    if (name === 'email' || name === 'nombre' || name === 'apellido') {
+      setTimeout(autoGuardarProgreso, 2000);
+    }
+  };
 
-                🔒 Confirmar Contraseña *    e.preventDefault();
-
-              </label>    setLoading(true);
-
-              <input    setError('');
-
-                type="password"    setMsg('');
-
-                name="confirmPassword"
-
-                value={formData.confirmPassword}    // Asegurar redirección post-login consistente
-
-                onChange={handleChange}    localStorage.setItem('postLoginRedirect', '/home');
-
-                required    localStorage.setItem('postLoginRedirectReason', 'signup-full');
-
-                style={inputStyle}
-
-                placeholder="Repite tu contraseña"    try {
-
-              />      if (!form.nombre || !form.email || !form.password) {
-
-            </div>        setError('Por favor completa todos los campos obligatorios');
-
-          </div>        setLoading(false);
-
-        );        return;
-
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validar tipo de archivo
+      const tiposPermitidos = ['image/jpeg', 'image/png', 'image/jpg'];
+      if (!tiposPermitidos.includes(file.type)) {
+        setError('Solo se permiten archivos JPG, PNG y JPEG');
+        return;
       }
 
+      // Validar tamaño (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('El archivo debe ser menor a 5MB');
+        return;
+      }
+
+      setFormData(prev => ({ ...prev, foto: file }));
+      
+      // Crear preview
+      const reader = new FileReader();
+      reader.onload = (e) => setPreviewImagen(e.target.result);
+      reader.readAsDataURL(file);
+      
+      setError('');
+    }
+  };
+
+  const validarPaso = () => {
+    switch (paso) {
+      case 1:
+        if (!formData.email || !formData.password || !formData.confirmPassword) {
+          setError('Por favor completa todos los campos obligatorios');
+          return false;
+        }
+        if (formData.password !== formData.confirmPassword) {
+          setError('Las contraseñas no coinciden');
+          return false;
+        }
+        if (formData.password.length < 6) {
+          setError('La contraseña debe tener al menos 6 caracteres');
+          return false;
+        }
+        break;
       case 2:
-
-        return (      if (form.password !== form.confirmPassword) {
-
-          <div>        setError('Las contraseñas no coinciden');
-
-            <h3 style={{ color: '#FFD700', marginBottom: '20px' }}>Paso 2: Información Personal</h3>        setLoading(false);
-
-                    return;
-
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>      }
-
-              <div style={{ flex: 1 }}>
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>      let avatarUrl = null;
-
-                  👤 Nombre *      if (form.avatar_url && typeof form.avatar_url === 'object') {
-
-                </label>        console.log('📸 Subiendo imagen de perfil...');
-
-                <input        setMsg('Subiendo imagen de perfil...');
-
-                  type="text"        avatarUrl = await uploadImage(form.avatar_url);
-
-                  name="nombre"        if (!avatarUrl) {
-
-                  value={formData.nombre}          console.warn('⚠️ No se pudo subir la imagen, continuando sin ella...');
-
-                  onChange={handleChange}        }
-
-                  required      }
-
-                  style={inputStyle}
-
-                  placeholder="Tu nombre"      // REGISTRO DIRECTO CON BYPASS DE CAPTCHA
-
-                />      console.log('� Registrando usuario directamente...');
-
-              </div>      setMsg('Creando cuenta de usuario...');
-
-              <div style={{ flex: 1 }}>      // Obtener token mock siempre
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>      const { status, provider } = getCaptchaProviderInfo();
-
-                  👤 Apellido *      const authOptions = {
-
-                </label>        email: form.email.toLowerCase().trim(),
-
-                <input        password: form.password,
-
-                  type="text"        options: {
-
-                  name="apellido"          data: {
-
-                  value={formData.apellido}            nombre: form.nombre.trim(),
-
-                  onChange={handleChange}            full_name: form.nombre.trim()
-
-                  required          }
-
-                  style={inputStyle}        }
-
-                  placeholder="Tu apellido"      };
-
-                />      
-
-              </div>      // BYPASS DEFINITIVO: NO ENVIAR captchaToken en absoluto
-
-            </div>      // Si Supabase no recibe captchaToken, no validará captcha
-
-      console.log('[CAPTCHA] 🚀 BYPASS DEFINITIVO: NO enviando captchaToken');
-
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>      console.log('[CAPTCHA] �️ Supabase saltará validación captcha automáticamente');
-
-              <div style={{ flex: 1 }}>      
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>      const { data: authData, error: authError } = await supabase.auth.signUp(authOptions);
-
-                  🎂 Edad *
-
-                </label>      if (authError) {
-
-                <input        console.error('❌ Error en Auth:', authError);
-
-                  type="number"        
-
-                  name="edad"        // Manejar errores específicos
-
-                  value={formData.edad}        if (authError.message?.includes('already registered') || 
-
-                  onChange={handleChange}           authError.message?.includes('User already registered')) {
-
-                  required          setError('Este email ya está registrado. Ve al login para iniciar sesión.');
-
-                  min="16"          setTimeout(() => navigate('/', { replace: true }), 3000);
-
-                  max="60"          return;
-
-                  style={inputStyle}        } else if (authError.message?.includes('signup_disabled')) {
-
-                />          setError('El registro está temporalmente deshabilitado. Intenta más tarde.');
-
-              </div>        } else if (authError.message?.toLowerCase().includes('captcha')) {
-
-              <div style={{ flex: 1 }}>          console.warn('🛡️ CAPTCHA bloqueó el registro. Usando bypass con Function...');
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>          setMsg('Verificación bloqueada. Intentando crear cuenta de forma segura...');
-
-                  📱 Teléfono *          const bypass = await signupBypass({
-
-                </label>            email: form.email.toLowerCase().trim(),
-
-                <input            password: form.password,
-
-                  type="tel"            nombre: form.nombre.trim()
-
-                  name="telefono"          });
-
-                  value={formData.telefono}          if (!bypass.ok) {
-
-                  onChange={handleChange}            setError('Error de seguridad: ' + (bypass.error || 'No se pudo crear la cuenta. Intenta más tarde.'));
-
-                  required            setLoading(false);
-
-                  style={inputStyle}            return;
-
-                  placeholder="+52 123 456 7890"          }
-
-                />          // Intentar iniciar sesión ahora que el usuario existe
-
-              </div>          const { data: signInData2, error: signInErr2 } = await supabase.auth.signInWithPassword({
-
-            </div>            email: form.email.toLowerCase().trim(),
-
-            password: form.password
-
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>          });
-
-              <div style={{ flex: 1 }}>          if (signInErr2) {
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>            console.warn('⚠️ No se pudo iniciar sesión tras bypass, redirigiendo a magic link...', signInErr2.message);
-
-                  🌍 País *            if (bypass.redirectLink) {
-
-                </label>              window.location.assign(bypass.redirectLink);
-
-                <select              return;
-
-                  name="pais"            }
-
-                  value={formData.pais}            setError('Cuenta creada, pero no se pudo iniciar sesión automáticamente. Ve al login.');
-
-                  onChange={handleChange}            setLoading(false);
-
-                  style={inputStyle}            return;
-
-                >          }
-
-                  <option value="México">México</option>          session = signInData2.session;
-
-                  <option value="Estados Unidos">Estados Unidos</option>          console.log('🔓 Sesión iniciada vía bypass function');
-
-                  <option value="Colombia">Colombia</option>        } else {
-
-                  <option value="Argentina">Argentina</option>          setError(`Error de registro: ${authError.message}`);
-
-                  <option value="España">España</option>        }
-
-                  <option value="Brasil">Brasil</option>        if (!session) {
-
-                  <option value="Otro">Otro</option>          setLoading(false);
-
-                </select>          return;
-
-              </div>        }
-
-              <div style={{ flex: 1 }}>      }
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>
-
-                  🏙️ Ciudad *      // Si llegamos aquí, el registro en Auth fue exitoso
-
-                </label>      console.log('✅ Usuario registrado en Auth:', authData.user?.email);
-
-                <input      console.log('👤 Usuario ID:', authData.user?.id);
-
-                  type="text"
-
-                  name="ciudad"      // Asegurar sesión activa (Supabase puede no iniciar sesión si requiere confirmación de email)
-
-                  value={formData.ciudad}      let session = authData.session || null;
-
-                  onChange={handleChange}      if (!session) {
-
-                  required        console.log('🔐 No hay sesión tras el signUp. Intentando iniciar sesión automáticamente...');
-
-                  style={inputStyle}        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-
-                  placeholder="Tu ciudad"          email: form.email.toLowerCase().trim(),
-
-                />          password: form.password
-
-              </div>        });
-
-            </div>        if (signInError) {
-
-          </div>          console.warn('⚠️ No se pudo iniciar sesión automáticamente:', signInError.message);
-
-        );          const needsConfirm = signInError.message?.toLowerCase().includes('email') && signInError.message?.toLowerCase().includes('confirm');
-
-          if (needsConfirm) {
-
-      case 3:            // Si auto-confirm está habilitado, simplemente omitir la verificación
-
-        return (            if (cfg.autoConfirmSignup) {
-
-          <div>              console.log('🏠 Auto-confirm habilitado: omitiendo verificación de email');
-
-            <h3 style={{ color: '#FFD700', marginBottom: '20px' }}>Paso 3: Información Futbolística</h3>              setMsg('Cuenta creada exitosamente. Iniciando sesión...');
-
-                        }
-
-            <div style={{ marginBottom: '15px' }}>
-
-              <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>            // Señales y navegación estable
-
-                ⚽ Posición Principal *            localStorage.setItem('registroCompleto', 'true');
-
-              </label>            localStorage.setItem('authCompleted', 'true');
-
-              <select            setTimeout(() => ensureHomeNavigation(navigate, { target: '/home' }), 300);
-
-                name="posicion"
-
-                value={formData.posicion}            return;
-
-                onChange={handleChange}          }
-
-                style={inputStyle}        } else {
-
-              >          session = signInData.session;
-
-                <option value="">Selecciona tu posición</option>          console.log('🔓 Sesión iniciada automáticamente');
-
-                <option value="Portero">Portero</option>        }
-
-                <option value="Defensa Central">Defensa Central</option>      }
-
-                <option value="Lateral Derecho">Lateral Derecho</option>      
-
-                <option value="Lateral Izquierdo">Lateral Izquierdo</option>      // Crear perfil en la base de datos
-
-                <option value="Mediocentro Defensivo">Mediocentro Defensivo</option>      setMsg('Completando perfil de jugador...');
-
-                <option value="Mediocentro">Mediocentro</option>      
-
-                <option value="Mediocentro Ofensivo">Mediocentro Ofensivo</option>      const perfilData = {
-
-                <option value="Extremo Derecho">Extremo Derecho</option>        id: authData.user.id,
-
-                <option value="Extremo Izquierdo">Extremo Izquierdo</option>        nombre: form.nombre.trim(),
-
-                <option value="Delantero Centro">Delantero Centro</option>        email: form.email.toLowerCase().trim(),
-
-              </select>        edad: parseInt(form.edad) || null,
-
-            </div>        peso: form.peso ? parseFloat(form.peso) : null,
-
-        ciudad: form.ciudad?.trim() || null,
-
-            <div style={{ marginBottom: '15px' }}>        pais: form.pais?.trim() || 'España',
-
-              <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>        posicion: form.posicion,
-
-                🏆 Experiencia *        frecuencia_juego: form.frecuencia_juego,
-
-              </label>        avatar_url: avatarUrl,
-
-              <select        rol: form.rol || 'usuario',
-
-                name="experiencia"        tipo_usuario: form.tipo_usuario || 'jugador',
-
-                value={formData.experiencia}        estado: 'activo',
-
-                onChange={handleChange}        created_at: new Date().toISOString(),
-
-                style={inputStyle}        updated_at: new Date().toISOString()
-
-              >      };
-
-                <option value="">Selecciona tu nivel</option>
-
-                <option value="Principiante">Principiante (menos de 1 año)</option>      console.log('📝 Datos del perfil a insertar:', perfilData);
-
-                <option value="Intermedio">Intermedio (1-3 años)</option>      
-
-                <option value="Avanzado">Avanzado (3-5 años)</option>      const { data: insertData, error: perfilError } = await supabase
-
-                <option value="Experto">Experto (más de 5 años)</option>        .from('usuarios')
-
-                <option value="Profesional">Profesional</option>        .insert([perfilData])
-
-              </select>        .select();
-
-            </div>
-
-      if (perfilError) {
-
-            <div style={{ marginBottom: '15px' }}>        console.error('❌ Error creando perfil:', perfilError);
-
-              <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>        setError(`Error creando perfil: ${perfilError.message}`);
-
-                💙 Equipo Favorito        setLoading(false);
-
-              </label>        return;
-
-              <input      }
-
-                type="text"
-
-                name="equipoFavorito"      console.log('✅ Perfil creado exitosamente:', insertData);
-
-                value={formData.equipoFavorito}      console.log('🎉 REGISTRO COMPLETADO EXITOSAMENTE');
-
-                onChange={handleChange}      
-
-                style={inputStyle}      setMsg('¡Registro exitoso! Bienvenido a FutPro. Redirigiendo a tu dashboard...');
-
-                placeholder="Real Madrid, Barcelona, etc."      
-
-              />      // Limpiar datos temporales
-
-            </div>      localStorage.removeItem('tempRegistroData');
-
-      localStorage.removeItem('registroProgreso');
-
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>      
-
-              <div style={{ flex: 1 }}>      // Calcular calificación basada en frecuencia de juego
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>      const frecuencia = parseInt(form.frecuencia_juego);
-
-                  ⚖️ Peso (kg) *      let calificacion = 50; // Base
-
-                </label>      if (frecuencia >= 7) calificacion = 95;
-
-                <input      else if (frecuencia >= 6) calificacion = 90;
-
-                  type="number"      else if (frecuencia >= 5) calificacion = 85;
-
-                  name="peso"      else if (frecuencia >= 4) calificacion = 75;
-
-                  value={formData.peso}      else if (frecuencia >= 3) calificacion = 65;
-
-                  onChange={handleChange}      else if (frecuencia >= 2) calificacion = 55;
-
-                  required      
-
-                  min="40"      // Guardar datos del usuario registrado
-
-                  max="150"      localStorage.setItem('userRegistrado', JSON.stringify({
-
-                  style={inputStyle}        id: authData.user.id,
-
-                  placeholder="70"        nombre: form.nombre,
-
-                />        email: form.email,
-
-              </div>        calificacion: calificacion,
-
-              <div style={{ flex: 1 }}>        registrado: true,
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>        timestamp: new Date().toISOString()
-
-                  📏 Altura (cm) *      }));
-
-                </label>      
-
-                <input      // Marcar que el registro está completo y forzar actualización del contexto
-
-                  type="number"      localStorage.setItem('registroCompleto', 'true');
-
-                  name="altura"      localStorage.setItem('authCompleted', 'true');
-
-                  value={formData.altura}      
-
-                  onChange={handleChange}      // Mensaje de éxito y esperar un poco para que el contexto se actualice
-
-                  required      console.log('🎉 REGISTRO COMPLETADO - Preparando navegación...');
-
-                  min="150"      
-
-                  max="220"      // Navegación más robusta con múltiples intentos
-
-                  style={inputStyle}      const navigateToHome = () => {
-
-                  placeholder="175"        try {
-
-                />          console.log('🔄 Navegando a /home después del registro completo');
-
-              </div>          navigate('/home', { replace: true });
-
-            </div>        } catch (navError) {
-
-          console.warn('⚠️ Error en navigate, intentando con window.location');
-
-            <div style={{ marginBottom: '15px' }}>          window.location.href = '/home';
-
-              <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>        }
-
-                🦶 Pie Dominante      };
-
-              </label>      
-
-              <select      // Intentar navegación inmediata
-
-                name="pieDominante"      setTimeout(navigateToHome, 1000);
-
-                value={formData.pieDominante}      
-
-                onChange={handleChange}      // Fallback por si falla la primera navegación
-
-                style={inputStyle}      setTimeout(() => {
-
-              >        if (window.location.pathname !== '/home') {
-
-                <option value="derecho">Derecho</option>          console.log('🔄 Navegación fallback ejecutándose...');
-
-                <option value="izquierdo">Izquierdo</option>          navigateToHome();
-
-                <option value="ambidiestro">Ambidiestro</option>        }
-
-              </select>      }, 3000);
-
-            </div>
-
-          </div>    } catch (error) {
-
-        );      console.error('💥 Error inesperado en registro:', error);
-
-      setError(`Error inesperado: ${error.message}. Por favor intenta nuevamente.`);
-
-      case 4:    } finally {
-
-        return (      setLoading(false);
-
-          <div>    }
-
-            <h3 style={{ color: '#FFD700', marginBottom: '20px' }}>Paso 4: Estadísticas para tu Card</h3>  };
-
-            <p style={{ color: '#888', fontSize: '14px', marginBottom: '20px' }}>
-
-              Estas estadísticas aparecerán en tu tarjeta de perfil. Si eres principiante, puedes dejarlas en 0.  return (
-
-            </p>    <div style={{
-
-                  minHeight: '100vh',
-
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>      background: `linear-gradient(135deg, ${black} 0%, #333 100%)`,
-
-              <div style={{ flex: 1 }}>      display: 'flex',
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>      alignItems: 'center',
-
-                  ⚽ Goles      justifyContent: 'center',
-
-                </label>      padding: '20px',
-
-                <input      fontFamily: 'Arial, sans-serif'
-
-                  type="number"    }}>
-
-                  name="goles"      <div style={{
-
-                  value={formData.goles}        background: darkCard,
-
-                  onChange={handleChange}        border: `2px solid ${gold}`,
-
-                  min="0"        borderRadius: '20px',
-
-                  style={inputStyle}        padding: '40px',
-
-                  placeholder="0"        width: '100%',
-
-                />        maxWidth: '600px',
-
-              </div>        boxShadow: `0 20px 60px rgba(0, 0, 0, 0.5)`
-
-              <div style={{ flex: 1 }}>      }}>
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>        {/* Banner QA: auto-confirm activo */}
-
-                  🅰️ Asistencias        {cfg.autoConfirmSignup && !hideAutoConfirmBanner && (
-
-                </label>          <div style={{
-
-                <input            background: '#1e3a8a',
-
-                  type="number"            color: '#fff',
-
-                  name="asistencias"            border: `1px solid ${gold}`,
-
-                  value={formData.asistencias}            borderRadius: '8px',
-
-                  onChange={handleChange}            padding: '10px 12px',
-
-                  min="0"            marginBottom: '16px',
-
-                  style={inputStyle}            display: 'flex',
-
-                  placeholder="0"            justifyContent: 'space-between',
-
-                />            alignItems: 'center',
-
-              </div>            fontSize: '12px'
-
-            </div>          }}>
-
-            <span>Modo QA: la verificación por email está desactivada (auto-confirm activo)</span>
-
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>            <button
-
-              <div style={{ flex: 1 }}>              type="button"
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>              onClick={() => { localStorage.setItem('hideAutoConfirmBanner', 'true'); setHideAutoConfirmBanner(true); }}
-
-                  🏟️ Partidos Jugados              style={{
-
-                </label>                background: 'transparent',
-
-                <input                color: gold,
-
-                  type="number"                border: `1px solid ${gold}`,
-
-                  name="partidosJugados"                borderRadius: '6px',
-
-                  value={formData.partidosJugados}                padding: '2px 8px',
-
-                  onChange={handleChange}                cursor: 'pointer'
-
-                  min="0"              }}
-
-                  style={inputStyle}            >Ocultar</button>
-
-                  placeholder="0"          </div>
-
-                />        )}
-
-              </div>        {/* Header */}
-
-              <div style={{ flex: 1 }}>        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>          <FutproLogo size={80} />
-
-                  ⏱️ Minutos Totales          <h1 style={{ color: gold, marginTop: '20px', marginBottom: '10px' }}>
-
-                </label>            Registro Completo FutPro
-
-                <input          </h1>
-
-                  type="number"          <p style={{ color: '#ccc', fontSize: '14px' }}>
-
-                  name="minutosTotales"            Paso {currentStep} de 3 - Completa tu perfil de jugador
-
-                  value={formData.minutosTotales}          </p>
-
-                  onChange={handleChange}        </div>
-
-                  min="0"
-
-                  style={inputStyle}        {/* Progress Bar */}
-
-                  placeholder="0"        <div style={{
-
-                />          background: '#333',
-
-              </div>          height: '6px',
-
-            </div>          borderRadius: '3px',
-
-          marginBottom: '30px',
-
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>          overflow: 'hidden'
-
-              <div style={{ flex: 1 }}>        }}>
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>          <div style={{
-
-                  🟨 Tarjetas Amarillas            background: gold,
-
-                </label>            height: '100%',
-
-                <input            width: `${(currentStep / 3) * 100}%`,
-
-                  type="number"            transition: 'width 0.3s ease'
-
-                  name="tarjetasAmarillas"          }} />
-
-                  value={formData.tarjetasAmarillas}        </div>
-
-                  onChange={handleChange}
-
-                  min="0"        {/* Mensajes */}
-
-                  style={inputStyle}        {error && (
-
-                  placeholder="0"          <div style={{
-
-                />            background: '#ff4444',
-
-              </div>            color: '#fff',
-
-              <div style={{ flex: 1 }}>            padding: '15px',
-
-                <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>            borderRadius: '8px',
-
-                  🟥 Tarjetas Rojas            marginBottom: '20px',
-
-                </label>            textAlign: 'center',
-
-                <input            fontSize: '14px',
-
-                  type="number"            fontWeight: 'bold'
-
-                  name="tarjetasRojas"          }}>
-
-                  value={formData.tarjetasRojas}            ❌ {error}
-
-                  onChange={handleChange}            {error.includes('Demasiados intentos') && (
-
-                  min="0"              <div style={{ marginTop: '10px' }}>
-
-                  style={inputStyle}                <button
-
-                  placeholder="0"                  onClick={() => {
-
-                />                    setError('');
-
-              </div>                    handleDirectRegistration();
-
-            </div>                  }}
-
-          </div>                  style={{
-
-        );                    background: '#ff6b35',
-
-                    color: '#fff',
-
-      case 5:                    border: 'none',
-
-        return (                    padding: '8px 16px',
-
-          <div>                    borderRadius: '4px',
-
-            <h3 style={{ color: '#FFD700', marginBottom: '20px' }}>Paso 5: Disponibilidad</h3>                    fontSize: '12px',
-
-                                cursor: 'pointer',
-
-            <div style={{ marginBottom: '15px' }}>                    marginTop: '8px'
-
-              <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>                  }}
-
-                📅 Disponibilidad General *                >
-
-              </label>                  🚀 Registro Directo (Sin verificación email)
-
-              <select                </button>
-
-                name="disponibilidad"              </div>
-
-                value={formData.disponibilidad}            )}
-
-                onChange={handleChange}          </div>
-
-                style={inputStyle}        )}
-
-              >
-
-                <option value="">Selecciona tu disponibilidad</option>        {msg && (
-
-                <option value="Solo fines de semana">Solo fines de semana</option>          <div style={{
-
-                <option value="Entre semana por las tardes">Entre semana por las tardes</option>            background: '#22c55e',
-
-                <option value="Entre semana por las noches">Entre semana por las noches</option>            color: '#fff',
-
-                <option value="Cualquier día">Cualquier día</option>            padding: '15px',
-
-                <option value="Flexible">Flexible</option>            borderRadius: '8px',
-
-              </select>            marginBottom: '20px',
-
-            </div>            textAlign: 'center',
-
-            fontSize: '14px',
-
-            <div style={{ marginBottom: '15px' }}>            fontWeight: 'bold'
-
-              <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>          }}>
-
-                🔄 ¿Cuántas veces juegas por semana?            ✅ {msg}
-
-              </label>          </div>
-
-              <select        )}
-
-                name="vecesJuegaPorSemana"
-
-                value={formData.vecesJuegaPorSemana}        {/* Mensaje adicional para el último paso */}
-
-                onChange={handleChange}        {currentStep === 3 && (
-
-                style={inputStyle}          <div style={{
-
-              >            background: '#1a365d',
-
-                <option value="1">1 vez por semana</option>            color: gold,
-
-                <option value="2-3">2-3 veces por semana</option>            padding: '15px',
-
-                <option value="4-5">4-5 veces por semana</option>            borderRadius: '8px',
-
-                <option value="Diario">Todos los días</option>            marginBottom: '20px',
-
-              </select>            textAlign: 'center',
-
-            </div>            fontSize: '14px',
-
-            border: `1px solid ${gold}`
-
-            <div style={{ marginBottom: '15px' }}>          }}>
-
-              <label style={{ color: '#FFD700', display: 'block', marginBottom: '5px' }}>            🏆 ¡Último paso! Completa tu ubicación y foto de perfil
-
-                🕐 Horarios Preferidos *          </div>
-
-              </label>        )}
-
-              <input
-
-                type="text"        <form onSubmit={handleSubmit}>
-
-                name="horariosPreferidos"          {/* PASO 1: Información básica */}
-
-                value={formData.horariosPreferidos}          {currentStep === 1 && (
-
-                onChange={handleChange}            <div>
-
-                required              <h2 style={{ color: gold, marginBottom: '20px', fontSize: '20px' }}>
-
-                style={inputStyle}                📝 Información Básica
-
-                placeholder="Ej: Lunes y Miércoles 6-8 PM, Sábados mañana"              </h2>
-
-              />              
-
-            </div>              <div style={{ marginBottom: '20px' }}>
-
-          </div>                <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-
-        );                  Nombre completo *
-
-                </label>
-
-      case 6:                <input
-
-        return (                  type="text"
-
-          <div>                  name="nombre"
-
-            <h3 style={{ color: '#FFD700', marginBottom: '20px' }}>Paso 6: Foto de Perfil</h3>                  value={form.nombre}
-
-                              onChange={handleChange}
-
-            <div style={{                   style={{
-
-              border: '2px dashed #FFD700',                     width: '100%',
-
-              borderRadius: '10px',                     padding: '12px',
-
-              padding: '30px',                     border: `2px solid #444`,
-
-              textAlign: 'center',                    borderRadius: '8px',
-
-              marginBottom: '20px',                    background: '#333',
-
-              background: 'rgba(255, 215, 0, 0.05)'                    color: '#fff',
-
-            }}>                    fontSize: '16px'
-
-              {previewImagen ? (                  }}
-
-                <div>                  placeholder="Tu nombre completo"
-
-                  <img                 />
-
-                    src={previewImagen}               </div>
-
-                    alt="Preview" 
-
-                    style={{              <div style={{ marginBottom: '20px' }}>
-
-                      width: '150px',                <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-
-                      height: '150px',                  Email *
-
-                      borderRadius: '50%',                </label>
-
-                      objectFit: 'cover',                <input
-
-                      marginBottom: '15px',                  type="email"
-
-                      border: '3px solid #FFD700'                  name="email"
-
-                    }}                  value={form.email}
-
-                  />                  onChange={handleChange}
-
-                  <div>                  style={{
-
-                    <button                    width: '100%',
-
-                      type="button"                    padding: '12px',
-
-                      onClick={() => fileInputRef.current?.click()}                    border: `2px solid #444`,
-
-                      style={{                    borderRadius: '8px',
-
-                        background: '#FFD700',                    background: '#333',
-
-                        color: '#222',                    color: '#fff',
-
-                        padding: '8px 15px',                    fontSize: '16px'
-
-                        border: 'none',                  }}
-
-                        borderRadius: '6px',                  placeholder="tu@email.com"
-
-                        cursor: 'pointer',                />
-
-                        fontSize: '14px'              </div>
-
-                      }}
-
-                    >              <div style={{ marginBottom: '20px' }}>
-
-                      Cambiar Foto                <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-
-                    </button>                  Contraseña *
-
-                  </div>                </label>
-
-                </div>                <input
-
-              ) : (                  type="password"
-
-                <div>                  name="password"
-
-                  <div style={{ fontSize: '48px', marginBottom: '15px' }}>📸</div>                  value={form.password}
-
-                  <p style={{ color: '#FFD700', marginBottom: '15px' }}>                  onChange={handleChange}
-
-                    Sube tu foto de perfil                  style={{
-
-                  </p>                    width: '100%',
-
-                  <button                    padding: '12px',
-
-                    type="button"                    border: `2px solid #444`,
-
-                    onClick={() => fileInputRef.current?.click()}                    borderRadius: '8px',
-
-                    style={{                    background: '#333',
-
-                      background: '#FFD700',                    color: '#fff',
-
-                      color: '#222',                    fontSize: '16px'
-
-                      padding: '10px 20px',                  }}
-
-                      border: 'none',                  placeholder="Mínimo 6 caracteres"
-
-                      borderRadius: '8px',                />
-
-                      cursor: 'pointer',              </div>
-
-                      fontSize: '16px',
-
-                      fontWeight: 'bold'              <div style={{ marginBottom: '20px' }}>
-
-                    }}                <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-
-                  >                  Confirmar contraseña *
-
-                    Seleccionar Foto                </label>
-
-                  </button>                <input
-
-                  <p style={{ color: '#888', fontSize: '12px', marginTop: '10px' }}>                  type="password"
-
-                    JPG, PNG • Máximo 5MB • Recomendado: cuadrada                  name="confirmPassword"
-
-                  </p>                  value={form.confirmPassword}
-
-                </div>                  onChange={handleChange}
-
-              )}                  style={{
-
-                                  width: '100%',
-
-              <input                    padding: '12px',
-
-                ref={fileInputRef}                    border: `2px solid #444`,
-
-                type="file"                    borderRadius: '8px',
-
-                accept="image/*"                    background: '#333',
-
-                onChange={handleFileChange}                    color: '#fff',
-
-                style={{ display: 'none' }}                    fontSize: '16px'
-
-              />                  }}
-
-            </div>                  placeholder="Repite tu contraseña"
-
-                            />
-
-            <div style={{              </div>
-
-              background: 'rgba(34, 197, 94, 0.1)',
-
-              border: '1px solid #22c55e',              <button
-
-              borderRadius: '8px',                type="button"
-
-              padding: '15px',                onClick={nextStep}
-
-              color: '#22c55e',                style={{
-
-              textAlign: 'center'                  width: '100%',
-
-            }}>                  padding: '15px',
-
-              ✅ ¡Casi terminamos! Tu perfil estará listo para generar tu card personalizada.                  background: gold,
-
-            </div>                  color: black,
-
-          </div>                  border: 'none',
-
-        );                  borderRadius: '8px',
-
-                  fontSize: '18px',
-
-      default:                  fontWeight: 'bold',
-
-        return null;                  cursor: 'pointer'
-
-    }                }}
-
-  };              >
-
-                Siguiente →
-
-  const inputStyle = {              </button>
-
-    width: '100%',            </div>
-
-    padding: '12px',          )}
-
-    borderRadius: '8px',
-
-    border: '1px solid #555',          {/* PASO 2: Información deportiva */}
-
-    background: '#2a2a2a',          {currentStep === 2 && (
-
-    color: 'white',            <div>
-
-    fontSize: '14px'              <h2 style={{ color: gold, marginBottom: '20px', fontSize: '20px' }}>
-
-  };                ⚽ Información Deportiva
-
-              </h2>
-
-  return (
-
-    <div style={{              <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-
-      minHeight: '100vh',                <div style={{ flex: 1 }}>
-
-      background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',                  <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-
-      display: 'flex',                    Edad
-
-      alignItems: 'center',                  </label>
-
-      justifyContent: 'center',                  <input
-
-      fontFamily: 'Arial, sans-serif',                    type="number"
-
-      padding: '20px'                    name="edad"
-
-    }}>                    value={form.edad}
-
-      <div style={{                    onChange={handleChange}
-
-        background: 'rgba(255, 255, 255, 0.1)',                    style={{
-
-        borderRadius: '15px',                      width: '100%',
-
-        padding: '40px',                      padding: '12px',
-
-        width: '100%',                      border: `2px solid #444`,
-
-        maxWidth: '600px',                      borderRadius: '8px',
-
-        backdropFilter: 'blur(10px)',                      background: '#333',
-
-        border: '1px solid rgba(255, 215, 0, 0.3)'                      color: '#fff',
-
-      }}>                      fontSize: '16px'
-
-        <div style={{ textAlign: 'center', marginBottom: '30px' }}>                    }}
-
-          <h1 style={{                    min="13"
-
-            color: '#FFD700',                    max="60"
-
-            marginBottom: '10px',                  />
-
-            fontSize: '28px'                </div>
-
-          }}>                <div style={{ flex: 1 }}>
-
-            ⚽ Registro Completo FutPro                  <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-
-          </h1>                    Peso (kg)
-
-          <div style={{                  </label>
-
-            background: 'rgba(255, 215, 0, 0.1)',                  <input
-
-            border: '1px solid #FFD700',                    type="number"
-
-            borderRadius: '20px',                    name="peso"
-
-            padding: '8px 15px',                    value={form.peso}
-
-            display: 'inline-block',                    onChange={handleChange}
-
-            fontSize: '14px',                    style={{
-
-            color: '#FFD700'                      width: '100%',
-
-          }}>                      padding: '12px',
-
-            Paso {paso} de 6                      border: `2px solid #444`,
-
-          </div>                      borderRadius: '8px',
-
-        </div>                      background: '#333',
-
-                      color: '#fff',
-
-        {error && (                      fontSize: '16px'
-
-          <div style={{                    }}
-
-            background: 'rgba(239, 68, 68, 0.1)',                    placeholder="70"
-
-            border: '1px solid #ef4444',                    min="30"
-
-            borderRadius: '8px',                    max="150"
-
-            padding: '12px',                  />
-
-            marginBottom: '20px',                </div>
-
-            color: '#ef4444',              </div>
-
-            textAlign: 'center'
-
-          }}>              <div style={{ marginBottom: '20px' }}>
-
-            {error}                <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-
-          </div>                  Posición preferida
-
-        )}                </label>
-
-                <select
-
-        {success && (                  name="posicion"
-
-          <div style={{                  value={form.posicion}
-
-            background: 'rgba(34, 197, 94, 0.1)',                  onChange={handleChange}
-
-            border: '1px solid #22c55e',                  style={{
-
-            borderRadius: '8px',                    width: '100%',
-
-            padding: '12px',                    padding: '12px',
-
-            marginBottom: '20px',                    border: `2px solid #444`,
-
-            color: '#22c55e',                    borderRadius: '8px',
-
-            textAlign: 'center'                    background: '#333',
-
-          }}>                    color: '#fff',
-
-            {success}                    fontSize: '16px'
-
-          </div>                  }}
-
-        )}                >
-
-                  <option value="Portero">🥅 Portero</option>
-
-        <form onSubmit={handleSubmit}>                  <option value="Defensa Central">🛡️ Defensa Central</option>
-
-          {renderPaso()}                  <option value="Lateral Derecho">➡️ Lateral Derecho</option>
-
-                  <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
-
-          <div style={{                   <option value="Libero">🔒 Libero</option>
-
-            display: 'flex',                   <option value="Pivote">⚙️ Pivote</option>
-
-            gap: '10px',                   <option value="Mediocentro">🎯 Mediocentro</option>
-
-            marginTop: '30px',                  <option value="Mediocentro Ofensivo">🔥 Mediocentro Ofensivo</option>
-
-            justifyContent: 'space-between'                  <option value="Extremo Derecho">🚀 Extremo Derecho</option>
-
-          }}>                  <option value="Extremo Izquierdo">⚡ Extremo Izquierdo</option>
-
-            {paso > 1 && (                  <option value="Media Punta">💎 Media Punta</option>
-
-              <button                  <option value="Delantero Centro">🎯 Delantero Centro</option>
-
-                type="button"                  <option value="Segundo Delantero">⭐ Segundo Delantero</option>
-
-                onClick={anteriorPaso}                </select>
-
-                style={{              </div>
-
-                  padding: '12px 20px',
-
-                  background: 'transparent',              <div style={{ marginBottom: '20px' }}>
-
-                  color: '#FFD700',                <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-
-                  border: '1px solid #FFD700',                  ¿Cuántos días juegas por semana? (Afecta tu calificación)
-
-                  borderRadius: '8px',                </label>
-
-                  cursor: 'pointer',                <select
-
-                  fontSize: '14px'                  name="frecuencia_juego"
-
-                }}                  value={form.frecuencia_juego}
-
-              >                  onChange={handleChange}
-
-                ← Anterior                  style={{
-
-              </button>                    width: '100%',
-
-            )}                    padding: '12px',
-
-                    border: `2px solid #444`,
-
-            <button                    borderRadius: '8px',
-
-              type="submit"                    background: '#333',
-
-              disabled={loading}                    color: '#fff',
-
-              style={{                    fontSize: '16px'
-
-                padding: '12px 25px',                  }}
-
-                background: loading ? '#666' :                 >
-
-                  paso === 6 ? 'linear-gradient(135deg, #22c55e, #16a34a)' :                   <option value="1">🔥 1 día por semana (Casual)</option>
-
-                  'linear-gradient(135deg, #FFD700, #f59e0b)',                  <option value="2">⚡ 2 días por semana (Aficionado)</option>
-
-                color: paso === 6 ? 'white' : '#222',                  <option value="3">🎯 3 días por semana (Regular)</option>
-
-                border: 'none',                  <option value="4">� 4 días por semana (Dedicado)</option>
-
-                borderRadius: '8px',                  <option value="5">🏆 5 días por semana (Serio)</option>
-
-                cursor: loading ? 'not-allowed' : 'pointer',                  <option value="6">⭐ 6 días por semana (Semi-Pro)</option>
-
-                fontSize: '16px',                  <option value="7">👑 7 días por semana (Profesional)</option>
-
-                fontWeight: 'bold',                </select>
-
-                flex: paso === 1 ? 1 : 'auto',              </div>
-
-                minWidth: '120px'
-
-              }}              <div style={{ display: 'flex', gap: '10px' }}>
-
-            >                <button
-
-              {loading ? 'Procesando...' :                   type="button"
-
-               paso === 6 ? '🎯 Crear Mi Perfil' :                   onClick={prevStep}
-
-               'Siguiente →'}                  style={{
-
-            </button>                    flex: 1,
-
-          </div>                    padding: '15px',
-
-        </form>                    background: '#444',
-
-                    color: '#fff',
-
-        <div style={{                    border: 'none',
-
-          marginTop: '20px',                    borderRadius: '8px',
-
-          textAlign: 'center'                    fontSize: '16px',
-
-        }}>                    cursor: 'pointer'
-
-          <button                  }}
-
-            onClick={() => {                >
-
-              try {                  ← Anterior
-
-                navigate('/');                </button>
-
-              } catch (error) {                <button
-
-                window.location.href = '/';                  type="button"
-
-              }                  onClick={nextStep}
-
-            }}                  style={{
-
-            style={{                    flex: 1,
-
-              background: 'transparent',                    padding: '15px',
-
-              color: '#888',                    background: gold,
-
-              border: 'none',                    color: black,
-
-              cursor: 'pointer',                    border: 'none',
-
-              fontSize: '14px',                    borderRadius: '8px',
-
-              textDecoration: 'underline'                    fontSize: '16px',
-
-            }}                    fontWeight: 'bold',
-
-          >                    cursor: 'pointer'
-
-            ← Volver al Login                  }}
-
-          </button>                >
-
-        </div>                  Siguiente →
-
-      </div>                </button>
-
-    </div>              </div>
-
-  );            </div>
-
-}          )}
-
-          {/* PASO 3: Foto y ubicación */}
-          {currentStep === 3 && (
+        if (!formData.nombre || !formData.apellido || !formData.edad || !formData.telefono || !formData.ubicacion) {
+          setError('Por favor completa todos los campos obligatorios');
+          return false;
+        }
+        if (formData.edad < 16 || formData.edad > 60) {
+          setError('La edad debe estar entre 16 y 60 años');
+          return false;
+        }
+        break;
+      case 3:
+        if (!formData.posicion || !formData.experiencia || !formData.equipoFavorito) {
+          setError('Por favor completa todos los campos obligatorios');
+          return false;
+        }
+        break;
+      case 4:
+        if (!formData.disponibilidad || !formData.vecesJuegaPorSemana) {
+          setError('Por favor completa todos los campos obligatorios');
+          return false;
+        }
+        break;
+      case 5:
+        // La foto es opcional en el último paso
+        break;
+    }
+    setError('');
+    return true;
+  };
+
+  const siguientePaso = () => {
+    if (validarPaso()) {
+      setPaso(prev => Math.min(prev + 1, 5));
+      autoGuardarProgreso();
+    }
+  };
+
+  const pasoAnterior = () => {
+    setPaso(prev => Math.max(prev - 1, 1));
+  };
+
+  const subirFoto = async () => {
+    if (!formData.foto) return null;
+
+    try {
+      const fileName = `perfil_${Date.now()}_${formData.email.replace('@', '_')}`;
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, formData.foto);
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      return urlData.publicUrl;
+    } catch (error) {
+      console.error('Error subiendo foto:', error);
+      throw error;
+    }
+  };
+
+  const completarRegistro = async () => {
+    if (!validarPaso()) return;
+
+    setLoading(true);
+    setError('');
+
+    try {
+      console.log('🚀 Iniciando registro completo...', formData);
+
+      // 1. Registrar usuario en Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            nombre: formData.nombre,
+            apellido: formData.apellido
+          }
+        }
+      });
+
+      if (authError) throw authError;
+
+      // 2. Subir foto si existe
+      let fotoUrl = null;
+      if (formData.foto) {
+        try {
+          fotoUrl = await subirFoto();
+        } catch (fotoError) {
+          console.warn('Error subiendo foto, continuando sin foto:', fotoError);
+        }
+      }
+
+      // 3. Crear perfil en la tabla usuarios
+      const perfilData = {
+        id: authData.user.id,
+        email: formData.email,
+        nombre: formData.nombre,
+        apellido: formData.apellido,
+        edad: parseInt(formData.edad),
+        telefono: formData.telefono,
+        pais: formData.pais,
+        ubicacion: formData.ubicacion,
+        posicion: formData.posicion,
+        experiencia: formData.experiencia,
+        equipo_favorito: formData.equipoFavorito,
+        peso: formData.peso ? parseInt(formData.peso) : null,
+        disponibilidad: formData.disponibilidad,
+        veces_juega_semana: formData.vecesJuegaPorSemana,
+        horarios_preferidos: formData.horariosPreferidos,
+        foto_perfil: fotoUrl,
+        created_at: new Date().toISOString()
+      };
+
+      const { error: perfilError } = await supabase
+        .from('usuarios')
+        .insert([perfilData]);
+
+      if (perfilError) throw perfilError;
+
+      // 4. Limpiar datos guardados
+      localStorage.removeItem('futpro_registro_progreso');
+      localStorage.setItem('registroCompleto', 'true');
+      localStorage.setItem('authCompleted', 'true');
+
+      setSuccess('¡Registro completado exitosamente! Redirigiendo a tu perfil...');
+
+      // 5. Redirección a la card de perfil
+      setTimeout(() => {
+        try {
+          navigate('/perfil-card', { 
+            replace: true, 
+            state: { 
+              newUser: true, 
+              userData: perfilData 
+            } 
+          });
+        } catch (navError) {
+          console.warn('Error con navigate, usando window.location');
+          window.location.href = '/perfil-card';
+        }
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error en registro:', error);
+      setError(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderPaso = () => {
+    switch (paso) {
+      case 1:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-center text-yellow-400 mb-6">
+              🚀 Paso 1: Datos de Acceso
+            </h2>
+            
             <div>
-              <h2 style={{ color: gold, marginBottom: '20px', fontSize: '20px' }}>
-                📸 Foto y Ubicación
-              </h2>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">
+                📧 Email *
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                placeholder="tu@email.com"
+                required
+              />
+            </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-                  Foto de perfil (opcional)
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">
+                🔒 Contraseña *
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                placeholder="Mínimo 6 caracteres"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">
+                🔒 Confirmar Contraseña *
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                placeholder="Repite tu contraseña"
+                required
+              />
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-center text-yellow-400 mb-6">
+              👤 Paso 2: Información Personal
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-300 text-sm font-semibold mb-2">
+                  👤 Nombre *
                 </label>
                 <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageChange}
-                  accept="image/*"
-                  style={{ display: 'none' }}
+                  type="text"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleInputChange}
+                  className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                  placeholder="Tu nombre"
+                  required
                 />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  style={{
-                    width: '100%',
-                    padding: '15px',
-                    background: '#444',
-                    color: '#fff',
-                    border: `2px dashed ${gold}`,
-                    borderRadius: '8px',
-                    fontSize: '16px',
-                    cursor: 'pointer',
-                    marginBottom: '10px'
-                  }}
-                >
-                  📷 Seleccionar imagen
-                </button>
-                
-                {previewImage && (
-                  <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-                    <p style={{ color: gold, marginBottom: '10px' }}>Preview</p>
-                    <img
-                      src={previewImage}
-                      alt="Vista previa"
-                      style={{
-                        width: '120px',
-                        height: '120px',
-                        borderRadius: '50%',
-                        objectFit: 'cover',
-                        border: `3px solid ${gold}`
-                      }}
-                    />
-                  </div>
-                )}
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-                    Ciudad
-                  </label>
-                  <input
-                    type="text"
-                    name="ciudad"
-                    value={form.ciudad}
-                    onChange={handleChange}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      border: `2px solid #444`,
-                      borderRadius: '8px',
-                      background: '#333',
-                      color: '#fff',
-                      fontSize: '16px'
-                    }}
-                    placeholder="Tu ciudad"
-                  />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{ color: gold, display: 'block', marginBottom: '8px' }}>
-                    País
-                  </label>
-                  <input
-                    type="text"
-                    name="pais"
-                    value={form.pais}
-                    onChange={handleChange}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      border: `2px solid #444`,
-                      borderRadius: '8px',
-                      background: '#333',
-                      color: '#fff',
-                      fontSize: '16px'
-                    }}
-                  />
-                </div>
+              <div>
+                <label className="block text-gray-300 text-sm font-semibold mb-2">
+                  👤 Apellido *
+                </label>
+                <input
+                  type="text"
+                  name="apellido"
+                  value={formData.apellido}
+                  onChange={handleInputChange}
+                  className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                  placeholder="Tu apellido"
+                  required
+                />
               </div>
-
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button
-                  type="button"
-                  onClick={prevStep}
-                  style={{
-                    flex: 1,
-                    padding: '15px',
-                    background: '#444',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '16px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  ← Anterior
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  style={{
-                    flex: 2,
-                    padding: '15px',
-                    background: loading ? '#666' : gold,
-                    color: black,
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '18px',
-                    fontWeight: 'bold',
-                    cursor: loading ? 'not-allowed' : 'pointer'
-                  }}
-                >
-                  {loading ? 'Registrando...' : 'Completar Registro ✅'}
-                </button>
-              </div>
-
-              {/* Separador con opciones rápidas OAuth */}
-              <div style={{ 
-                margin: '30px 0 20px 0', 
-                textAlign: 'center',
-                position: 'relative'
-              }}>
-                <div style={{
-                  height: '1px',
-                  background: '#444',
-                  margin: '0 auto',
-                  position: 'relative'
-                }}>
-                  <span style={{
-                    background: darkCard,
-                    color: '#ccc',
-                    padding: '0 15px',
-                    fontSize: '14px',
-                    position: 'absolute',
-                    left: '50%',
-                    top: '-8px',
-                    transform: 'translateX(-50%)'
-                  }}>
-                    o termina rápido con
-                  </span>
-                </div>
-              </div>
-
-              {/* Botones OAuth finales */}
-              <OAuthButtons />
             </div>
-          )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-300 text-sm font-semibold mb-2">
+                  🎂 Edad *
+                </label>
+                <input
+                  type="number"
+                  name="edad"
+                  value={formData.edad}
+                  onChange={handleInputChange}
+                  min="16"
+                  max="60"
+                  className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 text-sm font-semibold mb-2">
+                  📞 Teléfono *
+                </label>
+                <input
+                  type="tel"
+                  name="telefono"
+                  value={formData.telefono}
+                  onChange={handleInputChange}
+                  className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                  placeholder="+52 123 456 7890"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-300 text-sm font-semibold mb-2">
+                  🌍 País *
+                </label>
+                <select
+                  name="pais"
+                  value={formData.pais}
+                  onChange={handleInputChange}
+                  className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                  required
+                >
+                  <option value="México">México</option>
+                  <option value="Argentina">Argentina</option>
+                  <option value="Colombia">Colombia</option>
+                  <option value="España">España</option>
+                  <option value="Chile">Chile</option>
+                  <option value="Perú">Perú</option>
+                  <option value="Ecuador">Ecuador</option>
+                  <option value="Uruguay">Uruguay</option>
+                  <option value="Bolivia">Bolivia</option>
+                  <option value="Paraguay">Paraguay</option>
+                  <option value="Venezuela">Venezuela</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-300 text-sm font-semibold mb-2">
+                  📍 Ciudad/Ubicación *
+                </label>
+                <input
+                  type="text"
+                  name="ubicacion"
+                  value={formData.ubicacion}
+                  onChange={handleInputChange}
+                  className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                  placeholder="Ciudad donde juegas"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-center text-yellow-400 mb-6">
+              ⚽ Paso 3: Información Futbolística
+            </h2>
+            
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">
+                🎯 Posición Principal *
+              </label>
+              <select
+                name="posicion"
+                value={formData.posicion}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                required
+              >
+                <option value="">Selecciona tu posición</option>
+                <option value="Portero">🥅 Portero</option>
+                <option value="Defensa Central">🛡️ Defensa Central</option>
+                <option value="Lateral Derecho">➡️ Lateral Derecho</option>
+                <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
+                <option value="Mediocentro Defensivo">🔒 Mediocentro Defensivo</option>
+                <option value="Mediocentro">⚙️ Mediocentro</option>
+                <option value="Mediocentro Ofensivo">🎨 Mediocentro Ofensivo</option>
+                <option value="Extremo Derecho">🚀 Extremo Derecho</option>
+                <option value="Extremo Izquierdo">🚀 Extremo Izquierdo</option>
+                <option value="Delantero Centro">🎯 Delantero Centro</option>
+                <option value="Segundo Delantero">👑 Segundo Delantero</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">
+                📈 Años de Experiencia *
+              </label>
+              <select
+                name="experiencia"
+                value={formData.experiencia}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                required
+              >
+                <option value="">Selecciona tu experiencia</option>
+                <option value="Principiante (0-2 años)">🌱 Principiante (0-2 años)</option>
+                <option value="Intermedio (3-5 años)">📈 Intermedio (3-5 años)</option>
+                <option value="Avanzado (6-10 años)">⭐ Avanzado (6-10 años)</option>
+                <option value="Experto (11+ años)">🏆 Experto (11+ años)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">
+                ⚽ Equipo Favorito *
+              </label>
+              <input
+                type="text"
+                name="equipoFavorito"
+                value={formData.equipoFavorito}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                placeholder="Real Madrid, Barcelona, etc."
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">
+                ⚖️ Peso (kg) - Opcional
+              </label>
+              <input
+                type="number"
+                name="peso"
+                value={formData.peso}
+                onChange={handleInputChange}
+                min="40"
+                max="150"
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                placeholder="Tu peso en kg"
+              />
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-center text-yellow-400 mb-6">
+              📅 Paso 4: Disponibilidad
+            </h2>
+            
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">
+                🕐 Disponibilidad General *
+              </label>
+              <select
+                name="disponibilidad"
+                value={formData.disponibilidad}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                required
+              >
+                <option value="">Selecciona tu disponibilidad</option>
+                <option value="Solo fines de semana">📅 Solo fines de semana</option>
+                <option value="Entre semana (tardes)">🌆 Entre semana (tardes)</option>
+                <option value="Entre semana (mañanas)">🌅 Entre semana (mañanas)</option>
+                <option value="Cualquier día">🎯 Cualquier día</option>
+                <option value="Horarios rotativos">🔄 Horarios rotativos</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">
+                📊 ¿Cuántas veces juegas por semana? *
+              </label>
+              <select
+                name="vecesJuegaPorSemana"
+                value={formData.vecesJuegaPorSemana}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                required
+              >
+                <option value="">Selecciona frecuencia</option>
+                <option value="1 vez por semana">1️⃣ 1 vez por semana</option>
+                <option value="2-3 veces por semana">2️⃣ 2-3 veces por semana</option>
+                <option value="4-5 veces por semana">3️⃣ 4-5 veces por semana</option>
+                <option value="Todos los días">🔥 Todos los días</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">
+                ⏰ Horarios Preferidos - Opcional
+              </label>
+              <textarea
+                name="horariosPreferidos"
+                value={formData.horariosPreferidos}
+                onChange={handleInputChange}
+                rows="3"
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-yellow-400"
+                placeholder="Ej: Lunes y miércoles 7pm, Sábados 10am..."
+              />
+            </div>
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-center text-yellow-400 mb-6">
+              📸 Paso 5: Foto de Perfil
+            </h2>
+            
+            <div className="text-center">
+              {previewImagen ? (
+                <div className="mb-6">
+                  <img
+                    src={previewImagen}
+                    alt="Preview"
+                    className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-yellow-400"
+                  />
+                  <p className="text-green-400 text-sm mt-2">¡Foto cargada correctamente!</p>
+                </div>
+              ) : (
+                <div className="w-32 h-32 rounded-full mx-auto bg-gray-700 flex items-center justify-center border-4 border-gray-600 mb-6">
+                  <span className="text-4xl">📸</span>
+                </div>
+              )}
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/*"
+                className="hidden"
+              />
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                📷 {previewImagen ? 'Cambiar Foto' : 'Seleccionar Foto'}
+              </button>
+
+              <p className="text-gray-400 text-sm mt-4">
+                Formatos: JPG, PNG • Tamaño máximo: 5MB • La foto es opcional
+              </p>
+            </div>
+
+            <div className="bg-green-900 border border-green-600 rounded-lg p-4 text-center">
+              <h3 className="text-green-400 font-semibold text-lg mb-2">
+                🎉 ¡Casi listo!
+              </h3>
+              <p className="text-green-300 text-sm">
+                Estás a punto de completar tu registro en FutPro. 
+                Haz clic en "Completar Registro" para crear tu cuenta y acceder a tu perfil.
+              </p>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center p-4">
+      <div className="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl p-8 border border-gray-700">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+            ⚽
+          </div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            Registro FutPro
+          </h1>
+          <p className="text-gray-400 mt-2">Crea tu perfil profesional de fútbol</p>
+        </div>
+
+        {/* Indicador de progreso */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-2">
+            {[1, 2, 3, 4, 5].map((num) => (
+              <div
+                key={num}
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+                  num <= paso
+                    ? 'bg-yellow-400 text-gray-900'
+                    : 'bg-gray-600 text-gray-300'
+                }`}
+              >
+                {num}
+              </div>
+            ))}
+          </div>
+          <div className="w-full bg-gray-700 rounded-full h-2">
+            <div
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full transition-all duration-500"
+              style={{ width: `${(paso / 5) * 100}%` }}
+            />
+          </div>
+          <p className="text-center text-gray-400 text-sm mt-2">
+            Paso {paso} de 5
+          </p>
+        </div>
+
+        {/* Auto-guardado indicator */}
+        {lastSaved && (
+          <div className="mb-4 text-center text-xs text-gray-500">
+            {autoSaving ? (
+              <span className="text-yellow-400">💾 Guardando...</span>
+            ) : (
+              <span>💾 Guardado automático: {lastSaved}</span>
+            )}
+          </div>
+        )}
+
+        {/* Mensajes de error y éxito */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-900 border border-red-600 rounded-lg text-red-300 text-center">
+            ❌ {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-6 p-4 bg-green-900 border border-green-600 rounded-lg text-green-300 text-center">
+            ✅ {success}
+          </div>
+        )}
+
+        {/* Contenido del paso actual */}
+        <form onSubmit={(e) => e.preventDefault()}>
+          {renderPaso()}
+
+          {/* Botones de navegación */}
+          <div className="flex justify-between mt-8">
+            <button
+              type="button"
+              onClick={pasoAnterior}
+              disabled={paso === 1}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                paso === 1
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-700 text-white hover:bg-gray-600'
+              }`}
+            >
+              ← Anterior
+            </button>
+
+            {paso < 5 ? (
+              <button
+                type="button"
+                onClick={siguientePaso}
+                className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:from-yellow-500 hover:to-orange-600 transition-all"
+              >
+                Siguiente →
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={completarRegistro}
+                disabled={loading}
+                className={`px-8 py-3 rounded-lg font-semibold transition-all ${
+                  loading
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-green-500 to-blue-500 text-white hover:from-green-600 hover:to-blue-600'
+                }`}
+              >
+                {loading ? '⏳ Registrando...' : '🚀 Completar Registro'}
+              </button>
+            )}
+          </div>
         </form>
 
-        {/* Volver al login */}
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <p style={{ color: '#ccc', fontSize: '14px' }}>
-            ¿Ya tienes cuenta?{' '}
-            <span
-              onClick={() => navigate('/')}
-              style={{
-                color: gold,
-                cursor: 'pointer',
-                textDecoration: 'underline'
-              }}
-            >
-              Inicia sesión
-            </span>
+        {/* Botón para volver al login */}
+        <div className="text-center mt-6">
+          <button
+            onClick={() => navigate('/login')}
+            className="text-yellow-400 hover:text-yellow-300 text-sm underline transition-colors"
+          >
+            ¿Ya tienes cuenta? Inicia sesión aquí
+          </button>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-6 pt-4 border-t border-gray-700">
+          <p className="text-gray-500 text-xs">
+            🔒 Tus datos están seguros y encriptados
           </p>
         </div>
       </div>
