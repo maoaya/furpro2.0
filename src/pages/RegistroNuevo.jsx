@@ -212,23 +212,84 @@ const RegistroNuevo = () => {
         throw new Error('No se pudo crear el usuario');
       }
 
-      // 2. Subir foto de perfil si existe
+      // 2. Subir foto de perfil con configuración mejorada
       let fotoUrl = null;
+      let fotoPath = null;
+      
       if (imagenPerfil) {
-        const fileName = `perfil_${authData.user.id}_${Date.now()}.jpg`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(fileName, imagenPerfil);
-
-        if (!uploadError) {
-          const { data: { publicUrl } } = supabase.storage
+        setSuccess('Subiendo foto de perfil...');
+        
+        // Crear nombre único para la foto
+        const fileExt = imagenPerfil.name.split('.').pop().toLowerCase();
+        const fileName = `perfil_${authData.user.id}_${Date.now()}.${fileExt}`;
+        fotoPath = fileName;
+        
+        try {
+          // Subir a bucket public de avatars
+          const { data: uploadData, error: uploadError } = await supabase.storage
             .from('avatars')
-            .getPublicUrl(fileName);
-          fotoUrl = publicUrl;
+            .upload(fileName, imagenPerfil, {
+              cacheControl: '3600',
+              upsert: false
+            });
+
+          if (uploadError) {
+            console.warn('⚠️ Error subiendo foto:', uploadError.message);
+            // Continuar sin foto si falla
+          } else {
+            // Obtener URL pública
+            const { data: { publicUrl } } = supabase.storage
+              .from('avatars')
+              .getPublicUrl(fileName);
+            fotoUrl = publicUrl;
+            console.log('✅ Foto subida exitosamente:', fotoUrl);
+          }
+        } catch (photoError) {
+          console.warn('⚠️ Error en proceso de foto:', photoError);
+          // Continuar sin foto
         }
       }
 
-      // 3. Crear perfil en la tabla usuarios
+      // 3. Calcular puntaje inicial basado en datos del formulario
+      const calcularPuntajeInicial = () => {
+        let puntaje = 50; // Base
+        
+        // Puntos por experiencia
+        switch(formData.experiencia.toLowerCase()) {
+          case 'principiante': puntaje += 10; break;
+          case 'intermedio': puntaje += 25; break;
+          case 'avanzado': puntaje += 40; break;
+          case 'semi-profesional': puntaje += 55; break;
+          case 'profesional': puntaje += 70; break;
+        }
+        
+        // Puntos por frecuencia de juego
+        const frecuencia = parseInt(formData.vecesJuegaPorSemana);
+        if (frecuencia >= 5) puntaje += 20;
+        else if (frecuencia >= 3) puntaje += 15;
+        else if (frecuencia >= 2) puntaje += 10;
+        else if (frecuencia >= 1) puntaje += 5;
+        
+        // Puntos por disponibilidad
+        if (formData.disponibilidad === 'Todos los días') puntaje += 15;
+        else if (formData.disponibilidad === 'Flexible') puntaje += 10;
+        else if (formData.disponibilidad === 'Fines de semana') puntaje += 8;
+        else if (formData.disponibilidad === 'Entre semana') puntaje += 5;
+        
+        // Puntos por foto de perfil
+        if (fotoUrl) puntaje += 15;
+        
+        // Puntos por edad (edad ideal 20-30)
+        const edad = parseInt(formData.edad);
+        if (edad >= 20 && edad <= 30) puntaje += 10;
+        else if (edad >= 18 && edad <= 35) puntaje += 5;
+        
+        return Math.min(puntaje, 100); // Máximo 100 puntos
+      };
+
+      const puntajeInicial = calcularPuntajeInicial();
+
+      // 4. Crear perfil completo en la tabla usuarios
       const perfilCompleto = {
         id: authData.user.id,
         email: formData.email,
@@ -240,10 +301,21 @@ const RegistroNuevo = () => {
         posicion_favorita: formData.posicion,
         nivel_habilidad: formData.experiencia.toLowerCase(),
         equipo: formData.equipoFavorito,
-        descripcion: `Jugador de fútbol. Disponibilidad: ${formData.disponibilidad}. Juega ${formData.vecesJuegaPorSemana} veces por semana.`,
+        descripcion: `Jugador de ${formData.posicion}. Nivel: ${formData.experiencia}. Disponibilidad: ${formData.disponibilidad}. Juega ${formData.vecesJuegaPorSemana} veces por semana.`,
         avatar_url: fotoUrl,
+        foto_path: fotoPath,
+        puntaje: puntajeInicial,
+        partidos_jugados: 0,
+        victorias: 0,
+        derrotas: 0,
+        goles: 0,
+        asistencias: 0,
+        tarjetas_amarillas: 0,
+        tarjetas_rojas: 0,
         is_active: true,
-        email_confirmado: true
+        email_confirmado: true,
+        fecha_registro: new Date().toISOString(),
+        tiene_foto: !!fotoUrl
       };
 
       const { error: profileError } = await supabase
@@ -254,52 +326,65 @@ const RegistroNuevo = () => {
         throw profileError;
       }
 
-      // 4. Auto-login y redirección robusta dentro de la app
-      setSuccess('¡Usuario creado exitosamente! Bienvenido a FutPro. Redirigiendo al inicio...');
+      // 5. Auto-login y redirección a card de perfil tipo Instagram
+      setSuccess(`¡Usuario creado exitosamente! Puntaje inicial: ${puntajeInicial}/100. Redirigiendo a tu card de jugador...`);
       
       // Limpiar datos temporales del registro
       localStorage.removeItem('futpro_registro_progreso');
       localStorage.removeItem('tempRegistroData');
       
-      // Guardar datos de sesión para autenticación automática
-      localStorage.setItem('futpro_user_profile', JSON.stringify(perfilCompleto));
+      // Guardar datos de sesión completos para la card
+      const datosCard = {
+        ...perfilCompleto,
+        puntajeCalculado: puntajeInicial,
+        tipoCard: 'jugador',
+        fechaCreacion: new Date().toISOString(),
+        esPrimeraCard: true,
+        categoria: puntajeInicial >= 80 ? 'Élite' : puntajeInicial >= 60 ? 'Avanzado' : puntajeInicial >= 40 ? 'Intermedio' : 'Principiante'
+      };
+      
+      localStorage.setItem('futpro_user_profile', JSON.stringify(datosCard));
+      localStorage.setItem('futpro_user_card_data', JSON.stringify(datosCard));
       localStorage.setItem('registration_completed', 'true');
       localStorage.setItem('user_authenticated', 'true');
       localStorage.setItem('registroCompleto', 'true');
       localStorage.setItem('authCompleted', 'true');
       localStorage.setItem('loginSuccess', 'true');
+      localStorage.setItem('show_first_card', 'true');
       
-      // Marcar que debe ir al home después del login
-      localStorage.setItem('postLoginRedirect', '/home');
-      localStorage.setItem('postLoginRedirectReason', 'usuario-creado-exitosamente');
+      // Marcar que debe ir a la card de perfil después del login
+      localStorage.setItem('postLoginRedirect', '/perfil-card');
+      localStorage.setItem('postLoginRedirectReason', 'primera-card-creada');
       
-      console.log('🎉 USUARIO CREADO EXITOSAMENTE - Redirigiendo al Homepage...');
+      console.log('🎉 USUARIO CREADO EXITOSAMENTE - Redirigiendo a Card de Perfil...');
       console.log('👤 Usuario ID:', authData.user.id);
       console.log('📧 Email:', authData.user.email);
+      console.log('⭐ Puntaje inicial:', puntajeInicial);
+      console.log('🏆 Categoría:', datosCard.categoria);
       console.log('📋 Perfil completo guardado');
       
-      // Redirección inmediata y múltiple para asegurar que funcione
-      const redirectToHomepage = () => {
-        console.log('🏠 Ejecutando redirección al Homepage...');
+      // Redirección inmediata a la card de perfil
+      const redirectToCard = () => {
+        console.log('� Ejecutando redirección a Card de Perfil...');
         try {
-          navigate('/home', { replace: true });
-          console.log('✅ Redirección con React Router ejecutada');
+          navigate('/perfil-card', { replace: true, state: { newUser: true, cardData: datosCard } });
+          console.log('✅ Redirección a card ejecutada');
         } catch (navError) {
           console.warn('⚠️ React Router falló, usando window.location...');
-          window.location.href = '/home';
+          window.location.href = '/perfil-card';
         }
       };
       
       // Redirección inmediata
-      setTimeout(redirectToHomepage, 1000);
+      setTimeout(redirectToCard, 1500);
       
       // Fallback adicional
       setTimeout(() => {
-        if (window.location.pathname !== '/home') {
-          console.log('🔄 Ejecutando fallback de redirección...');
-          window.location.replace('/home');
+        if (window.location.pathname !== '/perfil-card') {
+          console.log('🔄 Ejecutando fallback de redirección a card...');
+          window.location.replace('/perfil-card');
         }
-      }, 2500);
+      }, 3000);
       
       // Intentar redirección inmediata
       setTimeout(redirectToHome, 1500);

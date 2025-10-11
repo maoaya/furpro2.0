@@ -6,6 +6,7 @@ import LoginRegisterForm from './pages/LoginRegisterForm.jsx';
 import RegistroFuncionando from './pages/RegistroFuncionando.jsx';
 import RegistroNuevo from './pages/RegistroNuevo.jsx';
 import RegistroTemporal from './pages/RegistroTemporal.jsx';
+import PerfilCard from './pages/PerfilCard.jsx';
 import HomePage from './pages/HomePage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal.jsx';
@@ -415,6 +416,13 @@ export default function FutProAppDefinitivo() {
       <Route path="/registro" element={<RegistroFuncionando />} />
       <Route path="/registro-completo" element={<RegistroTemporal />} />
       <Route path="/registro-nuevo" element={<RegistroNuevo />} />
+      
+      {/* Card de Perfil tipo Instagram */}
+      <Route path="/perfil-card" element={
+        <ProtectedRoute>
+          <PerfilCard />
+        </ProtectedRoute>
+      } />
       
       {/* Callback para OAuth */}
       <Route path="/auth/callback" element={<CallbackPage />} />
