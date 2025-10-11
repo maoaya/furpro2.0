@@ -309,12 +309,13 @@ export default function LoginRegisterForm() {
                 fontSize: '16px', 
                 cursor: 'pointer', 
                 fontWeight: 'bold',
-                marginBottom: '12px'
+                marginBottom: '15px'
               }}
             >
               Usar Email y Contraseña
             </button>
             
+            {/* Botón Crear Usuario - SIEMPRE VISIBLE */}
             <button 
               onClick={() => {
                 console.log('🚀 Navegando a crear usuario completo...');
