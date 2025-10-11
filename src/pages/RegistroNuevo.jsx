@@ -10,11 +10,6 @@ const RegistroNuevo = () => {
   const fileInputRef = useRef(null);
   const { user } = useAuth();
   
-  // 🔥 TRACKING HOOKS - AUTOGUARDADO TIPO REDES SOCIALES
-  const tracker = useActivityTracker();
-  const formTracker = useFormTracker('registro_completo', paso);
-  const { trackUpload } = useUploadTracker();
-  
   // Estado del formulario paso a paso
   const [paso, setPaso] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -24,6 +19,11 @@ const RegistroNuevo = () => {
   const [previewImagen, setPreviewImagen] = useState(null);
   const [autoSaving, setAutoSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
+  
+  // 🔥 TRACKING HOOKS - AUTOGUARDADO TIPO REDES SOCIALES
+  const tracker = useActivityTracker();
+  const formTracker = useFormTracker('registro_completo', paso);
+  const { trackUpload } = useUploadTracker();
 
   const [formData, setFormData] = useState({
     // Paso 1: Datos básicos

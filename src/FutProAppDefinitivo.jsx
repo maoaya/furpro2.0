@@ -4,13 +4,14 @@ import { useAuth } from './context/AuthContext';
 import TestPage from './pages/TestPage.jsx';
 import LoginRegisterForm from './pages/LoginRegisterForm.jsx';
 import RegistroFuncionando from './pages/RegistroFuncionando.jsx';
-import RegistroNuevo from './pages/RegistroNuevo.jsx';
+import RegistroSimple from './pages/RegistroSimple.jsx';
+import RegistroEmergencia from './pages/RegistroEmergencia.jsx';
 import RegistroTemporal from './pages/RegistroTemporal.jsx';
 import PerfilCard from './pages/PerfilCard.jsx';
 import HomePage from './pages/HomePage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal.jsx';
-import AuthCallback from './pages/AuthCallback.jsx';
+import CallbackPage from './pages/CallbackPage.jsx';
 import PageInDevelopment from './components/PageInDevelopment.jsx';
 import OAuthLiveTest from './pages/OAuthLiveTest.jsx';
 import { authFlowManager } from './utils/authFlowManager.js';
@@ -415,7 +416,7 @@ export default function FutProAppDefinitivo() {
       {/* Registro completo */}
       <Route path="/registro" element={<RegistroFuncionando />} />
       <Route path="/registro-completo" element={<RegistroTemporal />} />
-      <Route path="/registro-nuevo" element={<RegistroNuevo />} />
+      <Route path="/registro-nuevo" element={<RegistroEmergencia />} />
       
       {/* Card de Perfil tipo Instagram */}
       <Route path="/perfil-card" element={
@@ -425,7 +426,7 @@ export default function FutProAppDefinitivo() {
       } />
       
       {/* Callback para OAuth */}
-      <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/auth/callback" element={<CallbackPage />} />
 
   {/* Live test de OAuth en el dominio actual */}
   <Route path="/auth/test" element={<OAuthLiveTest />} />
