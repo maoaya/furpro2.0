@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Diagnóstico FutPro - Problemas de Navegación</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-card {
+            background: #2a2a2a;
+            border: 2px solid #FFD700;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .success { background: #22c55e; color: white; }
+        .error { background: #ef4444; color: white; }
+        .warning { background: #f59e0b; color: white; }
+        .info { background: #3b82f6; color: white; }
+        button {
+            background: #FFD700;
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #fbbf24;
+        }
+        #console {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            height: 300px;
+            overflow-y: scroll;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Diagnóstico FutPro</h1>
+            <h2>Resolver problemas de navegación "Crear Usuario"</h2>
+        </div>
+
+        <div class="test-card">
+            <h3>🚀 Tests Automáticos</h3>
+            <button onclick="runAllTests()">Ejecutar Todos los Tests</button>
+            <button onclick="clearConsole()">Limpiar Consola</button>
+            <button onclick="testNavigation()">Test Navegación</button>
+            <button onclick="testRegistroForm()">Test Formulario</button>
+            <div id="testResults"></div>
+        </div>
+
+        <div class="test-card">
+            <h3>📊 Consola de Debug</h3>
+            <div id="console"></div>
+        </div>
+
+        <div class="test-card">
+            <h3>🔍 Tests Manuales</h3>
+            <button onclick="testCreateUserButton()">Test Botón "Crear Usuario"</button>
+            <button onclick="simulateRegistration()">Simular Registro Completo</button>
+            <button onclick="checkRoutes()">Verificar Rutas</button>
+            <button onclick="testRedirection()">Test Redirección a Home</button>
+        </div>
+
+        <div class="test-card">
+            <h3>🛠️ Acciones de Reparación</h3>
+            <button onclick="clearBrowserData()">Limpiar Datos del Navegador</button>
+            <button onclick="resetAppState()">Reset Estado de App</button>
+            <button onclick="forceReload()">Recargar Forzado</button>
+        </div>
+    </div>
+
+    <script>
+        let console_div = document.getElementById('console');
+        let results_div = document.getElementById('testResults');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                info: '#0ff',
+                success: '#0f0', 
+                error: '#f00',
+                warning: '#ff0'
+            };
+            
+            console_div.innerHTML += `<span style="color: ${colors[type]}">[${timestamp}] ${message}</span><br>`;
+            console_div.scrollTop = console_div.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function addResult(test, status, message) {
+            const resultClass = status === 'success' ? 'success' : status === 'error' ? 'error' : 'warning';
+            results_div.innerHTML += `<div class="test-result ${resultClass}"><strong>${test}:</strong> ${message}</div>`;
+        }
+
+        function clearConsole() {
+            console_div.innerHTML = '';
+            results_div.innerHTML = '';
+        }
+
+        // Test 1: Verificar que React Router esté funcionando
+        function testReactRouter() {
+            log('🔍 Verificando React Router...', 'info');
+            
+            if (typeof window.React !== 'undefined') {
+                log('✅ React detectado', 'success');
+                addResult('React', 'success', 'React está cargado correctamente');
+            } else {
+                log('❌ React no detectado', 'error');
+                addResult('React', 'error', 'React no está cargado');
+            }
+
+            // Verificar si hay errores de JavaScript
+            if (window.lastJSError) {
+                log(`❌ Error JS detectado: ${window.lastJSError}`, 'error');
+                addResult('JavaScript', 'error', window.lastJSError);
+            } else {
+                log('✅ No hay errores JS críticos', 'success');
+                addResult('JavaScript', 'success', 'Sin errores críticos detectados');
+            }
+        }
+
+        // Test 2: Verificar navegación programática
+        function testNavigation() {
+            log('🚀 Probando navegación programática...', 'info');
+            
+            try {
+                // Simular click en crear usuario
+                const currentUrl = window.location.href;
+                log(`📍 URL actual: ${currentUrl}`, 'info');
+                
+                // Intentar navegar a registro-nuevo
+                if (currentUrl.includes('futpro.vip')) {
+                    window.location.href = 'https://futpro.vip/registro-nuevo';
+                    log('🔄 Navegando a registro-nuevo...', 'info');
+                    addResult('Navegación', 'success', 'Navegación iniciada');
+                } else {
+                    log('⚠️ No estamos en futpro.vip', 'warning');
+                    addResult('Navegación', 'warning', 'URL no es de producción');
+                }
+            } catch (error) {
+                log(`❌ Error en navegación: ${error.message}`, 'error');
+                addResult('Navegación', 'error', error.message);
+            }
+        }
+
+        // Test 3: Verificar formulario de registro
+        function testRegistroForm() {
+            log('📝 Verificando formulario de registro...', 'info');
+            
+            // Crear iframe para cargar la página de registro
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = window.location.origin + '/registro-nuevo';
+            
+            iframe.onload = function() {
+                try {
+                    log('✅ Página de registro cargada', 'success');
+                    addResult('Formulario Registro', 'success', 'Página accesible');
+                } catch (error) {
+                    log(`❌ Error cargando registro: ${error.message}`, 'error');
+                    addResult('Formulario Registro', 'error', error.message);
+                }
+            };
+            
+            iframe.onerror = function() {
+                log('❌ Error cargando página de registro', 'error');
+                addResult('Formulario Registro', 'error', 'No se pudo cargar la página');
+            };
+            
+            document.body.appendChild(iframe);
+            
+            // Limpiar después de 5 segundos
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+            }, 5000);
+        }
+
+        // Test 4: Simular botón crear usuario
+        function testCreateUserButton() {
+            log('👤 Simulando click en "Crear Usuario"...', 'info');
+            
+            // Verificar localStorage
+            const authData = {
+                authCompleted: localStorage.getItem('authCompleted'),
+                loginSuccess: localStorage.getItem('loginSuccess'),
+                session: localStorage.getItem('session')
+            };
+            
+            log(`💾 Datos localStorage: ${JSON.stringify(authData)}`, 'info');
+            
+            // Simular click
+            setTimeout(() => {
+                try {
+                    window.location.href = window.location.origin + '/registro-nuevo';
+                    log('🔄 Redirigiendo a registro-nuevo...', 'success');
+                    addResult('Botón Crear Usuario', 'success', 'Redirección iniciada');
+                } catch (error) {
+                    log(`❌ Error en redirección: ${error.message}`, 'error');
+                    addResult('Botón Crear Usuario', 'error', error.message);
+                }
+            }, 1000);
+        }
+
+        // Test 5: Simular registro completo
+        function simulateRegistration() {
+            log('📋 Simulando registro completo...', 'info');
+            
+            const testUser = {
+                email: 'test@futpro.com',
+                nombre: 'Test User',
+                apellido: 'FutPro',
+                edad: 25,
+                posicion: 'Delantero'
+            };
+            
+            // Simular datos en localStorage
+            localStorage.setItem('futpro_registro_progreso', JSON.stringify(testUser));
+            localStorage.setItem('registroCompleto', 'true');
+            localStorage.setItem('authCompleted', 'true');
+            
+            log('✅ Datos de registro simulados guardados', 'success');
+            addResult('Registro Simulado', 'success', 'Datos guardados en localStorage');
+            
+            // Intentar navegar a home
+            setTimeout(() => {
+                window.location.href = window.location.origin + '/home';
+                log('🏠 Navegando a home...', 'info');
+            }, 2000);
+        }
+
+        // Test 6: Verificar rutas
+        function checkRoutes() {
+            log('🗺️ Verificando rutas disponibles...', 'info');
+            
+            const routes = [
+                '/login',
+                '/registro-nuevo', 
+                '/home',
+                '/perfil-card',
+                '/auth/callback'
+            ];
+            
+            routes.forEach(route => {
+                const url = window.location.origin + route;
+                log(`🔍 Verificando: ${url}`, 'info');
+                
+                fetch(url, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            log(`✅ ${route} - OK`, 'success');
+                            addResult(`Ruta ${route}`, 'success', 'Disponible');
+                        } else {
+                            log(`⚠️ ${route} - ${response.status}`, 'warning');
+                            addResult(`Ruta ${route}`, 'warning', `Status: ${response.status}`);
+                        }
+                    })
+                    .catch(error => {
+                        log(`❌ ${route} - Error: ${error.message}`, 'error');
+                        addResult(`Ruta ${route}`, 'error', error.message);
+                    });
+            });
+        }
+
+        // Test 7: Test redirección a home
+        function testRedirection() {
+            log('🏠 Probando redirección a home...', 'info');
+            
+            // Simular usuario autenticado
+            const mockUser = {
+                id: 'test-user-id',
+                email: 'test@futpro.com',
+                authenticated: true
+            };
+            
+            localStorage.setItem('session', JSON.stringify(mockUser));
+            localStorage.setItem('userLoggedIn', JSON.stringify(mockUser));
+            localStorage.setItem('authCompleted', 'true');
+            
+            log('✅ Usuario mock creado', 'success');
+            addResult('Usuario Mock', 'success', 'Datos de sesión simulados');
+            
+            setTimeout(() => {
+                window.location.href = window.location.origin + '/home';
+                log('🔄 Redirigiendo a home...', 'info');
+            }, 1000);
+        }
+
+        // Acciones de reparación
+        function clearBrowserData() {
+            log('🧹 Limpiando datos del navegador...', 'info');
+            
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Limpiar cookies
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+            
+            log('✅ Datos limpiados', 'success');
+            addResult('Limpieza', 'success', 'LocalStorage y cookies limpiados');
+        }
+
+        function resetAppState() {
+            log('🔄 Reseteando estado de la aplicación...', 'info');
+            
+            // Limpiar datos específicos de FutPro
+            const futproKeys = Object.keys(localStorage).filter(key => 
+                key.includes('futpro') || 
+                key.includes('auth') || 
+                key.includes('user') ||
+                key.includes('registro')
+            );
+            
+            futproKeys.forEach(key => {
+                localStorage.removeItem(key);
+                log(`🗑️ Removido: ${key}`, 'info');
+            });
+            
+            log('✅ Estado reseteado', 'success');
+            addResult('Reset Estado', 'success', `${futproKeys.length} claves removidas`);
+        }
+
+        function forceReload() {
+            log('🔄 Recargando página forzadamente...', 'info');
+            window.location.reload(true);
+        }
+
+        // Ejecutar todos los tests
+        function runAllTests() {
+            clearConsole();
+            log('🚀 Iniciando diagnóstico completo de FutPro...', 'info');
+            
+            testReactRouter();
+            
+            setTimeout(() => testNavigation(), 1000);
+            setTimeout(() => testRegistroForm(), 2000);
+            setTimeout(() => checkRoutes(), 3000);
+            
+            log('📊 Tests programados para ejecución', 'success');
+        }
+
+        // Capturar errores JavaScript
+        window.addEventListener('error', function(e) {
+            window.lastJSError = e.message;
+            log(`💥 Error JS capturado: ${e.message}`, 'error');
+        });
+
+        // Auto-ejecutar tests básicos al cargar
+        window.addEventListener('load', function() {
+            log('🔍 Página cargada, ejecutando tests básicos...', 'info');
+            runAllTests();
+        });
+    </script>
+</body>
+</html>

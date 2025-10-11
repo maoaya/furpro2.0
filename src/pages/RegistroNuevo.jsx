@@ -432,20 +432,38 @@ const RegistroNuevo = () => {
       
       // Redirección inmediata a la card de perfil
       const redirectToCard = () => {
-        console.log('� Ejecutando redirección a Card de Perfil...');
+        console.log('🎯 Ejecutando redirección a Card de Perfil...');
         try {
           navigate('/perfil-card', { replace: true, state: { newUser: true, cardData: datosCard } });
-          console.log('✅ Redirección a card ejecutada');
+          console.log('✅ Redirección a card ejecutada con React Router');
         } catch (navError) {
           console.warn('⚠️ React Router falló, usando window.location...');
           window.location.href = '/perfil-card';
         }
       };
       
-      // Redirección inmediata
+      // Función de redirección robusta al home como fallback
+      const redirectToHome = () => {
+        console.log('🏠 Ejecutando redirección al home...');
+        try {
+          navigate('/home', { replace: true });
+          console.log('✅ Redirección al home ejecutada con React Router');
+        } catch (navError) {
+          console.warn('⚠️ React Router al home falló, usando window.location...');
+          try {
+            window.location.href = '/home';
+            console.log('✅ Redirección al home con window.location');
+          } catch (windowError) {
+            console.error('❌ Error total en redirección:', windowError);
+            window.location.href = window.location.origin + '/home';
+          }
+        }
+      };
+      
+      // Redirección inmediata a card de perfil (principal)
       setTimeout(redirectToCard, 1500);
       
-      // Fallback adicional
+      // Fallback a card si la primera redirección falla
       setTimeout(() => {
         if (window.location.pathname !== '/perfil-card') {
           console.log('🔄 Ejecutando fallback de redirección a card...');
@@ -453,16 +471,13 @@ const RegistroNuevo = () => {
         }
       }, 3000);
       
-      // Intentar redirección inmediata
-      setTimeout(redirectToHome, 1500);
-      
-      // Fallback por si la primera redirección falla
+      // Fallback final al home si todo falla
       setTimeout(() => {
-        if (window.location.pathname !== '/home') {
-          console.log('🔄 Ejecutando redirección fallback...');
-          window.location.href = '/home';
+        if (window.location.pathname !== '/perfil-card' && window.location.pathname !== '/home') {
+          console.log('🔄 Ejecutando redirección final al home como último recurso...');
+          redirectToHome();
         }
-      }, 3000);
+      }, 5000);
 
     } catch (error) {
       console.error('Error en registro:', error);

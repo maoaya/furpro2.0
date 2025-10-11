@@ -269,7 +269,23 @@ export default function LoginRegisterForm() {
               type="button" 
               onClick={() => {
                 console.log('🚀 Navegando a registro completo...');
-                navigate('/registro-nuevo');
+                
+                // Método robusto con múltiples fallbacks
+                try {
+                  navigate('/registro-nuevo');
+                  console.log('✅ Navigate ejecutado desde formulario email');
+                } catch (error) {
+                  console.error('❌ Error con navigate desde formulario:', error);
+                  
+                  // Fallback directo
+                  try {
+                    window.location.href = '/registro-nuevo';
+                    console.log('✅ Fallback window.location desde formulario');
+                  } catch (fallbackError) {
+                    console.error('❌ Error con fallback desde formulario:', fallbackError);
+                    window.location.href = window.location.origin + '/registro-nuevo';
+                  }
+                }
               }} 
               style={{ 
                 width: '100%', 
@@ -370,11 +386,30 @@ export default function LoginRegisterForm() {
               Usar Email y Contraseña
             </button>
             
-            {/* Botón Crear Usuario - SIEMPRE VISIBLE */}
+            {/* Botón Crear Usuario - SIEMPRE VISIBLE - VERSIÓN MEJORADA */}
             <button 
               onClick={() => {
                 console.log('🚀 Navegando a crear usuario completo...');
-                navigate('/registro-nuevo');
+                
+                // Método 1: React Router navigate (principal)
+                try {
+                  navigate('/registro-nuevo');
+                  console.log('✅ Navigate ejecutado correctamente');
+                } catch (error) {
+                  console.error('❌ Error con navigate:', error);
+                  
+                  // Método 2: Fallback con window.location
+                  try {
+                    window.location.href = '/registro-nuevo';
+                    console.log('✅ Fallback window.location ejecutado');
+                  } catch (fallbackError) {
+                    console.error('❌ Error con fallback:', fallbackError);
+                    
+                    // Método 3: Último recurso con URL completa
+                    window.location.href = window.location.origin + '/registro-nuevo';
+                    console.log('🚨 Último recurso ejecutado');
+                  }
+                }
               }} 
               style={{ 
                 width: '100%', 
