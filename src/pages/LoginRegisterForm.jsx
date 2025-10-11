@@ -439,6 +439,81 @@ export default function LoginRegisterForm() {
             >
               <span>👤</span>Crear Usuario
             </button>
+            
+            {/* BOTÓN ALTERNATIVO ULTRA-ROBUSTO - JAVASCRIPT PURO */}
+            <button 
+              id="btn-crear-usuario-backup"
+              onClick={() => {
+                console.log('🔥 BOTÓN ALTERNATIVO - Navegación ultra-robusta...');
+                
+                // Tracking del click
+                try {
+                  trackButtonClick('crear_usuario_backup', { source: 'login_form', method: 'backup_button' });
+                } catch (trackError) {
+                  console.warn('⚠️ Error en tracking:', trackError);
+                }
+                
+                // Método directo inmediato
+                const navegarInmediato = () => {
+                  const targetUrl = '/registro-nuevo';
+                  console.log(`🎯 Navegando a: ${targetUrl}`);
+                  
+                  // Múltiples métodos en secuencia
+                  setTimeout(() => {
+                    try {
+                      window.location.assign(targetUrl);
+                      console.log('✅ Method 1: window.location.assign');
+                    } catch (e) {
+                      console.error('❌ Method 1 failed:', e);
+                      try {
+                        window.location.href = targetUrl;
+                        console.log('✅ Method 2: window.location.href');
+                      } catch (e2) {
+                        console.error('❌ Method 2 failed:', e2);
+                        try {
+                          window.location.replace(targetUrl);
+                          console.log('✅ Method 3: window.location.replace');
+                        } catch (e3) {
+                          console.error('❌ Method 3 failed:', e3);
+                          window.open(targetUrl, '_self');
+                          console.log('✅ Method 4: window.open');
+                        }
+                      }
+                    }
+                  }, 100);
+                };
+                
+                navegarInmediato();
+              }}
+              style={{ 
+                width: '100%', 
+                padding: '15px', 
+                background: 'linear-gradient(135deg, #dc2626, #b91c1c)', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '12px', 
+                fontSize: '16px', 
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                boxShadow: '0 4px 12px rgba(220, 38, 38, 0.4)',
+                transition: 'all 0.3s ease',
+                marginTop: '10px'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 6px 16px rgba(220, 38, 38, 0.6)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.4)';
+              }}
+            >
+              <span>🚨</span>CREAR USUARIO (Si el de arriba no funciona)
+            </button>
           </>
         )}
         {showEmailForm && (
