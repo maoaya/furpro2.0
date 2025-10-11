@@ -5,7 +5,7 @@ import TestPage from './pages/TestPage.jsx';
 import LoginRegisterForm from './pages/LoginRegisterForm.jsx';
 import RegistroFuncionando from './pages/RegistroFuncionando.jsx';
 import RegistroSimple from './pages/RegistroSimple.jsx';
-import RegistroEmergencia from './pages/RegistroEmergencia.jsx';
+import RegistroCompleto from './pages/RegistroCompleto.jsx';
 import RegistroTemporal from './pages/RegistroTemporal.jsx';
 import PerfilCard from './pages/PerfilCard.jsx';
 import HomePage from './pages/HomePage.jsx';
@@ -416,7 +416,7 @@ export default function FutProAppDefinitivo() {
       {/* Registro completo */}
       <Route path="/registro" element={<RegistroFuncionando />} />
       <Route path="/registro-completo" element={<RegistroTemporal />} />
-      <Route path="/registro-nuevo" element={<RegistroEmergencia />} />
+      <Route path="/registro-nuevo" element={<RegistroCompleto />} />
       
       {/* Card de Perfil tipo Instagram */}
       <Route path="/perfil-card" element={
