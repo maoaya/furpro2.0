@@ -1,7 +1,7 @@
 
 // Test real para grupos de chat y ubicación
 const request = require('supertest');
-const { app } = require('../server');
+import { app } from '../server.js';
 const { getToken } = require('./auth_token_real.helper');
 
 describe('Grupos de chat y ubicación (real)', () => {

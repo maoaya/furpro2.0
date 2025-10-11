@@ -15,13 +15,6 @@ import i18n from './i18n';
 import { AuthProvider } from './context/AuthContext';
 import FutProAppDefinitivo from './FutProAppDefinitivo.jsx';
 
-// Test de conexión efectiva en desarrollo
-if (window.location.hostname === 'localhost') {
-  import('./utils/test-conexion-efectiva.js').then(({ testConexionEfectiva }) => {
-    testConexionEfectiva();
-  });
-}
-
 const container = document.getElementById('root');
 if (container) {
   const root = ReactDOM.createRoot(container);

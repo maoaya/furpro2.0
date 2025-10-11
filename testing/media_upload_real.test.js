@@ -7,7 +7,7 @@ global.TextDecoder = require('util').TextDecoder;
 
 
 const request = require('supertest');
-const { app } = require('../server');
+import { app } from '../server.js';
 const path = require('path');
 const { getToken } = require('./auth_token_real.helper');
 

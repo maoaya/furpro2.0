@@ -21,8 +21,7 @@ const supabaseOptions = {
         // Configuración específica para evitar errores 502
         flowType: 'pkce',
         storage: window.localStorage,
-        storageKey: 'futpro-auth-token',
-        debug: false
+        storageKey: 'futpro-auth-token'
     },
     global: {
         headers: {

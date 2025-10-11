@@ -4,6 +4,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import app from './src/main/expressApp.js';
 import webpush from 'web-push';
+
 let io;
 
 // Crear el servidor HTTP siempre (para tests y producción)
@@ -12,24 +13,27 @@ export { app, server };
 
 // WebSocket para notificaciones y comentarios en tiempo real (solo si no es test)
 if (process.env.NODE_ENV !== 'test') {
-  const { WebSocketServer } = await import('ws');
-  io = new Server(server, {
-    cors: { origin: '*' }
-  });
-  const wss = new WebSocketServer({ server });
-  app.set('wss', wss);
-  // Socket.io para streaming y chat
-  io.on('connection', (socket) => {
-    socket.on('join-stream', (streamId) => {
-      socket.join(streamId);
-      io.to(streamId).emit('viewer-joined', socket.id);
+  // Importación dinámica dentro de función async para evitar error de await en nivel superior
+  (async () => {
+    const { WebSocketServer } = await import('ws');
+    io = new Server(server, {
+      cors: { origin: '*' }
     });
-    socket.on('send-message', (data) => {
-      io.emit('new-message', data);
+    const wss = new WebSocketServer({ server });
+    app.set('wss', wss);
+    
+    // Socket.io para streaming y chat
+    io.on('connection', (socket) => {
+      socket.on('join-stream', (streamId) => {
+        socket.join(streamId);
+        io.to(streamId).emit('viewer-joined', socket.id);
+      });
+      socket.on('send-message', (data) => {
+        io.emit('new-message', data);
+      });
+      socket.on('disconnect', () => {});
     });
-    socket.on('disconnect', () => {});
-  });
-  // Importante: el listen se realiza únicamente en start.js para evitar doble arranque
+  })();
 }
 
 

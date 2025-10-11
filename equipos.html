@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>FutPro - Equipos</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+	<style>
+		body { background: #181818; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; }
+		.container { max-width: 600px; margin: 40px auto; padding: 24px; background: #232323; border-radius: 14px; box-shadow: 0 2px 12px #0006; }
+		h1 { color: #FFD700; text-align: center; margin-bottom: 24px; }
+		.equipo-card { background:#232323;border-radius:12px;padding:18px;width:340px;box-shadow:0 2px 12px #0006;display:flex;flex-direction:column;align-items:center;position:relative;margin:0 auto 18px; }
+		.avatar-circular { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #FFD700; margin-right: 8px; box-shadow: 0 2px 8px #0004; background: #222; }
+		.badge-rol { background: #FFD700; color: #181818; border-radius: 8px; padding: 2px 8px; font-size: 12px; margin-left: 6px; font-weight: bold; }
+		.plantilla-lista li { display: flex; align-items: center; margin-bottom: 6px; }
+		.contador-badge { background: #FFD700; color: #181818; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; margin-left: 6px; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Gestión de Equipos</h1>
+		<form id="equipoForm" style="background:#181818;padding:16px 20px;border-radius:10px;max-width:400px;margin:0 auto 24px;box-shadow:0 2px 8px #0004;">
+			<input type="file" id="equipoLogo" accept="image/*" style="width:100%;margin-bottom:8px;">
+			<input type="text" id="equipoNombre" placeholder="Nombre del equipo" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+			<input type="text" id="equipoCiudad" placeholder="Ciudad" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+			<select id="equipoCategoria" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+				<option value="">Categoría</option>
+				<optgroup label="Masculino">
+					<option>Infantil Masculino</option>
+					<option>Juvenil Masculino</option>
+					<option>Libre Masculino</option>
+					<option>Senior Masculino</option>
+				</optgroup>
+				<optgroup label="Femenino">
+					<option>Infantil Femenino</option>
+					<option>Juvenil Femenino</option>
+					<option>Libre Femenino</option>
+					<option>Senior Femenino</option>
+				</optgroup>
+				<optgroup label="Mixto">
+					<option>Libre Mixto</option>
+					<option>Infantil Mixto</option>
+				</optgroup>
+			</select>
+			<input type="number" id="equipoJugadores" min="12" max="23" placeholder="Cantidad de jugadores (12-23)" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+			<input type="number" id="equipoStaff" min="0" max="5" placeholder="Staff técnico (0-5)" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+			<button type="submit" style="width:100%;background:#FFD700;color:#181818;font-weight:bold;padding:10px;border-radius:6px;border:none;cursor:pointer;">Crear equipo</button>
+		</form>
+		<div style="max-width:400px;margin:0 auto 18px;">
+			<input type="text" id="equipoBuscar" placeholder="Buscar equipo por nombre o ciudad..." style="width:100%;padding:8px;border-radius:6px;border:none;">
+		</div>
+		<div id="equipoList" style="display:flex;flex-wrap:wrap;gap:18px;justify-content:center;"></div>
+		<!-- Modal plantilla completa -->
+		<div id="modalPlantilla" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000a;z-index:1000;align-items:center;justify-content:center;">
+			<div style="background:#232323;padding:28px 24px 18px 24px;border-radius:14px;max-width:420px;width:95vw;max-height:90vh;overflow-y:auto;position:relative;">
+				<button id="cerrarPlantilla" style="position:absolute;top:10px;right:12px;background:#FFD700;color:#181818;border:none;border-radius:50%;width:28px;height:28px;font-size:18px;cursor:pointer;">×</button>
+				<h3 style="color:#FFD700;text-align:center;margin-bottom:10px;">Plantilla del Equipo</h3>
+				<div id="plantillaEquipo"></div>
+				<hr style="margin:16px 0;">
+				<form id="agregarMiembroForm">
+					<select id="tipoMiembro" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+						<option value="jugador">Jugador</option>
+						<option value="staff">Staff</option>
+					</select>
+					<input type="text" id="nombreMiembro" placeholder="Nombre completo" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+					<input type="text" id="posicionMiembro" placeholder="Posición/Rol (ej: Delantero, DT, Médico)" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+					<input type="file" id="avatarMiembro" accept="image/*" style="width:100%;margin-bottom:8px;">
+					<button type="submit" style="width:100%;background:#FFD700;color:#181818;font-weight:bold;padding:8px;border-radius:6px;border:none;cursor:pointer;">Agregar a plantilla</button>
+				</form>
+			</div>
+		</div>
+		<a href="homepage-instagram.html" style="display:block;text-align:center;margin-top:30px;color:#FFD700;">Volver al inicio</a>
+	</div>
+	<script>
+	// --- Lógica avanzada de equipos migrada desde homepage-instagram.html ---
+	function getEquipos() {
+		return JSON.parse(localStorage.getItem('futpro_equipos')||'[]');
+	}
+	function saveEquipos(arr) {
+		localStorage.setItem('futpro_equipos', JSON.stringify(arr));
+	}
+	function renderEquipos() {
+		const list = document.getElementById('equipoList');
+		if (!list) return;
+		list.innerHTML = '';
+		let equipos = getEquipos();
+		// Filtro/búsqueda
+		const filtro = (document.getElementById('equipoBuscar')?.value||'').toLowerCase();
+		if (filtro) {
+			equipos = equipos.filter(eq => eq.nombre.toLowerCase().includes(filtro) || eq.ciudad.toLowerCase().includes(filtro));
+		}
+		equipos.forEach((eq, idx) => {
+			const card = document.createElement('div');
+			card.className = 'equipo-card';
+			card.style = 'background:#232323;border-radius:12px;padding:18px;width:340px;box-shadow:0 2px 12px #0006;display:flex;flex-direction:column;align-items:center;position:relative;';
+			// Logo personalizado o generado
+			let logoHtml = '';
+			if (eq.logo) {
+				logoHtml = `<img src="${eq.logo}" alt="logo" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:8px;box-shadow:0 2px 8px #0004;">`;
+			} else {
+				const iniciales = eq.nombre.split(' ').map(w=>w[0]).join('').substring(0,3).toUpperCase();
+				logoHtml = `<div style=\"width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#181818 80%);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;color:#181818;box-shadow:0 2px 8px #0004;margin-bottom:8px;user-select:none;\">${iniciales}</div>`;
+			}
+			// Card resumen de logros
+			let logrosHtml = '';
+			if (eq.logros && eq.logros.length) {
+				logrosHtml = `<div style='margin:8px 0 0 0;'><b>🏆 Logros:</b><ul style='padding-left:18px;'>`+
+					eq.logros.map(l=>`<li>${l.torneo} <span style='color:#FFD700'>(${l.fecha})</span></li>`).join('')+'</ul></div>';
+			}
+			card.innerHTML = `
+				${logoHtml}
+				<h3 style=\"color:#FFD700;margin:12px 0 4px;\">${eq.nombre}</h3>
+				<p style=\"color:#aaa;font-size:14px;\">${eq.ciudad} • ${eq.categoria}</p>
+				<p style=\"color:#fff;font-size:15px;margin-bottom:8px;\">Jugadores: ${eq.jugadores||0} • Staff: ${eq.staff||0}</p>
+				<div style=\"display:flex;gap:10px;justify-content:center;margin-top:8px;\">
+					<button class='btn-plantilla' data-idx='${idx}' style=\"background:#FFD700;color:#181818;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:13px;\">Plantilla</button>
+					<button class='btn-detalles' data-idx='${idx}' style=\"background:#FFD700;color:#181818;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:13px;\">Detalles</button>
+					<button class='btn-editar' data-idx='${idx}' style=\"background:#222;color:#FFD700;border:1px solid #FFD700;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:13px;\">Editar</button>
+					<button class='btn-eliminar' data-idx='${idx}' style=\"background:#c00;color:#fff;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:13px;\">Eliminar</button>
+				</div>
+				<div class='detalles-equipo' id='detalles-${idx}' style='display:none;margin-top:10px;background:#181818;padding:10px 12px;border-radius:8px;color:#fff;font-size:14px;'></div>
+				<button class='btn-exportar' data-idx='${idx}' style='margin-top:10px;background:#FFD700;color:#181818;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:13px;'>Exportar PDF/CSV</button>
+				${logrosHtml}
+			`;
+			list.appendChild(card);
+		});
+		// Botón Plantilla
+		list.querySelectorAll('.btn-plantilla').forEach(btn => {
+			btn.onclick = function() {
+				const i = parseInt(this.dataset.idx);
+				mostrarPlantilla(i);
+			};
+		});
+		// Botones Detalles
+		list.querySelectorAll('.btn-detalles').forEach(btn => {
+			btn.onclick = function() {
+				const i = parseInt(this.dataset.idx);
+				const detalles = list.querySelector(`#detalles-${i}`);
+				if (!detalles) return;
+				if (detalles.style.display === 'none') {
+					const eq = getEquipos()[i];
+					detalles.innerHTML = `<b>Equipo:</b> ${eq.nombre}<br><b>Ciudad:</b> ${eq.ciudad}<br><b>Categoría:</b> ${eq.categoria}<br><b>Jugadores:</b> ${eq.jugadores||0}<br><b>Staff:</b> ${eq.staff||0}`;
+					detalles.style.display = 'block';
+				} else {
+					detalles.style.display = 'none';
+				}
+			};
+		});
+		// Botones Eliminar
+		list.querySelectorAll('.btn-eliminar').forEach(btn => {
+			btn.onclick = function() {
+				if (!confirm('¿Eliminar este equipo?')) return;
+				const i = parseInt(this.dataset.idx);
+				let equipos = getEquipos();
+				equipos.splice(i,1);
+				saveEquipos(equipos);
+				renderEquipos();
+			};
+		});
+		// Botones Editar
+		list.querySelectorAll('.btn-editar').forEach(btn => {
+			btn.onclick = function() {
+				const i = parseInt(this.dataset.idx);
+				const eq = getEquipos()[i];
+				document.getElementById('equipoNombre').value = eq.nombre;
+				document.getElementById('equipoCiudad').value = eq.ciudad;
+				document.getElementById('equipoCategoria').value = eq.categoria;
+				document.getElementById('equipoJugadores').value = eq.jugadores||0;
+				document.getElementById('equipoStaff').value = eq.staff||0;
+				// Eliminar el equipo viejo
+				let equipos = getEquipos();
+				equipos.splice(i,1);
+				saveEquipos(equipos);
+				renderEquipos();
+			};
+		});
+		// Botón Exportar
+		list.querySelectorAll('.btn-exportar').forEach(btn => {
+			btn.onclick = function() {
+				const i = parseInt(this.dataset.idx);
+				exportarEquipo(i);
+			};
+		});
+	}
+	// Formulario crear equipo
+	const equipoForm = document.getElementById('equipoForm');
+	if (equipoForm) {
+		equipoForm.onsubmit = async function(e) {
+			e.preventDefault();
+			const nombre = document.getElementById('equipoNombre').value.trim();
+			const ciudad = document.getElementById('equipoCiudad').value.trim();
+			const categoria = document.getElementById('equipoCategoria').value;
+			const jugadores = parseInt(document.getElementById('equipoJugadores').value);
+			const staff = parseInt(document.getElementById('equipoStaff').value);
+			let logo = '';
+			const logoInput = document.getElementById('equipoLogo');
+			if (logoInput && logoInput.files && logoInput.files[0]) {
+				logo = await fileToBase64(logoInput.files[0]);
+			}
+			if (!nombre || !ciudad || !categoria) return alert('Completa todos los campos');
+			if (jugadores < 12 || jugadores > 23) return alert('Jugadores debe ser entre 12 y 23');
+			if (staff < 0 || staff > 5) return alert('Staff debe ser entre 0 y 5');
+			let equipos = getEquipos();
+			equipos.unshift({nombre, ciudad, categoria, jugadores, staff, logo, plantilla: []});
+			saveEquipos(equipos);
+			equipoForm.reset();
+			renderEquipos();
+		};
+	}
+	// Filtro/búsqueda
+	const equipoBuscar = document.getElementById('equipoBuscar');
+	if (equipoBuscar) {
+		equipoBuscar.oninput = renderEquipos;
+	}
+	// Utilidad para convertir archivo a base64
+	function fileToBase64(file) {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result);
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
+	}
+	// PLANTILLA COMPLETA
+	function mostrarPlantilla(idx) {
+		const equipos = getEquipos();
+		const eq = equipos[idx];
+		const modal = document.getElementById('modalPlantilla');
+		const plantillaDiv = document.getElementById('plantillaEquipo');
+		if (!modal || !plantillaDiv) return;
+		modal.style.display = 'flex';
+		plantillaDiv.innerHTML = '';
+		// Jugadores
+		const jugadores = (eq.plantilla||[]).filter(m=>m.tipo==='jugador');
+		const staff = (eq.plantilla||[]).filter(m=>m.tipo==='staff');
+		plantillaDiv.innerHTML += `<b>Jugadores (${jugadores.length}):</b><ul style='padding-left:18px;'>` +
+			jugadores.map(j=>`<li><img src='${j.avatar||''}' style='width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;'> <b>${j.nombre}</b> (${j.posicion}) ${j.rol?'<span style=\'color:#FFD700\'>['+j.rol+']</span>':''}</li>`).join('') + '</ul>';
+		plantillaDiv.innerHTML += `<b>Staff (${staff.length}):</b><ul style='padding-left:18px;'>` +
+			staff.map(s=>`<li><img src='${s.avatar||''}' style='width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;'> <b>${s.nombre}</b> (${s.posicion}) ${s.rol?'<span style=\'color:#FFD700\'>['+s.rol+']</span>':''}</li>`).join('') + '</ul>';
+		// Botón para exportar plantilla
+		plantillaDiv.innerHTML += `<button id='exportarPlantillaBtn' style='margin-top:10px;background:#FFD700;color:#181818;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:13px;'>Exportar Plantilla CSV</button>`;
+		// Asignar roles
+		plantillaDiv.innerHTML += `<hr><b>Asignar rol:</b> <select id='rolPlantilla'><option value=''>Selecciona miembro</option>`+
+			(eq.plantilla||[]).map((m,i)=>`<option value='${i}'>${m.nombre} (${m.tipo})</option>`).join('')+`</select> <input id='rolNuevo' placeholder='Ej: Capitán, DT' style='width:90px;'> <button id='btnAsignarRol' style='background:#FFD700;color:#181818;border:none;padding:2px 8px;border-radius:5px;cursor:pointer;font-size:12px;'>Asignar</button>`;
+		// Eliminar miembro
+		plantillaDiv.innerHTML += `<br><b>Eliminar miembro:</b> <select id='eliminarMiembro'><option value=''>Selecciona</option>`+
+			(eq.plantilla||[]).map((m,i)=>`<option value='${i}'>${m.nombre} (${m.tipo})</option>`).join('')+`</select> <button id='btnEliminarMiembro' style='background:#c00;color:#fff;border:none;padding:2px 8px;border-radius:5px;cursor:pointer;font-size:12px;'>Eliminar</button>`;
+		// Exportar plantilla CSV
+		document.getElementById('exportarPlantillaBtn').onclick = function() {
+			exportarPlantillaCSV(eq);
+		};
+		// Asignar rol
+		document.getElementById('btnAsignarRol').onclick = function() {
+			const idxMiembro = document.getElementById('rolPlantilla').value;
+			const rol = document.getElementById('rolNuevo').value.trim();
+			if (rol && idxMiembro!=='') {
+				eq.plantilla[idxMiembro].rol = rol;
+				equipos[idx] = eq;
+				saveEquipos(equipos);
+				mostrarPlantilla(idx);
+			}
+		};
+		// Eliminar miembro
+		document.getElementById('btnEliminarMiembro').onclick = function() {
+			const idxMiembro = document.getElementById('eliminarMiembro').value;
+			if (idxMiembro!=='') {
+				eq.plantilla.splice(idxMiembro,1);
+				equipos[idx] = eq;
+				saveEquipos(equipos);
+				mostrarPlantilla(idx);
+			}
+		};
+	}
+	// Exportar plantilla CSV
+	function exportarPlantillaCSV(eq) {
+		let csv = `Tipo,Nombre,Posición,Rol\n`;
+		(eq.plantilla||[]).forEach(m => {
+			csv += `${m.tipo},${m.nombre},${m.posicion},${m.rol||''}\n`;
+		});
+		const blob = new Blob([csv], {type:'text/csv'});
+		const a = document.createElement('a');
+		a.href = URL.createObjectURL(blob);
+		a.download = `plantilla_${eq.nombre.replace(/\s+/g,'_')}.csv`;
+		a.click();
+	}
+	// Cerrar modal plantilla
+	document.getElementById('cerrarPlantilla').onclick = function() {
+		document.getElementById('modalPlantilla').style.display = 'none';
+	};
+	// Render inicial equipos
+	renderEquipos();
+	</script>
+</body>
+</html>

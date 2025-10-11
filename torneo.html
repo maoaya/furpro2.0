@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>FutPro - Torneos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #181818; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container { max-width: 700px; margin: 40px auto; padding: 24px; background: #232323; border-radius: 14px; box-shadow: 0 2px 12px #0006; }
+        h1 { color: #FFD700; text-align: center; margin-bottom: 24px; }
+        .torneo-card { background:#232323;border-radius:12px;padding:18px;width:340px;box-shadow:0 2px 12px #0006;display:flex;flex-direction:column;align-items:center;position:relative;margin:0 auto 18px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de Torneos</h1>
+        <form id="torneoForm" style="background:#181818;padding:16px 20px;border-radius:10px;max-width:400px;margin:0 auto 24px;box-shadow:0 2px 8px #0004;">
+            <input type="text" id="torneoNombre" placeholder="Nombre del torneo" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+            <input type="text" id="torneoCiudad" placeholder="Ciudad" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+            <input type="date" id="torneoFecha" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+            <select id="torneoCategoria" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;">
+                <option value="">Categoría</option>
+                <optgroup label="Masculino">
+                    <option>Infantil Masculino</option>
+                    <option>Juvenil Masculino</option>
+                    <option>Libre Masculino</option>
+                    <option>Senior Masculino</option>
+                </optgroup>
+                <optgroup label="Femenino">
+                    <option>Infantil Femenino</option>
+                    <option>Juvenil Femenino</option>
+                    <option>Libre Femenino</option>
+                    <option>Senior Femenino</option>
+                </optgroup>
+                <optgroup label="Mixto">
+                    <option>Libre Mixto</option>
+                    <option>Infantil Mixto</option>
+                </optgroup>
+            </select>
+            <button type="submit" style="width:100%;background:#FFD700;color:#181818;font-weight:bold;padding:10px;border-radius:6px;border:none;cursor:pointer;">Crear torneo</button>
+        </form>
+        <div style="max-width:400px;margin:0 auto 18px;">
+            <input type="text" id="torneoBuscar" placeholder="Buscar torneo por nombre o ciudad..." style="width:100%;padding:8px;border-radius:6px;border:none;">
+        </div>
+        <div id="torneoList" style="display:flex;flex-wrap:wrap;gap:18px;justify-content:center;"></div>
+        <!-- Modal detalles torneo -->
+        <div id="modalTorneo" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000a;z-index:1000;align-items:center;justify-content:center;">
+            <div style="background:#232323;padding:28px 24px 18px 24px;border-radius:14px;max-width:420px;width:95vw;max-height:90vh;overflow-y:auto;position:relative;">
+                <button id="cerrarTorneo" style="position:absolute;top:10px;right:12px;background:#FFD700;color:#181818;border:none;border-radius:50%;width:28px;height:28px;font-size:18px;cursor:pointer;">×</button>
+                <h3 style="color:#FFD700;text-align:center;margin-bottom:10px;">Detalles del Torneo</h3>
+                <div id="detallesTorneo"></div>
+                <hr style="margin:16px 0;">
+                <form id="agregarEquipoTorneoForm">
+                    <select id="equipoTorneo" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:none;"></select>
+                    <button type="submit" style="width:100%;background:#FFD700;color:#181818;font-weight:bold;padding:8px;border-radius:6px;border:none;cursor:pointer;">Agregar equipo</button>
+                </form>
+                
+                <!-- PANEL DE SUGERENCIAS -->
+                <div style="margin:16px 0;">
+                    <h4 style="color:#FFD700;margin-bottom:8px;">📋 Equipos Sugeridos (Que Sigues)</h4>
+                    <div id="equiposSugeridos" style="max-height:150px;overflow-y:auto;background:#181818;border-radius:6px;padding:8px;">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                    <button onclick="invitarTodosEquipos()" style="width:100%;background:#4CAF50;color:#fff;font-weight:bold;padding:6px;border-radius:6px;border:none;cursor:pointer;margin-top:8px;">
+                        🎯 Invitar Todos los Equipos que Sigo
+                    </button>
+                </div>
+                <hr style="margin:16px 0;">
+                <button id="generarFixtureBtn" style="width:100%;background:#FFD700;color:#181818;font-weight:bold;padding:8px;border-radius:6px;border:none;cursor:pointer;">Generar Fixture</button>
+                <div id="fixtureTorneo" style="margin-top:18px;"></div>
+                <button id="generarEliminacionBtn" style="width:100%;background:#FFD700;color:#181818;font-weight:bold;padding:8px;border-radius:6px;border:none;cursor:pointer;margin-top:10px;">Generar Eliminación Directa</button>
+                <div id="eliminacionTorneo" style="margin-top:18px;"></div>
+                <div id="tablaPosiciones" style="margin-top:18px;"></div>
+            </div>
+        </div>
+        <a href="homepage-instagram.html" style="display:block;text-align:center;margin-top:30px;color:#FFD700;">Volver al inicio</a>
+    </div>
+    <script>
+    // --- Lógica avanzada de torneos migrada ---
+    function getTorneos() {
+        return JSON.parse(localStorage.getItem('futpro_torneos')||'[]');
+    }
+    function saveTorneos(arr) {
+        localStorage.setItem('futpro_torneos', JSON.stringify(arr));
+    }
+    function renderTorneos() {
+        const list = document.getElementById('torneoList');
+        if (!list) return;
+        list.innerHTML = '';
+        let torneos = getTorneos();
+        // Filtro/búsqueda
+        const filtro = (document.getElementById('torneoBuscar')?.value||'').toLowerCase();
+        if (filtro) {
+            torneos = torneos.filter(t => t.nombre.toLowerCase().includes(filtro) || t.ciudad.toLowerCase().includes(filtro));
+        }
+        torneos.forEach((t, idx) => {
+            const card = document.createElement('div');
+            card.className = 'torneo-card';
+            card.style = 'background:#232323;border-radius:12px;padding:18px;width:340px;box-shadow:0 2px 12px #0006;display:flex;flex-direction:column;align-items:center;position:relative;';
+            card.innerHTML = `
+                <h3 style=\"color:#FFD700;margin:12px 0 4px;\">${t.nombre}</h3>
+                <p style=\"color:#aaa;font-size:14px;\">${t.ciudad} • ${t.categoria}</p>
+                <p style=\"color:#fff;font-size:15px;margin-bottom:8px;\">Fecha: ${t.fecha}</p>
+                <div style=\"display:flex;gap:10px;justify-content:center;margin-top:8px;\">
+                    <button class='btn-detalles-torneo' data-idx='${idx}' style=\"background:#FFD700;color:#181818;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:13px;\">Detalles</button>
+                    <button class='btn-eliminar-torneo' data-idx='${idx}' style=\"background:#c00;color:#fff;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:13px;\">Eliminar</button>
+                </div>
+                <button class='btn-exportar-torneo' data-idx='${idx}' style='margin-top:10px;background:#FFD700;color:#181818;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:13px;'>Exportar CSV</button>
+            `;
+            list.appendChild(card);
+        });
+        // Botones Detalles
+        list.querySelectorAll('.btn-detalles-torneo').forEach(btn => {
+            btn.onclick = function() {
+                const i = parseInt(this.dataset.idx);
+                mostrarDetallesTorneo(i);
+            };
+        });
+        // Botones Eliminar
+        list.querySelectorAll('.btn-eliminar-torneo').forEach(btn => {
+            btn.onclick = function() {
+                if (!confirm('¿Eliminar este torneo?')) return;
+                const i = parseInt(this.dataset.idx);
+                let torneos = getTorneos();
+                torneos.splice(i,1);
+                saveTorneos(torneos);
+                renderTorneos();
+            };
+        });
+        // Botón Exportar
+        list.querySelectorAll('.btn-exportar-torneo').forEach(btn => {
+            btn.onclick = function() {
+                const i = parseInt(this.dataset.idx);
+                exportarTorneoCSV(i);
+            };
+        });
+    }
+    // Formulario crear torneo
+    const torneoForm = document.getElementById('torneoForm');
+    if (torneoForm) {
+        torneoForm.onsubmit = function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('torneoNombre').value.trim();
+            const ciudad = document.getElementById('torneoCiudad').value.trim();
+            const fecha = document.getElementById('torneoFecha').value;
+            const categoria = document.getElementById('torneoCategoria').value;
+            if (!nombre || !ciudad || !fecha || !categoria) return alert('Completa todos los campos');
+            const torneos = getTorneos();
+            torneos.unshift({nombre, ciudad, fecha, categoria, equipos: []});
+            saveTorneos(torneos);
+            torneoForm.reset();
+            renderTorneos();
+        };
+    }
+    // Filtro/búsqueda
+    const torneoBuscar = document.getElementById('torneoBuscar');
+    if (torneoBuscar) {
+        torneoBuscar.oninput = renderTorneos;
+    }
+    // Modal detalles torneo y lógica avanzada (idéntica a homepage-instagram.html)
+    // ... (puedes seguir migrando la lógica de detalles, fixture, eliminación, exportar, etc. según el código original) ...
+    
+    // SISTEMA DE SUGERENCIAS DE EQUIPOS
+    function getEquiposSeguidos() {
+        // Simulamos equipos que el usuario sigue
+        const equiposSeguidos = JSON.parse(localStorage.getItem('futpro_equipos_seguidos') || '[]');
+        if (equiposSeguidos.length === 0) {
+            // Datos de ejemplo si no hay equipos seguidos
+            const ejemplos = [
+                {nombre: 'FC Barcelona', ciudad: 'Barcelona', categoria: 'Libre Masculino'},
+                {nombre: 'Real Madrid', ciudad: 'Madrid', categoria: 'Libre Masculino'},
+                {nombre: 'Athletic Bilbao Femenino', ciudad: 'Bilbao', categoria: 'Libre Femenino'},
+                {nombre: 'Atlético Madrid', ciudad: 'Madrid', categoria: 'Libre Masculino'},
+                {nombre: 'Valencia CF', ciudad: 'Valencia', categoria: 'Libre Masculino'}
+            ];
+            localStorage.setItem('futpro_equipos_seguidos', JSON.stringify(ejemplos));
+            return ejemplos;
+        }
+        return equiposSeguidos;
+    }
+
+    function renderEquiposSugeridos(torneoCategoria) {
+        const container = document.getElementById('equiposSugeridos');
+        if (!container) return;
+        
+        const equiposSeguidos = getEquiposSeguidos();
+        // Filtrar por categoría similar si es posible
+        const equiposFiltrados = equiposSeguidos.filter(equipo => {
+            return equipo.categoria === torneoCategoria || 
+                   equipo.categoria.includes('Libre') || 
+                   torneoCategoria.includes('Libre');
+        });
+
+        container.innerHTML = '';
+        
+        if (equiposFiltrados.length === 0) {
+            container.innerHTML = '<p style="color:#888;text-align:center;padding:16px;">No hay equipos sugeridos para esta categoría</p>';
+            return;
+        }
+
+        equiposFiltrados.forEach((equipo, index) => {
+            const equipoDiv = document.createElement('div');
+            equipoDiv.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px;margin:4px 0;background:#2d2d2d;border-radius:6px;';
+            equipoDiv.innerHTML = `
+                <div>
+                    <strong style="color:#FFD700">${equipo.nombre}</strong>
+                    <div style="font-size:12px;color:#888">${equipo.ciudad} • ${equipo.categoria}</div>
+                </div>
+                <button onclick="invitarEquipoEspecifico('${equipo.nombre}')" 
+                        style="background:#FFD700;color:#181818;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:12px;">
+                    ✉️ Invitar
+                </button>
+            `;
+            container.appendChild(equipoDiv);
+        });
+    }
+
+    function invitarEquipoEspecifico(nombreEquipo) {
+        // Simular invitación
+        alert(`📧 Invitación enviada a ${nombreEquipo}!\n\nEl equipo recibirá una notificación para unirse al torneo.`);
+        
+        // Aquí podrías agregar lógica real de invitación
+        // Por ejemplo, enviar notificación push, email, etc.
+    }
+
+    function invitarTodosEquipos() {
+        const equiposSeguidos = getEquiposSeguidos();
+        if (equiposSeguidos.length === 0) {
+            alert('❌ No tienes equipos seguidos para invitar');
+            return;
+        }
+        
+        const confirmacion = confirm(`🎯 ¿Enviar invitación a todos los ${equiposSeguidos.length} equipos que sigues?`);
+        if (confirmacion) {
+            alert(`📧 ¡Invitaciones enviadas!\n\nSe enviaron ${equiposSeguidos.length} invitaciones a los equipos que sigues.`);
+            
+            // Aquí podrías agregar lógica real de invitación masiva
+        }
+    }
+
+    // Función para mostrar sugerencias cuando se abre el modal
+    function mostrarSugerenciasEnModal(categoria) {
+        renderEquiposSugeridos(categoria);
+    }
+    
+    renderTorneos();
+    </script>
+</body>
+</html>

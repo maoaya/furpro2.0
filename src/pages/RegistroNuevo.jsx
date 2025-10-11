@@ -254,24 +254,63 @@ const RegistroNuevo = () => {
         throw profileError;
       }
 
-      // 4. Auto-login y redirección a homepage
-      setSuccess('¡Registro completado exitosamente! Bienvenido a FutPro. Redirigiendo...');
+      // 4. Auto-login y redirección robusta dentro de la app
+      setSuccess('¡Usuario creado exitosamente! Bienvenido a FutPro. Redirigiendo al inicio...');
       
-      // Limpiar datos temporales
+      // Limpiar datos temporales del registro
       localStorage.removeItem('futpro_registro_progreso');
+      localStorage.removeItem('tempRegistroData');
       
-      // Guardar datos en localStorage para persistencia
+      // Guardar datos de sesión para autenticación automática
       localStorage.setItem('futpro_user_profile', JSON.stringify(perfilCompleto));
       localStorage.setItem('registration_completed', 'true');
       localStorage.setItem('user_authenticated', 'true');
       localStorage.setItem('registroCompleto', 'true');
       localStorage.setItem('authCompleted', 'true');
+      localStorage.setItem('loginSuccess', 'true');
       
-      console.log('🎉 REGISTRO EXITOSO - Datos guardados y redirigiendo...');
+      // Marcar que debe ir al home después del login
+      localStorage.setItem('postLoginRedirect', '/home');
+      localStorage.setItem('postLoginRedirectReason', 'usuario-creado-exitosamente');
       
+      console.log('🎉 USUARIO CREADO EXITOSAMENTE - Redirigiendo al Homepage...');
+      console.log('👤 Usuario ID:', authData.user.id);
+      console.log('📧 Email:', authData.user.email);
+      console.log('📋 Perfil completo guardado');
+      
+      // Redirección inmediata y múltiple para asegurar que funcione
+      const redirectToHomepage = () => {
+        console.log('🏠 Ejecutando redirección al Homepage...');
+        try {
+          navigate('/home', { replace: true });
+          console.log('✅ Redirección con React Router ejecutada');
+        } catch (navError) {
+          console.warn('⚠️ React Router falló, usando window.location...');
+          window.location.href = '/home';
+        }
+      };
+      
+      // Redirección inmediata
+      setTimeout(redirectToHomepage, 1000);
+      
+      // Fallback adicional
       setTimeout(() => {
-        navigate('/home', { replace: true });
-      }, 2000);
+        if (window.location.pathname !== '/home') {
+          console.log('🔄 Ejecutando fallback de redirección...');
+          window.location.replace('/home');
+        }
+      }, 2500);
+      
+      // Intentar redirección inmediata
+      setTimeout(redirectToHome, 1500);
+      
+      // Fallback por si la primera redirección falla
+      setTimeout(() => {
+        if (window.location.pathname !== '/home') {
+          console.log('🔄 Ejecutando redirección fallback...');
+          window.location.href = '/home';
+        }
+      }, 3000);
 
     } catch (error) {
       console.error('Error en registro:', error);

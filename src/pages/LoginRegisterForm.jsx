@@ -208,17 +208,171 @@ export default function LoginRegisterForm() {
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required style={{ width: '100%', padding: '12px', marginBottom: '16px', border: `1px solid #555`, borderRadius: '8px', background: '#2a2a2a', color: '#fff', fontSize: '16px' }} />
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña" required style={{ width: '100%', padding: '12px', marginBottom: '16px', border: `1px solid #555`, borderRadius: '8px', background: '#2a2a2a', color: '#fff', fontSize: '16px' }} />
             <button type="submit" disabled={loading} style={{ width: '100%', padding: '12px', background: loading ? '#666' : gold, color: loading ? '#ccc' : black, border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer', marginBottom: '10px' }}>{loading ? 'Procesando...' : (isRegister ? 'Registrarse' : 'Ingresar')}</button>
-            <button type="button" onClick={() => setIsRegister(!isRegister)} style={{ width: '100%', padding: '8px', background: 'transparent', color: gold, border: `1px solid ${gold}`, borderRadius: '8px', fontSize: '14px', cursor: 'pointer' }}>{isRegister ? '¿Ya tienes cuenta? Ingresar' : '¿No tienes cuenta? Registrarse'}</button>
+            <button type="button" onClick={() => setIsRegister(!isRegister)} style={{ width: '100%', padding: '8px', background: 'transparent', color: gold, border: `1px solid ${gold}`, borderRadius: '8px', fontSize: '14px', cursor: 'pointer', marginBottom: '10px' }}>{isRegister ? '¿Ya tienes cuenta? Ingresar' : '¿No tienes cuenta? Registrarse'}</button>
+            
+            <button 
+              type="button" 
+              onClick={() => {
+                console.log('🚀 Navegando a registro completo...');
+                navigate('/registro-nuevo');
+              }} 
+              style={{ 
+                width: '100%', 
+                padding: '12px', 
+                background: 'linear-gradient(135deg, #22c55e, #16a34a)', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '8px', 
+                fontSize: '15px', 
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 6px 16px rgba(34, 197, 94, 0.6)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.4)';
+              }}
+            >
+              <span>🚀</span>Registro Completo (Recomendado)
+            </button>
           </form>
         ) : (
           <>
-            <button onClick={() => handleLoginSocial('google')} disabled={loading} style={{ width: '100%', padding: '12px', marginBottom: '12px', background: '#4285f4', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '16px', cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}><span>🌐</span>Continuar con Google</button>
-            <button onClick={() => handleLoginSocial('facebook')} disabled={loading} style={{ width: '100%', padding: '12px', marginBottom: '20px', background: '#1877f2', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '16px', cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}><span>📘</span>Continuar con Facebook</button>
-            <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0', color: '#666' }}><hr style={{ flex: 1, border: 'none', borderTop: '1px solid #333' }} /><span style={{ padding: '0 15px', fontSize: '14px' }}>o</span><hr style={{ flex: 1, border: 'none', borderTop: '1px solid #333' }} /></div>
-            <button onClick={() => setShowEmailForm(true)} style={{ width: '100%', padding: '12px', background: 'transparent', color: gold, border: `2px solid ${gold}`, borderRadius: '8px', fontSize: '16px', cursor: 'pointer', fontWeight: 'bold' }}>Usar Email y Contraseña</button>
+            <button 
+              onClick={() => handleLoginSocial('google')} 
+              disabled={loading} 
+              style={{ 
+                width: '100%', 
+                padding: '12px', 
+                marginBottom: '12px', 
+                background: '#4285f4', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: '8px', 
+                fontSize: '16px', 
+                cursor: loading ? 'not-allowed' : 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                gap: '10px' 
+              }}
+            >
+              <span>🌐</span>Continuar con Google
+            </button>
+            
+            <button 
+              onClick={() => handleLoginSocial('facebook')} 
+              disabled={loading} 
+              style={{ 
+                width: '100%', 
+                padding: '12px', 
+                marginBottom: '20px', 
+                background: '#1877f2', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: '8px', 
+                fontSize: '16px', 
+                cursor: loading ? 'not-allowed' : 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                gap: '10px' 
+              }}
+            >
+              <span>📘</span>Continuar con Facebook
+            </button>
+            
+            <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0', color: '#666' }}>
+              <hr style={{ flex: 1, border: 'none', borderTop: '1px solid #333' }} />
+              <span style={{ padding: '0 15px', fontSize: '14px' }}>o</span>
+              <hr style={{ flex: 1, border: 'none', borderTop: '1px solid #333' }} />
+            </div>
+            
+            <button 
+              onClick={() => setShowEmailForm(true)} 
+              style={{ 
+                width: '100%', 
+                padding: '12px', 
+                background: 'transparent', 
+                color: gold, 
+                border: `2px solid ${gold}`, 
+                borderRadius: '8px', 
+                fontSize: '16px', 
+                cursor: 'pointer', 
+                fontWeight: 'bold',
+                marginBottom: '12px'
+              }}
+            >
+              Usar Email y Contraseña
+            </button>
+            
+            <button 
+              onClick={() => {
+                console.log('🚀 Navegando a crear usuario completo...');
+                navigate('/registro-nuevo');
+              }} 
+              style={{ 
+                width: '100%', 
+                padding: '15px', 
+                background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '12px', 
+                fontSize: '16px', 
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 6px 16px rgba(59, 130, 246, 0.6)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+              }}
+            >
+              <span>👤</span>Crear Usuario
+            </button>
           </>
         )}
-        {showEmailForm && (<button onClick={() => { setShowEmailForm(false); setIsRegister(false); setError(null); setSuccess(null); }} style={{ width: '100%', padding: '8px', background: 'transparent', color: '#ccc', border: 'none', borderRadius: '8px', fontSize: '14px', cursor: 'pointer', marginTop: '10px' }}>← Volver a opciones de ingreso</button>)}
+        {showEmailForm && (
+          <button 
+            onClick={() => { 
+              setShowEmailForm(false); 
+              setIsRegister(false); 
+              setError(null); 
+              setSuccess(null); 
+            }} 
+            style={{ 
+              width: '100%', 
+              padding: '8px', 
+              background: 'transparent', 
+              color: '#ccc', 
+              border: 'none', 
+              borderRadius: '8px', 
+              fontSize: '14px', 
+              cursor: 'pointer', 
+              marginTop: '10px' 
+            }}
+          >
+            ← Volver a opciones de ingreso
+          </button>
+        )}
       </div>
     </div>
   );

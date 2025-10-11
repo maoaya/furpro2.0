@@ -8,7 +8,7 @@ jest.mock('socket.io', () => {
   return { Server: jest.fn(() => ({ on: jest.fn(), emit: jest.fn(), close: jest.fn() })) };
 });
 const request = require('supertest');
-const { app } = require('../server');
+import { app } from '../server.js';
 
 describe('Horarios de partidos', () => {
   const token = 'TOKEN_DE_PRUEBA';

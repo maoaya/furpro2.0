@@ -47,13 +47,16 @@ export default function App() {
       <Router>
         <Routes>
           {/* Rutas de autenticación - SIN Layout */}
+          <Route path="/" element={<AuthPageUnificada />} />
           <Route path="/login" element={<AuthPageUnificada />} />
-          <Route path="/register" element={<AuthPageUnificada />} />
+          <Route path="/registro" element={<AuthPageUnificada />} />
+          <Route path="/registro-google" element={<AuthPageUnificada />} />
+          <Route path="/registro-facebook" element={<AuthPageUnificada />} />
+          <Route path="/registro-email" element={<AuthPageUnificada />} />
           <Route path="/auth" element={<AuthPageUnificada />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           
           {/* Rutas principales - CON Layout */}
-          <Route path="/" element={<AuthPageUnificada />} />
           <Route path="/home" element={<Layout><HomePage /></Layout>} />
           <Route path="/feed" element={<Layout><FeedPage /></Layout>} />
           <Route path="/perfil/:userId" element={<Layout><PerfilPage /></Layout>} />

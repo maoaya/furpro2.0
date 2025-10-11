@@ -8,7 +8,7 @@ if (typeof global.TextDecoder === 'undefined') {
 // Test base para login y obtención automática de token para otros tests
 
 const request = require('supertest');
-const { app, server } = require('../server');
+import { app, server } from '../server.js';
 
 const testUser = {
   email: 'testuser@example.com',

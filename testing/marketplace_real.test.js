@@ -7,7 +7,7 @@ global.TextDecoder = require('util').TextDecoder;
 
 
 const request = require('supertest');
-const { server } = require('../server');
+import { server } from '../server.js';
 const { getToken } = require('./auth_token_real.helper');
 
 describe('Marketplace (real)', () => {

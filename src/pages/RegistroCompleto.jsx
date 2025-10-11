@@ -1,53 +1,49 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
-import { getCaptchaTokenSafe, getCaptchaProviderInfo } from '../utils/captcha.js';
-import FutproLogo from '../components/FutproLogo.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
-import { getConfig } from '../config/environment.js';
-import { signUpWithAutoConfirm } from '../utils/autoConfirmSignup.js';
-import { signupBypass } from '../api/signupBypass';
-import { ensureHomeNavigation } from '../utils/redirectStabilizer';
 
-const gold = '#FFD700';
-const black = '#222';
-const darkCard = '#1a1a1a';
-
-export default function RegistroCompleto() {
+const RegistroCompleto = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  const { loginWithGoogle, loginWithFacebook } = useAuth();
-  const cfg = getConfig();
+  const { user } = useAuth();
+  
+  // Estado del formulario paso a paso
+  const [paso, setPaso] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [imagenPerfil, setImagenPerfil] = useState(null);
+  const [previewImagen, setPreviewImagen] = useState(null);
 
-  const [form, setForm] = useState({
-    nombre: '',
+  const [formData, setFormData] = useState({
+    // Paso 1: Datos básicos
     email: '',
     password: '',
     confirmPassword: '',
+    
+    // Paso 2: Información personal
+    nombre: '',
+    apellido: '',
     edad: 18,
+    telefono: '',
+    pais: 'México',
+    ubicacion: '',
+    
+    // Paso 3: Información futbolística
+    posicion: '',
+    experiencia: '',
+    equipoFavorito: '',
     peso: '',
-    ciudad: '',
-    pais: 'España',
-    posicion: 'Delantero Centro',
-    frecuencia_juego: '3',
-    avatar_url: null,
-    rol: 'usuario',
-    tipo_usuario: 'jugador'
+    
+    // Paso 4: Disponibilidad
+    disponibilidad: '',
+    vecesJuegaPorSemana: '',
+    horariosPreferidos: '',
+    
+    // Paso 5: Foto de perfil
+    foto: null
   });
-
-  const [previewImage, setPreviewImage] = useState(null);
-  const [error, setError] = useState('');
-  const [msg, setMsg] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [hideAutoConfirmBanner, setHideAutoConfirmBanner] = useState(
-    typeof window !== 'undefined' ? localStorage.getItem('hideAutoConfirmBanner') === 'true' : false
-  );
-
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-    if (error) setError('');
   };
 
   const handleImageChange = (e) => {

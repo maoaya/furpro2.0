@@ -15,12 +15,6 @@ import TorneosPage from './pages/TorneosPage';
 import UsuariosPage from './pages/UsuariosPage';
 import EquiposPage from './pages/EquiposPage';
 import PerfilPage from './pages/PerfilPage';
-import TestRegistroFlow from './components/TestRegistroFlow';
-import StatusMonitor from './components/StatusMonitor';
-import AuthDiagnostic from './components/AuthDiagnostic';
-import RegistroDebugger from './components/RegistroDebugger';
-import EmergencyTest502 from './components/EmergencyTest502';
-import AuthFlowTester from './components/AuthFlowTester';
 
 // Componentes lazy loading opcionales
 const Dashboard = React.lazy(() => import('./Dashboard').catch(() => ({ default: HomePage })));
@@ -108,11 +102,6 @@ export default function FutProApp() {
 
   return (
     <BrowserRouter>
-      <StatusMonitor />
-      <AuthDiagnostic />
-      <RegistroDebugger />
-      <EmergencyTest502 />
-      <AuthFlowTester />
       <Routes>      
         {/* Rutas públicas (sin autenticación) */}
         <Route path="/auth" element={<AuthPageUnificada />} />
@@ -120,7 +109,6 @@ export default function FutProApp() {
         <Route path="/registro-completo" element={<RegistroCompleto />} />
         <Route path="/login" element={<LoginRegisterForm />} />
         <Route path="/login-legacy" element={<LoginRegisterForm />} />
-        <Route path="/test" element={<TestRegistroFlow />} />
         
         {/* Callback para OAuth (Google/Facebook) - Versión optimizada */}
         <Route path="/auth/callback" element={<CallbackPageOptimized />} />
