@@ -10,7 +10,7 @@ import PerfilCard from './pages/PerfilCard.jsx';
 import HomePage from './pages/HomePage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal.jsx';
-import CallbackPage from './pages/CallbackPage.jsx';
+import AuthCallback from './pages/AuthCallback.jsx';
 import PageInDevelopment from './components/PageInDevelopment.jsx';
 import OAuthLiveTest from './pages/OAuthLiveTest.jsx';
 import { authFlowManager } from './utils/authFlowManager.js';
@@ -425,7 +425,7 @@ export default function FutProAppDefinitivo() {
       } />
       
       {/* Callback para OAuth */}
-      <Route path="/auth/callback" element={<CallbackPage />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
 
   {/* Live test de OAuth en el dominio actual */}
   <Route path="/auth/test" element={<OAuthLiveTest />} />

@@ -1,226 +1,98 @@
+/**
+ * 🔐 CALLBACK PARA OAUTH (GOOGLE/FACEBOOK)
+ * Maneja la redirección después del login social
+ */
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import supabase from '../supabaseClient';
 import { useAuth } from '../context/AuthContext';
+import userActivityTracker from '../services/UserActivityTracker';
 
-export default function AuthCallback() {
-  const [status, setStatus] = useState('loading');
-  const [message, setMessage] = useState('Procesando autenticación...');
+const AuthCallback = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        console.log('🔄 Procesando callback de OAuth...');
+        console.log('🔐 Procesando callback de OAuth...');
         
-        // Obtener la sesión del callback
-        const { data, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('❌ Error en callback:', error);
-          setStatus('error');
-          setMessage(`Error de autenticación: ${error.message}`);
-          return;
-        }
-
-        if (data.session && data.session.user) {
-          console.log('✅ Usuario autenticado:', data.session.user.email);
-          
-          // Verificar si el usuario ya existe en la base de datos
-          const { data: existingUser, error: dbError } = await supabase
-            .from('usuarios')
-            .select('*')
-            .eq('id', data.session.user.id)
-            .single();
-
-          if (dbError && dbError.code !== 'PGRST116') {
-            console.error('❌ Error verificando usuario:', dbError);
-            setStatus('error');
-            setMessage('Error verificando usuario en la base de datos');
-            return;
-          }
-
-          if (!existingUser) {
-            // Usuario nuevo - crear perfil básico
-            console.log('👤 Creando perfil básico para usuario nuevo...');
+        // Esperar un momento para que AuthContext se actualice
+        setTimeout(() => {
+          if (user) {
+            console.log('✅ Usuario autenticado:', user.email);
             
-            const userMetadata = data.session.user.user_metadata || {};
-            const email = data.session.user.email;
-            const nombre = userMetadata.full_name || userMetadata.name || email.split('@')[0];
+            // 🔥 TRACK SUCCESSFUL OAUTH LOGIN
+            userActivityTracker.trackLogin('oauth_callback', true, {
+              userId: user.id,
+              email: user.email,
+              provider: 'oauth_redirect'
+            });
             
-            const { error: insertError } = await supabase
-              .from('usuarios')
-              .insert([
-                {
-                  id: data.session.user.id,
-                  nombre: nombre,
-                  email: email,
-                  avatar_url: userMetadata.avatar_url || userMetadata.picture,
-                  rol: 'usuario',
-                  provider: data.session.user.app_metadata?.provider || 'oauth',
-                  created_at: new Date().toISOString(),
-                  updated_at: new Date().toISOString(),
-                  // Datos pendientes de completar
-                  needs_profile_completion: true
-                }
-              ]);
-
-            if (insertError) {
-              console.error('❌ Error creando perfil:', insertError);
-              setStatus('error');
-              setMessage('Error creando perfil de usuario');
-              return;
-            }
-
-            console.log('✅ Perfil básico creado');
-            setStatus('success');
-            setMessage('¡Bienvenido! Completando tu perfil...');
-            
-            // Redirigir al formulario de completar perfil
-            setTimeout(() => {
-              navigate('/validar-usuario');
-            }, 2000);
+            // Redireccionar a home
+            navigate('/home');
           } else {
-            // Usuario existente - ir al dashboard
-            console.log('✅ Usuario existente encontrado');
-            setStatus('success');
-            setMessage('¡Bienvenido de vuelta!');
+            console.log('❌ No se encontró usuario después del callback');
+            setError('Error en la autenticación');
             
-            setTimeout(() => {
-              navigate('/home');
-            }, 2000);
+            // 🔥 TRACK FAILED OAUTH CALLBACK
+            userActivityTracker.track('oauth_callback_failed', {
+              timestamp: new Date().toISOString(),
+              error: 'No user found after callback'
+            });
+            
+            // Redireccionar a login después de un error
+            setTimeout(() => navigate('/login'), 3000);
           }
-        } else {
-          console.log('⚠️ No se encontró sesión activa');
-          setStatus('error');
-          setMessage('No se pudo completar la autenticación');
-          
-          setTimeout(() => {
-            navigate('/');
-          }, 3000);
-        }
-      } catch (err) {
-        console.error('💥 Error inesperado en callback:', err);
-        setStatus('error');
-        setMessage('Error inesperado durante la autenticación');
+          setLoading(false);
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Error en callback:', error);
+        setError('Error procesando autenticación');
+        
+        // 🔥 TRACK OAUTH CALLBACK EXCEPTION
+        userActivityTracker.track('oauth_callback_exception', {
+          error: error.message,
+          timestamp: new Date().toISOString()
+        });
+        
+        setLoading(false);
+        setTimeout(() => navigate('/login'), 3000);
       }
     };
 
     handleAuthCallback();
-  }, [navigate]);
+  }, [user, navigate]);
 
-  const getStatusColor = () => {
-    switch (status) {
-      case 'loading': return '#FFD700';
-      case 'success': return '#4CAF50';
-      case 'error': return '#F44336';
-      default: return '#FFD700';
-    }
-  };
-
-  const getStatusIcon = () => {
-    switch (status) {
-      case 'loading': return '⏳';
-      case 'success': return '✅';
-      case 'error': return '❌';
-      default: return '⏳';
-    }
-  };
-
-  return (
-    <div style={{
-      background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <div style={{
-        background: '#222',
-        padding: '48px 32px',
-        borderRadius: '20px',
-        textAlign: 'center',
-        maxWidth: '400px',
-        width: '90%',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-        border: `2px solid ${getStatusColor()}`
-      }}>
-        <div style={{
-          fontSize: '48px',
-          marginBottom: '24px'
-        }}>
-          {getStatusIcon()}
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin text-6xl mb-4">⚽</div>
+          <h2 className="text-2xl font-bold text-white mb-2">Completando ingreso...</h2>
+          <p className="text-gray-400">Procesando autenticación</p>
         </div>
-        
-        <h2 style={{
-          color: getStatusColor(),
-          fontSize: '24px',
-          fontWeight: 'bold',
-          marginBottom: '16px'
-        }}>
-          {status === 'loading' && 'Procesando...'}
-          {status === 'success' && '¡Éxito!'}
-          {status === 'error' && 'Error'}
-        </h2>
-        
-        <p style={{
-          color: '#ccc',
-          fontSize: '16px',
-          lineHeight: '1.5',
-          marginBottom: '24px'
-        }}>
-          {message}
-        </p>
-        
-        {status === 'loading' && (
-          <div style={{
-            width: '100%',
-            height: '4px',
-            background: '#333',
-            borderRadius: '2px',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              width: '30%',
-              height: '100%',
-              background: getStatusColor(),
-              borderRadius: '2px',
-              animation: 'loading 2s ease-in-out infinite'
-            }} />
-          </div>
-        )}
-        
-        {status === 'error' && (
-          <button
-            onClick={() => navigate('/')}
-            style={{
-              background: '#FFD700',
-              color: '#000',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => e.target.style.background = '#FFA500'}
-            onMouseOut={(e) => e.target.style.background = '#FFD700'}
-          >
-            Volver al Inicio
-          </button>
-        )}
       </div>
-      
-      <style>{`
-        @keyframes loading {
-          0% { transform: translateX(-100%); }
-          50% { transform: translateX(300%); }
-          100% { transform: translateX(-100%); }
-        }
-      `}</style>
-    </div>
-  );
-}
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">❌</div>
+          <h2 className="text-2xl font-bold text-red-400 mb-2">Error de Autenticación</h2>
+          <p className="text-gray-400 mb-4">{error}</p>
+          <p className="text-sm text-gray-500">Redirigiendo a inicio de sesión...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+export default AuthCallback;

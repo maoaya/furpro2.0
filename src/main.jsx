@@ -15,6 +15,11 @@ import i18n from './i18n';
 import { AuthProvider } from './context/AuthContext';
 import FutProAppDefinitivo from './FutProAppDefinitivo.jsx';
 
+// 🔥 INICIALIZAR TRACKING AUTOMÁTICO
+import './trackingInit.js';
+
+console.log('🚀 FutPro iniciando con tracking automático activado...');
+
 const container = document.getElementById('root');
 if (container) {
   const root = ReactDOM.createRoot(container);

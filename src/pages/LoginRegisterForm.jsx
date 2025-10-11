@@ -3,18 +3,26 @@ import supabase from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { getConfig } from '../config/environment.js';
+import { useActivityTracker, usePageTracker, useClickTracker } from '../hooks/useActivityTracker';
 const gold = '#FFD700';
 const black = '#222';
 
 export default function LoginRegisterForm() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const [showEmailForm, setShowEmailForm] = useState(false);
-  const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [isRegister, setIsRegister] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
   const navigate = useNavigate();
+  
+  // 🔥 TRACKING HOOKS - AUTOGUARDADO TIPO REDES SOCIALES
+  const tracker = useActivityTracker();
+  const { trackButtonClick } = useClickTracker();
+  
+  // Track page view automáticamente
+  usePageTracker('login_page', { referrer: document.referrer });
   const { loginWithGoogle, loginWithFacebook } = useContext(AuthContext);
   const config = getConfig();
   useEffect(() => {
@@ -37,24 +45,45 @@ export default function LoginRegisterForm() {
     setLoading(true);
     setError(null);
     setSuccess(null);
+    
+    // 🔥 TRACK SOCIAL LOGIN ATTEMPT
+    tracker.track('social_login_attempt', { 
+      provider, 
+      timestamp: new Date().toISOString() 
+    }, true);
+    
     try {
-      let result;
-      if (provider === 'google') {
-        result = await loginWithGoogle();
-      } else if (provider === 'facebook') {
-        result = await loginWithFacebook();
-      }
-      if (result?.error) {
-        console.error(`❌ Error ${provider}:`, result.error);
-        setError(`Error con ${provider}: ${result.error.message}`);
+      const config = getConfig();
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: config.oauthCallbackUrl
+        }
+      });
+      
+      if (error) {
+        console.error(`❌ Error ${provider}:`, error);
+        setError(`Error con ${provider}: ${error.message}`);
+        
+        // 🔥 TRACK FAILED LOGIN
+        tracker.trackLogin(provider, false, { error: error.message });
         setLoading(false);
       } else {
         console.log(`✅ ${provider} OAuth iniciado`);
         setSuccess(`Redirigiendo a ${provider}...`);
+        
+        // 🔥 TRACK SUCCESSFUL OAUTH REDIRECT
+        tracker.trackLogin(provider, true, { redirected: true });
       }
     } catch (error) {
       console.error(`❌ Error ${provider}:`, error);
       setError(`Error con ${provider}: ${error.message}`);
+      
+      // 🔥 TRACK EXCEPTION
+      tracker.track('social_login_exception', { 
+        provider, 
+        error: error.message 
+      }, true);
       setLoading(false);
     }
   };
@@ -63,6 +92,13 @@ export default function LoginRegisterForm() {
     setLoading(true);
     setError(null);
     setSuccess(null);
+    
+    // 🔥 TRACK EMAIL LOGIN ATTEMPT
+    tracker.track('email_login_attempt', { 
+      email: email.substring(0, 3) + '***', // Ocultar email por privacidad
+      timestamp: new Date().toISOString() 
+    }, true);
+    
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -70,9 +106,22 @@ export default function LoginRegisterForm() {
       });
       if (error) {
         setError(error.message);
+        
+        // 🔥 TRACK FAILED EMAIL LOGIN
+        tracker.trackLogin('email', false, { 
+          email: email.substring(0, 3) + '***', 
+          error: error.message 
+        });
         setLoading(false);
       } else {
         setSuccess('¡Ingreso exitoso! Redirigiendo...');
+        
+        // 🔥 TRACK SUCCESSFUL EMAIL LOGIN
+        tracker.trackLogin('email', true, { 
+          userId: data.user.id,
+          email: data.user.email 
+        });
+        
         setLoading(false);
         // Log y redirección ultra-agresiva
         console.log('🚀 LOGIN: Usuario autenticado, forzando redirección a /home');
@@ -93,6 +142,12 @@ export default function LoginRegisterForm() {
       }
     } catch (e) {
       setError(e.message);
+      
+      // 🔥 TRACK LOGIN EXCEPTION
+      tracker.track('email_login_exception', { 
+        error: e.message,
+        email: email.substring(0, 3) + '***'
+      }, true);
       setLoading(false);
     }
   };

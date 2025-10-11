@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment.js';
+import trackingInitializer from '../services/TrackingInitializer.js';
 
 export const AuthContext = createContext();
 
@@ -40,6 +41,9 @@ export const AuthProvider = ({ children }) => {
         if (session && session.user) {
           console.log('✅ Sesión encontrada:', session.user.email);
           setUser(session.user);
+          
+          // 🔥 ESTABLECER USUARIO EN TRACKING SYSTEM
+          trackingInitializer.setUser(session.user);
           
           // Establecer indicadores si no están presentes
           if (!authCompleted) {
@@ -122,6 +126,9 @@ export const AuthProvider = ({ children }) => {
         
         if (session && session.user) {
           setUser(session.user);
+          
+          // 🔥 ESTABLECER USUARIO EN TRACKING SYSTEM
+          trackingInitializer.setUser(session.user);
           
           // Obtener datos del usuario
           const { data: userData } = await supabase
@@ -211,6 +218,9 @@ export const AuthProvider = ({ children }) => {
     
     if (data.user) {
       setUser(data.user);
+      
+      // 🔥 ESTABLECER USUARIO EN TRACKING SYSTEM
+      trackingInitializer.setUser(data.user);
       
       // Obtener datos completos del usuario
       const { data: userData } = await supabase

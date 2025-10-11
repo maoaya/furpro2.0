@@ -2,12 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useActivityTracker, useFormTracker, useUploadTracker } from '../hooks/useActivityTracker';
 import '../styles/registro-animations.css';
 
 const RegistroNuevo = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const { user } = useAuth();
+  
+  // 🔥 TRACKING HOOKS - AUTOGUARDADO TIPO REDES SOCIALES
+  const tracker = useActivityTracker();
+  const formTracker = useFormTracker('registro_completo', paso);
+  const { trackUpload } = useUploadTracker();
   
   // Estado del formulario paso a paso
   const [paso, setPaso] = useState(1);
@@ -102,6 +108,9 @@ const RegistroNuevo = () => {
     }));
     setError('');
     
+    // 🔥 TRACK FIELD INPUT AUTOMÁTICAMENTE (COMO REDES SOCIALES)
+    formTracker.trackField(name, value);
+    
     // Auto-guardar después de cambios importantes
     if (name === 'email' || name === 'nombre' || name === 'apellido') {
       setTimeout(() => autoGuardarProgreso(), 2000);
@@ -113,6 +122,9 @@ const RegistroNuevo = () => {
     if (file) {
       setImagenPerfil(file);
       setFormData(prev => ({ ...prev, foto: file }));
+      
+      // 🔥 TRACK PHOTO UPLOAD AUTOMÁTICAMENTE
+      trackUpload(file, 'profile_registration');
       
       // Crear preview
       const reader = new FileReader();
@@ -170,12 +182,18 @@ const RegistroNuevo = () => {
 
   const siguientePaso = () => {
     if (validarPaso(paso)) {
+      // 🔥 TRACK STEP COMPLETION
+      formTracker.trackStepComplete(paso);
+      
       setPaso(paso + 1);
       window.scrollTo(0, 0);
     }
   };
 
   const pasoAnterior = () => {
+    // 🔥 TRACK STEP BACK
+    tracker.track('form_step_back', { fromStep: paso, toStep: paso - 1 });
+    
     setPaso(paso - 1);
     setError('');
     window.scrollTo(0, 0);
@@ -186,6 +204,18 @@ const RegistroNuevo = () => {
     
     setLoading(true);
     setError('');
+    
+    // 🔥 TRACK FINAL SUBMISSION START
+    tracker.track('registration_final_attempt', { 
+      step: 5, 
+      hasPhoto: !!imagenPerfil,
+      formData: {
+        hasNombre: !!formData.nombre,
+        hasEmail: !!formData.email,
+        hasPosicion: !!formData.posicion,
+        hasExperiencia: !!formData.experiencia
+      }
+    }, true);
     
     try {
       // 1. Crear cuenta en Supabase Auth
@@ -203,6 +233,11 @@ const RegistroNuevo = () => {
       if (authError) {
         if (authError.message?.includes('already registered')) {
           setError('Este email ya está registrado. ¿Deseas iniciar sesión?');
+          
+          // 🔥 TRACK DUPLICATE EMAIL
+          tracker.track('registration_duplicate_email', { 
+            email: formData.email.substring(0, 3) + '***' 
+          }, true);
           return;
         }
         throw authError;
@@ -218,6 +253,12 @@ const RegistroNuevo = () => {
       
       if (imagenPerfil) {
         setSuccess('Subiendo foto de perfil...');
+        
+        // 🔥 TRACK PHOTO UPLOAD START
+        tracker.track('profile_photo_upload_start', { 
+          fileName: imagenPerfil.name,
+          fileSize: imagenPerfil.size 
+        });
         
         // Crear nombre único para la foto
         const fileExt = imagenPerfil.name.split('.').pop().toLowerCase();
@@ -318,13 +359,39 @@ const RegistroNuevo = () => {
         tiene_foto: !!fotoUrl
       };
 
+      // 🔥 TRACK REGISTRATION SUCCESS FINAL
+      tracker.track('registration_completed_success', {
+        userId: authData.user.id,
+        email: authData.user.email,
+        hasPhoto: !!fotoUrl,
+        puntajeCalculado: puntajeInicial,
+        steps_completed: 5,
+        registration_method: 'complete_form'
+      }, true);
+
       const { error: profileError } = await supabase
         .from('usuarios')
         .insert([perfilCompleto]);
 
       if (profileError) {
+        // 🔥 TRACK PROFILE CREATION ERROR
+        tracker.track('profile_creation_error', {
+          error: profileError.message,
+          userId: authData.user.id
+        }, true);
         throw profileError;
       }
+
+      // 🔥 TRACK PROFILE CREATED SUCCESSFULLY
+      tracker.track('profile_created_success', {
+        userId: authData.user.id,
+        profileData: {
+          nombre: perfilCompleto.nombre,
+          posicion: perfilCompleto.posicion,
+          experiencia: perfilCompleto.experiencia,
+          puntaje: puntajeInicial
+        }
+      }, true);
 
       // 5. Auto-login y redirección a card de perfil tipo Instagram
       setSuccess(`¡Usuario creado exitosamente! Puntaje inicial: ${puntajeInicial}/100. Redirigiendo a tu card de jugador...`);
