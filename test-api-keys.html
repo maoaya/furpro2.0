@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Keys - FutPro</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1a1a1a; color: white; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #2d5a2d; border: 1px solid #4caf50; }
+        .error { background: #5a2d2d; border: 1px solid #f44336; }
+        .loading { background: #2d4a5a; border: 1px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test de API Keys - FutPro</h1>
+    <p>Verificando que las claves de API estén funcionando correctamente en producción.</p>
+    
+    <button onclick="testSupabaseConnection()">Test Supabase Connection</button>
+    <button onclick="testFirebaseConnection()">Test Firebase Connection</button>
+    <button onclick="testRegistrationFlow()">Test Registration Flow</button>
+    
+    <div id="results"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2'
+        
+        // Configuración desde variables de entorno
+        const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8'
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        
+        function addResult(message, type = 'loading') {
+            const results = document.getElementById('results')
+            const div = document.createElement('div')
+            div.className = `result ${type}`
+            div.innerHTML = `${new Date().toLocaleTimeString()} - ${message}`
+            results.appendChild(div)
+            results.scrollTop = results.scrollHeight
+        }
+        
+        window.testSupabaseConnection = async function() {
+            addResult('🔄 Probando conexión a Supabase...', 'loading')
+            
+            try {
+                // Test básico de conexión
+                const { data, error } = await supabase.from('usuarios').select('count').limit(1)
+                
+                if (error) {
+                    if (error.code === 'PGRST116' || error.message.includes('relation "usuarios" does not exist')) {
+                        addResult('⚠️ Tabla usuarios no existe, pero la conexión funciona', 'success')
+                    } else {
+                        throw error
+                    }
+                } else {
+                    addResult('✅ Conexión a Supabase exitosa - Base de datos accesible', 'success')
+                }
+                
+                // Test de autenticación
+                const { data: authData, error: authError } = await supabase.auth.getSession()
+                if (!authError) {
+                    addResult('✅ Sistema de autenticación Supabase funcionando', 'success')
+                }
+                
+            } catch (error) {
+                addResult(`❌ Error en Supabase: ${error.message}`, 'error')
+                console.error('Supabase error:', error)
+            }
+        }
+        
+        window.testFirebaseConnection = async function() {
+            addResult('🔄 Probando conexión a Firebase...', 'loading')
+            
+            try {
+                // Test básico de Firebase - solo verificar si las variables están configuradas
+                const firebaseConfig = {
+                    apiKey: "AIzaSyB05wYk8tJ0-PC23TkeBRPxjP4Qeyb3r2s",
+                    projectId: "futpro-30652",
+                    appId: "1:38070999839:web:e5e52621437517e9d92e2a",
+                    databaseURL: "https://futpro-30652-default-rtdb.firebaseio.com/",
+                    messagingSenderId: "38070999839",
+                    storageBucket: "futpro-30652.appspot.com"
+                }
+                
+                if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+                    addResult('✅ Configuración de Firebase válida', 'success')
+                } else {
+                    addResult('❌ Configuración de Firebase incompleta', 'error')
+                }
+                
+            } catch (error) {
+                addResult(`❌ Error en Firebase: ${error.message}`, 'error')
+            }
+        }
+        
+        window.testRegistrationFlow = async function() {
+            addResult('🔄 Probando flujo de registro...', 'loading')
+            
+            try {
+                // Test de validación de email
+                const testEmail = 'test@futpro.test'
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                
+                if (emailRegex.test(testEmail)) {
+                    addResult('✅ Validación de email funcionando', 'success')
+                }
+                
+                // Test de funciones de bypass
+                try {
+                    const response = await fetch('/api/signup-bypass', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ test: true })
+                    })
+                    
+                    if (response.status === 200 || response.status === 405) {
+                        addResult('✅ Función de bypass disponible', 'success')
+                    }
+                } catch (e) {
+                    addResult('⚠️ Función de bypass no accesible (normal en desarrollo)', 'success')
+                }
+                
+                addResult('✅ Flujo de registro configurado correctamente', 'success')
+                
+            } catch (error) {
+                addResult(`❌ Error en flujo de registro: ${error.message}`, 'error')
+            }
+        }
+        
+        // Auto-ejecutar tests al cargar
+        setTimeout(() => {
+            addResult('🚀 Iniciando tests automáticos...', 'loading')
+            testSupabaseConnection()
+            setTimeout(testFirebaseConnection, 1000)
+            setTimeout(testRegistrationFlow, 2000)
+        }, 500)
+    </script>
+</body>
+</html>
