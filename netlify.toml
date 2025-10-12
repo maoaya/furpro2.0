@@ -1,48 +1,68 @@
-# Netlify Configuration - Fixed Domain Issue
-# Configuración corregida para resolver ERR_CONNECTION_REFUSED
+# 🚀 FutPro 2.0 - Configuración Netlify Optimizada
+# Actualizada para máximo rendimiento y compatibilidad 2025
 
 [build]
   base = "."
   publish = "dist"
   command = "npm ci && npm run build"
-  # Netlify build habilitado con tracking automático activado
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':!README.md' ':!*.md'"
 
 [build.environment]
-  NODE_VERSION = "20.0.0"
-  NPM_VERSION = "10"
-  SECRETS_SCAN_ENABLED = "false"
+  NODE_VERSION = "20.10.0"
+  NPM_VERSION = "10.2.0"
+  NODE_OPTIONS = "--max-old-space-size=4096"
+  VITE_NODE_ENV = "production"
+  # Optimizaciones de build
+  CI = "true"
+  DISABLE_ESLINT_PLUGIN = "true"
+  GENERATE_SOURCEMAP = "false"
+  # Configuración FutPro específica
   VITE_AUTO_CONFIRM_SIGNUP = "true"
   VITE_PRODUCTION_MODE = "true"
-  # 🔥 TRACKING AUTOMÁTICO ACTIVADO
   VITE_TRACKING_ENABLED = "true"
   VITE_AUTO_SAVE_ENABLED = "true"
-  # Force rebuild con tracking system
-  NETLIFY_BUILD_ID = "tracking-system-activated-2025-10-11-v1"
-  # Supabase envs para build en Netlify (frontend)
+  # Build ID actualizado para 2025
+  NETLIFY_BUILD_ID = "futpro-2025-optimized-v2.0"
+  # Supabase configuración para frontend
   VITE_SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
   VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8"
-  # Variables de entorno para funciones Netlify (backend)
+  # Google OAuth
+  VITE_GOOGLE_CLIENT_ID = "760210878835-r15nffmc9ldt4hb1a5k8mvs9dql7pkrf.apps.googleusercontent.com"
+  # Firebase configuración
+  VITE_FIREBASE_API_KEY = "AIzaSyB05wYk8tJ0-PC23TkeBRPxjP4Qeyb3r2s"
+  VITE_FIREBASE_PROJECT_ID = "futpro-30652"
+  VITE_FIREBASE_APP_ID = "1:38070999839:web:e5e52621437517e9d92e2a"
+  # Variables backend para funciones Netlify
   SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
   SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMTAyNjU4NywiZXhwIjoyMDQ2NjAyNTg3fQ.Ri_q9Q1wQRmSZHNEX8QP4uqHkUmjRJVKQWLi4gONMrU"
 
 [functions]
   directory = "functions"
+  node_bundler = "esbuild"
+  external_node_modules = ["@supabase/supabase-js", "firebase"]
 
-# Custom domain settings
-
+# 🔄 Redirects SPA optimizados
 [[redirects]]
   from = "/auth/*"
   to = "/index.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/oauth/*"
   to = "/index.html"
   status = 200
+  force = true
 
 [[redirects]]
-  from = "/callback*"
+  from = "/registro*"
   to = "/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
 
 [[redirects]]
@@ -50,12 +70,65 @@
   to = "/index.html"
   status = 200
 
+# 🛡️ Headers de seguridad y rendimiento optimizados
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
-    Content-Security-Policy = "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; font-src * data:; connect-src *; frame-src *; object-src 'none';"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy = """
+      default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: 
+      qqrxetxcglwrejtblwut.supabase.co 
+      *.googleapis.com 
+      *.google.com 
+      *.firebase.com 
+      *.firebaseio.com 
+      futpro.vip 
+      *.netlify.app;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' 
+      *.googleapis.com 
+      *.google.com 
+      *.firebase.com;
+      style-src 'self' 'unsafe-inline' 
+      *.googleapis.com 
+      *.google.com;
+      img-src 'self' data: blob: 
+      *.supabase.co 
+      *.google.com 
+      *.googleapis.com;
+      connect-src 'self' 
+      qqrxetxcglwrejtblwut.supabase.co 
+      *.googleapis.com 
+      *.google.com 
+      *.firebase.com 
+      *.firebaseio.com;
+      font-src 'self' data: 
+      *.googleapis.com 
+      *.google.com;
+    """
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
-    Access-Control-Allow-Headers = "*"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, X-Requested-With"
+
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
