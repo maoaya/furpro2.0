@@ -5,7 +5,60 @@ import TestPage from './pages/TestPage.jsx';
 import LoginRegisterForm from './pages/LoginRegisterForm.jsx';
 import RegistroFuncionando from './pages/RegistroFuncionando.jsx';
 import RegistroSimple from './pages/RegistroSimple.jsx';
-import RegistroCompleto from './pages/RegistroCompleto.jsx';
+import RegistroCompleto       {/* Live test de OAuth en el dominio actual */}
+      <Route path="/auth/test" element={<OAuthLiveTest />} />
+
+      {/* Rutas públicas (sin autenticación requerida) */}
+      
+      {/* Políticas de Privacidad */}
+      <Route path="/privacidad" element={
+        <div style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+          color: '#fff',
+          padding: '20px'
+        }}>
+          <PageInDevelopment title="📄 Políticas de Privacidad" icon="📄" />
+        </div>
+      } />
+
+      {/* Términos de Servicio */}
+      <Route path="/terminos" element={
+        <div style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+          color: '#fff',
+          padding: '20px'
+        }}>
+          <PageInDevelopment title="📋 Términos de Servicio" icon="📋" />
+        </div>
+      } />
+
+      {/* Contacto */}
+      <Route path="/contacto" element={
+        <div style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+          color: '#fff',
+          padding: '20px'
+        }}>
+          <PageInDevelopment title="📞 Contacto" icon="📞" />
+        </div>
+      } />
+
+      {/* Ayuda/FAQ */}
+      <Route path="/ayuda" element={
+        <div style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+          color: '#fff',
+          padding: '20px'
+        }}>
+          <PageInDevelopment title="❓ Centro de Ayuda" icon="❓" />
+        </div>
+      } />
+      
+      {/* Home/Feed */} './pages/RegistroCompleto.jsx';
 import RegistroTemporal from './pages/RegistroTemporal.jsx';
 import PerfilCard from './pages/PerfilCard.jsx';
 import HomePage from './pages/HomePage.jsx';
@@ -14,6 +67,16 @@ import LayoutPrincipal from './components/LayoutPrincipal.jsx';
 import CallbackPage from './pages/CallbackPage.jsx';
 import PageInDevelopment from './components/PageInDevelopment.jsx';
 import OAuthLiveTest from './pages/OAuthLiveTest.jsx';
+import UsuariosPage from './pages/UsuariosPage.jsx';
+import TorneosPage from './pages/TorneosPage.jsx';
+import EquiposPage from './pages/EquiposPage.jsx';
+import PartidosPage from './pages/PartidosPage.jsx';
+import RankingPage from './pages/RankingPage.jsx';
+import EstadisticasPage from './pages/EstadisticasPage.jsx';
+import ChatPage from './pages/ChatPage.jsx';
+import PerfilPage from './pages/PerfilPage.jsx';
+import NotificationsPage from './pages/NotificationsPage.jsx';
+import ConfiguracionPage from './pages/ConfiguracionPage.jsx';
 import { authFlowManager } from './utils/authFlowManager.js';
 import supabase from './supabaseClient.js';
 
@@ -444,7 +507,7 @@ export default function FutProAppDefinitivo() {
       <Route path="/usuarios" element={
         <ProtectedRoute>
           <LayoutPrincipal>
-            <PageInDevelopment title="👥 Gestión de Usuarios" icon="👥" />
+            <UsuariosPage />
           </LayoutPrincipal>
         </ProtectedRoute>
       } />
@@ -453,7 +516,7 @@ export default function FutProAppDefinitivo() {
       <Route path="/torneos" element={
         <ProtectedRoute>
           <LayoutPrincipal>
-            <PageInDevelopment title="🏆 Gestión de Torneos" icon="🏆" />
+            <TorneosPage />
           </LayoutPrincipal>
         </ProtectedRoute>
       } />
@@ -462,7 +525,34 @@ export default function FutProAppDefinitivo() {
       <Route path="/equipos" element={
         <ProtectedRoute>
           <LayoutPrincipal>
-            <PageInDevelopment title="⚽ Gestión de Equipos" icon="⚽" />
+            <EquiposPage />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Partidos */}
+      <Route path="/partidos" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PartidosPage />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Ranking */}
+      <Route path="/ranking" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <RankingPage />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Estadísticas */}
+      <Route path="/estadisticas" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <EstadisticasPage />
           </LayoutPrincipal>
         </ProtectedRoute>
       } />
@@ -471,7 +561,7 @@ export default function FutProAppDefinitivo() {
       <Route path="/chat" element={
         <ProtectedRoute>
           <LayoutPrincipal>
-            <PageInDevelopment title="💬 Chat con IA" icon="💬" />
+            <ChatPage />
           </LayoutPrincipal>
         </ProtectedRoute>
       } />
@@ -480,7 +570,7 @@ export default function FutProAppDefinitivo() {
       <Route path="/perfil" element={
         <ProtectedRoute>
           <LayoutPrincipal>
-            <PageInDevelopment title="👤 Mi Perfil" icon="👤" />
+            <PerfilPage />
           </LayoutPrincipal>
         </ProtectedRoute>
       } />
@@ -489,7 +579,16 @@ export default function FutProAppDefinitivo() {
       <Route path="/notificaciones" element={
         <ProtectedRoute>
           <LayoutPrincipal>
-            <PageInDevelopment title="🔔 Notificaciones" icon="🔔" />
+            <NotificationsPage />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Configuración */}
+      <Route path="/configuracion" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <ConfiguracionPage />
           </LayoutPrincipal>
         </ProtectedRoute>
       } />
@@ -499,6 +598,80 @@ export default function FutProAppDefinitivo() {
         <ProtectedRoute>
           <LayoutPrincipal>
             <PageInDevelopment title="🔍 Resultados de Búsqueda" icon="🔍" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Rutas adicionales importantes */}
+      
+      {/* Admin Panel */}
+      <Route path="/admin" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="⚙️ Panel de Administración" icon="⚙️" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Soporte */}
+      <Route path="/soporte" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="🆘 Centro de Soporte" icon="🆘" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Marketplace */}
+      <Route path="/marketplace" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="🛒 Marketplace" icon="🛒" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Streaming */}
+      <Route path="/streaming" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="📺 Streaming en Vivo" icon="📺" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Media/Videos */}
+      <Route path="/videos" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="🎥 Videos y Media" icon="🎥" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Feed/Actividad */}
+      <Route path="/feed" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="📰 Feed de Actividad" icon="📰" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Logros */}
+      <Route path="/logros" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="🏆 Mis Logros" icon="🏆" />
+          </LayoutPrincipal>
+        </ProtectedRoute>
+      } />
+
+      {/* Historial */}
+      <Route path="/historial" element={
+        <ProtectedRoute>
+          <LayoutPrincipal>
+            <PageInDevelopment title="📈 Historial de Partidos" icon="📈" />
           </LayoutPrincipal>
         </ProtectedRoute>
       } />
