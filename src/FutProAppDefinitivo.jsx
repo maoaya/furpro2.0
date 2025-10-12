@@ -5,34 +5,7 @@ import TestPage from './pages/TestPage.jsx';
 import LoginRegisterForm from './pages/LoginRegisterForm.jsx';
 import RegistroFuncionando from './pages/RegistroFuncionando.jsx';
 import RegistroSimple from './pages/RegistroSimple.jsx';
-import RegistroCompleto       {/* Live test de OAuth en el dominio actual */}
-      <Route path="/auth/test" element={<OAuthLiveTest />} />
-
-      {/* Rutas públicas (sin autenticación requerida) */}
-      
-      {/* Políticas de Privacidad */}
-      <Route path="/privacidad" element={
-        <div style={{
-          minHeight: '100vh',
-          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-          color: '#fff',
-          padding: '20px'
-        }}>
-          <PageInDevelopment title="📄 Políticas de Privacidad" icon="📄" />
-        </div>
-      } />
-
-      {/* Términos de Servicio */}
-      <Route path="/terminos" element={
-        <div style={{
-          minHeight: '100vh',
-          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-          color: '#fff',
-          padding: '20px'
-        }}>
-          <PageInDevelopment title="📋 Términos de Servicio" icon="📋" />
-        </div>
-      } />
+import RegistroCompleto from './pages/RegistroCompleto.jsx';
 
       {/* Contacto */}
       <Route path="/contacto" element={
