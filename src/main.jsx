@@ -15,10 +15,17 @@ import i18n from './i18n';
 import { AuthProvider } from './context/AuthContext';
 import FutProAppDefinitivo from './FutProAppDefinitivo.jsx';
 
-// 🔥 INICIALIZAR TRACKING AUTOMÁTICO
-import './trackingInit.js';
+// 🔧 Tracking desactivado en el arranque para evitar bloqueos de render.
+// Se carga de forma perezosa y segura más tarde.
+try {
+  import('./trackingInit.js')
+    .then(() => console.log('🧭 Tracking cargado en segundo plano'))
+    .catch((e) => console.warn('⚠️ No se pudo cargar tracking:', e?.message));
+} catch (e) {
+  console.warn('⚠️ Error al programar carga de tracking:', e?.message);
+}
 
-console.log('🚀 FutPro iniciando con tracking automático activado...');
+console.log('🚀 FutPro iniciando (tracking lazy)...');
 
 const container = document.getElementById('root');
 if (container) {

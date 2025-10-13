@@ -181,8 +181,8 @@ export default function FutProAppDefinitivo() {
 
   return (
     <Routes>
-      {/* Página de login/registro - CON VERIFICACIÓN DE AUTH */}
-      <Route path="/" element={<AuthAwareLoginPage />} />
+      {/* Página de login/registro - render directo para evitar bloqueos */}
+      <Route path="/" element={<LoginRegisterForm />} />
       
       {/* Dashboard principal */}
       <Route path="/dashboard" element={
