@@ -88,16 +88,6 @@ class FutProTrackingInitializer {
 // Crear instancia global
 const trackingInitializer = new FutProTrackingInitializer();
 
-// Auto-inicializar cuando el DOM esté listo
-if (typeof window !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      trackingInitializer.initialize();
-    });
-  } else {
-    // DOM ya está listo
-    trackingInitializer.initialize();
-  }
-}
+// Nota: no auto-inicializar en import para evitar bloquear el primer render. Se inicializa explícitamente desde main/AuthContext.
 
 export default trackingInitializer;

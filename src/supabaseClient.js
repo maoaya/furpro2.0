@@ -12,6 +12,7 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
     throw new Error('Configuración de Supabase incompleta');
 }
 
+
 // Configuración optimizada para evitar errores 502
 const supabaseOptions = {
     auth: {
@@ -20,7 +21,7 @@ const supabaseOptions = {
         detectSessionInUrl: true,
         // Configuración específica para evitar errores 502
         flowType: 'pkce',
-        storage: window.localStorage,
+        storage: (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : undefined,
         storageKey: 'futpro-auth-token'
     },
     global: {

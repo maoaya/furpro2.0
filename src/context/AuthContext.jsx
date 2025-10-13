@@ -1,7 +1,26 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment.js';
-import trackingInitializer from '../services/TrackingInitializer.js';
+// Carga perezosa del tracking para evitar efectos secundarios durante el render
+let trackingInitializer = null;
+const ensureTracking = async () => {
+  if (trackingInitializer) return trackingInitializer;
+  try {
+    // Intentar wrapper primero
+    const mod = await import('../trackingInit.js');
+    trackingInitializer = mod?.default || null;
+    if (!trackingInitializer?.initialize) {
+      // Intentar inicializador directo
+      const mod2 = await import('../services/TrackingInitializer.js');
+      trackingInitializer = mod2?.default || null;
+    }
+    // Inicializar de manera segura si existe método
+    try { await trackingInitializer?.initialize?.(); } catch {}
+  } catch (e) {
+    console.warn('⚠️ No se pudo cargar tracking en AuthContext:', e?.message);
+  }
+  return trackingInitializer;
+};
 
 export const AuthContext = createContext();
 
@@ -43,7 +62,10 @@ export const AuthProvider = ({ children }) => {
           setUser(session.user);
           
           // 🔥 ESTABLECER USUARIO EN TRACKING SYSTEM
-          trackingInitializer.setUser(session.user);
+          try {
+            const tr = await ensureTracking();
+            tr?.setUser?.(session.user);
+          } catch {}
           
           // Establecer indicadores si no están presentes
           if (!authCompleted) {
@@ -144,13 +166,16 @@ export const AuthProvider = ({ children }) => {
     // Escuchar cambios en el estado de autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('🔄 Cambio en autenticación:', event, session?.user?.email);
+  console.log('🔄 Cambio en autenticación:', event, session?.user?.email);
         
         if (session && session.user) {
           setUser(session.user);
           
           // 🔥 ESTABLECER USUARIO EN TRACKING SYSTEM
-          trackingInitializer.setUser(session.user);
+          try {
+            const tr = await ensureTracking();
+            tr?.setUser?.(session.user);
+          } catch {}
           
           // Obtener datos del usuario
           const { data: userData } = await supabase
@@ -242,7 +267,10 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       
       // 🔥 ESTABLECER USUARIO EN TRACKING SYSTEM
-      trackingInitializer.setUser(data.user);
+      try {
+        const tr = await ensureTracking();
+        tr?.setUser?.(data.user);
+      } catch {}
       
       // Obtener datos completos del usuario
       const { data: userData } = await supabase

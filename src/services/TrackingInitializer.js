@@ -205,17 +205,7 @@ class TrackingInitializer {
   }
 }
 
-// Crear instancia global
+// Crear instancia global pero NO auto-inicializar para evitar efectos secundarios en importación
 const trackingInitializer = new TrackingInitializer();
-
-// Auto-inicializar cuando se carga el DOM
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    trackingInitializer.initialize();
-  });
-} else {
-  // DOM ya está cargado
-  trackingInitializer.initialize();
-}
 
 export default trackingInitializer;

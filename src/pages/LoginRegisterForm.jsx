@@ -20,6 +20,27 @@ export default function LoginRegisterForm() {
   // 🔥 TRACKING HOOKS - AUTOGUARDADO TIPO REDES SOCIALES
   const tracker = useActivityTracker();
   const { trackButtonClick } = useClickTracker();
+
+  // wrapper seguro para tracking de botones: acepta evento o label/context
+  const safeTrackButton = (maybeEventOrLabel, maybeContext = null) => {
+    try {
+      // si se pasa un Event, usar la firma nativa
+      if (maybeEventOrLabel && maybeEventOrLabel.target) {
+        trackButtonClick(maybeEventOrLabel);
+        return;
+      }
+
+      // si se pasó un label, usar tracker general como fallback
+      const label = String(maybeEventOrLabel || 'unknown_button');
+      tracker.track('button_click', {
+        label,
+        context: maybeContext || { source: 'login_form' }
+      });
+    } catch (e) {
+      // fallback silencioso para no bloquear la UI
+      try { tracker.track('button_click_fallback', { label: String(maybeEventOrLabel) }); } catch {}
+    }
+  };
   
   // Track page view automáticamente
   usePageTracker('login_page', { referrer: document.referrer });
@@ -319,6 +340,9 @@ export default function LoginRegisterForm() {
         ) : (
           <>
             <button 
+              type="button"
+              aria-label="Continuar con Google"
+              data-test="btn-google"
               onClick={() => handleLoginSocial('google')} 
               disabled={loading} 
               style={{ 
@@ -341,6 +365,9 @@ export default function LoginRegisterForm() {
             </button>
             
             <button 
+              type="button"
+              aria-label="Continuar con Facebook"
+              data-test="btn-facebook"
               onClick={() => handleLoginSocial('facebook')} 
               disabled={loading} 
               style={{ 
@@ -369,6 +396,9 @@ export default function LoginRegisterForm() {
             </div>
             
             <button 
+              type="button"
+              aria-label="Usar email y contraseña"
+              data-test="btn-email-form"
               onClick={() => setShowEmailForm(true)} 
               style={{ 
                 width: '100%', 
@@ -411,6 +441,9 @@ export default function LoginRegisterForm() {
                   }
                 }
               }} 
+              type="button"
+              aria-label="Registro completo (recomendado)"
+              data-test="btn-registro-completo"
               style={{ 
                 width: '100%', 
                 padding: '15px', 
@@ -443,38 +476,37 @@ export default function LoginRegisterForm() {
             {/* BOTÓN ALTERNATIVO ULTRA-ROBUSTO - JAVASCRIPT PURO */}
             <button 
               id="btn-crear-usuario-backup"
-              onClick={() => {
+              type="button"
+              aria-label="Crear usuario de emergencia"
+              data-test="btn-crear-usuario-backup"
+              onClick={(e) => {
                 console.log('🔥 BOTÓN ALTERNATIVO - Navegación ultra-robusta...');
-                
-                // Tracking del click
-                try {
-                  trackButtonClick('crear_usuario_backup', { source: 'login_form', method: 'backup_button' });
-                } catch (trackError) {
-                  console.warn('⚠️ Error en tracking:', trackError);
-                }
-                
+
+                // Tracking del click (robusto)
+                safeTrackButton(e, { source: 'login_form', method: 'backup_button' });
+
                 // Método directo inmediato
                 const navegarInmediato = () => {
                   const targetUrl = '/registro-nuevo';
                   console.log(`🎯 Navegando a: ${targetUrl}`);
-                  
+
                   // Múltiples métodos en secuencia
                   setTimeout(() => {
                     try {
                       window.location.assign(targetUrl);
                       console.log('✅ Method 1: window.location.assign');
-                    } catch (e) {
-                      console.error('❌ Method 1 failed:', e);
+                    } catch (err1) {
+                      console.error('❌ Method 1 failed:', err1);
                       try {
                         window.location.href = targetUrl;
                         console.log('✅ Method 2: window.location.href');
-                      } catch (e2) {
-                        console.error('❌ Method 2 failed:', e2);
+                      } catch (err2) {
+                        console.error('❌ Method 2 failed:', err2);
                         try {
                           window.location.replace(targetUrl);
                           console.log('✅ Method 3: window.location.replace');
-                        } catch (e3) {
-                          console.error('❌ Method 3 failed:', e3);
+                        } catch (err3) {
+                          console.error('❌ Method 3 failed:', err3);
                           window.open(targetUrl, '_self');
                           console.log('✅ Method 4: window.open');
                         }
@@ -482,7 +514,7 @@ export default function LoginRegisterForm() {
                     }
                   }, 100);
                 };
-                
+
                 navegarInmediato();
               }}
               style={{ 
