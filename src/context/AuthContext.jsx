@@ -66,10 +66,32 @@ export const AuthProvider = ({ children }) => {
             setUserProfile(userData);
             console.log('✅ Perfil de usuario cargado:', userData.nombre);
           } else {
-            console.log('⚠️ No se encontró perfil de usuario, estableciendo valores por defecto');
-            setRole('player');
-            setEquipoId(null);
-            setUserProfile(null);
+            console.log('⚠️ No se encontró perfil de usuario, creando registro básico...');
+            // Crear registro mínimo del usuario para garantizar presencia en DB
+            const { error: insertBasicError } = await supabase
+              .from('usuarios')
+              .insert([
+                {
+                  id: session.user.id,
+                  email: session.user.email,
+                  nombre: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Jugador',
+                  rol: 'player',
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                }
+              ]);
+
+            if (insertBasicError) {
+              console.warn('⚠️ No se pudo crear registro básico del usuario:', insertBasicError?.message);
+              setRole('player');
+              setEquipoId(null);
+              setUserProfile(null);
+            } else {
+              console.log('✅ Registro básico de usuario creado');
+              setRole('player');
+              setEquipoId(null);
+              setUserProfile({ id: session.user.id, email: session.user.email, nombre: session.user.email?.split('@')[0], rol: 'player' });
+            }
           }
           
           // Guardar en localStorage

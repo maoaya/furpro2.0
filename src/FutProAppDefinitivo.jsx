@@ -9,6 +9,7 @@ import RegistroCompleto from './pages/RegistroCompleto.jsx';
 import RegistroTemporal from './pages/RegistroTemporal.jsx';
 import PerfilCard from './pages/PerfilCard.jsx';
 import HomePage from './pages/HomePage.jsx';
+import HomeSimple from './pages/HomeSimple.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal.jsx';
 import CallbackPage from './pages/CallbackPage.jsx';
@@ -107,17 +108,8 @@ function AuthAwareLoginPage() {
   }
 
   if (shouldShowLogin) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <LoginRegisterForm />
-      </div>
-    );
+    // Mostrar exactamente el diseño del login restaurado sin wrappers extra
+    return <LoginRegisterForm />;
   }
 
   return null;
@@ -269,12 +261,10 @@ export default function FutProAppDefinitivo() {
         </div>
       } />
       
-      {/* Home/Feed */}
+      {/* Home/Feed (vista simple solicitada) */}
       <Route path="/home" element={
         <ProtectedRoute>
-          <LayoutPrincipal>
-            <HomePage />
-          </LayoutPrincipal>
+          <HomeSimple />
         </ProtectedRoute>
       } />
       
