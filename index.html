@@ -127,27 +127,28 @@
         })();
     </script>
     
-    <script type="module" src="/src/main-test.jsx"></script>
+    <script type="module" src="/src/main.jsx"></script>
     
     <!-- Script de debugging adicional -->
     <script>
         console.log('🔍 HTML cargado, verificando React...');
+        console.log('🔧 Configuración de entorno aplicada');
         
         // Verificar que el elemento root existe
         setTimeout(() => {
             const root = document.getElementById('root');
             console.log('📦 Elemento root:', root);
-            console.log('📝 Contenido del root:', root ? root.innerHTML : 'NO ENCONTRADO');
+            console.log('📝 Contenido del root:', root ? root.innerHTML.substring(0, 200) + '...' : 'NO ENCONTRADO');
             
-            // Si está vacío después de 3 segundos, mostrar botón de emergencia
+            // Si está vacío después de 5 segundos, mostrar botón de emergencia
             if (root && root.innerHTML.trim() === '') {
-                console.warn('⚠️ Root vacío después de 3 segundos');
+                console.warn('⚠️ Root vacío después de 5 segundos');
                 const emergency = document.getElementById('emergency-nav');
                 if (emergency) {
                     emergency.style.display = 'block';
                 }
             }
-        }, 3000);
+        }, 5000);
     </script>
 </body>
 </html>
