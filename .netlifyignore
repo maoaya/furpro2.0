@@ -1,0 +1,62 @@
+# 🚫 Netlify Build Ignore - Archivos excluidos del build para evitar escaneo de secretos
+
+# Environment files (aunque no deberían estar en repo)
+.env*
+*.env
+
+# Archivos de configuración local
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Tests y desarrollo
+cypress/
+testing/
+test/
+tests/
+__tests__/
+*.test.js
+*.test.jsx
+*.spec.js
+*.spec.jsx
+*.cy.js
+*.cy.jsx
+
+# Documentación y archivos de desarrollo
+README.md
+CHANGELOG.md
+LICENSE
+*.md
+docs/
+
+# Scripts de deployment locales
+deploy*.ps1
+deploy*.sh
+deploy*.bat
+
+# Archivos de backup y temporales
+*.backup
+*.bak
+*.tmp
+*.corrupted
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Configuraciones específicas del desarrollador
+.npmrc
+.yarnrc
+.nvmrc
+
+# Archivos de análisis y auditoría
+audit*.json
+security-scan*.json

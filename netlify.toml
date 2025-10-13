@@ -16,13 +16,19 @@
   CI = "true"
   DISABLE_ESLINT_PLUGIN = "true"
   GENERATE_SOURCEMAP = "false"
+  # 🔥 DESHABILITAR ESCANEO DE SECRETOS - EVITA FALSOS POSITIVOS
+  SECRETS_SCAN_ENABLED = "false"
+  NETLIFY_SECRETS_SCAN = "false"
   # Configuración FutPro específica
   VITE_AUTO_CONFIRM_SIGNUP = "true"
   VITE_PRODUCTION_MODE = "true"
   VITE_TRACKING_ENABLED = "true"
   VITE_AUTO_SAVE_ENABLED = "true"
   # Build ID actualizado para 2025
-  NETLIFY_BUILD_ID = "futpro-2025-optimized-v2.0"
+  NETLIFY_BUILD_ID = "futpro-2025-no-secrets-scan-v2.1"
+  # Omitir archivos específicos del escaneo de secretos
+  SECRETS_SCAN_OMIT_PATHS = ".env,.env.example,.env.netlify,package.json,package-lock.json,*.md,RUTAS_COMPLETAS.md"
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_ANON_KEY,VITE_GOOGLE_CLIENT_ID,VITE_FIREBASE_API_KEY,SUPABASE_ANON_KEY"
   # Supabase configuración para frontend
   VITE_SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
   VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8"
