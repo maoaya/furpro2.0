@@ -193,10 +193,16 @@ export default function RegistroCompleto() {
         ]);
       }
 
-      setSuccess('¡Registro exitoso! Revisa tu email para confirmar tu cuenta.');
+      setSuccess('¡Registro exitoso! Redirigiendo al home...');
       localStorage.removeItem('futpro_registro_draft');
       // Redirigir inmediatamente a la homepage
-      setTimeout(() => { navigate('/'); }, 1500);
+      setTimeout(() => { 
+        try {
+          navigate('/home');
+        } catch {
+          window.location.href = '/home';
+        }
+      }, 1500);
     } catch (error) {
       console.error('Error en registro:', error);
       setError(error.message || 'Error en el registro. Inténtalo de nuevo.');
@@ -368,6 +374,7 @@ export default function RegistroCompleto() {
 
           <div style={{ marginTop: 16, display: 'flex', gap: 12 }}>
             <button type="submit" disabled={loading} style={{ padding: '12px 18px', background: loading ? '#666' : '#22c55e', color: '#fff', border: 'none', borderRadius: 8, cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>{loading ? '⏳ Procesando...' : '🚀 Crear Cuenta'}</button>
+            <button type="button" onClick={() => { try { navigate('/home'); } catch { window.location.href = '/home'; } }} style={{ padding: '12px 18px', background: '#FFD700', color: '#000', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold' }}>🏠 Ir al Home</button>
             <button type="button" onClick={() => { try { navigate('/'); } catch { window.location.href = '/'; } }} style={{ padding: '12px 18px', background: 'transparent', color: '#FFD700', border: '1px solid #FFD700', borderRadius: 8, cursor: 'pointer' }}>← Volver al Login</button>
           </div>
 
