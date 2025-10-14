@@ -15,11 +15,13 @@ export default function RegistroCompleto() {
     confirmPassword: '',
     edad: '',
     pais: '',
-    posicion: '',
+  posicion: [],
     experiencia: '',
     equipoFavorito: '',
     disponibilidad: '',
-    foto: null
+    foto: null,
+    fotoNombre: '',
+    fotoTipo: ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -41,7 +43,13 @@ export default function RegistroCompleto() {
         return;
       }
 
-      setFormData(prev => ({ ...prev, foto: file }));
+      // Guardar archivo y metadatos para posterior subida (tipo Instagram)
+      setFormData(prev => ({ 
+        ...prev, 
+        foto: file,
+        fotoNombre: file.name,
+        fotoTipo: file.type
+      }));
       
       const reader = new FileReader();
       reader.onload = (e) => setPreviewImagen(e.target.result);
@@ -86,7 +94,7 @@ export default function RegistroCompleto() {
             telefono: formData.telefono,
             edad: formData.edad,
             pais: formData.pais,
-            posicion: formData.posicion,
+            posicion: Array.isArray(formData.posicion) ? formData.posicion.join(',') : formData.posicion,
             experiencia: formData.experiencia,
             equipoFavorito: formData.equipoFavorito,
             disponibilidad: formData.disponibilidad
@@ -98,9 +106,28 @@ export default function RegistroCompleto() {
 
       // 2. Guardar usuario en tabla 'usuarios' (si existe la tabla)
       // Solo si el usuario fue creado correctamente
+      let avatarUrl = null;
+      // 2.a Subir foto a Supabase Storage tipo Instagram (si el usuario subió imagen)
+      if (signUpData && signUpData.user && formData.foto) {
+        const userId = signUpData.user.id;
+        const fileExt = formData.foto.name.split('.').pop();
+        const filePath = `avatars/${userId}-${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, formData.foto, {
+          cacheControl: '3600',
+          upsert: true,
+          contentType: formData.foto.type || 'image/jpeg'
+        });
+        if (uploadError) {
+          console.warn('No se pudo subir el avatar:', uploadError.message);
+        } else {
+          const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(filePath);
+          avatarUrl = publicUrlData?.publicUrl || null;
+        }
+      }
+
       if (signUpData && signUpData.user) {
         const { id, email } = signUpData.user;
-        // Puedes agregar más campos según tu tabla
+        // 2.b Guardar registro en tabla usuarios, incluyendo url del avatar (si existe)
         await supabase.from('usuarios').insert([
           {
             id_auth: id,
@@ -110,10 +137,11 @@ export default function RegistroCompleto() {
             telefono: formData.telefono,
             edad: formData.edad,
             pais: formData.pais,
-            posicion: formData.posicion,
+            posicion: Array.isArray(formData.posicion) ? formData.posicion.join(',') : formData.posicion,
             experiencia: formData.experiencia,
             equipo_favorito: formData.equipoFavorito,
-            disponibilidad: formData.disponibilidad
+            disponibilidad: formData.disponibilidad,
+            avatar_url: avatarUrl
           }
         ]);
       }
@@ -134,20 +162,27 @@ export default function RegistroCompleto() {
     const saveTimer = setTimeout(() => {
       if (formData.email || formData.nombre) {
         setAutoSaving(true);
-        localStorage.setItem('futpro_registro_draft', JSON.stringify(formData));
+        const { foto, ...rest } = formData;
+        // Guardar solo metadatos y preview para evitar exceder storage y errores de serialización
+        localStorage.setItem('futpro_registro_draft', JSON.stringify({
+          ...rest,
+          previewImagen
+        }));
         setLastSaved(Date.now());
         setTimeout(() => setAutoSaving(false), 500);
       }
     }, 1000);
     return () => clearTimeout(saveTimer);
-  }, [formData]);
+  }, [formData, previewImagen]);
 
   useEffect(() => {
     const saved = localStorage.getItem('futpro_registro_draft');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        setFormData(prev => ({ ...prev, ...parsed }));
+        const { previewImagen: savedPreview, ...rest } = parsed;
+        setFormData(prev => ({ ...prev, ...rest }));
+        if (savedPreview) setPreviewImagen(savedPreview);
       } catch (e) {
         console.error('Error cargando datos guardados:', e);
       }
@@ -161,6 +196,41 @@ export default function RegistroCompleto() {
     background: '#111', 
     color: '#fff' 
   };
+
+  // Opciones enriquecidas
+  const opcionesPosicion = [
+    { value: '', label: 'Posición' },
+    { value: 'portero', label: 'Portero' },
+    { value: 'defensa_central', label: 'Defensa Central' },
+    { value: 'lateral_derecho', label: 'Lateral Derecho' },
+    { value: 'lateral_izquierdo', label: 'Lateral Izquierdo' },
+    { value: 'mediocentro_defensivo', label: 'Mediocentro Defensivo' },
+    { value: 'mediocentro', label: 'Mediocentro' },
+    { value: 'mediapunta', label: 'Mediapunta' },
+    { value: 'extremo_derecho', label: 'Extremo Derecho' },
+    { value: 'extremo_izquierdo', label: 'Extremo Izquierdo' },
+    { value: 'delantero_centro', label: 'Delantero Centro' }
+  ];
+
+  const opcionesExperiencia = [
+    { value: '', label: 'Experiencia' },
+    { value: 'principiante', label: 'Principiante (0-1 años)' },
+    { value: 'amateur', label: 'Amateur (1-3 años)' },
+    { value: 'intermedio', label: 'Intermedio (3-5 años)' },
+    { value: 'avanzado', label: 'Avanzado (5-8 años)' },
+    { value: 'semi_profesional', label: 'Semi-profesional (8-10 años)' },
+    { value: 'profesional', label: 'Profesional (10+ años)' }
+  ];
+
+  const opcionesDisponibilidad = [
+    { value: '', label: 'Disponibilidad' },
+    { value: 'lun_mie_vie_tarde', label: 'Lun, Mié, Vie (tarde)' },
+    { value: 'mar_jue_noche', label: 'Mar, Jue (noche)' },
+    { value: 'fin_de_semana_manana', label: 'Sáb, Dom (mañana)' },
+    { value: 'fin_de_semana_tarde', label: 'Sáb, Dom (tarde)' },
+    { value: 'todos_los_dias', label: 'Todos los días' },
+    { value: 'personalizado', label: 'Personalizado' }
+  ];
 
   return (
     <div style={{ 
@@ -204,25 +274,47 @@ export default function RegistroCompleto() {
             <input required type="password" placeholder="Confirmar contraseña *" value={formData.confirmPassword} onChange={e => handleChange('confirmPassword', e.target.value)} style={inputStyle} />
             <input type="number" min="10" max="100" placeholder="Edad" value={formData.edad} onChange={e => handleChange('edad', e.target.value)} style={inputStyle} />
             <input placeholder="País" value={formData.pais} onChange={e => handleChange('pais', e.target.value)} style={inputStyle} />
-            <select value={formData.posicion} onChange={e => handleChange('posicion', e.target.value)} style={inputStyle}>
-              <option value="">Posición</option>
-              <option value="delantero">Delantero</option>
-              <option value="mediocampista">Mediocampista</option>
-              <option value="defensa">Defensa</option>
-              <option value="portero">Portero</option>
+            <select multiple value={formData.posicion} onChange={e => {
+              const values = Array.from(e.target.selectedOptions).map(o => o.value);
+              handleChange('posicion', values);
+            }} style={{...inputStyle, height: 90}}>
+              {opcionesPosicion.map(op => (
+                <option key={op.value} value={op.value}>{op.label}</option>
+              ))}
             </select>
-            <input placeholder="Años de experiencia" value={formData.experiencia} onChange={e => handleChange('experiencia', e.target.value)} style={inputStyle} />
+            <select value={formData.experiencia} onChange={e => handleChange('experiencia', e.target.value)} style={inputStyle}>
+              {opcionesExperiencia.map(op => (
+                <option key={op.value} value={op.value}>{op.label}</option>
+              ))}
+            </select>
             <input placeholder="Equipo favorito" value={formData.equipoFavorito} onChange={e => handleChange('equipoFavorito', e.target.value)} style={inputStyle} />
-            <input placeholder="Disponibilidad (ej: Lun,Mie,Vie)" value={formData.disponibilidad} onChange={e => handleChange('disponibilidad', e.target.value)} style={inputStyle} />
+            <select value={formData.disponibilidad} onChange={e => handleChange('disponibilidad', e.target.value)} style={inputStyle}>
+              {opcionesDisponibilidad.map(op => (
+                <option key={op.value} value={op.value}>{op.label}</option>
+              ))}
+            </select>
           </div>
 
           <div style={{ marginTop: 12 }}>
             <label style={{ display: 'block', marginBottom: 6, color: '#FFD700' }}>📷 Foto de perfil (opcional)</label>
             <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} style={{ marginBottom: 8 }} />
             {previewImagen && (
-              <div style={{ marginTop: 8 }}>
-                <img src={previewImagen} alt="preview" style={{ maxWidth: 120, maxHeight: 120, borderRadius: 8, objectFit: 'cover', border: '2px solid #FFD700' }} />
-                <button type="button" onClick={() => { setPreviewImagen(null); setFormData(prev => ({ ...prev, foto: null })); if (fileInputRef.current) fileInputRef.current.value = ''; }} style={{ marginLeft: 10, padding: '4px 8px', background: '#c62828', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer' }}>✕ Quitar</button>
+              <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{
+                  width: 120,
+                  height: 120,
+                  borderRadius: 12,
+                  overflow: 'hidden',
+                  border: '2px solid #FFD700',
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.35)'
+                }}>
+                  <img src={previewImagen} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div style={{ fontSize: 12, color: '#bbb' }}>
+                  <div>Archivo: {formData.fotoNombre}</div>
+                  <div>Tipo: {formData.fotoTipo}</div>
+                </div>
+                <button type="button" onClick={() => { setPreviewImagen(null); setFormData(prev => ({ ...prev, foto: null, fotoNombre: '', fotoTipo: '' })); if (fileInputRef.current) fileInputRef.current.value = ''; }} style={{ padding: '6px 10px', background: '#c62828', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>✕ Quitar</button>
               </div>
             )}
           </div>

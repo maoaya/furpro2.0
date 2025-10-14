@@ -10,6 +10,21 @@ if (typeof process !== 'undefined' && process.env) {
   FACEBOOK_CLIENT_ID = process.env.VITE_FACEBOOK_CLIENT_ID;
 }
 
+// En navegador (Vite), usar import.meta.env
+try {
+  // import.meta solo existe en entorno ESM del navegador/bundler
+  // Este bloque se ignora en Jest/Node si import.meta no existe
+  if (typeof window !== 'undefined' && typeof import.meta !== 'undefined') {
+    const viteEnv = import.meta.env || {};
+    SUPABASE_URL = viteEnv.VITE_SUPABASE_URL || SUPABASE_URL;
+    SUPABASE_ANON_KEY = viteEnv.VITE_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY;
+    GOOGLE_CLIENT_ID = viteEnv.VITE_GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID;
+    FACEBOOK_CLIENT_ID = viteEnv.VITE_FACEBOOK_CLIENT_ID || FACEBOOK_CLIENT_ID;
+  }
+} catch (e) {
+  // Ignorar si no está disponible import.meta
+}
+
 export const getConfig = () => {
   // Detectar si estamos en Node.js (server-side)
   const isNode = typeof window === 'undefined';
@@ -74,8 +89,8 @@ export const getConfig = () => {
     },
     
     // Configuraciones de Supabase - Compatible con Jest y navegador
-    supabaseUrl: SUPABASE_URL || 'https://qqrxetxcglwrejtblwut.supabase.co',
-    supabaseAnonKey: SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU4MzQwMTQsImV4cCI6MjA0MTQxMDAxNH0.WaJRwm3fGSoOZzYpU5xhMc82rP6FqJKM52kQGYlXJz8',
+  supabaseUrl: SUPABASE_URL || 'https://qqrxetxcglwrejtblwut.supabase.co',
+  supabaseAnonKey: SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU4MzQwMTQsImV4cCI6MjA0MTQxMDAxNH0.WaJRwm3fGSoOZzYpU5xhMc82rP6FqJKM52kQGYlXJz8',
     
     // OAuth credentials - Compatible con Jest y navegador  
     googleClientId: GOOGLE_CLIENT_ID || '760210878835-bnl2k6qfb4vuhm9v6fqpj1dqh5kul6d8.apps.googleusercontent.com',
