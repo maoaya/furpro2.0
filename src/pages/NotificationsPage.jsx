@@ -1,31 +1,31 @@
+import React, { useState, useEffect } from 'react';
 import supabase from '../supabaseClient';
-  // Borrar notificación en Supabase
-  const handleBorrar = async (id) => {
-    // Implementa la lógica según tu estructura de notificaciones
-    // Ejemplo:
-    // setLoading(true);
-    // const { error } = await supabase.from('notificaciones').delete().eq('id', id);
-    // if (error) setError('Error al borrar notificación');
-    // else cargarNotificaciones();
-    // setLoading(false);
-  };
 
-  // Ejemplo de tiempo real con Supabase (notificaciones)
-  React.useEffect(() => {
-    // Implementa la lógica según tu estructura de notificaciones
-    // Ejemplo:
-    // const subscription = supabase
-    //   .channel('notificaciones-changes')
-    //   .on('postgres_changes', { event: '*', schema: 'public', table: 'notificaciones' }, payload => {
-    //     cargarNotificaciones();
-    //   })
-    //   .subscribe();
-    // return () => {
-    //   supabase.removeChannel(subscription);
-    // };
-  }, []);
-// ...existing code...
-import React, { useState } from 'react';
+// Borrar notificación en Supabase
+// const handleBorrar = async (id) => {
+//   // Implementa la lógica según tu estructura de notificaciones
+//   // Ejemplo:
+//   // setLoading(true);
+//   // const { error } = await supabase.from('notificaciones').delete().eq('id', id);
+//   // if (error) setError('Error al borrar notificación');
+//   // else cargarNotificaciones();
+//   // setLoading(false);
+// };
+
+// Ejemplo de tiempo real con Supabase (notificaciones)
+// useEffect(() => {
+//   // Implementa la lógica según tu estructura de notificaciones
+//   // Ejemplo:
+//   // const subscription = supabase
+//   //   .channel('notificaciones-changes')
+//   //   .on('postgres_changes', { event: '*', schema: 'public', table: 'notificaciones' }, payload => {
+//   //     cargarNotificaciones();
+//   //   })
+//   //   .subscribe();
+//   // return () => {
+//   //   supabase.removeChannel(subscription);
+//   // };
+// }, []);
 
 const gold = '#FFD700';
 const black = '#222';

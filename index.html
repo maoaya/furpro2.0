@@ -19,28 +19,24 @@
     <meta property="og:type" content="website" />
     
     <!-- Security -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https: http: wss: ws:;">
 </head>
 <body>
     <div id="root"></div>
+    <!-- Error overlay para capturar errores JS globales y promesas rechazadas -->
+    <div id="error-overlay" style="display:none; position:fixed; inset:12px; background:rgba(0,0,0,0.85); color:#fff; padding:20px; z-index:99999; overflow:auto; font-family:monospace; font-size:13px; border-radius:8px;"> <strong>Error runtime:</strong><pre id="error-content" style="white-space:pre-wrap; color:#ffdddd;"></pre><button onclick="document.getElementById('error-overlay').style.display='none'" style="position:fixed; right:20px; top:20px;">Cerrar</button></div>
     
-    <!-- 🚨 LOGIN DE EMERGENCIA PURO HTML - Se muestra si React falla -->
-    <div id="emergency-login" style="display: none; min-height: 100vh; background: linear-gradient(135deg, #222 0%, #333 100%); display: flex; align-items: center; justify-content: center; font-family: Arial, sans-serif;">
-        <div style="background: #1a1a1a; border: 2px solid #FFD700; border-radius: 20px; padding: 40px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);">
-            <div style="margin-bottom: 30px;">
-                <div style="font-size: 48px; margin-bottom: 10px;">⚽</div>
-                <h1 style="color: #FFD700; margin: 0; font-size: 24px;">FutPro</h1>
-                <p style="color: #ccc; margin: 5px 0 0 0; font-size: 14px;">Plataforma de Fútbol</p>
-            </div>
-            
-            <button onclick="window.location.href='https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/authorize?provider=google&redirect_to=https://futpro.vip/auth/callback'" style="width: 100%; padding: 12px; margin-bottom: 12px; background: #4285f4; color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                <span>🌐</span>Continuar con Google
-            </button>
-            
-            <button onclick="window.location.href='/registro-nuevo'" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; border-radius: 12px; font-size: 16px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); margin-top: 20px;">
-                <span>👤</span>Crear Usuario
-            </button>
-        </div>
+    <!-- 🚨 BOTON DE EMERGENCIA - Por si JavaScript falla completamente -->
+    <div id="emergency-nav" style="position: fixed; top: 10px; right: 10px; z-index: 9999; display: none;">
+        <a href="/registro-nuevo" style="
+            background: #dc2626; 
+            color: white; 
+            padding: 10px 15px; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+        ">🚨 IR A REGISTRO</a>
     </div>
     
     <!-- 🔧 SCRIPT GLOBAL DE NAVEGACION ULTRA-ROBUSTO -->
@@ -48,38 +44,24 @@
         // Script de navegación ultra-robusto inline para máxima compatibilidad
         (function() {
             'use strict';
-            console.log('🔥 Sistema de emergencia inicializado');
+            console.log('🔥 Navegación ultra-robusta inicializada');
             
-            // Verificar que React se cargue en 3 segundos
-            setTimeout(() => {
-                const root = document.getElementById('root');
-                const emergencyLogin = document.getElementById('emergency-login');
-                
-                console.log('🔍 Verificando estado del root:', root ? root.innerHTML.length : 'NO ENCONTRADO');
-                
-                // Si el root está vacío o React no se cargó, mostrar login de emergencia
-                if (!root || root.innerHTML.trim() === '' || root.innerHTML.length < 100) {
-                    console.warn('⚠️ React no se cargó correctamente, activando login de emergencia');
-                    if (emergencyLogin) {
-                        emergencyLogin.style.display = 'flex';
-                        root.style.display = 'none';
-                    }
-                } else {
-                    console.log('✅ React cargado correctamente');
-                    if (emergencyLogin) {
-                        emergencyLogin.style.display = 'none';
-                    }
-                }
-            }, 3000);
-            
-            // Función global de navegación para emergencias
+            // Función global de navegación
             window.navegarCrearUsuario = function() {
-                console.log('� NAVEGACION CREAR USUARIO - Método ultra-robusto');
+                console.log('🚀 NAVEGACION CREAR USUARIO - Método ultra-robusto');
+                
                 const metodos = [
                     () => window.location.href = '/registro-nuevo',
                     () => window.location.assign('/registro-nuevo'),
                     () => window.location.replace('/registro-nuevo'),
-                    () => window.open('/registro-nuevo', '_self')
+                    () => window.open('/registro-nuevo', '_self'),
+                    () => {
+                        const form = document.createElement('form');
+                        form.method = 'GET';
+                        form.action = '/registro-nuevo';
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
                 ];
                 
                 for (let i = 0; i < metodos.length; i++) {
@@ -95,31 +77,77 @@
                     }
                 }
             };
+            
+            // Buscar y adjuntar a botones cuando el DOM esté listo
+            function adjuntarEventos() {
+                setTimeout(() => {
+                    const botones = document.querySelectorAll('button');
+                    let botonCrearUsuarioEncontrado = false;
+                    
+                    botones.forEach(btn => {
+                        const texto = (btn.textContent || '').toLowerCase();
+                        if (texto.includes('crear usuario')) {
+                            botonCrearUsuarioEncontrado = true;
+                            console.log('🔍 Botón crear usuario encontrado:', btn);
+                            
+                            btn.addEventListener('click', function(e) {
+                                console.log('🔗 Click detectado en botón crear usuario');
+                                setTimeout(() => {
+                                    if (window.location.pathname === '/' || window.location.pathname === '/login') {
+                                        console.log('⚠️ Navegación falló, ejecutando backup...');
+                                        window.navegarCrearUsuario();
+                                    }
+                                }, 1000);
+                            }, true);
+                        }
+                    });
+                    
+                    // Mostrar botón de emergencia si hay problemas
+                    if (!botonCrearUsuarioEncontrado && window.location.pathname === '/') {
+                        console.log('⚠️ No se encontró botón crear usuario, mostrando emergencia...');
+                        const emergencyBtn = document.getElementById('emergency-nav');
+                        if (emergencyBtn) {
+                            emergencyBtn.style.display = 'block';
+                        }
+                    }
+                }, 1000);
+            }
+            
+            // Ejecutar múltiples veces para asegurar compatibilidad con React
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', adjuntarEventos);
+            } else {
+                adjuntarEventos();
+            }
+            
+            // Observer para cambios dinámicos
+            new MutationObserver(adjuntarEventos).observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+            
         })();
     </script>
     
     <script type="module" src="/src/main.jsx"></script>
-    
-    <!-- Script de debugging adicional -->
-    <script>
-        console.log('🔍 HTML cargado, verificando React...');
-        console.log('🔧 Configuración de entorno aplicada');
-        
-        // Verificar que el elemento root existe
-        setTimeout(() => {
-            const root = document.getElementById('root');
-            console.log('📦 Elemento root:', root);
-            console.log('📝 Contenido del root:', root ? root.innerHTML.substring(0, 200) + '...' : 'NO ENCONTRADO');
-            
-            // Si está vacío después de 5 segundos, mostrar botón de emergencia
-            if (root && root.innerHTML.trim() === '') {
-                console.warn('⚠️ Root vacío después de 5 segundos');
-                const emergency = document.getElementById('emergency-nav');
-                if (emergency) {
-                    emergency.style.display = 'block';
-                }
-            }
-        }, 5000);
-    </script>
+        <script>
+            // Manejadores globales para mostrar overlay de errores
+            window.addEventListener('error', function (ev) {
+                try {
+                    const overlay = document.getElementById('error-overlay');
+                    const content = document.getElementById('error-content');
+                    overlay.style.display = 'block';
+                    content.textContent = (ev && ev.error && ev.error.stack) ? ev.error.stack : (ev && ev.message) || JSON.stringify(ev);
+                } catch (e) { console.error('Error mostrando overlay', e); }
+            });
+            window.addEventListener('unhandledrejection', function (ev) {
+                try {
+                    const overlay = document.getElementById('error-overlay');
+                    const content = document.getElementById('error-content');
+                    overlay.style.display = 'block';
+                    content.textContent = (ev && ev.reason && ev.reason.stack) ? ev.reason.stack : JSON.stringify(ev.reason || ev);
+                } catch (e) { console.error('Error mostrando overlay', e); }
+            });
+        </script>
 </body>
 </html>

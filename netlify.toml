@@ -29,18 +29,17 @@
   # Omitir archivos específicos del escaneo de secretos
   SECRETS_SCAN_OMIT_PATHS = ".env,.env.example,.env.netlify,package.json,package-lock.json,*.md,RUTAS_COMPLETAS.md"
   SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_ANON_KEY,VITE_GOOGLE_CLIENT_ID,VITE_FIREBASE_API_KEY,SUPABASE_ANON_KEY"
-  # Supabase configuración para frontend - TOKENS CORREGIDOS
-  VITE_SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
-  VITE_SUPABASE_ANON_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU5MTMyMTAsImV4cCI6MjA0MTQ4OTIxMH0.QG9rDBd7s7LgCUzNHVJEsqsXZPJNUhgUTW3zzC2o2ko"
-  # Google OAuth - TOKEN CORRECTO
-  VITE_GOOGLE_CLIENT_ID = "760210878835-q5n5sms3gsr6rk8l2h2tffm2r8vm0dv8.apps.googleusercontent.com"
-  # Firebase configuración
-  VITE_FIREBASE_API_KEY = "AIzaSyB05wYk8tJ0-PC23TkeBRPxjP4Qeyb3r2s"
-  VITE_FIREBASE_PROJECT_ID = "futpro-30652"
-  VITE_FIREBASE_APP_ID = "1:38070999839:web:e5e52621437517e9d92e2a"
-  # Variables backend para funciones Netlify
-  SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
-  SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMTAyNjU4NywiZXhwIjoyMDQ2NjAyNTg3fQ.Ri_q9Q1wQRmSZHNEX8QP4uqHkUmjRJVKQWLi4gONMrU"
+  # IMPORTANT: No colocar claves secretas en este archivo.
+  # Configura estas variables en Netlify (Site settings > Build & deploy > Environment):
+  # VITE_SUPABASE_URL
+  # VITE_SUPABASE_ANON_KEY
+  # SUPABASE_URL
+  # SUPABASE_SERVICE_ROLE_KEY  (solo para funciones)
+  # VITE_GOOGLE_CLIENT_ID
+  # VITE_FIREBASE_API_KEY
+  # VITE_FIREBASE_PROJECT_ID
+  # VITE_FIREBASE_APP_ID
+  # Puedes usar `.env.local` para pruebas locales (gitignored).
 
 [functions]
   directory = "functions"

@@ -39,13 +39,6 @@ export const getConfig = () => {
     protocol: isNode ? 'server' : window.location.protocol
   });
 
-  // 🔥 CONFIGURACIÓN HARDCODED PARA PRODUCCIÓN (fallback si env vars fallan)
-  const PRODUCTION_CONFIG = {
-    supabaseUrl: 'https://qqrxetxcglwrejtblwut.supabase.co',
-    supabaseAnonKey: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU5MTMyMTAsImV4cCI6MjA0MTQ4OTIxMH0.QG9rDBd7s7LgCUzNHVJEsqsXZPJNUhgUTW3zzC2o2ko',
-    googleClientId: '760210878835-q5n5sms3gsr6rk8l2h2tffm2r8vm0dv8.apps.googleusercontent.com'
-  };
-
   // Determinar URL base correcta
   const baseUrl = isNode
     ? (isProduction ? 'https://futpro.vip' : 'http://localhost:5173')
@@ -80,12 +73,12 @@ export const getConfig = () => {
       debugMode: isDevelopment // Debug solo en desarrollo
     },
     
-    // Configuraciones de Supabase - Usar configuración hardcoded en producción
-    supabaseUrl: isProduction ? PRODUCTION_CONFIG.supabaseUrl : (SUPABASE_URL || PRODUCTION_CONFIG.supabaseUrl),
-    supabaseAnonKey: isProduction ? PRODUCTION_CONFIG.supabaseAnonKey : (SUPABASE_ANON_KEY || PRODUCTION_CONFIG.supabaseAnonKey),
+    // Configuraciones de Supabase - Compatible con Jest y navegador
+    supabaseUrl: SUPABASE_URL || 'https://qqrxetxcglwrejtblwut.supabase.co',
+    supabaseAnonKey: SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU4MzQwMTQsImV4cCI6MjA0MTQxMDAxNH0.WaJRwm3fGSoOZzYpU5xhMc82rP6FqJKM52kQGYlXJz8',
     
-    // OAuth credentials - Usar configuración hardcoded en producción
-    googleClientId: isProduction ? PRODUCTION_CONFIG.googleClientId : (GOOGLE_CLIENT_ID || PRODUCTION_CONFIG.googleClientId),
+    // OAuth credentials - Compatible con Jest y navegador  
+    googleClientId: GOOGLE_CLIENT_ID || '760210878835-bnl2k6qfb4vuhm9v6fqpj1dqh5kul6d8.apps.googleusercontent.com',
     facebookClientId: FACEBOOK_CLIENT_ID || '',
     
     // Flags de entorno
