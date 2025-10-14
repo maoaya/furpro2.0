@@ -35,25 +35,72 @@ export default function RegistroCompleto() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setError('La imagen debe ser menor a 5MB');
+  // Procesa una imagen a formato cuadrado tipo Instagram (recorte centrado) y comprime a JPEG
+  const procesarImagenCuadrada = (file) => new Promise((resolve, reject) => {
+    try {
+      const img = new Image();
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        img.onload = () => {
+          const size = Math.min(img.width, img.height);
+          const sx = (img.width - size) / 2;
+          const sy = (img.height - size) / 2;
+          const canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size);
+          const quality = 0.9; // compresión alta calidad
+          canvas.toBlob((blob) => {
+            if (!blob) return reject(new Error('No se pudo procesar la imagen'));
+            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+            // Crear un File a partir del blob para mantener APIs consistentes
+            const newName = `${file.name.replace(/\.[^.]+$/, '')}-square.jpg`;
+            const processedFile = new File([blob], newName, { type: 'image/jpeg' });
+            resolve({ blob, processedFile, dataUrl });
+          }, 'image/jpeg', quality);
+        };
+        img.onerror = () => reject(new Error('Imagen inválida'));
+        img.src = ev.target.result;
+      };
+      reader.onerror = () => reject(new Error('No se pudo leer el archivo'));
+      reader.readAsDataURL(file);
+    } catch (err) {
+      reject(err);
+    }
+  });
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!/^image\//.test(file.type)) {
+      setError('Selecciona un archivo de imagen válido');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setError('La imagen debe ser menor a 10MB');
+      return;
+    }
+
+    try {
+      // Procesar a cuadrado y comprimir
+      const { processedFile, dataUrl } = await procesarImagenCuadrada(file);
+      // Validar tamaño final (límite 5MB)
+      if (processedFile.size > 5 * 1024 * 1024) {
+        setError('La imagen procesada sigue siendo grande (>5MB). Elige otra más pequeña.');
         return;
       }
-
-      // Guardar archivo y metadatos para posterior subida (tipo Instagram)
-      setFormData(prev => ({ 
-        ...prev, 
-        foto: file,
-        fotoNombre: file.name,
-        fotoTipo: file.type
+      // Guardar archivo procesado y metadatos
+      setFormData(prev => ({
+        ...prev,
+        foto: processedFile,
+        fotoNombre: processedFile.name,
+        fotoTipo: processedFile.type
       }));
-      
-      const reader = new FileReader();
-      reader.onload = (e) => setPreviewImagen(e.target.result);
-      reader.readAsDataURL(file);
+      setPreviewImagen(dataUrl);
+    } catch (err) {
+      console.error('Error procesando imagen:', err);
+      setError('No se pudo procesar la imagen. Intenta con otra.');
     }
   };
 
