@@ -1,1 +1,1 @@
-"deploy-trigger-lun. 13/10/2025-23:42:29,69"  
+v2025.10.13.deploy 
