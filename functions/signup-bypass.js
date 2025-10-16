@@ -62,7 +62,8 @@ exports.handler = async (event) => {
     }
 
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE, {
-      auth: { autoRefreshToken: false, persistSession: false }
+      auth: { autoRefreshToken: false, persistSession: false },
+      db: { schema: 'api' }
     });
 
     // 1) Crear usuario confirmado

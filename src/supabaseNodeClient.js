@@ -9,6 +9,6 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
   console.warn('⚠️ No se encontraron las variables de entorno de Supabase. Revisa tu archivo .env y asegúrate de tener SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY/ANON_KEY definidas.');
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, { db: { schema: 'api' } });
 
 module.exports = supabase;

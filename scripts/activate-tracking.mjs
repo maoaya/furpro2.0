@@ -11,7 +11,7 @@ import path from 'path';
 const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
 const SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMTAyNjU4NywiZXhwIjoyMDQ2NjAyNTg3fQ.Ri_q9Q1wQRmSZHNEX8QP4uqHkUmjRJVKQWLi4gONMrU'; // Service Role Key
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { db: { schema: 'api' } });
 
 async function activateTrackingSystem() {
   console.log('🔥 ACTIVANDO SISTEMA DE TRACKING EN SUPABASE...\n');
@@ -21,13 +21,22 @@ async function activateTrackingSystem() {
     console.log('📊 Paso 1: Creando tabla user_activities...');
     
     const createTableSQL = `
-      CREATE TABLE IF NOT EXISTS user_activities (
+      CREATE SCHEMA IF NOT EXISTS api;
+      -- Crear tabla en esquema api
+      CREATE TABLE IF NOT EXISTS api.user_activities (
         id TEXT PRIMARY KEY,
         user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
         action_type TEXT NOT NULL,
         action_data JSONB NOT NULL DEFAULT '{}',
         created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
       );
+      -- Si la tabla existe en public, moverla a api
+      DO $$
+      BEGIN
+        IF to_regclass('public.user_activities') IS NOT NULL AND to_regclass('api.user_activities') IS NULL THEN
+          ALTER TABLE public.user_activities SET SCHEMA api;
+        END IF;
+      END $$;
     `;
 
     const { error: tableError } = await supabase.rpc('exec_sql', { 
@@ -43,10 +52,10 @@ async function activateTrackingSystem() {
     console.log('📈 Paso 2: Creando índices optimizados...');
     
     const indices = [
-      'CREATE INDEX IF NOT EXISTS idx_user_activities_user_id ON user_activities(user_id);',
-      'CREATE INDEX IF NOT EXISTS idx_user_activities_action_type ON user_activities(action_type);',
-      'CREATE INDEX IF NOT EXISTS idx_user_activities_created_at ON user_activities(created_at DESC);',
-      'CREATE INDEX IF NOT EXISTS idx_user_activities_user_action ON user_activities(user_id, action_type);'
+      'CREATE INDEX IF NOT EXISTS idx_user_activities_user_id ON api.user_activities(user_id);',
+      'CREATE INDEX IF NOT EXISTS idx_user_activities_action_type ON api.user_activities(action_type);',
+      'CREATE INDEX IF NOT EXISTS idx_user_activities_created_at ON api.user_activities(created_at DESC);',
+      'CREATE INDEX IF NOT EXISTS idx_user_activities_user_action ON api.user_activities(user_id, action_type);'
     ];
 
     for (const indexSQL of indices) {
@@ -61,7 +70,7 @@ async function activateTrackingSystem() {
     console.log('🔐 Paso 3: Configurando Row Level Security...');
     
     const { error: rlsError } = await supabase.rpc('exec_sql', { 
-      sql: 'ALTER TABLE user_activities ENABLE ROW LEVEL SECURITY;' 
+      sql: 'ALTER TABLE api.user_activities ENABLE ROW LEVEL SECURITY;' 
     });
 
     if (rlsError && !rlsError.message.includes('already enabled')) {
@@ -74,15 +83,15 @@ async function activateTrackingSystem() {
     
     const policies = [
       // Política para que usuarios vean sus propias actividades
-      `CREATE POLICY IF NOT EXISTS "users_can_view_own_activities" ON user_activities
+      `CREATE POLICY IF NOT EXISTS "users_can_view_own_activities" ON api.user_activities
         FOR SELECT USING (auth.uid() = user_id);`,
       
       // Política para que usuarios inserten sus propias actividades
-      `CREATE POLICY IF NOT EXISTS "users_can_insert_own_activities" ON user_activities
+      `CREATE POLICY IF NOT EXISTS "users_can_insert_own_activities" ON api.user_activities
         FOR INSERT WITH CHECK (auth.uid() = user_id);`,
       
       // Política para administradores
-      `CREATE POLICY IF NOT EXISTS "admins_can_view_all_activities" ON user_activities
+      `CREATE POLICY IF NOT EXISTS "admins_can_view_all_activities" ON api.user_activities
         FOR ALL USING (
           EXISTS (
             SELECT 1 FROM usuarios 
@@ -104,7 +113,7 @@ async function activateTrackingSystem() {
     console.log('📊 Paso 5: Creando función de estadísticas...');
     
     const statsFunction = `
-      CREATE OR REPLACE FUNCTION get_user_activity_stats(target_user_id UUID DEFAULT auth.uid())
+  CREATE OR REPLACE FUNCTION get_user_activity_stats(target_user_id UUID DEFAULT auth.uid())
       RETURNS JSON AS $$
       DECLARE
         stats JSON;
@@ -117,7 +126,7 @@ async function activateTrackingSystem() {
           'last_activity', MAX(created_at),
           'first_activity', MIN(created_at)
         ) INTO stats
-        FROM user_activities
+  FROM api.user_activities
         WHERE user_id = target_user_id;
         
         RETURN COALESCE(stats, '{}'::json);
@@ -154,7 +163,7 @@ async function activateTrackingSystem() {
           ua.action_type,
           ua.action_data,
           ua.created_at
-        FROM user_activities ua
+        FROM api.user_activities ua
         WHERE ua.user_id = target_user_id
         ORDER BY ua.created_at DESC
         LIMIT limit_count
