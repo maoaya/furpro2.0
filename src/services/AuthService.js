@@ -1,6 +1,6 @@
 // 🔐 FutPro - Servicio de Autenticación
 import supabase from '../supabaseClient';
-import { updateUserRole } from '../config/supabase.js';
+import { dbOperations } from '../config/supabase.js';
 import { getConfig } from '../config/environment.js';
 
 export class AuthService {
@@ -132,11 +132,25 @@ export class AuthService {
       }
 
   // ...existing code...
-  const { error } = await supabase.auth.signInWithOAuth(config);
-      if (error) {
-  // ...existing code...
-        throw error;
-      }
+  // Ejecutar signInWithOAuth con logging y fallback
+  console.log('🔁 signInWithOAuth config:', config);
+  const { data, error } = await supabase.auth.signInWithOAuth(config);
+  console.log('🔁 signInWithOAuth result:', { data, error });
+
+  // Legacy fallback: si Supabase devuelve una URL, redirigir a ella
+  if (data && data.url) {
+    try {
+      console.log('🌐 Redirigiendo mediante data.url (legacy):', data.url);
+      window.location.href = data.url;
+      return { redirecting: true };
+    } catch (err) {
+      console.warn('⚠️ No se pudo redirigir mediante data.url:', err);
+    }
+  }
+
+  if (error) {
+    throw error;
+  }
   // ...existing code...
       return {
         success: true,
@@ -590,5 +604,5 @@ export class AuthService {
 export default AuthService
 
 export async function cambiarRolUsuario(userId, role) {
-  return await updateUserRole(userId, role);
+  return await dbOperations.updateUserRole(userId, role);
 }

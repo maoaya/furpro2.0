@@ -1,4 +1,5 @@
 import React from 'react';
+import getConfig from '../config/environment';
 
 // Componente de login de emergencia - render puro sin dependencias
 export default function LoginFallback() {
@@ -6,7 +7,10 @@ export default function LoginFallback() {
   const black = '#222';
 
   const handleGoogleLogin = () => {
-    window.location.href = 'https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/authorize?provider=google&redirect_to=https://futpro.vip/auth/callback';
+    const config = getConfig();
+    const supabaseUrl = config.supabaseUrl;
+    const redirectTo = encodeURIComponent(config.oauthCallbackUrl);
+    window.location.href = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${redirectTo}`;
   };
 
   const handleCreateUser = () => {

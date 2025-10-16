@@ -81,32 +81,45 @@
             const statusElement = document.getElementById('status');
             
             try {
+                // Esperar un poco para que supabase procese el callback
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
                 // Manejar el callback de OAuth
                 const { data, error } = await supabase.auth.getSession();
-                
-                if (error) {
-                    throw error;
-                }
-                
-                if (data.session) {
+                if (error) console.warn('getSession warning:', error);
+
+                if (data && data.session) {
                     statusElement.textContent = '✅ ¡Autenticación exitosa! Redirigiendo...';
-                    
-                    // Redirigir al dashboard después de 2 segundos
-                    setTimeout(() => {
-                        window.location.href = '../dashboard.html';
-                    }, 2000);
-                } else {
-                    throw new Error('No se pudo completar la autenticación');
+                    setTimeout(() => { window.location.href = '../dashboard.html'; }, 1200);
+                    return;
                 }
-                
+
+                // Intentar recuperar tokens desde fragment/hash
+                const hash = window.location.hash || '';
+                const params = new URLSearchParams(hash.startsWith('#') ? hash.substring(1) : '');
+                const access_token = params.get('access_token');
+                const refresh_token = params.get('refresh_token');
+
+                if (access_token) {
+                    statusElement.textContent = '🔑 Estableciendo sesión...';
+                    const { data: setData, error: setErr } = await supabase.auth.setSession({ access_token, refresh_token: refresh_token || '' });
+                    if (setErr) {
+                        console.error('setSession error:', setErr);
+                        throw setErr;
+                    }
+                    if (setData && setData.session) {
+                        statusElement.textContent = '✅ Sesión establecida. Redirigiendo...';
+                        setTimeout(() => { window.location.href = '../dashboard.html'; }, 1200);
+                        return;
+                    }
+                }
+
+                throw new Error('No se pudo completar la autenticación');
+
             } catch (error) {
                 console.error('Error en callback:', error);
                 statusElement.textContent = '❌ Error en autenticación. Redirigiendo...';
-                
-                // Redirigir de vuelta al login en caso de error
-                setTimeout(() => {
-                    window.location.href = '../futpro-premium.html';
-                }, 3000);
+                setTimeout(() => { window.location.href = '../futpro-premium.html'; }, 2000);
             }
         }
 
