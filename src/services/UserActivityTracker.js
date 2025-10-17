@@ -289,8 +289,9 @@ class UserActivityTracker {
         return;
       }
 
-      // Guardar en Supabase
+      // Guardar en Supabase (schema 'api')
       const { error } = await supabase
+        .schema('api')
         .from('user_activities')
         .insert(toInsert.map(action => ({
           // id: lo genera la DB (uuid)

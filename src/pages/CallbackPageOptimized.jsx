@@ -25,7 +25,13 @@ export default function CallbackPageOptimized() {
         const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
 
         if (errorParam) {
-          console.warn('⚠️ Error recibido en callback:', { errorParam, errorCode });
+          const errorDescription = searchParams.get('error_description') || hashParams.get('error_description') || 'Sin descripción';
+          console.warn('⚠️ Error recibido en callback:', { 
+            errorParam, 
+            errorCode, 
+            errorDescription: decodeURIComponent(errorDescription),
+            fullURL: window.location.href 
+          });
           const alreadyRetried = sessionStorage.getItem('oauth_retry_once') === 'true';
           if (!alreadyRetried && (
             errorParam.includes('server_error') ||
