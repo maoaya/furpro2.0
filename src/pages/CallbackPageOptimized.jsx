@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import supabase from '../supabaseClient';
+import supabase, { supabaseAuth } from '../supabaseClient'; // Importar ambos clientes
 import { authFlowManager, handleAuthenticationSuccess } from '../utils/authFlowManager.js';
 import getConfig from '../config/environment.js';
 
@@ -36,7 +36,7 @@ export default function CallbackPageOptimized() {
             setStatus('Hubo un problema intercambiando el código. Reintentando login de forma segura...');
             const config = getConfig();
             try {
-              const { error } = await supabase.auth.signInWithOAuth({
+              const { error } = await supabaseAuth.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
                   redirectTo: config.oauthCallbackUrl,
@@ -61,8 +61,8 @@ export default function CallbackPageOptimized() {
   // Esperar un poco para que Supabase procese el callback
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Obtener la sesión actual
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        // Obtener la sesión actual usando el cliente Auth (sin restricción de schema)
+        const { data: { session }, error: sessionError } = await supabaseAuth.auth.getSession();
         
         console.log('📊 Estado de sesión:', { session: !!session, user: !!session?.user, error: sessionError });
         
@@ -81,7 +81,7 @@ export default function CallbackPageOptimized() {
           if (urlHasCode) {
             try {
               setStatus('Intercambiando código por sesión...');
-              const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+              const { data, error } = await supabaseAuth.auth.exchangeCodeForSession(window.location.href);
               if (error) {
                 console.error('❌ exchangeCodeForSession error:', error);
               } else if (data?.session?.user) {

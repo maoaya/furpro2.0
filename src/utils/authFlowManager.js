@@ -7,7 +7,7 @@
 
 import { navigateToHome, handleSuccessfulAuth, markAuthenticationComplete } from './navigationUtils.js';
 import { registrarUsuarioCompleto } from './registroCompleto.js';
-import supabase from '../supabaseClient.js';
+import supabase, { supabaseAuth } from '../supabaseClient.js'; // Importar ambos clientes
 
 /**
  * Manager principal del flujo de autenticación
@@ -265,8 +265,8 @@ export class AuthFlowManager {
       // 2. Esperar a que Supabase procese la autenticación
       await this.delay(2000);
 
-      // 3. Verificar estado de autenticación
-      const { data: { session }, error } = await supabase.auth.getSession();
+      // 3. Verificar estado de autenticación (usar cliente Auth)
+      const { data: { session }, error } = await supabaseAuth.auth.getSession();
       
       if (session && session.user) {
         this.log('Sesión activa detectada después del registro');

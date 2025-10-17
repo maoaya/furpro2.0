@@ -44,11 +44,35 @@ const supabaseOptions = {
     }
 };
 
+// Opciones SIN restricción de schema para operaciones de autenticación
+// Necesario porque OAuth necesita acceder a auth.users, no a api.*
+const authOnlyOptions = {
+    auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        storage: (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : undefined,
+        storageKey: 'futpro-auth-token'
+    },
+    global: {
+        headers: {
+            'x-client-info': 'futpro-vip@2.0.0',
+            'x-application-name': 'FutPro VIP'
+        }
+    }
+    // NO incluimos db.schema para permitir acceso a auth.users
+};
+
 console.log('🔗 Inicializando Supabase Client...');
 console.log('📍 URL:', SUPABASE_URL);
 console.log('🔑 Key configurada:', SUPABASE_KEY ? 'SÍ' : 'NO');
 
+// Cliente principal con schema 'api' para operaciones de base de datos
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, supabaseOptions);
+
+// Cliente especial para Auth sin restricción de schema
+export const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_KEY, authOnlyOptions);
 
 // Test de conexión inicial
 supabase.auth.onAuthStateChange((event, session) => {
