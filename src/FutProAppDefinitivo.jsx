@@ -121,15 +121,24 @@ function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [waited, setWaited] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
-      console.log('🔒 ProtectedRoute: Usuario no autenticado, redirigiendo a login');
+    // Esperar un poco antes de redirigir para dar tiempo al AuthContext
+    if (!loading && !user && !waited) {
+      const timer = setTimeout(() => {
+        setWaited(true);
+      }, 1000); // Esperar 1 segundo adicional
+      return () => clearTimeout(timer);
+    }
+
+    if (waited && !loading && !user) {
+      console.log('🔒 ProtectedRoute: Usuario no autenticado después de espera, redirigiendo a login');
       navigate('/', { replace: true, state: { from: location } });
     }
-  }, [user, loading, navigate, location]);
+  }, [user, loading, navigate, location, waited]);
 
-  if (loading) {
+  if (loading || (!user && !waited)) {
     return (
       <div style={{
         minHeight: '100vh',

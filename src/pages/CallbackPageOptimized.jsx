@@ -212,8 +212,17 @@ export default function CallbackPageOptimized() {
           }
         }
 
-        console.log('🎉 OAuth callback procesado. Usando AuthFlowManager...');
+        console.log('🎉 OAuth callback procesado. Guardando sesión y navegando...');
         setStatus('¡Éxito! Configurando navegación...');
+
+        // CRÍTICO: Establecer indicadores de auth ANTES de navegar
+        localStorage.setItem('authCompleted', 'true');
+        localStorage.setItem('loginSuccess', 'true');
+        localStorage.setItem('userEmail', user.email);
+        localStorage.setItem('userId', user.id);
+
+        // Esperar un momento para que AuthContext procese la sesión
+        await new Promise(resolve => setTimeout(resolve, 800));
 
         // Usar el nuevo AuthFlowManager para navegación robusta
         const resultado = await handleAuthenticationSuccess(user, navigate, {
@@ -225,18 +234,14 @@ export default function CallbackPageOptimized() {
           console.log('✅ Navegación exitosa con AuthFlowManager');
           setStatus('¡Redirigiendo a tu dashboard!');
         } else {
-          console.log('⚠️ Problema con AuthFlowManager, usando fallback');
+          console.log('⚠️ Problema con AuthFlowManager, usando fallback directo');
           setStatus('Finalizando configuración...');
           
-          // Fallback al método anterior
-          localStorage.setItem('authCompleted', 'true');
+          // Fallback: forzar navegación con window.location para recargar contexto
+          console.log('🔄 Forzando recarga completa para actualizar contexto...');
           setTimeout(() => {
-            try {
-              navigate('/home', { replace: true });
-            } catch (navError) {
-              window.location.href = '/home';
-            }
-          }, 1000);
+            window.location.href = '/home';
+          }, 500);
         }
       } catch (error) {
   console.error('💥 Error procesando perfil:', error);
