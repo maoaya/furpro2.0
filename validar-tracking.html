@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validación Tracking FutPro</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#111; color:#FFD700; margin:0; padding:24px; }
+    .card { background:#1e1e1e; border:1px solid #FFD70055; border-radius:10px; padding:20px; max-width:720px; margin:0 auto; }
+    .btn { background:#FFD700; color:#111; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:bold; }
+    .btn.secondary { background:transparent; color:#FFD700; border:1px solid #FFD700; }
+    code { color:#fffb; }
+    .log { background:#0b0b0b; border:1px solid #333; padding:10px; border-radius:8px; height:200px; overflow:auto; color:#ddd; }
+    .ok { color:#22c55e; }
+    .warn { color:#f59e0b; }
+    .err { color:#ef4444; }
+  </style>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="card">
+    <h1>⚽ Validación de Tracking (api.user_activities)</h1>
+    <p>Dominio: <b id="origin"></b></p>
+    <p>Esta herramienta verifica que la tabla <code>api.user_activities</code> exista y acepte operaciones con RLS.</p>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin:12px 0;">
+      <button class="btn" id="btnHead">1) HEAD REST (perfil api)</button>
+      <button class="btn" id="btnLogin">2) Login Google</button>
+      <button class="btn" id="btnInsert">3) Insert test activity</button>
+      <button class="btn secondary" id="btnClear">Limpiar logs</button>
+    </div>
+    <div class="log" id="log"></div>
+  </div>
+  <script>
+    (function(){
+      const ORIGIN = window.location.origin;
+      document.getElementById('origin').textContent = ORIGIN;
+
+      // Config públicos (anon) ya son seguros
+      const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU4MzQwMTQsImV4cCI6MjA0MTQxMDAxNH0.WaJRwm3fGSoOZzYpU5xhMc82rP6FqJKM52kQGYlXJz8';
+
+      const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: 'api' }, auth: { detectSessionInUrl: true, flowType: 'pkce' } });
+
+      const log = (msg, cls='') => {
+        const el = document.getElementById('log');
+        const line = document.createElement('div');
+        if (cls) line.className = cls;
+        line.textContent = msg;
+        el.appendChild(line);
+        el.scrollTop = el.scrollHeight;
+        console.log('[VALIDAR]', msg);
+      };
+
+      async function headRest() {
+        log('Lanzando HEAD a REST con Accept-Profile: api ...');
+        const url = SUPABASE_URL + '/rest/v1/user_activities?select=id&limit=1';
+        try {
+          const res = await fetch(url, {
+            method: 'HEAD',
+            headers: {
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+              'Accept-Profile': 'api'
+            }
+          });
+          log('HEAD status: ' + res.status + ' ' + res.statusText, res.ok ? 'ok' : (res.status === 401 ? 'warn' : 'err'));
+          if (res.status === 404) log('Tabla no encontrada bajo perfil api (crear api.user_activities)', 'err');
+          if (res.status === 406) log('Problema de perfil/esquema (ver Accept-Profile: api y existencia de esquema api)', 'err');
+          if (res.status === 401) log('RLS exige autenticación (esto es normal, prueba insert tras login)', 'warn');
+        } catch (e) {
+          log('HEAD error: ' + (e.message || e), 'err');
+        }
+      }
+
+      async function loginGoogle() {
+        log('Iniciando login con Google ...');
+        const redirectTo = ORIGIN + '/validar-tracking.html';
+        const { data, error } = await supa.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
+        if (error) {
+          log('Login error: ' + error.message, 'err');
+        } else {
+          log('Redirigiendo a Google ...', 'warn');
+        }
+      }
+
+      async function insertTest() {
+        const { data: sessionData } = await supa.auth.getSession();
+        if (!sessionData || !sessionData.session) {
+          log('Sin sesión activa. Haz login primero.', 'warn');
+          return;
+        }
+        const uid = sessionData.session.user.id;
+        log('Sesión OK para: ' + sessionData.session.user.email, 'ok');
+        log('Insertando actividad de prueba en api.user_activities ...');
+        const { error } = await supa.from('user_activities').insert([
+          {
+            user_id: uid,
+            action_type: 'validation',
+            action_data: { page: 'validar-tracking', at: new Date().toISOString() },
+            created_at: new Date().toISOString()
+          }
+        ]);
+        if (error) {
+          log('Insert error: ' + (error.message || JSON.stringify(error)), 'err');
+        } else {
+          log('Insert OK. Tabla accesible y RLS correcto.', 'ok');
+        }
+      }
+
+      document.getElementById('btnHead').addEventListener('click', headRest);
+      document.getElementById('btnLogin').addEventListener('click', loginGoogle);
+      document.getElementById('btnInsert').addEventListener('click', insertTest);
+      document.getElementById('btnClear').addEventListener('click', () => { document.getElementById('log').innerHTML=''; });
+
+      // Si volvimos de OAuth, mostrar estado sesión
+      supa.auth.getSession().then(({ data }) => {
+        if (data && data.session) {
+          log('Sesión detectada: ' + data.session.user.email, 'ok');
+        } else {
+          log('Sin sesión. Puedes ejecutar HEAD o loguearte.', 'warn');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

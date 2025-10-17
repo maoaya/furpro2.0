@@ -286,6 +286,23 @@ class UserActivityTracker {
         })));
 
       if (error) {
+        // Detectar 404 típico de tabla inexistente bajo esquema api
+        const msg = (error?.message || '').toLowerCase();
+        const code = error?.code || '';
+        const status = error?.status || error?.statusCode || 0;
+        if (status === 404 || msg.includes('not found') || msg.includes('does not exist')) {
+          console.warn('⚠️ Tracking deshabilitado temporalmente (tabla api.user_activities no encontrada).');
+          // Backoff: guardar en localStorage y no reintentar agresivamente para evitar spam
+          this.pendingActions.unshift(...actionsToProcess);
+          this.savePendingActions();
+          // Desactivar autosave por 2 minutos
+          if (this.autoSaveInterval) clearInterval(this.autoSaveInterval);
+          setTimeout(() => {
+            this.autoSaveInterval = setInterval(() => this.processPendingActions(), 3000);
+          }, 120000);
+          return;
+        }
+
         console.error('❌ Error guardando actividades:', error);
         // Volver a añadir a la cola con incremento de intentos
         actionsToProcess.forEach(action => {
