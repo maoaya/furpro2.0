@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de Despliegue - FutPro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .status-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .status-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .badge.building {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .badge.ready {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge.failed {
+            background: #dc3545;
+            color: white;
+        }
+
+        .badge.unknown {
+            background: #6c757d;
+            color: white;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #333;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn.secondary {
+            background: #6c757d;
+        }
+
+        .btn.secondary:hover {
+            background: #5a6268;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .log {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .log-line {
+            margin: 5px 0;
+        }
+
+        .timestamp {
+            color: #888;
+            font-size: 0.8em;
+        }
+
+        .error-text {
+            color: #ff6b6b;
+        }
+
+        .success-text {
+            color: #51cf66;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Monitor de Despliegue</h1>
+        <p class="subtitle">Commit: <strong>9e4d0cd</strong> - "fix: separar clientes Supabase - Auth sin schema, DB con schema api"</p>
+
+        <div class="status-box">
+            <div class="status-header">
+                <div class="status-title">Estado del Despliegue</div>
+                <span class="badge unknown" id="status-badge">Verificando...</span>
+            </div>
+            <div id="deploy-info">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <div class="log" id="log-container">
+            <div class="log-line"><span class="timestamp">[Iniciando monitor...]</span></div>
+        </div>
+
+        <div class="actions">
+            <button class="btn" onclick="checkStatus()">🔄 Actualizar Estado</button>
+            <button class="btn secondary" onclick="window.open('https://app.netlify.com/sites/futpro-vip/deploys', '_blank')">📊 Ver Dashboard Netlify</button>
+            <button class="btn secondary" onclick="window.open('https://futpro.vip', '_blank')">🌐 Abrir Sitio</button>
+        </div>
+    </div>
+
+    <script>
+        let checkInterval = null;
+
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('log-container');
+            const time = new Date().toLocaleTimeString('es-ES');
+            const className = type === 'error' ? 'error-text' : type === 'success' ? 'success-text' : '';
+            
+            const line = document.createElement('div');
+            line.className = 'log-line';
+            line.innerHTML = `<span class="timestamp">[${time}]</span> <span class="${className}">${message}</span>`;
+            
+            log.appendChild(line);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        async function checkStatus() {
+            addLog('Verificando estado del despliegue...');
+            
+            try {
+                // Verificar si el sitio responde
+                const response = await fetch('https://futpro.vip/', { method: 'HEAD' });
+                
+                if (response.ok) {
+                    addLog('✅ Sitio accesible en https://futpro.vip', 'success');
+                    
+                    // Verificar si el fix está desplegado
+                    const htmlResponse = await fetch('https://futpro.vip/');
+                    const html = await htmlResponse.text();
+                    
+                    // Buscar señales del nuevo código
+                    const hasNewCode = html.includes('supabaseAuth') || html.includes('9e4d0cd');
+                    
+                    if (hasNewCode) {
+                        updateStatus('ready', 'Desplegado ✅', {
+                            'Commit': '9e4d0cd',
+                            'Estado': 'Live',
+                            'URL': 'https://futpro.vip',
+                            'Última verificación': new Date().toLocaleString('es-ES')
+                        });
+                        addLog('🎉 Fix desplegado correctamente - supabaseAuth detectado', 'success');
+                        stopMonitoring();
+                    } else {
+                        updateStatus('building', 'Desplegando... ⏳', {
+                            'Commit anterior': 'Aún activo',
+                            'Estado': 'Building',
+                            'Estimado': '2-3 minutos'
+                        });
+                        addLog('⏳ Sitio accesible pero aún con versión anterior');
+                    }
+                } else {
+                    addLog('⚠️ Error al acceder al sitio: ' + response.status, 'error');
+                }
+            } catch (error) {
+                addLog('❌ Error de red: ' + error.message, 'error');
+                updateStatus('unknown', 'Error de conexión', {
+                    'Error': error.message
+                });
+            }
+        }
+
+        function updateStatus(state, text, info) {
+            const badge = document.getElementById('status-badge');
+            badge.className = `badge ${state}`;
+            badge.textContent = text;
+
+            const infoContainer = document.getElementById('deploy-info');
+            infoContainer.innerHTML = '';
+
+            for (const [label, value] of Object.entries(info)) {
+                const row = document.createElement('div');
+                row.className = 'info-row';
+                row.innerHTML = `
+                    <span class="info-label">${label}:</span>
+                    <span class="info-value">${value}</span>
+                `;
+                infoContainer.appendChild(row);
+            }
+        }
+
+        function startMonitoring() {
+            addLog('🔄 Iniciando monitoreo automático cada 30 segundos...');
+            checkStatus();
+            checkInterval = setInterval(checkStatus, 30000); // Cada 30 segundos
+        }
+
+        function stopMonitoring() {
+            if (checkInterval) {
+                clearInterval(checkInterval);
+                checkInterval = null;
+                addLog('✋ Monitoreo detenido - despliegue completado', 'success');
+            }
+        }
+
+        // Iniciar monitoreo automático
+        startMonitoring();
+    </script>
+</body>
+</html>
