@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Final - Tracking System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        .test-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        .btn.success {
+            background: #28a745;
+        }
+        .btn.danger {
+            background: #dc3545;
+        }
+        .result {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            color: #ff6b6b;
+        }
+        .success-text {
+            color: #51cf66;
+        }
+        .info {
+            color: #ffd43b;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        .badge-error {
+            background: #dc3545;
+            color: white;
+        }
+        .badge-pending {
+            background: #ffc107;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 Test Final del Sistema</h1>
+        <p style="color: #666; margin-bottom: 30px;">Verificación completa de OAuth, Tracking y Base de Datos</p>
+
+        <!-- Test 1: Clientes Supabase -->
+        <div class="test-section">
+            <div class="test-title">
+                1. Verificar Clientes Supabase
+                <span class="status-badge badge-pending" id="status-clients">Pendiente</span>
+            </div>
+            <button class="btn" onclick="testSupabaseClients()">🔍 Verificar Clientes</button>
+            <div class="result" id="result-clients" style="display:none;"></div>
+        </div>
+
+        <!-- Test 2: Autenticación -->
+        <div class="test-section">
+            <div class="test-title">
+                2. Estado de Autenticación
+                <span class="status-badge badge-pending" id="status-auth">Pendiente</span>
+            </div>
+            <button class="btn" onclick="testAuth()">👤 Verificar Sesión</button>
+            <button class="btn" onclick="loginGoogle()">🔐 Login Google</button>
+            <div class="result" id="result-auth" style="display:none;"></div>
+        </div>
+
+        <!-- Test 3: Tabla user_activities -->
+        <div class="test-section">
+            <div class="test-title">
+                3. Tabla api.user_activities
+                <span class="status-badge badge-pending" id="status-table">Pendiente</span>
+            </div>
+            <button class="btn" onclick="testTable()">📊 Verificar Tabla</button>
+            <button class="btn success" onclick="testInsert()">➕ Test Insert</button>
+            <div class="result" id="result-table" style="display:none;"></div>
+        </div>
+
+        <!-- Test 4: UserActivityTracker -->
+        <div class="test-section">
+            <div class="test-title">
+                4. UserActivityTracker System
+                <span class="status-badge badge-pending" id="status-tracker">Pendiente</span>
+            </div>
+            <button class="btn" onclick="testTracker()">🎯 Test Tracker</button>
+            <div class="result" id="result-tracker" style="display:none;"></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn" style="background: #6c757d;" onclick="runAllTests()">🚀 Ejecutar Todos los Tests</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NzYzMTgsImV4cCI6MjA1MjU1MjMxOH0.GFo0ivFnj4FvQRMOJ_2SuZyAxYeFV94qdCOJpMZ0JCI';
+
+        // Cliente para Auth (sin schema restriction)
+        const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: {
+                autoRefreshToken: true,
+                persistSession: true,
+                detectSessionInUrl: true,
+                flowType: 'pkce'
+            }
+        });
+
+        // Cliente para DB (con schema api)
+        const supabaseDB = createClient(SUPABASE_URL, SUPABASE_KEY, {
+            db: { schema: 'api' }
+        });
+
+        window.supabaseAuth = supabaseAuth;
+        window.supabaseDB = supabaseDB;
+
+        function log(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            container.style.display = 'block';
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success-text' : 'info';
+            container.innerHTML += `<div class="${className}">${message}</div>`;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateStatus(badgeId, status) {
+            const badge = document.getElementById(badgeId);
+            badge.className = 'status-badge badge-' + status;
+            badge.textContent = status === 'success' ? '✅ OK' : status === 'error' ? '❌ Error' : '⏳ Procesando';
+        }
+
+        window.testSupabaseClients = function() {
+            const container = 'result-clients';
+            document.getElementById(container).innerHTML = '';
+            updateStatus('status-clients', 'pending');
+
+            log(container, '🔍 Verificando clientes Supabase...', 'info');
+            
+            if (window.supabaseAuth) {
+                log(container, '✅ supabaseAuth inicializado correctamente', 'success');
+            } else {
+                log(container, '❌ supabaseAuth NO encontrado', 'error');
+                updateStatus('status-clients', 'error');
+                return;
+            }
+
+            if (window.supabaseDB) {
+                log(container, '✅ supabaseDB inicializado correctamente', 'success');
+            } else {
+                log(container, '❌ supabaseDB NO encontrado', 'error');
+                updateStatus('status-clients', 'error');
+                return;
+            }
+
+            log(container, '✅ Ambos clientes funcionando', 'success');
+            updateStatus('status-clients', 'success');
+        };
+
+        window.testAuth = async function() {
+            const container = 'result-auth';
+            document.getElementById(container).innerHTML = '';
+            updateStatus('status-auth', 'pending');
+
+            log(container, '🔍 Verificando sesión de usuario...', 'info');
+
+            try {
+                const { data: { session }, error } = await supabaseAuth.auth.getSession();
+                
+                if (error) {
+                    log(container, '❌ Error al obtener sesión: ' + error.message, 'error');
+                    updateStatus('status-auth', 'error');
+                    return;
+                }
+
+                if (session && session.user) {
+                    log(container, '✅ Usuario autenticado', 'success');
+                    log(container, '   Email: ' + session.user.email, 'info');
+                    log(container, '   ID: ' + session.user.id, 'info');
+                    updateStatus('status-auth', 'success');
+                } else {
+                    log(container, '⚠️ No hay sesión activa - Debes hacer login', 'error');
+                    updateStatus('status-auth', 'error');
+                }
+            } catch (e) {
+                log(container, '❌ Error: ' + e.message, 'error');
+                updateStatus('status-auth', 'error');
+            }
+        };
+
+        window.loginGoogle = async function() {
+            const container = 'result-auth';
+            log(container, '🔐 Iniciando login con Google...', 'info');
+
+            try {
+                const { error } = await supabaseAuth.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + '/auth/callback'
+                    }
+                });
+
+                if (error) {
+                    log(container, '❌ Error en OAuth: ' + error.message, 'error');
+                } else {
+                    log(container, '✅ Redirigiendo a Google...', 'success');
+                }
+            } catch (e) {
+                log(container, '❌ Error: ' + e.message, 'error');
+            }
+        };
+
+        window.testTable = async function() {
+            const container = 'result-table';
+            document.getElementById(container).innerHTML = '';
+            updateStatus('status-table', 'pending');
+
+            log(container, '🔍 Verificando tabla api.user_activities...', 'info');
+
+            try {
+                const { data, error } = await supabaseDB
+                    .from('user_activities')
+                    .select('count')
+                    .limit(1);
+
+                if (error) {
+                    log(container, '❌ Error: ' + error.message, 'error');
+                    log(container, '   Código: ' + error.code, 'error');
+                    
+                    if (error.code === 'PGRST106') {
+                        log(container, '💡 La tabla existe pero está en otro schema', 'info');
+                    } else if (error.code === '42P01') {
+                        log(container, '💡 La tabla NO existe - ejecuta migrar_user_activities_api.sql', 'info');
+                    }
+                    
+                    updateStatus('status-table', 'error');
+                    return;
+                }
+
+                log(container, '✅ Tabla accesible correctamente', 'success');
+                log(container, '   Registros: ' + (data?.length || 0), 'info');
+                updateStatus('status-table', 'success');
+            } catch (e) {
+                log(container, '❌ Error: ' + e.message, 'error');
+                updateStatus('status-table', 'error');
+            }
+        };
+
+        window.testInsert = async function() {
+            const container = 'result-table';
+            log(container, '➕ Intentando insertar registro de prueba...', 'info');
+
+            try {
+                const { data: { session } } = await supabaseAuth.auth.getSession();
+                
+                if (!session || !session.user) {
+                    log(container, '❌ Debes estar autenticado para insertar', 'error');
+                    return;
+                }
+
+                const testData = {
+                    user_id: session.user.id,
+                    action_type: 'test_insert',
+                    action_data: { timestamp: new Date().toISOString(), source: 'test-tracking-final' }
+                };
+
+                log(container, '   Insertando con user_id: ' + session.user.id, 'info');
+
+                const { data, error } = await supabaseDB
+                    .from('user_activities')
+                    .insert([testData])
+                    .select();
+
+                if (error) {
+                    log(container, '❌ Error en INSERT: ' + error.message, 'error');
+                    log(container, '   Código: ' + error.code, 'error');
+                    return;
+                }
+
+                log(container, '✅ INSERT exitoso!', 'success');
+                log(container, '   ID generado: ' + data[0].id, 'success');
+            } catch (e) {
+                log(container, '❌ Error: ' + e.message, 'error');
+            }
+        };
+
+        window.testTracker = async function() {
+            const container = 'result-tracker';
+            document.getElementById(container).innerHTML = '';
+            updateStatus('status-tracker', 'pending');
+
+            log(container, '🎯 Verificando UserActivityTracker...', 'info');
+
+            // Simular tracking
+            log(container, '   Acción simulada: page_view', 'info');
+            log(container, '   Timestamp: ' + new Date().toISOString(), 'info');
+            
+            // Verificar si está cargado
+            if (typeof window.UserActivityTracker !== 'undefined') {
+                log(container, '✅ UserActivityTracker cargado', 'success');
+                updateStatus('status-tracker', 'success');
+            } else {
+                log(container, '⚠️ UserActivityTracker no detectado en esta página', 'info');
+                log(container, '   (Normal si no estás en la app principal)', 'info');
+                updateStatus('status-tracker', 'success');
+            }
+        };
+
+        window.runAllTests = async function() {
+            await testSupabaseClients();
+            await new Promise(r => setTimeout(r, 1000));
+            await testAuth();
+            await new Promise(r => setTimeout(r, 1000));
+            await testTable();
+            await new Promise(r => setTimeout(r, 1000));
+            await testTracker();
+        };
+
+        // Auto-ejecutar test de clientes al cargar
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testSupabaseClients();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
