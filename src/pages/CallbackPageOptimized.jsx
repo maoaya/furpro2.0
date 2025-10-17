@@ -106,8 +106,8 @@ export default function CallbackPageOptimized() {
             
             if (error || !data.session) {
               console.error('❌ Error estableciendo sesión:', error);
-              setStatus('No se pudo completar la autenticación. Redirigiendo...');
-              setTimeout(() => navigate('/?error=' + encodeURIComponent('No se pudo completar la autenticación'), { replace: true }), 2000);
+              setStatus('No se pudo completar la autenticación. Redirigiendo a tu dashboard...');
+              setTimeout(() => navigate('/home', { replace: true }), 1500);
               return;
             }
             
@@ -119,7 +119,7 @@ export default function CallbackPageOptimized() {
           }
           
           setStatus('No se pudo completar la autenticación. Redirigiendo...');
-          setTimeout(() => navigate('/?error=' + encodeURIComponent('No se pudo completar la autenticación'), { replace: true }), 2000);
+          setTimeout(() => navigate('/home', { replace: true }), 1500);
           return;
         }
 
@@ -128,9 +128,9 @@ export default function CallbackPageOptimized() {
         await processUserProfile(user);
 
       } catch (error) {
-        console.error('💥 Error inesperado en callback:', error);
-        setStatus('Error inesperado. Redirigiendo...');
-        setTimeout(() => navigate('/', { replace: true }), 2000);
+  console.error('💥 Error inesperado en callback:', error);
+  setStatus('Error inesperado. Redirigiendo a tu dashboard...');
+  setTimeout(() => navigate('/home', { replace: true }), 1500);
       } finally {
         setProcessing(false);
       }
@@ -200,7 +200,8 @@ export default function CallbackPageOptimized() {
 
           if (createError) {
             console.error('❌ Error creando perfil:', createError);
-            // Continuar sin perfil, el usuario puede completarlo después
+            setStatus('Error creando perfil, pero tu sesión está activa. Redirigiendo...');
+            setTimeout(() => navigate('/home', { replace: true }), 1200);
           } else {
             console.log('✅ Perfil creado exitosamente para usuario OAuth con datos completos');
             // Limpiar draft si se usó
@@ -238,9 +239,9 @@ export default function CallbackPageOptimized() {
           }, 1000);
         }
       } catch (error) {
-        console.error('💥 Error procesando perfil:', error);
-        setStatus('Error configurando perfil. Redirigiendo...');
-        setTimeout(() => navigate('/home', { replace: true }), 2000);
+  console.error('💥 Error procesando perfil:', error);
+  setStatus('Error configurando perfil. Redirigiendo a tu dashboard...');
+  setTimeout(() => navigate('/home', { replace: true }), 1200);
       }
     };
 
