@@ -19,8 +19,9 @@ const supabaseOptions = {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true,
-        // Configuración específica para evitar errores 502
-        flowType: 'pkce',
+        // 🔥 CAMBIO CRÍTICO: Forzar flujo IMPLICIT en lugar de PKCE
+        // PKCE requiere code_verifier que no está funcionando correctamente
+        flowType: 'implicit',
         storage: (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : undefined,
         storageKey: 'futpro-auth-token'
     },

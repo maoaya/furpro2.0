@@ -25,6 +25,16 @@ export default function CallbackPageOptimized() {
         const hasCode = window.location.href.includes('code=');
         const errorParam = searchParams.get('error') || hashParams.get('error');
         const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
+        
+        // 🔍 DEBUG: Loguear TODO lo que llega en la URL
+        console.log('🔍 DEBUG CALLBACK URL:', {
+          fullURL: window.location.href,
+          search: window.location.search,
+          hash: window.location.hash,
+          hasCode,
+          searchParams: Object.fromEntries(searchParams.entries()),
+          hashParams: Object.fromEntries(hashParams.entries())
+        });
 
         if (errorParam) {
           const errorDescription = searchParams.get('error_description') || hashParams.get('error_description') || 'Sin descripción';
