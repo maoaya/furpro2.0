@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import supabase, { supabaseAuth } from '../supabaseClient'; // Importar ambos clientes
+import supabase, { supabaseAuth } from '../supabaseClient'; // Cliente único (alias)
 import { authFlowManager, handleAuthenticationSuccess } from '../utils/authFlowManager.js';
 import getConfig from '../config/environment.js';
 
@@ -10,6 +10,7 @@ export default function CallbackPageOptimized() {
   const { user, loading } = useAuth();
   const [processing, setProcessing] = useState(true);
   const [status, setStatus] = useState('Procesando autenticación...');
+  const [showFixInstructions, setShowFixInstructions] = useState(false);
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -17,60 +18,66 @@ export default function CallbackPageOptimized() {
         console.log('🔄 CallbackPage: Procesando callback OAuth...');
         setStatus('Verificando autenticación...');
 
-        // 0) Si viene con error en la URL, intentar un reintento seguro UNA sola vez
+        // Preparar parámetros de URL
         const searchParams = new URLSearchParams(window.location.search);
         const hashParamsRaw = window.location.hash?.startsWith('#') ? window.location.hash.substring(1) : '';
         const hashParams = new URLSearchParams(hashParamsRaw);
+        const hasCode = window.location.href.includes('code=');
         const errorParam = searchParams.get('error') || hashParams.get('error');
         const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
 
         if (errorParam) {
           const errorDescription = searchParams.get('error_description') || hashParams.get('error_description') || 'Sin descripción';
-          console.warn('⚠️ Error recibido en callback:', { 
-            errorParam, 
-            errorCode, 
+          console.warn('⚠️ Error recibido en callback:', {
+            errorParam,
+            errorCode,
             errorDescription: decodeURIComponent(errorDescription),
-            fullURL: window.location.href 
+            fullURL: window.location.href
           });
-          const alreadyRetried = sessionStorage.getItem('oauth_retry_once') === 'true';
-          if (!alreadyRetried && (
-            errorParam.includes('server_error') ||
-            (errorCode && errorCode.includes('unexpected_failure')) ||
-            decodeURIComponent((searchParams.get('error_description') || hashParams.get('error_description') || '')).toLowerCase().includes('exchange')
-          )) {
-            sessionStorage.setItem('oauth_retry_once', 'true');
-            setStatus('Hubo un problema intercambiando el código. Reintentando login de forma segura...');
-            const config = getConfig();
-            try {
-              const { error } = await supabaseAuth.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                  redirectTo: config.oauthCallbackUrl,
-                  queryParams: { prompt: 'select_account' }
-                }
-              });
-              if (error) {
-                console.error('❌ Reintento OAuth falló:', error);
-                setTimeout(() => navigate('/?error=' + encodeURIComponent('No se pudo completar la autenticación'), { replace: true }), 1500);
-                return;
-              }
-              // Supabase redirigirá, detener flujo actual
-              return;
-            } catch (e) {
-              console.error('💥 Excepción en reintento OAuth:', e);
-              setTimeout(() => navigate('/?error=' + encodeURIComponent('No se pudo completar la autenticación'), { replace: true }), 1500);
-              return;
-            }
+          // Si el error indica mismatch de redirect_uri, mostrar instrucciones visibles
+          const desc = decodeURIComponent(errorDescription).toLowerCase();
+          if (errorParam.includes('invalid') || desc.includes('redirect') || desc.includes('redirect_uri')) {
+            setShowFixInstructions(true);
+            setStatus('Error de configuración OAuth: redirect_uri mismatch. Debes actualizar Redirect URLs en Supabase/Google.');
+            // No intentar relanzar login desde aquí para evitar loops
+            setProcessing(false);
+            return;
           }
+          // No relanzar signIn aquí para evitar bucles; seguimos al exchange si hay code.
         }
 
   // Esperar un poco para que Supabase procese el callback
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Obtener la sesión actual usando el cliente Auth (sin restricción de schema)
+        // 1) Intentar intercambio explícito si viene con code/state (PKCE)
+        let activeSession = null;
+        if (hasCode) {
+          setStatus('Intercambiando código por sesión...');
+          let lastErr = null;
+          for (let i = 0; i < 2; i++) { // hasta 2 intentos rápidos
+            const { data, error } = await supabaseAuth.auth.exchangeCodeForSession(window.location.href);
+            if (error) {
+              lastErr = error;
+              console.warn(`⚠️ exchangeCodeForSession intento ${i + 1} falló:`, error?.message || error);
+              await new Promise(r => setTimeout(r, 400));
+              continue;
+            }
+            if (data?.session?.user) {
+              activeSession = data.session;
+              console.log('✅ Sesión establecida vía exchangeCodeForSession');
+              break;
+            }
+          }
+          if (!activeSession && lastErr) {
+            console.error('❌ exchangeCodeForSession error final:', lastErr);
+          }
+        }
+
+        // 2) Obtener la sesión actual
         const { data: { session }, error: sessionError } = await supabaseAuth.auth.getSession();
+        const effectiveSession = activeSession || session;
         
-        console.log('📊 Estado de sesión:', { session: !!session, user: !!session?.user, error: sessionError });
+        console.log('📊 Estado de sesión:', { session: !!effectiveSession, user: !!effectiveSession?.user, error: sessionError });
         
         if (sessionError) {
           console.error('❌ Error obteniendo sesión:', sessionError);
@@ -79,33 +86,18 @@ export default function CallbackPageOptimized() {
           return;
         }
 
-        if (!session || !session.user) {
+        if (!effectiveSession || !effectiveSession.user) {
           console.warn('⚠️ No hay sesión válida en callback');
           console.log('🔍 Intentando recuperar sesión desde URL...');
           // 1) Si viene flujo con code/state (PKCE), intentar intercambio explícito
-          const urlHasCode = window.location.search.includes('code=') && window.location.search.includes('state=');
-          if (urlHasCode) {
-            try {
-              setStatus('Intercambiando código por sesión...');
-              const { data, error } = await supabaseAuth.auth.exchangeCodeForSession(window.location.href);
-              if (error) {
-                console.error('❌ exchangeCodeForSession error:', error);
-              } else if (data?.session?.user) {
-                console.log('✅ Sesión establecida vía exchangeCodeForSession');
-                await processUserProfile(data.session.user);
-                return;
-              }
-            } catch (ex) {
-              console.error('💥 Excepción en exchangeCodeForSession:', ex);
-            }
-          }
+          // Ya se intentó arriba si había code.
           
           // Intentar obtener sesión desde el hash de la URL
           const accessToken = hashParams.get('access_token');
           
           if (accessToken) {
             console.log('✅ Token encontrado en URL, estableciendo sesión...');
-            const { data, error } = await supabase.auth.setSession({
+            const { data, error } = await supabaseAuth.auth.setSession({
               access_token: accessToken,
               refresh_token: hashParams.get('refresh_token') || ''
             });
@@ -129,7 +121,7 @@ export default function CallbackPageOptimized() {
           return;
         }
 
-        const user = session.user;
+  const user = (effectiveSession || {}).user;
         console.log('✅ Usuario OAuth autenticado:', user.email);
         await processUserProfile(user);
 
@@ -346,6 +338,22 @@ export default function CallbackPageOptimized() {
         }}>
           {status}
         </p>
+
+        {showFixInstructions && (
+          <div style={{ textAlign: 'left', marginTop: 12, color: '#fff' }}>
+            <h3 style={{ color: '#FFD700', fontSize: 16 }}>Solución rápida</h3>
+            <p style={{ color: '#ccc', fontSize: 14 }}>Parece que las Redirect URLs configuradas para OAuth no coinciden con este dominio. Sigue estos pasos:</p>
+            <ol style={{ color: '#ddd', fontSize: 14 }}>
+              <li>En Supabase > Authentication > URL Configuration, agrega: <strong>https://futpro.vip/auth/callback</strong> y <strong>https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback</strong></li>
+              <li>En Google Cloud Console > Credentials > OAuth client, agrega las mismas URLs en Authorized redirect URIs y agrega <strong>https://futpro.vip</strong> en Authorized JavaScript origins.</li>
+              <li>Después de guardar, intenta el login en una ventana de incógnito.</li>
+            </ol>
+            <div style={{ marginTop: 10 }}>
+              <a href="https://app.supabase.com/project/qqrxetxcglwrejtblwut/auth/url-configuration" target="_blank" rel="noreferrer" style={{ color: '#FFD700', textDecoration: 'underline', marginRight: 12 }}>Abrir Supabase (URL config)</a>
+              <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer" style={{ color: '#FFD700', textDecoration: 'underline' }}>Abrir Google Cloud Console</a>
+            </div>
+          </div>
+        )}
 
         {!processing && (
           <div style={{
