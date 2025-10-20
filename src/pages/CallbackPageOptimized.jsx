@@ -47,33 +47,50 @@ export default function CallbackPageOptimized() {
         }
 
   // Esperar un poco para que Supabase procese el callback
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise(resolve => setTimeout(resolve, 800));
 
-        // 1) Intentar intercambio explícito si viene con code/state (PKCE)
+        // 1) PRIORIDAD: Intentar obtener tokens desde el HASH (flujo implicit)
         let activeSession = null;
-        if (hasCode) {
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        
+        if (accessToken) {
+          console.log('✅ Access token encontrado en hash, estableciendo sesión...');
+          setStatus('Estableciendo sesión desde token...');
+          try {
+            const { data, error } = await supabaseAuth.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken || ''
+            });
+            
+            if (error) {
+              console.error('❌ Error estableciendo sesión desde hash:', error);
+            } else if (data?.session?.user) {
+              activeSession = data.session;
+              console.log('✅ Sesión establecida desde access_token en hash');
+            }
+          } catch (err) {
+            console.error('💥 Excepción estableciendo sesión desde hash:', err);
+          }
+        }
+        
+        // 2) FALLBACK: Si no hay token en hash, intentar PKCE (code en query)
+        if (!activeSession && hasCode) {
           setStatus('Intercambiando código por sesión...');
-          let lastErr = null;
-          for (let i = 0; i < 2; i++) { // hasta 2 intentos rápidos
+          try {
             const { data, error } = await supabaseAuth.auth.exchangeCodeForSession(window.location.href);
             if (error) {
-              lastErr = error;
-              console.warn(`⚠️ exchangeCodeForSession intento ${i + 1} falló:`, error?.message || error);
-              await new Promise(r => setTimeout(r, 400));
-              continue;
-            }
-            if (data?.session?.user) {
+              console.warn('⚠️ exchangeCodeForSession falló:', error?.message || error);
+            } else if (data?.session?.user) {
               activeSession = data.session;
-              console.log('✅ Sesión establecida vía exchangeCodeForSession');
-              break;
+              console.log('✅ Sesión establecida vía exchangeCodeForSession (PKCE)');
             }
-          }
-          if (!activeSession && lastErr) {
-            console.error('❌ exchangeCodeForSession error final:', lastErr);
+          } catch (err) {
+            console.error('💥 Excepción en exchangeCodeForSession:', err);
           }
         }
 
-        // 2) Obtener la sesión actual
+        // 3) Obtener la sesión actual como último recurso
         const { data: { session }, error: sessionError } = await supabaseAuth.auth.getSession();
         const effectiveSession = activeSession || session;
         
@@ -87,37 +104,10 @@ export default function CallbackPageOptimized() {
         }
 
         if (!effectiveSession || !effectiveSession.user) {
-          console.warn('⚠️ No hay sesión válida en callback');
-          console.log('🔍 Intentando recuperar sesión desde URL...');
-          // 1) Si viene flujo con code/state (PKCE), intentar intercambio explícito
-          // Ya se intentó arriba si había code.
-          
-          // Intentar obtener sesión desde el hash de la URL
-          const accessToken = hashParams.get('access_token');
-          
-          if (accessToken) {
-            console.log('✅ Token encontrado en URL, estableciendo sesión...');
-            const { data, error } = await supabaseAuth.auth.setSession({
-              access_token: accessToken,
-              refresh_token: hashParams.get('refresh_token') || ''
-            });
-            
-            if (error || !data.session) {
-              console.error('❌ Error estableciendo sesión:', error);
-              setStatus('No se pudo completar la autenticación. Redirigiendo a tu dashboard...');
-              setTimeout(() => navigate('/home', { replace: true }), 1500);
-              return;
-            }
-            
-            // Usar la sesión establecida
-            const user = data.session.user;
-            console.log('✅ Sesión establecida correctamente para:', user.email);
-            await processUserProfile(user);
-            return;
-          }
-          
-          setStatus('No se pudo completar la autenticación. Redirigiendo...');
-          setTimeout(() => navigate('/home', { replace: true }), 1500);
+          console.warn('⚠️ No hay sesión válida después de todos los intentos');
+          setStatus('No se pudo completar la autenticación. Por favor, intenta de nuevo.');
+          setProcessing(false);
+          setTimeout(() => navigate('/', { replace: true }), 3000);
           return;
         }
 
