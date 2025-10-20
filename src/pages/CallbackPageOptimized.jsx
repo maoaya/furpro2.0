@@ -44,51 +44,71 @@ export default function CallbackPageOptimized() {
             errorDescription: decodeURIComponent(errorDescription),
             fullURL: window.location.href
           });
-          // Si el error indica mismatch de redirect_uri, mostrar instrucciones visibles
-          const desc = decodeURIComponent(errorDescription).toLowerCase();
-          if (errorParam.includes('invalid') || desc.includes('redirect') || desc.includes('redirect_uri')) {
-            setShowFixInstructions(true);
-            setStatus('Error de configuración OAuth: redirect_uri mismatch. Debes actualizar Redirect URLs en Supabase/Google.');
-            // No intentar relanzar login desde aquí para evitar loops
-            setProcessing(false);
-            return;
-          }
-          // No relanzar signIn aquí para evitar bucles; seguimos al exchange si hay code.
-        }
-
-        // 🔥 ESTRATEGIA SIMPLIFICADA: Dejar que Supabase haga TODO el trabajo
-        // Con detectSessionInUrl: true, Supabase automáticamente detecta y procesa
-        // los tokens del hash o el código PKCE. Solo necesitamos esperar y obtener la sesión.
-        
-        console.log('⏳ Esperando a que Supabase procese la URL automáticamente...');
-        setStatus('Procesando autenticación con Google...');
-        
-        // Esperar un poco más para asegurar que Supabase procese la URL
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Obtener la sesión que Supabase ya debería haber establecido
-        console.log('📡 Obteniendo sesión después de procesamiento automático...');
-        const { data: { session }, error: sessionError } = await supabaseAuth.auth.getSession();
-        const effectiveSession = session;
-        
-        console.log('📊 Estado de sesión:', { session: !!effectiveSession, user: !!effectiveSession?.user, error: sessionError });
-        
-        if (sessionError) {
-          console.error('❌ Error obteniendo sesión:', sessionError);
-          setStatus('Error en autenticación. Redirigiendo...');
+          // Redirigir inmediatamente si hay error
+          setStatus('Error de autenticación. Redirigiendo...');
+          setProcessing(false);
           setTimeout(() => navigate('/', { replace: true }), 2000);
           return;
         }
 
+        // 🔥 ESTRATEGIA FINAL: Procesar manualmente según lo que REALMENTE venga
+        console.log('⏳ Procesando callback manualmente...');
+        setStatus('Procesando autenticación con Google...');
+        
+        let effectiveSession = null;
+        
+        // 1️⃣ PRIMERO: Si hay access_token en el HASH, usar setSession
+        const accessToken = hashParams.get('access_token');
+        if (accessToken) {
+          console.log('✅ access_token encontrado en hash');
+          const refreshToken = hashParams.get('refresh_token') || '';
+          try {
+            const { data, error } = await supabaseAuth.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken
+            });
+            if (!error && data?.session) {
+              effectiveSession = data.session;
+              console.log('✅ Sesión establecida desde hash:', data.session.user.email);
+            } else {
+              console.error('❌ Error en setSession:', error);
+            }
+          } catch (err) {
+            console.error('💥 Excepción en setSession:', err);
+          }
+        }
+        
+        // 2️⃣ SI NO HAY TOKEN: Dejar que Supabase intente procesar automáticamente
+        if (!effectiveSession) {
+          console.log('📡 No hay token en hash, intentando getSession automático...');
+          await new Promise(resolve => setTimeout(resolve, 1500));
+          const { data: { session }, error: sessionError } = await supabaseAuth.auth.getSession();
+          if (!sessionError && session) {
+            effectiveSession = session;
+            console.log('✅ Sesión obtenida automáticamente:', session.user.email);
+          } else {
+            console.error('❌ getSession falló:', sessionError);
+          }
+        }
+        
+        console.log('📊 Estado FINAL de sesión:', { 
+          session: !!effectiveSession, 
+          user: !!effectiveSession?.user,
+          email: effectiveSession?.user?.email 
+        });
+        
         if (!effectiveSession || !effectiveSession.user) {
-          console.warn('⚠️ No hay sesión válida después de todos los intentos');
-          setStatus('No se pudo completar la autenticación. Por favor, intenta de nuevo.');
+          console.error('❌ NO HAY SESIÓN después de todos los intentos');
+          console.error('🔍 URL completa que llegó:', window.location.href);
+          console.error('🔍 Hash:', window.location.hash);
+          console.error('🔍 Search:', window.location.search);
+          setStatus('No se pudo completar la autenticación. Verifica la configuración de OAuth.');
           setProcessing(false);
           setTimeout(() => navigate('/', { replace: true }), 3000);
           return;
         }
 
-  const user = (effectiveSession || {}).user;
+        const user = effectiveSession.user;
         console.log('✅ Usuario OAuth autenticado:', user.email);
         await processUserProfile(user);
 
