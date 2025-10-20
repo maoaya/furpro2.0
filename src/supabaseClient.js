@@ -19,9 +19,10 @@ const supabaseOptions = {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true,
-        // 🔥 CAMBIO CRÍTICO: Forzar flujo IMPLICIT en lugar de PKCE
-        // PKCE requiere code_verifier que no está funcionando correctamente
-        flowType: 'implicit',
+        // 🔥 ESTRATEGIA: Dejar que Supabase auto-detecte el flujo
+        // Con detectSessionInUrl: true, Supabase maneja automáticamente
+        // tanto implicit (access_token en hash) como PKCE (code en query)
+        // NO especificar flowType para permitir auto-detección
         storage: (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : undefined,
         storageKey: 'futpro-auth-token'
     },

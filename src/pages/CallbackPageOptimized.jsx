@@ -56,53 +56,20 @@ export default function CallbackPageOptimized() {
           // No relanzar signIn aquí para evitar bucles; seguimos al exchange si hay code.
         }
 
-  // Esperar un poco para que Supabase procese el callback
-        await new Promise(resolve => setTimeout(resolve, 800));
-
-        // 1) PRIORIDAD: Intentar obtener tokens desde el HASH (flujo implicit)
-        let activeSession = null;
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
+        // 🔥 ESTRATEGIA SIMPLIFICADA: Dejar que Supabase haga TODO el trabajo
+        // Con detectSessionInUrl: true, Supabase automáticamente detecta y procesa
+        // los tokens del hash o el código PKCE. Solo necesitamos esperar y obtener la sesión.
         
-        if (accessToken) {
-          console.log('✅ Access token encontrado en hash, estableciendo sesión...');
-          setStatus('Estableciendo sesión desde token...');
-          try {
-            const { data, error } = await supabaseAuth.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken || ''
-            });
-            
-            if (error) {
-              console.error('❌ Error estableciendo sesión desde hash:', error);
-            } else if (data?.session?.user) {
-              activeSession = data.session;
-              console.log('✅ Sesión establecida desde access_token en hash');
-            }
-          } catch (err) {
-            console.error('💥 Excepción estableciendo sesión desde hash:', err);
-          }
-        }
+        console.log('⏳ Esperando a que Supabase procese la URL automáticamente...');
+        setStatus('Procesando autenticación con Google...');
         
-        // 2) FALLBACK: Si no hay token en hash, intentar PKCE (code en query)
-        if (!activeSession && hasCode) {
-          setStatus('Intercambiando código por sesión...');
-          try {
-            const { data, error } = await supabaseAuth.auth.exchangeCodeForSession(window.location.href);
-            if (error) {
-              console.warn('⚠️ exchangeCodeForSession falló:', error?.message || error);
-            } else if (data?.session?.user) {
-              activeSession = data.session;
-              console.log('✅ Sesión establecida vía exchangeCodeForSession (PKCE)');
-            }
-          } catch (err) {
-            console.error('💥 Excepción en exchangeCodeForSession:', err);
-          }
-        }
+        // Esperar un poco más para asegurar que Supabase procese la URL
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // 3) Obtener la sesión actual como último recurso
+        // Obtener la sesión que Supabase ya debería haber establecido
+        console.log('📡 Obteniendo sesión después de procesamiento automático...');
         const { data: { session }, error: sessionError } = await supabaseAuth.auth.getSession();
-        const effectiveSession = activeSession || session;
+        const effectiveSession = session;
         
         console.log('📊 Estado de sesión:', { session: !!effectiveSession, user: !!effectiveSession?.user, error: sessionError });
         
