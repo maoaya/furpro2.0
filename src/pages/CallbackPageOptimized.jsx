@@ -57,7 +57,34 @@ export default function CallbackPageOptimized() {
           console.error('Search:', window.location.search);
           console.error('OBJETO COMPLETO:', JSON.stringify(errorDetails, null, 2));
           
-          // Mostrar en pantalla también
+          // 🔥 MANEJO ESPECÍFICO DE bad_oauth_state
+          if (errorParam === 'invalid_request' || errorCode === 'bad_oauth_state' || errorDescription.includes('state')) {
+            console.error('🚨 ERROR DE ESTADO OAUTH - Limpiando storage y redirigiendo...');
+            setStatus('Error de autenticación OAuth. Limpiando caché...');
+            
+            // Limpiar TODO el storage relacionado con Supabase
+            try {
+              localStorage.removeItem('futpro-auth-token');
+              localStorage.removeItem('supabase.auth.token');
+              sessionStorage.clear();
+              
+              // Limpiar cookies de Supabase (esto requiere configuración adicional)
+              document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+              });
+            } catch (e) {
+              console.warn('⚠️ Error limpiando storage:', e);
+            }
+            
+            setProcessing(false);
+            setTimeout(() => {
+              console.log('🔄 Redirigiendo a login limpio...');
+              window.location.href = '/';
+            }, 2500);
+            return;
+          }
+          
+          // Mostrar en pantalla también para otros errores
           setStatus(`Error OAuth: ${errorParam} - ${decodeURIComponent(errorDescription)}`);
           setProcessing(false);
           
