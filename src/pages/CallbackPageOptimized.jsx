@@ -38,16 +38,31 @@ export default function CallbackPageOptimized() {
 
         if (errorParam) {
           const errorDescription = searchParams.get('error_description') || hashParams.get('error_description') || 'Sin descripción';
-          console.warn('⚠️ Error recibido en callback:', {
+          const errorDetails = {
             errorParam,
             errorCode,
             errorDescription: decodeURIComponent(errorDescription),
-            fullURL: window.location.href
-          });
-          // Redirigir inmediatamente si hay error
-          setStatus('Error de autenticación. Redirigiendo...');
+            fullURL: window.location.href,
+            hash: window.location.hash,
+            search: window.location.search
+          };
+          
+          // 🔥 LOGGING EXHAUSTIVO DEL ERROR
+          console.error('❌❌❌ ERROR COMPLETO EN CALLBACK ❌❌❌');
+          console.error('Error Param:', errorParam);
+          console.error('Error Code:', errorCode);
+          console.error('Error Description:', decodeURIComponent(errorDescription));
+          console.error('Full URL:', window.location.href);
+          console.error('Hash:', window.location.hash);
+          console.error('Search:', window.location.search);
+          console.error('OBJETO COMPLETO:', JSON.stringify(errorDetails, null, 2));
+          
+          // Mostrar en pantalla también
+          setStatus(`Error OAuth: ${errorParam} - ${decodeURIComponent(errorDescription)}`);
           setProcessing(false);
-          setTimeout(() => navigate('/', { replace: true }), 2000);
+          
+          // NO redirigir automáticamente - dejar que el usuario vea el error
+          console.error('🚨 DETÉN: Copia TODO este log y pásalo al desarrollador');
           return;
         }
 
