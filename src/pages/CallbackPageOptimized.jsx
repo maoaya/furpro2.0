@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import supabase, { supabaseAuth } from '../supabaseClient'; // Cliente único (alias)
-import { authFlowManager, handleAuthenticationSuccess } from '../utils/authFlowManager.js';
+import supabase, { supabaseAuth } from '../supabaseClient';
 import getConfig from '../config/environment.js';
 
 export default function CallbackPageOptimized() {
@@ -249,27 +248,17 @@ export default function CallbackPageOptimized() {
         localStorage.setItem('userId', user.id);
 
         // Esperar un momento para que AuthContext procese la sesión
-        await new Promise(resolve => setTimeout(resolve, 800));
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Usar el nuevo AuthFlowManager para navegación robusta
-        const resultado = await handleAuthenticationSuccess(user, navigate, {
-          nombre: user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
-          provider: user.app_metadata?.provider
-        });
-
-        if (resultado.success) {
-          console.log('✅ Navegación exitosa con AuthFlowManager');
-          setStatus('¡Redirigiendo a tu dashboard!');
-        } else {
-          console.log('⚠️ Problema con AuthFlowManager, usando fallback directo');
-          setStatus('Finalizando configuración...');
-          
-          // Fallback: forzar navegación con window.location para recargar contexto
-          console.log('🔄 Forzando recarga completa para actualizar contexto...');
-          setTimeout(() => {
-            window.location.href = '/home';
-          }, 500);
-        }
+        // 🎯 NAVEGACIÓN DIRECTA SIN CONDICIONES - Forzar ir a /home
+        console.log('🎯 FORZANDO NAVEGACIÓN DIRECTA A /HOME');
+        setStatus('¡Redirigiendo a tu dashboard!');
+        
+        // Usar window.location para forzar recarga completa y actualizar contexto
+        setTimeout(() => {
+          console.log('🔄 Ejecutando window.location.href = "/home"');
+          window.location.href = '/home';
+        }, 300);
       } catch (error) {
   console.error('💥 Error procesando perfil:', error);
   setStatus('Error configurando perfil. Redirigiendo a tu dashboard...');
@@ -373,8 +362,8 @@ export default function CallbackPageOptimized() {
             <h3 style={{ color: '#FFD700', fontSize: 16 }}>Solución rápida</h3>
             <p style={{ color: '#ccc', fontSize: 14 }}>Parece que las Redirect URLs configuradas para OAuth no coinciden con este dominio. Sigue estos pasos:</p>
             <ol style={{ color: '#ddd', fontSize: 14 }}>
-              <li>En Supabase > Authentication > URL Configuration, agrega: <strong>https://futpro.vip/auth/callback</strong> y <strong>https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback</strong></li>
-              <li>En Google Cloud Console > Credentials > OAuth client, agrega las mismas URLs en Authorized redirect URIs y agrega <strong>https://futpro.vip</strong> en Authorized JavaScript origins.</li>
+              <li>En Supabase &gt; Authentication &gt; URL Configuration, agrega: <strong>https://futpro.vip/auth/callback</strong> y <strong>https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback</strong></li>
+              <li>En Google Cloud Console &gt; Credentials &gt; OAuth client, agrega las mismas URLs en Authorized redirect URIs y agrega <strong>https://futpro.vip</strong> en Authorized JavaScript origins.</li>
               <li>Después de guardar, intenta el login en una ventana de incógnito.</li>
             </ol>
             <div style={{ marginTop: 10 }}>
