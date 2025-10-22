@@ -4,7 +4,8 @@
 [build]
   base = "."
   publish = "dist"
-  command = "npm ci && npm run build"
+  # Copiamos la página estática de Instagram al directorio de publicación
+  command = "npm ci && npm run build && cp homepage-instagram.html dist/homepage-instagram.html"
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':!README.md' ':!*.md'"
 
 [build.environment]
@@ -47,6 +48,23 @@
   external_node_modules = ["@supabase/supabase-js", "firebase"]
 
 # 🔄 Redirects SPA optimizados
+[[redirects]]
+  from = "/home"
+  to = "/homepage-instagram.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/homepage-instagram"
+  to = "/homepage-instagram.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/homepage-instagram.html"
+  to = "/homepage-instagram.html"
+  status = 200
+  force = true
 [[redirects]]
   from = "/auth/*"
   to = "/index.html"

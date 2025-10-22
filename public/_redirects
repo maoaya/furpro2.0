@@ -18,8 +18,11 @@
 /registro-completo    /index.html   200
 
 # === RUTAS PRINCIPALES DE LA APLICACIÓN ===
-/home                 /index.html   200
-/home/*               /index.html   200
+# Forzar que /home use el home estilo Instagram estático
+/home                 /homepage-instagram.html   200
+/home/*               /homepage-instagram.html   200
+/homepage-instagram   /homepage-instagram.html   200
+/homepage-instagram.html   /homepage-instagram.html   200
 /inicio               /index.html   200
 /inicio/*             /index.html   200
 
