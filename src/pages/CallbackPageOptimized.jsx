@@ -98,6 +98,23 @@ export default function CallbackPageOptimized() {
         
         let effectiveSession = null;
         
+        // 0️⃣ Si hay `code` en la query, intercambiarlo por sesión (PKCE)
+        const authCode = searchParams.get('code');
+        if (authCode) {
+          console.log('🔁 Intercambiando code por sesión con Supabase (PKCE)...');
+          try {
+            const { data, error } = await supabaseAuth.auth.exchangeCodeForSession(window.location.href);
+            if (!error && data?.session) {
+              effectiveSession = data.session;
+              console.log('✅ Sesión establecida con exchangeCodeForSession:', data.session.user.email);
+            } else {
+              console.error('❌ Error en exchangeCodeForSession:', error);
+            }
+          } catch (err) {
+            console.error('💥 Excepción en exchangeCodeForSession:', err);
+          }
+        }
+        
         // 1️⃣ PRIMERO: Si hay access_token en el HASH, usar setSession
         const accessToken = hashParams.get('access_token');
         if (accessToken) {

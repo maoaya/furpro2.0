@@ -1,103 +1,70 @@
-const https = require('https');
-
+// ESM + Node 18+: usar fetch para llamar el Build Hook
 // Este script fuerza un redeploy en Netlify usando un Build Hook
-// Primero necesitamos crear el Build Hook desde el dashboard
 
 const SITE_NAME = 'futprovip';
-const BUILD_HOOK_URL = process.env.NETLIFY_BUILD_HOOK || 'https://api.netlify.com/build_hooks/YOUR_HOOK_ID';
+
+// Modo 1: URL pasada como argumento (preferido)
+// Modo 2: variable de entorno NETLIFY_BUILD_HOOK
+const argUrl = process.argv[2];
+const envUrl = process.env.NETLIFY_BUILD_HOOK;
+const BUILD_HOOK_URL = argUrl || envUrl || '';
 
 console.log('🚀 Forzando redeploy en Netlify...');
 console.log('Sitio:', SITE_NAME);
 
-if (BUILD_HOOK_URL.includes('YOUR_HOOK_ID')) {
-  console.error('❌ ERROR: Debes configurar el Build Hook primero');
-  console.error('');
-  console.error('Pasos:');
-  console.error('1. Ve a: https://app.netlify.com/sites/futprovip/settings/deploys');
-  console.error('2. Scroll a "Build hooks"');
-  console.error('3. Click "Add build hook"');
-  console.error('4. Nombre: "Auto Deploy", Branch: master');
-  console.error('5. Copia la URL generada');
-  console.error('6. Ejecuta: set NETLIFY_BUILD_HOOK=<URL_COPIADA> && node trigger-deploy.js');
+if (!BUILD_HOOK_URL.startsWith('https://api.netlify.com/build_hooks/')) {
+  console.error('❌ ERROR: Debes proporcionar la URL del Build Hook');
+  console.error('   Ejemplo: node trigger-deploy.js https://api.netlify.com/build_hooks/XXXXXXXXXXXX');
   process.exit(1);
 }
 
-const url = new URL(BUILD_HOOK_URL);
-
-const options = {
-  hostname: url.hostname,
-  port: 443,
-  path: url.pathname,
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  }
-};
-
-const req = https.request(options, (res) => {
-  console.log('📡 Respuesta de Netlify:', res.statusCode);
-  
-  let data = '';
-  res.on('data', (chunk) => {
-    data += chunk;
-  });
-  
-  res.on('end', () => {
-    if (res.statusCode === 200 || res.statusCode === 201) {
-      console.log('✅ Deploy disparado exitosamente!');
-      console.log('⏳ El build tomará 2-3 minutos');
-      console.log('📊 Monitorea en: https://app.netlify.com/sites/futprovip/deploys');
-      
-      // Iniciar monitoreo automático
-      console.log('');
-      console.log('🔍 Iniciando monitoreo automático...');
-      setTimeout(startMonitoring, 30000); // Esperar 30s antes de empezar a verificar
-    } else {
-      console.error('❌ Error al disparar deploy:', res.statusCode);
-      console.error(data);
-    }
-  });
-});
-
-req.on('error', (error) => {
-  console.error('❌ Error en la petición:', error.message);
-});
-
-req.end();
-
-function startMonitoring() {
-  const checkDeployment = () => {
-    https.get('https://futpro.vip/index.html', (res) => {
-      let html = '';
-      
-      res.on('data', (chunk) => {
-        html += chunk;
-      });
-      
-      res.on('end', () => {
-        const timestamp = new Date().toLocaleTimeString('es-ES');
-        
-        if (html.includes('a993e4a') || html.includes('a009753')) {
-          console.log(`[${timestamp}] ✅ DEPLOY COMPLETADO - Fix OAuth está LIVE!`);
-          console.log('');
-          console.log('🎯 Próximos pasos:');
-          console.log('1. Abre incógnito: Ctrl + Shift + N');
-          console.log('2. Ve a: https://futpro.vip');
-          console.log('3. Limpia storage en consola:');
-          console.log('   localStorage.clear(); sessionStorage.clear(); location.reload();');
-          console.log('4. Click en "Continuar con Google"');
-          console.log('5. Verifica que llegas a /home sin errores');
-          process.exit(0);
-        } else {
-          console.log(`[${timestamp}] ⏳ Esperando... (aún en commit antiguo)`);
-          setTimeout(checkDeployment, 30000); // Revisar cada 30s
-        }
-      });
-    }).on('error', (err) => {
-      console.error('Error verificando deployment:', err.message);
-      setTimeout(checkDeployment, 30000);
-    });
-  };
-  
-  checkDeployment();
+async function triggerBuild(url) {
+  const res = await fetch(url, { method: 'POST' });
+  return { status: res.status, text: await res.text() };
 }
+
+async function monitorOnce() {
+  try {
+    const res = await fetch('https://futpro.vip/index.html', { method: 'GET' });
+    const html = await res.text();
+    const timestamp = new Date().toLocaleTimeString('es-ES');
+    if (html.includes('3795afd')) {
+      console.log(`[${timestamp}] ✅ DEPLOY COMPLETADO - commit 3795afd detectado`);
+      return true;
+    }
+    console.log(`[${timestamp}] ⏳ Esperando publicación (no se detecta commit nuevo aún)`);
+    return false;
+  } catch (e) {
+    console.log('⚠️ Error al verificar publicación, reintentando...', e.message || e);
+    return false;
+  }
+}
+
+(async () => {
+  try {
+    console.log('📡 Enviando POST al Build Hook...');
+    const resp = await triggerBuild(BUILD_HOOK_URL);
+    if (resp.status >= 200 && resp.status < 300) {
+      console.log(`✅ Build Hook aceptado (HTTP ${resp.status}).`);
+      console.log('📊 Monitorea también aquí: https://app.netlify.com/sites/futprovip/deploys');
+      // Monitoreo simple: 6 intentos cada 30s (3 minutos)
+      for (let i = 0; i < 6; i++) {
+        const ok = await monitorOnce();
+        if (ok) {
+          console.log('🎯 Prueba ahora el login con Google.');
+          process.exit(0);
+        }
+        await new Promise(r => setTimeout(r, 30000));
+      }
+      console.log('⌛ El deploy puede tardar más. Revisa el dashboard de Netlify.');
+      process.exit(0);
+    } else {
+      console.error(`❌ Netlify respondió con HTTP ${resp.status}`);
+      console.error(resp.text);
+      process.exit(1);
+    }
+  } catch (err) {
+    console.error('❌ Error llamando al Build Hook:', err?.message || err);
+    process.exit(1);
+  }
+})();
