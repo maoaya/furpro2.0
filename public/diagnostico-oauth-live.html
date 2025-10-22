@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Diagnóstico OAuth Live - FutPro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 {
+            color: #FFD700;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+        }
+        .status-box {
+            background: #2a2a2a;
+            border-left: 4px solid #FFD700;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .status-box.error { border-color: #ff4444; }
+        .status-box.success { border-color: #44ff44; }
+        .status-box.warning { border-color: #ffaa00; }
+        
+        .log-container {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .log-entry {
+            padding: 5px;
+            margin-bottom: 5px;
+            border-left: 3px solid #666;
+            padding-left: 10px;
+        }
+        .log-entry.info { border-color: #4a9eff; color: #4a9eff; }
+        .log-entry.success { border-color: #44ff44; color: #44ff44; }
+        .log-entry.error { border-color: #ff4444; color: #ff4444; }
+        .log-entry.warning { border-color: #ffaa00; color: #ffaa00; }
+        
+        button {
+            background: #FFD700;
+            color: #1a1a1a;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #ffa500;
+            transform: scale(1.05);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+        
+        .data-table {
+            width: 100%;
+            background: #2a2a2a;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        .data-table td:first-child {
+            font-weight: bold;
+            color: #FFD700;
+            width: 30%;
+        }
+        .data-table td:last-child {
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .copy-btn {
+            background: #4a9eff;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        
+        .section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        pre {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnóstico OAuth Live - FutPro</h1>
+        
+        <div class="status-box" id="mainStatus">
+            <h2>📊 Estado del Sistema</h2>
+            <p id="statusText">Cargando diagnóstico...</p>
+        </div>
+        
+        <div class="section">
+            <h2>🚀 Acciones Rápidas</h2>
+            <button onclick="limpiarTodo()">🧹 Limpiar TODO (Storage + Cookies)</button>
+            <button onclick="probarOAuth()">🔐 Probar Login con Google</button>
+            <button onclick="verificarSesion()">✅ Verificar Sesión Actual</button>
+            <button onclick="copiarDiagnostico()">📋 Copiar Diagnóstico Completo</button>
+        </div>
+        
+        <div class="section">
+            <h2>📝 Logs en Tiempo Real</h2>
+            <div class="log-container" id="logContainer"></div>
+        </div>
+        
+        <div class="section">
+            <h2>🔍 Configuración Detectada</h2>
+            <table class="data-table" id="configTable"></table>
+        </div>
+        
+        <div class="section">
+            <h2>💾 Estado del Storage</h2>
+            <table class="data-table" id="storageTable"></table>
+        </div>
+        
+        <div class="section" id="errorSection" style="display: none;">
+            <h2>❌ Errores Detectados</h2>
+            <pre id="errorDetails"></pre>
+            <button class="copy-btn" onclick="copiarErrores()">📋 Copiar Errores</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Configuración
+        const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8';
+        const CLIENT_ID = '760210878835-r15nffmc9ldt4hb1a5k8mvs9dql7pkrf.apps.googleusercontent.com';
+        const CALLBACK_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5173/auth/callback'
+            : 'https://futpro.vip/auth/callback';
+        
+        // Cliente Supabase
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Logs
+        const logs = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+            const entry = { timestamp, message, type };
+            logs.push(entry);
+            
+            const container = document.getElementById('logContainer');
+            const div = document.createElement('div');
+            div.className = `log-entry ${type}`;
+            div.textContent = `[${timestamp}] ${message}`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function actualizarEstado(mensaje, tipo = 'info') {
+            const box = document.getElementById('mainStatus');
+            const text = document.getElementById('statusText');
+            
+            box.className = `status-box ${tipo}`;
+            text.textContent = mensaje;
+        }
+        
+        function mostrarConfig() {
+            const config = {
+                'Entorno': window.location.hostname === 'localhost' ? 'Desarrollo' : 'Producción',
+                'URL Base': window.location.origin,
+                'Supabase URL': SUPABASE_URL,
+                'Client ID': CLIENT_ID,
+                'Callback URL': CALLBACK_URL,
+                'User Agent': navigator.userAgent,
+                'Cookies Habilitadas': navigator.cookieEnabled ? 'Sí' : 'No',
+                'Storage Disponible': typeof(Storage) !== 'undefined' ? 'Sí' : 'No'
+            };
+            
+            const table = document.getElementById('configTable');
+            table.innerHTML = '';
+            
+            for (const [key, value] of Object.entries(config)) {
+                const row = table.insertRow();
+                row.insertCell(0).textContent = key;
+                row.insertCell(1).textContent = value;
+            }
+        }
+        
+        function mostrarStorage() {
+            const storage = {
+                'localStorage items': localStorage.length,
+                'sessionStorage items': sessionStorage.length,
+                'futpro-auth-token': localStorage.getItem('futpro-auth-token') || '(vacío)',
+                'authCompleted': localStorage.getItem('authCompleted') || '(vacío)',
+                'loginSuccess': localStorage.getItem('loginSuccess') || '(vacío)',
+                'userEmail': localStorage.getItem('userEmail') || '(vacío)',
+                'userId': localStorage.getItem('userId') || '(vacío)',
+            };
+            
+            const table = document.getElementById('storageTable');
+            table.innerHTML = '';
+            
+            for (const [key, value] of Object.entries(storage)) {
+                const row = table.insertRow();
+                row.insertCell(0).textContent = key;
+                row.insertCell(1).textContent = String(value).substring(0, 100);
+            }
+        }
+        
+        async function verificarSesion() {
+            log('🔍 Verificando sesión actual...', 'info');
+            actualizarEstado('Verificando sesión...', 'warning');
+            
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    log(`❌ Error obteniendo sesión: ${error.message}`, 'error');
+                    actualizarEstado('Error al verificar sesión', 'error');
+                    mostrarError(error);
+                    return;
+                }
+                
+                if (session) {
+                    log(`✅ Sesión activa encontrada: ${session.user.email}`, 'success');
+                    actualizarEstado(`✅ Usuario autenticado: ${session.user.email}`, 'success');
+                    
+                    log(`📊 Detalles de sesión:`, 'info');
+                    log(`  - User ID: ${session.user.id}`, 'info');
+                    log(`  - Email: ${session.user.email}`, 'info');
+                    log(`  - Provider: ${session.user.app_metadata.provider}`, 'info');
+                    log(`  - Expires: ${new Date(session.expires_at * 1000).toLocaleString()}`, 'info');
+                } else {
+                    log('⚠️ No hay sesión activa', 'warning');
+                    actualizarEstado('No hay sesión activa - necesitas hacer login', 'warning');
+                }
+            } catch (err) {
+                log(`💥 Excepción verificando sesión: ${err.message}`, 'error');
+                actualizarEstado('Error inesperado al verificar sesión', 'error');
+                mostrarError(err);
+            }
+            
+            mostrarStorage();
+        }
+        
+        function limpiarTodo() {
+            log('🧹 Limpiando TODO el storage...', 'warning');
+            
+            // LocalStorage
+            const lsItems = { ...localStorage };
+            localStorage.clear();
+            log(`  ✅ localStorage limpiado (${Object.keys(lsItems).length} items)`, 'info');
+            
+            // SessionStorage
+            const ssItems = { ...sessionStorage };
+            sessionStorage.clear();
+            log(`  ✅ sessionStorage limpiado (${Object.keys(ssItems).length} items)`, 'info');
+            
+            // Cookies
+            const cookies = document.cookie.split(";");
+            cookies.forEach(c => {
+                const name = c.split("=")[0].trim();
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+            });
+            log(`  ✅ Cookies limpiadas (${cookies.length} items)`, 'info');
+            
+            actualizarEstado('✅ Storage completamente limpiado', 'success');
+            mostrarStorage();
+            
+            setTimeout(() => {
+                log('🔄 Recargando página en 2 segundos...', 'info');
+                setTimeout(() => location.reload(), 2000);
+            }, 1000);
+        }
+        
+        async function probarOAuth() {
+            log('🔐 Iniciando prueba de OAuth con Google...', 'info');
+            actualizarEstado('Iniciando OAuth...', 'warning');
+            
+            try {
+                log(`📍 Callback URL configurada: ${CALLBACK_URL}`, 'info');
+                log(`🔑 Client ID: ${CLIENT_ID}`, 'info');
+                
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: CALLBACK_URL,
+                        queryParams: {
+                            access_type: 'offline',
+                            prompt: 'consent',
+                        }
+                    }
+                });
+                
+                if (error) {
+                    log(`❌ Error iniciando OAuth: ${error.message}`, 'error');
+                    actualizarEstado('Error al iniciar OAuth', 'error');
+                    mostrarError(error);
+                    return;
+                }
+                
+                if (data?.url) {
+                    log(`✅ OAuth iniciado correctamente`, 'success');
+                    log(`🔗 Redirigiendo a Google...`, 'info');
+                    log(`📍 URL de Google: ${data.url.substring(0, 100)}...`, 'info');
+                    actualizarEstado('Redirigiendo a Google...', 'success');
+                    
+                    // Guardar timestamp del inicio
+                    localStorage.setItem('oauth_start_time', new Date().toISOString());
+                    
+                    setTimeout(() => {
+                        window.location.href = data.url;
+                    }, 1000);
+                } else {
+                    log(`⚠️ No se recibió URL de redirect`, 'warning');
+                    actualizarEstado('Error: No se recibió URL de Google', 'error');
+                }
+            } catch (err) {
+                log(`💥 Excepción en OAuth: ${err.message}`, 'error');
+                actualizarEstado('Error inesperado en OAuth', 'error');
+                mostrarError(err);
+            }
+        }
+        
+        function mostrarError(error) {
+            const section = document.getElementById('errorSection');
+            const details = document.getElementById('errorDetails');
+            
+            const errorInfo = {
+                message: error.message || String(error),
+                stack: error.stack || '(no stack trace)',
+                name: error.name || '(no name)',
+                code: error.code || '(no code)',
+                status: error.status || '(no status)',
+                fullError: JSON.stringify(error, null, 2)
+            };
+            
+            details.textContent = JSON.stringify(errorInfo, null, 2);
+            section.style.display = 'block';
+        }
+        
+        function copiarDiagnostico() {
+            const diagnostico = {
+                timestamp: new Date().toISOString(),
+                url: window.location.href,
+                config: {
+                    supabase_url: SUPABASE_URL,
+                    client_id: CLIENT_ID,
+                    callback_url: CALLBACK_URL,
+                    environment: window.location.hostname === 'localhost' ? 'dev' : 'prod'
+                },
+                storage: {
+                    localStorage: { ...localStorage },
+                    sessionStorage: { ...sessionStorage }
+                },
+                logs: logs,
+                userAgent: navigator.userAgent
+            };
+            
+            const text = JSON.stringify(diagnostico, null, 2);
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Diagnóstico copiado al portapapeles');
+                log('📋 Diagnóstico completo copiado', 'success');
+            });
+        }
+        
+        function copiarErrores() {
+            const details = document.getElementById('errorDetails').textContent;
+            navigator.clipboard.writeText(details).then(() => {
+                alert('✅ Errores copiados al portapapeles');
+                log('📋 Errores copiados', 'success');
+            });
+        }
+        
+        // Auto-ejecutar al cargar
+        window.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Diagnóstico OAuth Live iniciado', 'success');
+            log(`📍 URL actual: ${window.location.href}`, 'info');
+            
+            mostrarConfig();
+            mostrarStorage();
+            verificarSesion();
+            
+            // Si estamos en callback, procesarlo
+            const params = new URLSearchParams(window.location.search);
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            
+            if (params.get('code') || hashParams.get('access_token') || params.get('error')) {
+                log('🔍 Detectado callback OAuth en URL', 'warning');
+                log(`  - Code: ${params.get('code') ? 'PRESENTE' : 'NO'}`, 'info');
+                log(`  - Access Token: ${hashParams.get('access_token') ? 'PRESENTE' : 'NO'}`, 'info');
+                log(`  - Error: ${params.get('error') || 'NO'}`, 'info');
+                
+                if (params.get('error')) {
+                    const error = {
+                        error: params.get('error'),
+                        error_code: params.get('error_code'),
+                        error_description: decodeURIComponent(params.get('error_description') || '')
+                    };
+                    log(`❌ Error en callback: ${error.error}`, 'error');
+                    log(`  - Code: ${error.error_code}`, 'error');
+                    log(`  - Description: ${error.error_description}`, 'error');
+                    mostrarError(error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
