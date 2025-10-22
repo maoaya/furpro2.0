@@ -172,8 +172,8 @@ export default function CallbackPageOptimized() {
 
       } catch (error) {
   console.error('💥 Error inesperado en callback:', error);
-  setStatus('Error inesperado. Redirigiendo a tu dashboard...');
-  setTimeout(() => navigate('/home', { replace: true }), 1500);
+    setStatus('Error inesperado. Redirigiendo al inicio...');
+    setTimeout(() => { window.location.href = '/homepage-instagram.html'; }, 1500);
       } finally {
         setProcessing(false);
       }
@@ -211,6 +211,30 @@ export default function CallbackPageOptimized() {
             }
           }
 
+          // Si faltan datos críticos (ej: avatar), enviar al formulario de registro primero
+          const avatarCandidato = draftData?.avatar || user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
+          const requiereFormulario = !avatarCandidato;
+
+          if (requiereFormulario) {
+            console.log('📝 Faltan datos (avatar). Redirigiendo a formulario de registro...');
+            const draftParaFormulario = {
+              nombre: draftData?.nombre || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
+              email: user.email,
+              provider: user.app_metadata?.provider || 'oauth',
+              avatar: null,
+              origen: 'oauth-callback'
+            };
+            localStorage.setItem('futpro_registro_draft', JSON.stringify(draftParaFormulario));
+            localStorage.setItem('registroPendiente', 'true');
+            // Navegar a formulario de registro
+            try {
+              navigate('/registro', { replace: true });
+            } catch (e) {
+              window.location.href = '/registro';
+            }
+            return; // Importante: no continuar con creación automática
+          }
+
           // Crear perfil para nuevo usuario OAuth - Con datos del draft si existen
           const perfilData = {
             id: user.id,
@@ -226,7 +250,7 @@ export default function CallbackPageOptimized() {
             dias_disponibles: draftData?.diasDisponibles || [],
             horarios_entrenamiento: draftData?.horariosEntrenamiento || '',
             equipo_favorito: draftData?.equipoFavorito || '',
-            avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+            avatar_url: avatarCandidato,
             rol: 'usuario',
             tipo_usuario: 'jugador',
             estado: 'activo',
@@ -244,7 +268,7 @@ export default function CallbackPageOptimized() {
           if (createError) {
             console.error('❌ Error creando perfil:', createError);
             setStatus('Error creando perfil, pero tu sesión está activa. Redirigiendo...');
-            setTimeout(() => navigate('/home', { replace: true }), 1200);
+              setTimeout(() => { window.location.href = '/homepage-instagram.html'; }, 1200);
           } else {
             console.log('✅ Perfil creado exitosamente para usuario OAuth con datos completos');
             // Limpiar draft si se usó
@@ -274,12 +298,12 @@ export default function CallbackPageOptimized() {
         // Usar window.location para forzar recarga completa y actualizar contexto
         setTimeout(() => {
           console.log('🔄 Ejecutando window.location.href = "/home"');
-          window.location.href = '/home';
+            window.location.href = '/homepage-instagram.html';
         }, 300);
       } catch (error) {
   console.error('💥 Error procesando perfil:', error);
   setStatus('Error configurando perfil. Redirigiendo a tu dashboard...');
-  setTimeout(() => navigate('/home', { replace: true }), 1200);
+    setTimeout(() => { window.location.href = '/homepage-instagram.html'; }, 1200);
       }
     };
 
@@ -295,9 +319,9 @@ export default function CallbackPageOptimized() {
       console.log('✅ Usuario ya autenticado en CallbackPage, redirigiendo...');
       setTimeout(() => {
         try {
-          navigate('/home', { replace: true });
+            window.location.href = '/homepage-instagram.html';
         } catch (error) {
-          window.location.href = '/home';
+            window.location.href = '/homepage-instagram.html';
         }
       }, 500);
     }

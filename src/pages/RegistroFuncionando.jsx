@@ -20,6 +20,8 @@ export default function RegistroFuncionando() {
     password: '',
     confirmPassword: ''
   });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,6 +36,18 @@ export default function RegistroFuncionando() {
     if (error) setError('');
   };
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    setAvatarFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setAvatarPreview(reader.result);
+      reader.readAsDataURL(file);
+    } else {
+      setAvatarPreview('');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -41,8 +55,8 @@ export default function RegistroFuncionando() {
     setSuccess('');
 
     try {
-      // Asegurar redirección post-login consistente
-      localStorage.setItem('postLoginRedirect', '/home');
+  // Asegurar redirección post-login consistente
+  localStorage.setItem('postLoginRedirect', '/homepage-instagram.html');
       localStorage.setItem('postLoginRedirectReason', 'signup-email');
 
       // Validaciones básicas
@@ -79,7 +93,7 @@ export default function RegistroFuncionando() {
         }
       };
 
-      const result = await signUpWithAutoConfirm(registroData);
+  const result = await signUpWithAutoConfirm(registroData);
 
       if (!result.success) {
         console.error('❌ Error en registro:', result.error);
@@ -135,10 +149,32 @@ export default function RegistroFuncionando() {
 
       // Crear perfil básico en tabla usuarios si tenemos el usuario
       if (result.user) {
+        let avatar_url = null;
+        // Subir avatar si fue seleccionado
+        if (avatarFile) {
+          try {
+            const path = `${result.user.id}/${Date.now()}_${avatarFile.name}`;
+            const { error: uploadError } = await supabase.storage.from('avatars').upload(path, avatarFile, {
+              cacheControl: '3600',
+              upsert: true
+            });
+            if (uploadError) {
+              console.warn('⚠️ Error subiendo avatar:', uploadError.message);
+            } else {
+              const { data: publicData } = supabase.storage.from('avatars').getPublicUrl(path);
+              avatar_url = publicData?.publicUrl || null;
+              console.log('🖼️ Avatar subido:', avatar_url);
+            }
+          } catch (e) {
+            console.warn('⚠️ Excepción subiendo avatar:', e);
+          }
+        }
+
         const perfilData = {
           id: result.user.id,
           email: form.email.toLowerCase().trim(),
           nombre: form.nombre.trim(),
+          avatar_url,
           created_at: new Date().toISOString(),
           rol: 'usuario',
           tipo_usuario: 'jugador'
@@ -163,18 +199,19 @@ export default function RegistroFuncionando() {
 
       // Auto-confirm está activo, ir directo a /home sin importar si hay sesión
       if (config?.autoConfirmSignup) {
-        console.log('🏠 Auto-confirm activo: redirigiendo a /home');
+        console.log('🏠 Auto-confirm activo: redirigiendo al home Instagram');
           // Marcar que el registro está completo para que ProtectedRoute no redirija inmediatamente
           localStorage.setItem('registroCompleto', 'true');
           localStorage.setItem('authCompleted', 'true');
         setTimeout(() => {
-          ensureHomeNavigation(navigate, { target: '/home' });
+          // Redirección directa al HTML estático
+          window.location.href = '/homepage-instagram.html';
         }, 300);
       } else {
         // Comportamiento normal: ir a login si no hay sesión
         if (result.session) {
           setTimeout(() => {
-            navigate('/home', { replace: true });
+            window.location.href = '/homepage-instagram.html';
           }, 1500);
         } else {
           setSuccess('Registro exitoso. Por favor confirma tu email antes de iniciar sesión.');
@@ -376,6 +413,41 @@ export default function RegistroFuncionando() {
               }}
               required
             />
+          </div>
+
+          {/* Avatar */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ 
+              color: gold, 
+              display: 'block', 
+              marginBottom: '8px',
+              fontSize: '16px',
+              fontWeight: 'bold'
+            }}>
+              Foto de Perfil (opcional)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '10px',
+                border: '2px solid #444',
+                background: '#333',
+                color: '#fff',
+                fontSize: '14px',
+                outline: 'none'
+              }}
+            />
+            {avatarPreview && (
+              <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                <img src={avatarPreview} alt="preview" style={{ width: 64, height: 64, borderRadius: '50%', border: `2px solid ${gold}`, objectFit: 'cover' }} />
+                <span style={{ color: '#ccc', fontSize: 12 }}>Vista previa</span>
+              </div>
+            )}
           </div>
 
           <button

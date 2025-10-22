@@ -42,8 +42,12 @@ function AuthAwareLoginPage() {
       
       // Si ya hay usuario, navegar inmediatamente
       if (user) {
-        console.log('✅ Usuario detectado, navegando a home');
-        navigate('/home', { replace: true });
+        console.log('✅ Usuario detectado, navegando a home (Instagram)');
+        try {
+          window.location.href = '/homepage-instagram.html';
+        } catch (e) {
+          navigate('/home', { replace: true });
+        }
         return;
       }
 
@@ -181,8 +185,12 @@ export default function FutProAppDefinitivo() {
 
       // Si ya está autenticado y en la raíz, ir a home
       if (user && currentPath === '/') {
-        console.log('🏠 Usuario autenticado en raíz, navegando a home');
-        navigate('/home', { replace: true });
+        console.log('🏠 Usuario autenticado en raíz, navegando a home (Instagram)');
+        try {
+          window.location.href = '/homepage-instagram.html';
+        } catch (e) {
+          navigate('/home', { replace: true });
+        }
       }
     };
 
@@ -271,10 +279,10 @@ export default function FutProAppDefinitivo() {
         </div>
       } />
       
-      {/* Home/Feed (vista simple solicitada) */}
+      {/* Home/Feed — ahora muestra la PerfilCard (diseño tipo Instagram) */}
       <Route path="/home" element={
         <ProtectedRoute>
-          <HomeSimple />
+          <PerfilCard />
         </ProtectedRoute>
       } />
       
