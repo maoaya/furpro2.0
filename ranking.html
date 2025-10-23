@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Ranking de Jugadores y Equipos - FutPro</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+	<style>
+		body { background: #111; color: #FFD700; font-family: 'Segoe UI', Arial, sans-serif; }
+		h1 { color: #FFD700; text-align: center; margin-top: 32px; }
+		#rankingFiltros { background: #181818; border-radius: 18px; padding: 24px; max-width: 900px; margin: 0 auto 24px auto; }
+		label { margin-right: 18px; }
+		select, input { background: #222; color: #FFD700; border: 1px solid #FFD700; border-radius: 8px; padding: 6px 12px; margin-top: 6px; }
+		button { background: #FFD700; color: #181818; font-weight: bold; border: none; border-radius: 12px; padding: 8px 18px; font-size: 1em; cursor: pointer; margin-top: 12px; }
+		button:hover { background: #FFA500; }
+		#rankingResultados { background: #181818; border-radius: 18px; padding: 24px; max-width: 900px; margin: 0 auto; }
+	</style>
+</head>
+<body>
+	<h1>Ranking de Jugadores y Equipos</h1>
+	<div id="rankingFiltros">
+		<label>Categoría jugador:
+			<select id="categoriaJugador">
+				<option value="masculina">Masculina</option>
+				<option value="femenina">Femenina</option>
+				<option value="infantil_femenina">Infantil Femenina</option>
+				<option value="infantil_masculina">Infantil Masculina</option>
+				<option value="veterano">Veterano</option>
+			</select>
+		</label>
+		<label>Edad:
+			<input type="number" id="edadJugador" min="5" max="99" placeholder="Edad">
+		</label>
+		<label>Ciudad:
+			<input type="text" id="ciudadJugador" list="ciudadesList" placeholder="Ciudad">
+			<datalist id="ciudadesList"></datalist>
+		</label>
+		<label>País:
+			<input type="text" id="paisJugador" list="paisesList" placeholder="País">
+			<datalist id="paisesList"></datalist>
+		</label>
+		<button onclick="filtrarRankingJugadores()">Filtrar jugadores</button>
+		<br><br>
+		<label>Categoría equipo:
+			<select id="categoriaEquipo">
+				<option value="mixta">Mixta</option>
+				<option value="infantil_femenina">Infantil Femenina</option>
+				<option value="infantil_masculina">Infantil Masculina</option>
+				<option value="masculina">Masculina</option>
+				<option value="femenina">Femenina</option>
+				<option value="veteranos">Veteranos</option>
+			</select>
+		</label>
+		<label>Ciudad:
+			<input type="text" id="ciudadEquipo" list="ciudadesList" placeholder="Ciudad">
+		</label>
+		<label>País:
+			<input type="text" id="paisEquipo" list="paisesList" placeholder="País">
+		</label>
+		<button onclick="filtrarRankingEquipos()">Filtrar equipos</button>
+	</div>
+	<div id="rankingResultados">
+		<!-- Resultados aquí -->
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+	<script>
+	// Listas de ciudades y países (puedes usar una API externa para más opciones)
+	const ciudades = ["Madrid","Barcelona","Buenos Aires","Ciudad de México","Bogotá","Lima","Santiago","Caracas","Quito","Montevideo","Miami","New York","London","Paris","Berlin","Roma","Tokyo","Beijing","Sydney","Moscow","Toronto"];
+	const paises = ["España","Argentina","México","Colombia","Perú","Chile","Venezuela","Ecuador","Uruguay","Estados Unidos","Reino Unido","Francia","Alemania","Italia","Japón","China","Australia","Rusia","Canadá"];
+	document.addEventListener('DOMContentLoaded',function(){
+		const ciudadesList = document.getElementById('ciudadesList');
+		ciudades.forEach(c=>{
+			const opt=document.createElement('option');opt.value=c;ciudadesList.appendChild(opt);
+		});
+		const paisesList = document.getElementById('paisesList');
+		paises.forEach(p=>{
+			const opt=document.createElement('option');opt.value=p;paisesList.appendChild(opt);
+		});
+	});
+
+	// Configuración Supabase
+	const supabase = window.supabase.createClient(
+		'https://qqrxetxcglwrejtblwut.supabase.co',
+		'eyJ...'
+	);
+	// Configuración Firebase
+	const firebaseConfig = {
+		apiKey: "AIza...",
+		authDomain: "futpro.firebaseapp.com",
+		databaseURL: "https://futpro.firebaseio.com",
+		projectId: "futpro",
+		storageBucket: "futpro.appspot.com",
+		messagingSenderId: "760210878835",
+		appId: "1:760210878835:web:xxxx"
+	};
+	firebase.initializeApp(firebaseConfig);
+	const db = firebase.database();
+
+	// Filtrar jugadores
+	async function filtrarRankingJugadores() {
+		const categoria = document.getElementById('categoriaJugador').value;
+		const edad = document.getElementById('edadJugador').value;
+		const ciudad = document.getElementById('ciudadJugador').value;
+		const pais = document.getElementById('paisJugador').value;
+		// Guardar filtro en localStorage
+		localStorage.setItem('futpro_ranking_filtro_jugadores', JSON.stringify({categoria,edad,ciudad,pais}));
+		// Consulta Supabase
+		let query = supabase.from('jugadores').select('*');
+		if (categoria) query = query.eq('categoria', categoria);
+		if (edad) query = query.eq('edad', edad);
+		if (ciudad) query = query.ilike('ciudad', `%${ciudad}%`);
+		if (pais) query = query.ilike('pais', `%${pais}%`);
+		const { data, error } = await query;
+		let resultados = `<h2>Jugadores (${categoria})</h2><ul>`;
+		if (error) {
+			resultados += `<li>Error al consultar: ${error.message}</li>`;
+		} else if (data && data.length) {
+			data.forEach(j => {
+				resultados += `<li>${j.nombre} (${j.ciudad}, ${j.pais}, ${j.edad} años)</li>`;
+			});
+		} else {
+			resultados += `<li>No hay resultados para el filtro seleccionado.</li>`;
+		}
+		resultados += `</ul>`;
+		document.getElementById('rankingResultados').innerHTML = resultados;
+		// Realtime Firebase
+		db.ref('jugadores').on('value', snapshot => {
+			const jugadores = snapshot.val();
+			// Aquí podrías actualizar el ranking en tiempo real si lo deseas
+		});
+	}
+	// Filtrar equipos
+	async function filtrarRankingEquipos() {
+		const categoria = document.getElementById('categoriaEquipo').value;
+		const ciudad = document.getElementById('ciudadEquipo').value;
+		const pais = document.getElementById('paisEquipo').value;
+		// Guardar filtro en localStorage
+		localStorage.setItem('futpro_ranking_filtro_equipos', JSON.stringify({categoria,ciudad,pais}));
+		// Consulta Supabase
+		let query = supabase.from('equipos').select('*');
+		if (categoria) query = query.eq('categoria', categoria);
+		if (ciudad) query = query.ilike('ciudad', `%${ciudad}%`);
+		if (pais) query = query.ilike('pais', `%${pais}%`);
+		const { data, error } = await query;
+		let resultados = `<h2>Equipos (${categoria})</h2><ul>`;
+		if (error) {
+			resultados += `<li>Error al consultar: ${error.message}</li>`;
+		} else if (data && data.length) {
+			data.forEach(eq => {
+				resultados += `<li>${eq.nombre} (${eq.ciudad}, ${eq.pais})</li>`;
+			});
+		} else {
+			resultados += `<li>No hay resultados para el filtro seleccionado.</li>`;
+		}
+		resultados += `</ul>`;
+		document.getElementById('rankingResultados').innerHTML = resultados;
+		// Realtime Firebase
+		db.ref('equipos').on('value', snapshot => {
+			const equipos = snapshot.val();
+			// Aquí podrías actualizar el ranking en tiempo real si lo deseas
+		});
+	}
+	</script>
+</body>
+</html>

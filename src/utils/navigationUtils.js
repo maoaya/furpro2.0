@@ -7,19 +7,18 @@
  * @param {boolean} replace - Si debe reemplazar la entrada del historial
  */
 export const navigateToHome = (navigate = null, replace = true) => {
-  console.log('🔄 navigateToHome: Iniciando navegación a /home');
+  console.log('🔄 navigateToHome: Iniciando navegación a /homepage-instagram.html');
   
   // Método 1: React Router navigate (si está disponible)
   if (navigate && typeof navigate === 'function') {
     try {
       console.log('🔄 Usando React Router navigate');
-      navigate('/home', { replace });
-      
+      navigate('/homepage-instagram.html', { replace });
       // Verificar que la navegación fue exitosa después de un breve delay
       setTimeout(() => {
-        if (window.location.pathname !== '/home') {
+        if (window.location.pathname !== '/homepage-instagram.html') {
           console.warn('⚠️ React Router navigate falló, usando fallback');
-          window.location.href = '/home';
+          window.location.href = '/homepage-instagram.html';
         }
       }, 1000);
       
@@ -32,7 +31,7 @@ export const navigateToHome = (navigate = null, replace = true) => {
   // Método 2: window.location.href (fallback directo)
   console.log('🔄 Usando window.location.href fallback');
   try {
-    window.location.href = '/home';
+    window.location.href = '/homepage-instagram.html';
     return true;
   } catch (error) {
     console.error('❌ Error con window.location.href:', error);
@@ -133,7 +132,7 @@ export const clearAuthData = () => {
   console.log('🧹 Datos de autenticación limpiados');
 };
 
-export const setPostLoginRedirect = (path = '/home') => {
+export const setPostLoginRedirect = (path = '/homepage-instagram.html') => {
   localStorage.setItem('postLoginRedirect', path);
   localStorage.setItem('postLoginRedirectReason', 'user-action');
   console.log(`📌 Redirección post-login configurada: ${path}`);

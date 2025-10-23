@@ -144,74 +144,320 @@
       }
     }
   </style>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Perfil - FutPro</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body { background: #111; color: #FFD700; font-family: 'Segoe UI', Arial, sans-serif; }
+    .header { background: #181818; border-bottom: 3px solid #FFD700; min-height: 74px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
+    .profile-main { max-width: 900px; margin: 0 auto; background: #181818; border-radius: 32px; box-shadow: 0 8px 40px #000a; padding: 44px 54px; }
+    .profile-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #FFD700; box-shadow: 0 2px 8px #0004; background: #222; }
+    .profile-info { margin-left: 32px; }
+    .profile-name { font-size: 2em; font-weight: bold; color: #FFD700; }
+    .profile-email { font-size: 1.1em; color: #ccc; }
+    .profile-actions { margin-top: 18px; display: flex; gap: 18px; }
+    .profile-actions button { background: #FFD700; color: #181818; font-weight: bold; border: none; border-radius: 16px; padding: 8px 22px; font-size: 1em; cursor: pointer; box-shadow: 0 2px 8px #0004; transition: background 0.2s; }
+    .profile-actions button:hover { background: #FFA500; }
+    .feed { margin-top: 38px; }
+    .post { background: #222; border-radius: 24px; margin-bottom: 32px; box-shadow: 0 4px 24px #0008; padding: 24px; }
+    .post-header { display: flex; align-items: center; gap: 18px; }
+    .post-user { font-weight: bold; color: #FFD700; }
+    .post-image { width: 100%; max-width: 600px; border-radius: 18px; margin: 18px 0; }
+    .post-actions { display: flex; gap: 18px; align-items: center; }
+    .like-btn { color: #FFD700; font-size: 1.5em; cursor: pointer; transition: color 0.2s; }
+    .like-btn.liked { color: #ff3040; }
+    .comment-btn { color: #FFD700; font-size: 1.3em; cursor: pointer; }
+    .post-comments { margin-top: 12px; background: #181818; border-radius: 12px; padding: 12px; }
+    .comment { color: #FFD700; margin-bottom: 8px; }
+    .upload-section { margin-top: 32px; background: #222; border-radius: 18px; padding: 18px; }
+    .upload-section input, .upload-section textarea { width: 100%; margin-bottom: 12px; border-radius: 8px; border: 1px solid #FFD700; background: #181818; color: #FFD700; padding: 8px; }
+    .upload-section button { background: #FFD700; color: #181818; font-weight: bold; border: none; border-radius: 12px; padding: 8px 18px; font-size: 1em; cursor: pointer; }
+    .upload-section button:hover { background: #FFA500; }
+    .dropdown-menu { background: #111; border: 3px solid #FFD700; border-radius: 28px; box-shadow: 0 12px 48px #000a; color: #FFD700; min-width: 350px; max-width: 420px; max-height: 85vh; padding: 32px 0 20px 0; position: absolute; top: 74px; right: 48px; z-index: 10000; display: none; }
+    .dropdown-item { display: flex; align-items: center; gap: 12px; color: #FFD700; background: none; border: none; font-size: 1.08rem; font-weight: 500; text-decoration: none; margin: 0 0 6px 0; padding: 10px 32px; border-radius: 12px; transition: background 0.2s, color 0.2s; cursor: pointer; }
+    .dropdown-item:hover { background: rgba(255,215,0,0.08); color: #181818; }
+    .dropdown-item i { color: #FFD700; font-size: 1.25rem; min-width: 24px; }
+    .menu-section-title { color: #FFD700; font-size: 1.05rem; font-weight: bold; margin: 18px 0 8px 28px; }
+    .menu-separator { background: linear-gradient(90deg, transparent, #FFD700 60%, transparent); height: 2px; margin: 10px 18px; border: none; }
+  </style>
 </head>
 <body>
-  <div class="profile-header">
-    <div class="profile-avatar" id="profileAvatar">👤</div>
-    <div class="profile-name" id="profileName">Usuario</div>
-    <div class="profile-username" id="profileUsername">@usuario</div>
-    <div class="profile-card">
-      <div class="card">
-        <div class="label">Seguidores</div>
-        <div class="value" id="seguidores">0</div>
+  <div class="header">
+    <div style="display:flex;align-items:center;gap:18px;">
+      <span style="font-size:2em;font-weight:bold;color:#FFD700;">FutPro</span>
+      <button class="hamburger-btn" onclick="toggleMenu()" style="background:none;border:none;color:#FFD700;font-size:2em;cursor:pointer;"><i class="fa fa-bars"></i></button>
+    </div>
+    <div class="profile-info" id="profileHeader"></div>
+    <div class="dropdown-menu" id="dropdownMenu">
+      <div class="menu-section-title">Mi cuenta</div>
+      <div class="dropdown-item" onclick="irAPerfil()"><i class="fa fa-user"></i>Ver perfil</div>
+      <div class="dropdown-item" onclick="editarPerfil()"><i class="fa fa-edit"></i>Editar perfil</div>
+      <div class="dropdown-item" onclick="verEstadisticas()"><i class="fa fa-chart-bar"></i>Estadísticas</div>
+      <div class="dropdown-item" onclick="cerrarSesion()"><i class="fa fa-sign-out-alt"></i>Cerrar sesión</div>
+      <hr class="menu-separator">
+      <div class="menu-section-title">Fútbol</div>
+      <div class="dropdown-item" onclick="verPartidos()"><i class="fa fa-futbol"></i>Partidos</div>
+      <div class="dropdown-item" onclick="verEquipos()"><i class="fa fa-users"></i>Equipos</div>
+      <div class="dropdown-item" onclick="verTorneos()"><i class="fa fa-trophy"></i>Torneos</div>
+      <div class="dropdown-item" onclick="verRanking()"><i class="fa fa-list-ol"></i>Ranking</div>
+      <hr class="menu-separator">
+      <div class="menu-section-title">Social</div>
+      <div class="dropdown-item" onclick="verNotificaciones()"><i class="fa fa-bell"></i>Notificaciones</div>
+      <div class="dropdown-item" onclick="abrirChat()"><i class="fa fa-comments"></i>Chat</div>
+      <div class="dropdown-item" onclick="abrirMarketplace()"><i class="fa fa-store"></i>Marketplace</div>
+      <div class="dropdown-item" onclick="verEstados()"><i class="fa fa-history"></i>Estados</div>
+      <div class="dropdown-item" onclick="verAmigos()"><i class="fa fa-user-friends"></i>Amigos</div>
+      <hr class="menu-separator">
+      <div class="menu-section-title">Juegos</div>
+      <div class="dropdown-item" onclick="jugarPenaltis()"><i class="fa fa-futbol"></i>Penaltis</div>
+      <div class="dropdown-item" onclick="centroJuegos()"><i class="fa fa-gamepad"></i>Juegos</div>
+      <div class="dropdown-item" onclick="verCardFIFA()"><i class="fa fa-id-card"></i>Card FIFA</div>
+      <hr class="menu-separator">
+      <div class="menu-section-title">Configuración</div>
+      <div class="dropdown-item" onclick="abrirConfiguracion()"><i class="fa fa-cog"></i>Configuración</div>
+      <div class="dropdown-item" onclick="verPrivacidad()"><i class="fa fa-shield-alt"></i>Privacidad</div>
+    </div>
+  </div>
+  <div class="profile-main">
+    <div style="display:flex;align-items:center;">
+      <div style="position:relative;">
+        <img id="avatar" class="profile-avatar" src="" alt="Avatar">
+        <button onclick="abrirModalFotoPerfil()" style="position:absolute;bottom:0;right:0;background:#FFD700;border:none;border-radius:50%;width:38px;height:38px;box-shadow:0 2px 8px #0004;cursor:pointer;">
+          <i class="fa fa-camera" style="color:#181818;font-size:1.3em;"></i>
+        </button>
       </div>
-      <div class="card">
-        <div class="label">Seguidos</div>
-        <div class="value" id="seguidos">0</div>
-      </div>
-      <div class="card">
-        <div class="label">Puntaje</div>
-        <div class="value" id="puntaje">0</div>
-      </div>
-      <div class="card">
-        <div class="label">Tarjeta</div>
-        <div class="value" id="tarjeta">VIP</div>
+      <div class="profile-info">
+        <div class="profile-name" id="profileName"></div>
+        <div class="profile-email" id="profileEmail"></div>
+        <div class="profile-actions">
+          <button onclick="abrirModalUpload()"><i class="fa fa-upload"></i> Subir foto/video</button>
+          <button onclick="editarPerfil()"><i class="fa fa-edit"></i> Editar perfil</button>
+        </div>
       </div>
     </div>
-    <div class="profile-actions">
-      <button onclick="editarPerfil()"><i class="fas fa-edit"></i> Editar Perfil</button>
-      <button onclick="verTarjetas()"><i class="fas fa-id-card"></i> Ver Tarjetas</button>
-    </div>
-    <div class="profile-bio" id="profileBio">¡Bienvenido a mi perfil FutPro! ⚽</div>
+    <div class="feed" id="feedPublicaciones"></div>
   </div>
-  <div class="profile-gallery" id="profileGallery">
-    <!-- Galería de fotos/videos -->
+  <div class="upload-section" id="modalUpload" style="display:none;">
+    <h3>Subir foto/video</h3>
+    <input type="file" id="archivoUpload" accept="image/*,video/*">
+    <textarea id="pieUpload" placeholder="Pie de foto/video"></textarea>
+    <button onclick="enviarUpload()">Publicar</button>
+    <button onclick="cerrarModalUpload()">Cancelar</button>
   </div>
+  <div class="upload-section" id="modalFotoPerfil" style="display:none;">
+    <h3>Cambiar foto de perfil</h3>
+    <input type="file" id="archivoFotoPerfil" accept="image/*">
+    <button onclick="enviarFotoPerfil()">Guardar</button>
+    <button onclick="cerrarModalFotoPerfil()">Cancelar</button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
   <script>
-    // Simulación de datos de usuario y galería
-    const user = JSON.parse(localStorage.getItem('futpro_usuario') || '{}');
-    document.getElementById('profileName').textContent = user.nombre ? user.nombre + ' ' + user.apellido : 'Usuario';
-    document.getElementById('profileUsername').textContent = user.email ? '@' + user.email.split('@')[0] : '@usuario';
-    document.getElementById('profileAvatar').textContent = user.nombre ? (user.nombre[0] + (user.apellido ? user.apellido[0] : '')).toUpperCase() : '👤';
-    document.getElementById('seguidores').textContent = user.seguidores || 120;
-    document.getElementById('seguidos').textContent = user.seguidos || 180;
-    document.getElementById('puntaje').textContent = user.puntaje || 4.7;
-    document.getElementById('tarjeta').textContent = user.tarjeta || 'VIP';
-    document.getElementById('profileBio').textContent = user.bio || '¡Bienvenido a mi perfil FutPro! ⚽';
+  // Configuración Supabase
+  const supabase = window.supabase.createClient(
+    'https://qqrxetxcglwrejtblwut.supabase.co',
+    'eyJ...'
+  );
+  // Configuración Firebase
+  const firebaseConfig = {
+    apiKey: "AIza...",
+    authDomain: "futpro.firebaseapp.com",
+    databaseURL: "https://futpro.firebaseio.com",
+    projectId: "futpro",
+    storageBucket: "futpro.appspot.com",
+    messagingSenderId: "760210878835",
+    appId: "1:760210878835:web:xxxx"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-    // Galería de fotos y videos (simulada)
-    const gallery = [
-      { type: 'img', src: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=400&q=80' },
-      { type: 'img', src: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80' },
-      { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-      { type: 'img', src: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80' },
-      { type: 'img', src: 'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80' },
-      { type: 'video', src: 'https://www.w3schools.com/html/movie.mp4' }
-    ];
-    const galleryDiv = document.getElementById('profileGallery');
-    gallery.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'gallery-item';
-      if (item.type === 'img') {
-        div.innerHTML = `<img src="${item.src}" alt="foto">`;
-      } else {
-        div.innerHTML = `<video src="${item.src}" muted></video><span class='play'><i class='fas fa-play-circle'></i></span>`;
-        div.onclick = () => { div.querySelector('video').play(); };
-      }
-      galleryDiv.appendChild(div);
+  // Cargar datos de usuario
+  document.addEventListener('DOMContentLoaded', function() {
+    const user = JSON.parse(localStorage.getItem('futpro_user') || '{}');
+    if (!user || !user.id) {
+      window.location.href = '/index.html';
+      return;
+    }
+    document.getElementById('profileName').textContent = user.nombre || 'Usuario';
+    document.getElementById('profileEmail').textContent = user.email || '';
+    document.getElementById('avatar').src = user.foto || 'https://via.placeholder.com/120x120.png?text=Avatar';
+    cargarFeed();
+  });
+
+  // Modal upload
+  function abrirModalUpload() {
+    document.getElementById('modalUpload').style.display = 'block';
+  }
+  function cerrarModalUpload() {
+    document.getElementById('modalUpload').style.display = 'none';
+  }
+  // Modal foto perfil
+  function abrirModalFotoPerfil() {
+    document.getElementById('modalFotoPerfil').style.display = 'block';
+  }
+  function cerrarModalFotoPerfil() {
+    document.getElementById('modalFotoPerfil').style.display = 'none';
+  }
+  async function enviarFotoPerfil() {
+    const user = JSON.parse(localStorage.getItem('futpro_user') || '{}');
+    const archivo = document.getElementById('archivoFotoPerfil').files[0];
+    if (!archivo) return alert('Selecciona una foto');
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      const base64 = e.target.result;
+      user.foto = base64;
+      localStorage.setItem('futpro_user', JSON.stringify(user));
+      document.getElementById('avatar').src = base64;
+      // Guardar en Supabase
+      await supabase.from('usuarios').update({ foto: base64 }).eq('id', user.id);
+      // Guardar en Firebase realtime
+      db.ref('usuarios/' + user.id + '/foto').set(base64);
+      cerrarModalFotoPerfil();
+    };
+    reader.readAsDataURL(archivo);
+  }
+  // Publicar foto/video
+  async function enviarUpload() {
+    const user = JSON.parse(localStorage.getItem('futpro_user') || '{}');
+    const archivo = document.getElementById('archivoUpload').files[0];
+    const pie = document.getElementById('pieUpload').value;
+    if (!archivo) return alert('Selecciona una foto o video');
+    // Convertir archivo a base64
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      const base64 = e.target.result;
+      // Guardar en localStorage
+      let publicaciones = JSON.parse(localStorage.getItem('futpro_publicaciones_perfil') || '[]');
+      const nuevaPub = {
+        id: Date.now(),
+        userId: user.id,
+        nombre: user.nombre,
+        foto: user.foto,
+        media: base64,
+        pie,
+        likes: [],
+        comentarios: [],
+        fecha: new Date().toISOString()
+      };
+      publicaciones.unshift(nuevaPub);
+      localStorage.setItem('futpro_publicaciones_perfil', JSON.stringify(publicaciones));
+      // Guardar en Supabase
+      await supabase.from('publicaciones').insert([nuevaPub]);
+      // Guardar en Firebase realtime
+      db.ref('publicaciones/' + nuevaPub.id).set(nuevaPub);
+      cerrarModalUpload();
+      cargarFeed();
+    };
+    reader.readAsDataURL(archivo);
+  }
+  // Cargar feed de publicaciones
+  function cargarFeed() {
+    let publicaciones = JSON.parse(localStorage.getItem('futpro_publicaciones_perfil') || '[]');
+    const feed = document.getElementById('feedPublicaciones');
+    feed.innerHTML = '';
+    publicaciones.forEach(pub => {
+      const post = document.createElement('div');
+      post.className = 'post';
+      post.innerHTML = `
+        <div class='post-header'>
+          <img src='${pub.foto}' class='profile-avatar' style='width:48px;height:48px;'>
+          <span class='post-user'>${pub.nombre}</span>
+          <span style='color:#ccc;font-size:0.9em;margin-left:12px;'>${new Date(pub.fecha).toLocaleString()}</span>
+        </div>
+        <div class='post-image'>${pub.media.startsWith('data:video') ? `<video src='${pub.media}' controls style='width:100%;border-radius:18px;background:#181818;'>` : `<img src='${pub.media}' style='width:100%;border-radius:18px;background:#181818;'>`}</div>
+        <div class='post-actions'>
+          <span class='like-btn' onclick='toggleLike(${pub.id})'>
+            <svg width="28" height="28" viewBox="0 0 28 28" style="vertical-align:middle;">
+              <circle cx="14" cy="14" r="13" fill="#FFD700" stroke="#181818" stroke-width="2"/>
+              <text x="14" y="19" text-anchor="middle" font-size="16" fill="#181818" font-family="Arial">⚽</text>
+            </svg>
+            <span id='likeCount_${pub.id}'>${pub.likes.length}</span>
+          </span>
+          <span class='comment-btn' onclick='abrirComentarios(${pub.id})'><i class='fa fa-comment'></i> Comentarios</span>
+        </div>
+        <div class='post-comments' id='comments_${pub.id}' style='display:none;'></div>
+      `;
+      feed.appendChild(post);
     });
-    function editarPerfil() { window.location.href = 'editar-perfil.html'; }
-    function verTarjetas() { window.location.href = 'tarjetas.html'; }
+  }
+  // Like
+  function toggleLike(pubId) {
+    const user = JSON.parse(localStorage.getItem('futpro_user') || '{}');
+    let publicaciones = JSON.parse(localStorage.getItem('futpro_publicaciones_perfil') || '[]');
+    const idx = publicaciones.findIndex(p => p.id === pubId);
+    if (idx > -1) {
+      const likes = publicaciones[idx].likes;
+      const userIdx = likes.indexOf(user.id);
+      if (userIdx > -1) {
+        likes.splice(userIdx, 1);
+      } else {
+        likes.push(user.id);
+      }
+      localStorage.setItem('futpro_publicaciones_perfil', JSON.stringify(publicaciones));
+      document.getElementById('likeCount_' + pubId).textContent = likes.length;
+      // Actualizar en Supabase y Firebase
+      supabase.from('publicaciones').update({ likes }).eq('id', pubId);
+      db.ref('publicaciones/' + pubId + '/likes').set(likes);
+    }
+  }
+  // Comentarios
+  function abrirComentarios(pubId) {
+    const comentariosDiv = document.getElementById('comments_' + pubId);
+    comentariosDiv.style.display = comentariosDiv.style.display === 'none' ? 'block' : 'none';
+    let publicaciones = JSON.parse(localStorage.getItem('futpro_publicaciones_perfil') || '[]');
+    const idx = publicaciones.findIndex(p => p.id === pubId);
+    if (idx > -1) {
+      const comentarios = publicaciones[idx].comentarios || [];
+      comentariosDiv.innerHTML = comentarios.map(c => `<div class='comment'><b>${c.nombre}:</b> ${c.texto}</div>`).join('');
+      comentariosDiv.innerHTML += `<textarea id='nuevoComentario_${pubId}' placeholder='Escribe un comentario'></textarea><button onclick='enviarComentario(${pubId})'>Comentar</button>`;
+    }
+  }
+  function enviarComentario(pubId) {
+    const user = JSON.parse(localStorage.getItem('futpro_user') || '{}');
+    let publicaciones = JSON.parse(localStorage.getItem('futpro_publicaciones_perfil') || '[]');
+    const idx = publicaciones.findIndex(p => p.id === pubId);
+    if (idx > -1) {
+      const texto = document.getElementById('nuevoComentario_' + pubId).value;
+      if (!texto) return;
+      publicaciones[idx].comentarios = publicaciones[idx].comentarios || [];
+      publicaciones[idx].comentarios.push({ nombre: user.nombre, texto });
+      localStorage.setItem('futpro_publicaciones_perfil', JSON.stringify(publicaciones));
+      // Actualizar en Supabase y Firebase
+      supabase.from('publicaciones').update({ comentarios: publicaciones[idx].comentarios }).eq('id', pubId);
+      db.ref('publicaciones/' + pubId + '/comentarios').set(publicaciones[idx].comentarios);
+      abrirComentarios(pubId);
+    }
+  }
+  // Menú hamburguesa
+  function toggleMenu() {
+    const menu = document.getElementById('dropdownMenu');
+    menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
+  }
+  // Funciones de navegación
+  function irAPerfil() { window.location.href = '/perfil-instagram.html'; }
+  function editarPerfil() { window.location.href = '/editar-perfil.html'; }
+  function verEstadisticas() { window.location.href = '/estadisticas.html'; }
+  function cerrarSesion() { localStorage.clear(); sessionStorage.clear(); window.location.href = '/index.html'; }
+  function verPartidos() { window.location.href = '/partidos.html'; }
+  function verEquipos() { window.location.href = '/equipos.html'; }
+  function verTorneos() { window.location.href = '/torneo.html'; }
+  function verRanking() { window.location.href = '/ranking.html'; }
+  function verNotificaciones() { window.location.href = '/notificaciones.html'; }
+  function abrirChat() { window.location.href = '/chat.html'; }
+  function abrirMarketplace() { window.location.href = '/marketplace.html'; }
+  function verEstados() { window.location.href = '/estados.html'; }
+  function verAmigos() { window.location.href = '/amigos.html'; }
+  function jugarPenaltis() { window.location.href = '/penaltis.html'; }
+  function centroJuegos() { window.location.href = '/juegos.html'; }
+  function verCardFIFA() { window.location.href = '/fifa-card-demo.html'; }
+  function abrirConfiguracion() { window.location.href = '/configuracion.html'; }
+  function verPrivacidad() { window.location.href = '/privacidad.html'; }
   </script>
 </body>
 </html>
