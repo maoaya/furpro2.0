@@ -90,7 +90,7 @@ https://futpro.vip
 
 2. Busca el Client ID:
    ```
-   760210878835-r15nffmc9ldt4hb1a5k8mvs9dql7pkrf
+   YOUR_GOOGLE_OAUTH_CLIENT_ID
    ```
 
 3. Click en el nombre → **Copiar Client Secret**

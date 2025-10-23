@@ -37,7 +37,7 @@ Cuando haces login con Google:
 
 1. En la lista de "OAuth 2.0 Client IDs", busca el que usas en Supabase
 2. El nombre puede ser algo como "Web client 1" o similar
-3. **Copia el Client ID** (formato: `760210878835-bnl2k6qfb4vuhm9v6fqpj1dqh5kul6d8.apps.googleusercontent.com`)
+3. **Copia el Client ID** (formato: `YOUR_OAUTH_CLIENT_ID.apps.googleusercontent.com`)
 
 #### B. Editar Authorized redirect URIs
 

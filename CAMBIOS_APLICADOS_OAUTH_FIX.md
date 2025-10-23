@@ -127,8 +127,8 @@ window.location.href = '/home';
 
 ### Supabase Dashboard
 ✅ **Authentication → Providers → Google**
-- Client ID: `760210878835-r15nffmc9ldt4hb1a5k8mvs9dql7pkrf.apps.googleusercontent.com`
-- Client Secret: (del Google Cloud Console)
+- Client ID: `YOUR_GOOGLE_CLIENT_ID_FROM_CONSOLE`
+- Client Secret: `YOUR_GOOGLE_CLIENT_SECRET_FROM_CONSOLE`
 - Enabled: ✅
 
 ✅ **Authentication → URL Configuration**
@@ -139,7 +139,7 @@ window.location.href = '/home';
 
 ### Google Cloud Console
 ✅ **APIs & Services → Credentials**
-- OAuth 2.0 Client ID: `760210878835-r15nffmc9ldt4hb1a5k8mvs9dql7pkrf`
+- OAuth 2.0 Client ID: `YOUR_OAUTH_CLIENT_ID`
 - Authorized redirect URIs:
   - `https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback` ⚠️ ÚNICO
 

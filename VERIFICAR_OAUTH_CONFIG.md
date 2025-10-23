@@ -63,7 +63,7 @@ El fix que acabo de implementar limpia automáticamente el storage cuando detect
 ```
 https://console.cloud.google.com/apis/credentials
 ```
-- Encuentra tu OAuth 2.0 Client ID: `760210878835-bnl2k6qfb4vuhm9v6fqpj1dqh5kul6d8.apps.googleusercontent.com`
+- Encuentra tu OAuth 2.0 Client ID: `YOUR_GOOGLE_CLIENT_ID`
 - Edita y verifica que las URIs coincidan EXACTAMENTE (sin trailing slash, protocolo correcto)
 
 ### 2. Verifica Supabase Dashboard
