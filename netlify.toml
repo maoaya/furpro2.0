@@ -4,8 +4,8 @@
 [build]
   base = "."
   publish = "dist"
-  # Copiamos la página estática de Instagram al directorio de publicación
-  command = "npm ci && npm run build && cp homepage-instagram.html dist/homepage-instagram.html"
+  # homepage-instagram.html está en public/ así que Vite lo copia automáticamente
+  command = "npm ci && npm run build"
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':!README.md' ':!*.md'"
 
 [build.environment]
