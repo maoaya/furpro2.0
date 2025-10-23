@@ -13,15 +13,15 @@ El Client Secret **NO se debe guardar en archivos .env del frontend** porque es 
 
    - **Enabled:** ✅ (toggle verde)
    
-   - **Client ID:**
-     ```
-     760210878835-r15nffmc9ldt4hb1a5k8mvs9dql7pkrf.apps.googleusercontent.com
-     ```
+    - **Client ID:**
+       ```
+       (NO GUARDAR EN EL REPO)
+       ```
    
-   - **Client Secret:**
-     ```
-     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
-     ```
+    - **Client Secret:**
+       ```
+       (NO GUARDAR EN EL REPO)
+       ```
    
    - **Authorized Client IDs:** (dejar vacío)
    
