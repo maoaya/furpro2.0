@@ -7,19 +7,17 @@
     <script>
     // Validación de sesión y redirección post-login
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. Verificar si hay usuario autenticado en localStorage (SPA o login clásico)
-        const user = JSON.parse(localStorage.getItem('futpro_user') || 'null');
+        const user = JSON.parse(localStorage.getItem('futpro_user') || '{}');
         if (!user || !user.id) {
-            // Si no hay usuario, redirigir a login
             window.location.href = './index.html';
             return;
         }
-        // 2. Mostrar nombre/email en el header si existe
+        // Mostrar datos del usuario en el header
         const header = document.querySelector('.header');
-        if (header && user.nombre) {
+        if (header) {
             let userInfo = document.createElement('div');
-            userInfo.style = 'color:#FFD700;font-weight:bold;font-size:1.1em;margin-left:18px;';
-            userInfo.innerHTML = `<i class="fa fa-user-circle"></i> ${user.nombre} <span style='font-size:0.9em;color:#ccc;'>(${user.email})</span>`;
+            userInfo.style = 'color:#FFD700;font-weight:bold;font-size:1.1em;margin-left:18px;display:flex;align-items:center;gap:8px;';
+            userInfo.innerHTML = `<img src='${user.foto || 'https://via.placeholder.com/40x40.png?text=Avatar'}' style='width:32px;height:32px;border-radius:50%;border:2px solid #FFD700;'> <span>${user.nombre || 'Usuario'}</span> <span style='font-size:0.9em;color:#ccc;'>${user.email || ''}</span>`;
             header.appendChild(userInfo);
         }
     });
