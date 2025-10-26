@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FutPro - Home</title>
+    <script>
+    // Validación de sesión y redirección post-login
+    document.addEventListener('DOMContentLoaded', function() {
+        const user = JSON.parse(localStorage.getItem('futpro_user') || '{}');
+        if (!user || !user.id) {
+            window.location.href = './index.html';
+            return;
+        }
+        // Mostrar datos del usuario en el header
+        const header = document.querySelector('.header');
+        if (header) {
+            let userInfo = document.createElement('div');
+            userInfo.style = 'color:#FFD700;font-weight:bold;font-size:1.1em;margin-left:18px;display:flex;align-items:center;gap:8px;';
+            userInfo.innerHTML = `<img src='${user.foto || 'https://via.placeholder.com/40x40.png?text=Avatar'}' style='width:32px;height:32px;border-radius:50%;border:2px solid #FFD700;'> <span>${user.nombre || 'Usuario'}</span> <span style='font-size:0.9em;color:#ccc;'>${user.email || ''}</span>`;
+            header.appendChild(userInfo);
+        }
+    });
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         /* ANIMACIONES PARA ALERTAS Y NOTIFICACIONES */
@@ -2309,7 +2327,7 @@
         // Cerrar menú y animar transición
         toggleMenu();
         setTimeout(() => {
-            window.location.href = './homepage-instagram.html';
+            window.location.href = '/homepage-instagram.html';
         }, 300);
     }
 
@@ -2317,9 +2335,9 @@
         const usuario = JSON.parse(localStorage.getItem('futpro_user') || '{}');
         if (!usuario.nombre) {
             alert('Por favor, completa tu perfil primero');
-            window.location.href = './editar-perfil.html';
+            window.location.href = '/editar-perfil.html';
         } else {
-            window.location.href = './perfil-instagram.html';
+            window.location.href = '/perfil-instagram.html';
         }
     }
 
@@ -2330,7 +2348,7 @@
             timestamp: new Date().toISOString()
         }, 'acceder');
         
-        window.location.href = './editar-perfil.html';
+    window.location.href = '/editar-perfil.html';
     }
 
     function verEstadisticas() {
@@ -2361,7 +2379,7 @@
             timestamp: new Date().toISOString()
         }, 'acceder');
         
-        window.location.href = './estadisticas.html';
+    window.location.href = '/estadisticas.html';
     }
 
     function verPartidos() {
@@ -2389,7 +2407,7 @@
             timestamp: new Date().toISOString()
         }, 'acceder');
         
-        window.location.href = './partidos.html';
+    window.location.href = '/partidos.html';
     }
 
     function verLogros() {
@@ -2400,16 +2418,16 @@
         if (stats.partidos > 10) logros.push('Veterano');
         if (stats.asistencias > 3) logros.push('Asistente');
         localStorage.setItem('futpro_logros', JSON.stringify(logros));
-        window.location.href = './logros.html';
+    window.location.href = '/logros.html';
     }
 
     function verTarjetas() {
-        window.location.href = './tarjetas.html';
+    window.location.href = '/tarjetas.html';
     }
 
     // SECCIÓN EQUIPOS Y TORNEOS
     function verEquipos() {
-        window.location.href = './equipos.html';
+    window.location.href = '/equipos.html';
     }
 
     function crearEquipo() {
@@ -2443,7 +2461,7 @@
             timestamp: new Date().toISOString()
         }, 'acceder');
         
-        window.location.href = './torneo.html';
+    window.location.href = '/torneo.html';
     }
 
     function crearTorneo() {
@@ -2478,20 +2496,20 @@
     }
 
     function crearAmistoso() {
-        window.location.href = './amistoso.html';
+    window.location.href = '/amistoso.html';
     }
 
     // SECCIÓN JUEGOS Y CARDS
     function jugarPenaltis() {
-        window.location.href = './penaltis.html';
+    window.location.href = '/penaltis.html';
     }
 
     function centroJuegos() {
-        window.location.href = './juegos.html';
+    window.location.href = '/juegos.html';
     }
 
     function verCardFIFA() {
-        window.location.href = './fifa-card-demo.html';
+    window.location.href = '/fifa-card-demo.html';
     }
 
     function sugerenciasCard() {
@@ -2518,23 +2536,23 @@
             {tipo: 'logro', mensaje: 'Has desbloqueado el logro "Goleador"', fecha: new Date().toLocaleDateString()}
         ];
         localStorage.setItem('futpro_notificaciones', JSON.stringify(notificaciones));
-        window.location.href = './notificaciones.html';
+    window.location.href = '/notificaciones.html';
     }
 
     function abrirChat() {
-        window.location.href = './chat.html';
+    window.location.href = '/chat.html';
     }
 
     function verVideos() {
-        window.location.href = './videos.html';
+    window.location.href = '/videos.html';
     }
 
     function abrirMarketplace() {
-        window.location.href = './marketplace.html';
+    window.location.href = '/marketplace.html';
     }
 
     function verEstados() {
-        window.location.href = './estados.html';
+    window.location.href = '/estados.html';
     }
 
     function verAmigos() {
@@ -2548,25 +2566,25 @@
             ];
             localStorage.setItem('futpro_amigos', JSON.stringify(amigosDemo));
         }
-        window.location.href = './amigos.html';
+    window.location.href = '/amigos.html';
     }
 
     // SECCIÓN RANKINGS
     function rankingJugadores() {
-        window.location.href = './ranking.html';
+    window.location.href = '/ranking.html';
     }
 
     function rankingPartidos() {
-        window.location.href = './ranking.html#partidos';
+    window.location.href = '/ranking.html#partidos';
     }
 
     function buscarRanking() {
-        window.location.href = './buscar-ranking.html';
+    window.location.href = '/buscar-ranking.html';
     }
 
     // SECCIÓN ADMINISTRACIÓN
     function abrirConfiguracion() {
-        window.location.href = './configuracion.html';
+    window.location.href = '/configuracion.html';
     }
 
     function contactarSoporte() {
@@ -2587,19 +2605,17 @@
     }
 
     function verPrivacidad() {
-        window.location.href = './privacidad.html';
+    window.location.href = '/privacidad.html';
     }
 
     // Función para cerrar sesión
     function cerrarSesion() {
         if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-            // Limpiar datos de sesión pero mantener datos del juego
+            // Limpiar datos de sesión y redirigir a login
             localStorage.removeItem('futpro_user');
             localStorage.removeItem('futpro_token');
             sessionStorage.clear();
-            
-            alert('Sesión cerrada correctamente. ¡Hasta la próxima!');
-            window.location.href = './formulario-completo.html';
+        window.location.href = '/index.html';
         }
     }
 
