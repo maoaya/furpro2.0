@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import supabase, { supabaseAuth } from '../supabaseClient';
+import supabase from '../supabaseClient';
+import { authFlowManager, handleAuthenticationSuccess } from '../utils/authFlowManager.js';
 import getConfig from '../config/environment.js';
 
 export default function CallbackPageOptimized() {
@@ -9,7 +10,6 @@ export default function CallbackPageOptimized() {
   const { user, loading } = useAuth();
   const [processing, setProcessing] = useState(true);
   const [status, setStatus] = useState('Procesando autenticación...');
-  const [showFixInstructions, setShowFixInstructions] = useState(false);
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -17,163 +17,120 @@ export default function CallbackPageOptimized() {
         console.log('🔄 CallbackPage: Procesando callback OAuth...');
         setStatus('Verificando autenticación...');
 
-        // Preparar parámetros de URL
+        // 0) Si viene con error en la URL, intentar un reintento seguro UNA sola vez
         const searchParams = new URLSearchParams(window.location.search);
         const hashParamsRaw = window.location.hash?.startsWith('#') ? window.location.hash.substring(1) : '';
         const hashParams = new URLSearchParams(hashParamsRaw);
-        const hasCode = window.location.href.includes('code=');
         const errorParam = searchParams.get('error') || hashParams.get('error');
         const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
-        
-        // 🔍 DEBUG: Loguear TODO lo que llega en la URL
-        console.log('🔍 DEBUG CALLBACK URL:', {
-          fullURL: window.location.href,
-          search: window.location.search,
-          hash: window.location.hash,
-          hasCode,
-          searchParams: Object.fromEntries(searchParams.entries()),
-          hashParams: Object.fromEntries(hashParams.entries())
-        });
 
         if (errorParam) {
-          const errorDescription = searchParams.get('error_description') || hashParams.get('error_description') || 'Sin descripción';
-          const errorDetails = {
-            errorParam,
-            errorCode,
-            errorDescription: decodeURIComponent(errorDescription),
-            fullURL: window.location.href,
-            hash: window.location.hash,
-            search: window.location.search
-          };
-          
-          // 🔥 LOGGING EXHAUSTIVO DEL ERROR
-          console.error('❌❌❌ ERROR COMPLETO EN CALLBACK ❌❌❌');
-          console.error('Error Param:', errorParam);
-          console.error('Error Code:', errorCode);
-          console.error('Error Description:', decodeURIComponent(errorDescription));
-          console.error('Full URL:', window.location.href);
-          console.error('Hash:', window.location.hash);
-          console.error('Search:', window.location.search);
-          console.error('OBJETO COMPLETO:', JSON.stringify(errorDetails, null, 2));
-          
-          // 🔥 MANEJO ESPECÍFICO DE bad_oauth_state
-          if (errorParam === 'invalid_request' || errorCode === 'bad_oauth_state' || errorDescription.includes('state')) {
-            console.error('🚨 ERROR DE ESTADO OAUTH - Limpiando storage y redirigiendo...');
-            setStatus('Error de autenticación OAuth. Limpiando caché...');
-            
-            // Limpiar TODO el storage relacionado con Supabase
+          console.warn('⚠️ Error recibido en callback:', { errorParam, errorCode });
+          const alreadyRetried = sessionStorage.getItem('oauth_retry_once') === 'true';
+          if (!alreadyRetried && (
+            errorParam.includes('server_error') ||
+            (errorCode && errorCode.includes('unexpected_failure')) ||
+            decodeURIComponent((searchParams.get('error_description') || hashParams.get('error_description') || '')).toLowerCase().includes('exchange')
+          )) {
+            sessionStorage.setItem('oauth_retry_once', 'true');
+            setStatus('Hubo un problema intercambiando el código. Reintentando login de forma segura...');
+            const config = getConfig();
             try {
-              localStorage.removeItem('futpro-auth-token');
-              localStorage.removeItem('supabase.auth.token');
-              sessionStorage.clear();
-              
-              // Limpiar cookies de Supabase (esto requiere configuración adicional)
-              document.cookie.split(";").forEach(function(c) { 
-                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+              const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                  redirectTo: config.oauthCallbackUrl,
+                  queryParams: { prompt: 'select_account' }
+                }
               });
+              if (error) {
+                console.error('❌ Reintento OAuth falló:', error);
+                setTimeout(() => navigate('/?error=' + encodeURIComponent('No se pudo completar la autenticación'), { replace: true }), 1500);
+                return;
+              }
+              // Supabase redirigirá, detener flujo actual
+              return;
             } catch (e) {
-              console.warn('⚠️ Error limpiando storage:', e);
+              console.error('💥 Excepción en reintento OAuth:', e);
+              setTimeout(() => navigate('/?error=' + encodeURIComponent('No se pudo completar la autenticación'), { replace: true }), 1500);
+              return;
+            }
+          }
+        }
+
+  // Esperar un poco para que Supabase procese el callback
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // Obtener la sesión actual
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        console.log('📊 Estado de sesión:', { session: !!session, user: !!session?.user, error: sessionError });
+        
+        if (sessionError) {
+          console.error('❌ Error obteniendo sesión:', sessionError);
+          setStatus('Error en autenticación. Redirigiendo...');
+          setTimeout(() => navigate('/', { replace: true }), 2000);
+          return;
+        }
+
+        if (!session || !session.user) {
+          console.warn('⚠️ No hay sesión válida en callback');
+          console.log('🔍 Intentando recuperar sesión desde URL...');
+          // 1) Si viene flujo con code/state (PKCE), intentar intercambio explícito
+          const urlHasCode = window.location.search.includes('code=') && window.location.search.includes('state=');
+          if (urlHasCode) {
+            try {
+              setStatus('Intercambiando código por sesión...');
+              const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+              if (error) {
+                console.error('❌ exchangeCodeForSession error:', error);
+              } else if (data?.session?.user) {
+                console.log('✅ Sesión establecida vía exchangeCodeForSession');
+                await processUserProfile(data.session.user);
+                return;
+              }
+            } catch (ex) {
+              console.error('💥 Excepción en exchangeCodeForSession:', ex);
+            }
+          }
+          
+          // Intentar obtener sesión desde el hash de la URL
+          const accessToken = hashParams.get('access_token');
+          
+          if (accessToken) {
+            console.log('✅ Token encontrado en URL, estableciendo sesión...');
+            const { data, error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: hashParams.get('refresh_token') || ''
+            });
+            
+            if (error || !data.session) {
+              console.error('❌ Error estableciendo sesión:', error);
+              setStatus('No se pudo completar la autenticación. Redirigiendo a tu dashboard...');
+              setTimeout(() => navigate('/home', { replace: true }), 1500);
+              return;
             }
             
-            setProcessing(false);
-            setTimeout(() => {
-              console.log('🔄 Redirigiendo a login limpio...');
-              window.location.href = '/';
-            }, 2500);
+            // Usar la sesión establecida
+            const user = data.session.user;
+            console.log('✅ Sesión establecida correctamente para:', user.email);
+            await processUserProfile(user);
             return;
           }
           
-          // Mostrar en pantalla también para otros errores
-          setStatus(`Error OAuth: ${errorParam} - ${decodeURIComponent(errorDescription)}`);
-          setProcessing(false);
-          
-          // NO redirigir automáticamente - dejar que el usuario vea el error
-          console.error('🚨 DETÉN: Copia TODO este log y pásalo al desarrollador');
+          setStatus('No se pudo completar la autenticación. Redirigiendo...');
+          setTimeout(() => navigate('/home', { replace: true }), 1500);
           return;
         }
 
-        // 🔥 ESTRATEGIA FINAL: Procesar manualmente según lo que REALMENTE venga
-        console.log('⏳ Procesando callback manualmente...');
-        setStatus('Procesando autenticación con Google...');
-        
-        let effectiveSession = null;
-        
-        // 0️⃣ Si hay `code` en la query, intercambiarlo por sesión (PKCE)
-        const authCode = searchParams.get('code');
-        if (authCode) {
-          console.log('🔁 Intercambiando code por sesión con Supabase (PKCE)...');
-          try {
-            const { data, error } = await supabaseAuth.auth.exchangeCodeForSession(window.location.href);
-            if (!error && data?.session) {
-              effectiveSession = data.session;
-              console.log('✅ Sesión establecida con exchangeCodeForSession:', data.session.user.email);
-            } else {
-              console.error('❌ Error en exchangeCodeForSession:', error);
-            }
-          } catch (err) {
-            console.error('💥 Excepción en exchangeCodeForSession:', err);
-          }
-        }
-        
-        // 1️⃣ PRIMERO: Si hay access_token en el HASH, usar setSession
-        const accessToken = hashParams.get('access_token');
-        if (accessToken) {
-          console.log('✅ access_token encontrado en hash');
-          const refreshToken = hashParams.get('refresh_token') || '';
-          try {
-            const { data, error } = await supabaseAuth.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken
-            });
-            if (!error && data?.session) {
-              effectiveSession = data.session;
-              console.log('✅ Sesión establecida desde hash:', data.session.user.email);
-            } else {
-              console.error('❌ Error en setSession:', error);
-            }
-          } catch (err) {
-            console.error('💥 Excepción en setSession:', err);
-          }
-        }
-        
-        // 2️⃣ SI NO HAY TOKEN: Dejar que Supabase intente procesar automáticamente
-        if (!effectiveSession) {
-          console.log('📡 No hay token en hash, intentando getSession automático...');
-          await new Promise(resolve => setTimeout(resolve, 1500));
-          const { data: { session }, error: sessionError } = await supabaseAuth.auth.getSession();
-          if (!sessionError && session) {
-            effectiveSession = session;
-            console.log('✅ Sesión obtenida automáticamente:', session.user.email);
-          } else {
-            console.error('❌ getSession falló:', sessionError);
-          }
-        }
-        
-        console.log('📊 Estado FINAL de sesión:', { 
-          session: !!effectiveSession, 
-          user: !!effectiveSession?.user,
-          email: effectiveSession?.user?.email 
-        });
-        
-        if (!effectiveSession || !effectiveSession.user) {
-          console.error('❌ NO HAY SESIÓN después de todos los intentos');
-          console.error('🔍 URL completa que llegó:', window.location.href);
-          console.error('🔍 Hash:', window.location.hash);
-          console.error('🔍 Search:', window.location.search);
-          setStatus('No se pudo completar la autenticación. Verifica la configuración de OAuth.');
-          setProcessing(false);
-          setTimeout(() => navigate('/', { replace: true }), 3000);
-          return;
-        }
-
-        const user = effectiveSession.user;
+        const user = session.user;
         console.log('✅ Usuario OAuth autenticado:', user.email);
         await processUserProfile(user);
 
       } catch (error) {
   console.error('💥 Error inesperado en callback:', error);
-    setStatus('Error inesperado. Redirigiendo al inicio...');
-    setTimeout(() => { window.location.href = '/homepage-instagram.html'; }, 1500);
+  setStatus('Error inesperado. Redirigiendo a tu dashboard...');
+  setTimeout(() => navigate('/home', { replace: true }), 1500);
       } finally {
         setProcessing(false);
       }
@@ -211,30 +168,6 @@ export default function CallbackPageOptimized() {
             }
           }
 
-          // Si faltan datos críticos (ej: avatar), enviar al formulario de registro primero
-          const avatarCandidato = draftData?.avatar || user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
-          const requiereFormulario = !avatarCandidato;
-
-          if (requiereFormulario) {
-            console.log('📝 Faltan datos (avatar). Redirigiendo a formulario de registro...');
-            const draftParaFormulario = {
-              nombre: draftData?.nombre || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
-              email: user.email,
-              provider: user.app_metadata?.provider || 'oauth',
-              avatar: null,
-              origen: 'oauth-callback'
-            };
-            localStorage.setItem('futpro_registro_draft', JSON.stringify(draftParaFormulario));
-            localStorage.setItem('registroPendiente', 'true');
-            // Navegar a formulario de registro
-            try {
-              navigate('/registro', { replace: true });
-            } catch (e) {
-              window.location.href = '/registro';
-            }
-            return; // Importante: no continuar con creación automática
-          }
-
           // Crear perfil para nuevo usuario OAuth - Con datos del draft si existen
           const perfilData = {
             id: user.id,
@@ -250,7 +183,7 @@ export default function CallbackPageOptimized() {
             dias_disponibles: draftData?.diasDisponibles || [],
             horarios_entrenamiento: draftData?.horariosEntrenamiento || '',
             equipo_favorito: draftData?.equipoFavorito || '',
-            avatar_url: avatarCandidato,
+            avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
             rol: 'usuario',
             tipo_usuario: 'jugador',
             estado: 'activo',
@@ -268,7 +201,7 @@ export default function CallbackPageOptimized() {
           if (createError) {
             console.error('❌ Error creando perfil:', createError);
             setStatus('Error creando perfil, pero tu sesión está activa. Redirigiendo...');
-              setTimeout(() => { window.location.href = '/homepage-instagram.html'; }, 1200);
+            setTimeout(() => navigate('/home', { replace: true }), 1200);
           } else {
             console.log('✅ Perfil creado exitosamente para usuario OAuth con datos completos');
             // Limpiar draft si se usó
@@ -279,31 +212,36 @@ export default function CallbackPageOptimized() {
           }
         }
 
-        console.log('🎉 OAuth callback procesado. Guardando sesión y navegando...');
+        console.log('🎉 OAuth callback procesado. Usando AuthFlowManager...');
         setStatus('¡Éxito! Configurando navegación...');
 
-        // CRÍTICO: Establecer indicadores de auth ANTES de navegar
-        localStorage.setItem('authCompleted', 'true');
-        localStorage.setItem('loginSuccess', 'true');
-        localStorage.setItem('userEmail', user.email);
-        localStorage.setItem('userId', user.id);
+        // Usar el nuevo AuthFlowManager para navegación robusta
+        const resultado = await handleAuthenticationSuccess(user, navigate, {
+          nombre: user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
+          provider: user.app_metadata?.provider
+        });
 
-        // Esperar un momento para que AuthContext procese la sesión
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // 🎯 NAVEGACIÓN DIRECTA SIN CONDICIONES - Forzar ir a /home
-        console.log('🎯 FORZANDO NAVEGACIÓN DIRECTA A /HOME');
-        setStatus('¡Redirigiendo a tu dashboard!');
-        
-        // Usar window.location para forzar recarga completa y actualizar contexto
-        setTimeout(() => {
-          console.log('🔄 Ejecutando window.location.href = "/home"');
-            window.location.href = '/homepage-instagram.html';
-        }, 300);
+        if (resultado.success) {
+          console.log('✅ Navegación exitosa con AuthFlowManager');
+          setStatus('¡Redirigiendo a tu dashboard!');
+        } else {
+          console.log('⚠️ Problema con AuthFlowManager, usando fallback');
+          setStatus('Finalizando configuración...');
+          
+          // Fallback al método anterior
+          localStorage.setItem('authCompleted', 'true');
+          setTimeout(() => {
+            try {
+              navigate('/home', { replace: true });
+            } catch (navError) {
+              window.location.href = '/home';
+            }
+          }, 1000);
+        }
       } catch (error) {
   console.error('💥 Error procesando perfil:', error);
   setStatus('Error configurando perfil. Redirigiendo a tu dashboard...');
-    setTimeout(() => { window.location.href = '/homepage-instagram.html'; }, 1200);
+  setTimeout(() => navigate('/home', { replace: true }), 1200);
       }
     };
 
@@ -319,9 +257,9 @@ export default function CallbackPageOptimized() {
       console.log('✅ Usuario ya autenticado en CallbackPage, redirigiendo...');
       setTimeout(() => {
         try {
-            window.location.href = '/homepage-instagram.html';
+          navigate('/home', { replace: true });
         } catch (error) {
-            window.location.href = '/homepage-instagram.html';
+          window.location.href = '/home';
         }
       }, 500);
     }
@@ -397,22 +335,6 @@ export default function CallbackPageOptimized() {
         }}>
           {status}
         </p>
-
-        {showFixInstructions && (
-          <div style={{ textAlign: 'left', marginTop: 12, color: '#fff' }}>
-            <h3 style={{ color: '#FFD700', fontSize: 16 }}>Solución rápida</h3>
-            <p style={{ color: '#ccc', fontSize: 14 }}>Parece que las Redirect URLs configuradas para OAuth no coinciden con este dominio. Sigue estos pasos:</p>
-            <ol style={{ color: '#ddd', fontSize: 14 }}>
-              <li>En Supabase &gt; Authentication &gt; URL Configuration, agrega: <strong>https://futpro.vip/auth/callback</strong> y <strong>https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback</strong></li>
-              <li>En Google Cloud Console &gt; Credentials &gt; OAuth client, agrega las mismas URLs en Authorized redirect URIs y agrega <strong>https://futpro.vip</strong> en Authorized JavaScript origins.</li>
-              <li>Después de guardar, intenta el login en una ventana de incógnito.</li>
-            </ol>
-            <div style={{ marginTop: 10 }}>
-              <a href="https://app.supabase.com/project/qqrxetxcglwrejtblwut/auth/url-configuration" target="_blank" rel="noreferrer" style={{ color: '#FFD700', textDecoration: 'underline', marginRight: 12 }}>Abrir Supabase (URL config)</a>
-              <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer" style={{ color: '#FFD700', textDecoration: 'underline' }}>Abrir Google Cloud Console</a>
-            </div>
-          </div>
-        )}
 
         {!processing && (
           <div style={{

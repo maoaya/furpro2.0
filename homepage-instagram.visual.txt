@@ -1,0 +1,190 @@
+        .dropdown-menu {
+        .dropdown-menu .menu-section-title {
+        .dropdown-menu .dropdown-item {
+        .dropdown-menu .dropdown-item:hover {
+        .dropdown-menu .dropdown-item i {
+        .dropdown-menu .menu-separator {
+        .dropdown-menu a {
+        .dropdown-menu a:visited, .dropdown-menu a:active {
+        .dropdown-menu a:focus {
+        body, .main-content, .stories-container, .post {
+        .dropdown-menu .dropdown-item:not(:last-child) {
+        .dropdown-menu .menu-section-title {
+        .stories-container, .post {
+        .menu-section-title {
+        .stories-container {
+        .stories-container::-webkit-scrollbar {
+            .dropdown-menu {
+                <button class="hamburger-btn" onclick="toggleMenu()" style="background:rgba(24,24,24,0.98);border:none;border-radius:50%;padding:16px 18px;box-shadow:0 2px 16px #000a;cursor:pointer;z-index:10001;transition:background 0.2s;">
+        <div class="dropdown-menu" id="dropdownMenu" style="display:none;top:74px;right:48px;position:absolute;z-index:10000;overflow-y:auto;overflow-x:hidden;">
+                    <div class="menu-section-title">Principal</div>
+                    <a href="#" class="dropdown-item" onclick="irAInicio(); return false;"><i class="fas fa-home"></i><span>Inicio</span></a>
+                    <a href="#" class="dropdown-item" onclick="irAPerfil(); return false;"><i class="fas fa-user-circle"></i><span>Mi Perfil</span></a>
+                    <a href="#" class="dropdown-item" onclick="editarPerfil(); return false;"><i class="fas fa-edit"></i><span>Editar Perfil</span></a>
+                    <a href="#" class="dropdown-item" onclick="verEstadisticas(); return false;"><i class="fas fa-chart-bar"></i><span>Mis Estadísticas</span></a>
+                    <a href="#" class="dropdown-item" onclick="verPartidos(); return false;"><i class="fas fa-calendar-alt"></i><span>Mis Partidos</span></a>
+                    <a href="#" class="dropdown-item" onclick="verLogros(); return false;"><i class="fas fa-medal"></i><span>Mis Logros</span></a>
+                    <a href="#" class="dropdown-item" onclick="verTarjetas(); return false;"><i class="fas fa-id-badge"></i><span>Mis Tarjetas</span></a>
+                    <div class="menu-section-title">Equipos & Torneos</div>
+                    <a href="#" class="dropdown-item" onclick="verEquipos(); return false;"><i class="fas fa-users"></i><span>Ver Equipos</span></a>
+                    <a href="#" class="dropdown-item" onclick="crearEquipo(); return false;"><i class="fas fa-plus-square"></i><span>Crear Equipo</span></a>
+                    <a href="#" class="dropdown-item" onclick="verTorneos(); return false;"><i class="fas fa-trophy"></i><span>Ver Torneos</span></a>
+                    <a href="#" class="dropdown-item" onclick="crearTorneo(); return false;"><i class="fas fa-plus-circle"></i><span>Crear Torneo</span></a>
+                    <a href="#" class="dropdown-item" onclick="crearAmistoso(); return false;"><i class="fas fa-handshake"></i><span>Crear Amistoso</span></a>
+                    <div class="menu-section-title">Juegos & Cards</div>
+                    <a href="#" class="dropdown-item" onclick="jugarPenaltis(); return false;"><i class="fas fa-futbol"></i><span>Juego de Penaltis</span></a>
+                    <a href="#" class="dropdown-item" onclick="centroJuegos(); return false;"><i class="fas fa-gamepad"></i><span>Centro de Juegos</span></a>
+                    <a href="#" class="dropdown-item" onclick="verCardFIFA(); return false;"><i class="fas fa-id-card"></i><span>Card FIFA</span></a>
+                    <a href="#" class="dropdown-item" onclick="sugerenciasCard(); return false;"><i class="fas fa-lightbulb"></i><span>Sugerencias Card</span></a>
+                    <div class="menu-section-title">Social</div>
+                    <a href="#" class="dropdown-item" onclick="verNotificaciones(); return false;"><i class="fas fa-bell"></i><span>Notificaciones</span></a>
+                    <a href="#" class="dropdown-item" onclick="abrirChat(); return false;"><i class="fas fa-comments"></i><span>Chat</span></a>
+                    <a href="#" class="dropdown-item" onclick="verVideos(); return false;"><i class="fas fa-video"></i><span>Videos</span></a>
+                    <a href="#" class="dropdown-item" onclick="abrirMarketplace(); return false;"><i class="fas fa-store"></i><span>Marketplace</span></a>
+                    <a href="#" class="dropdown-item" onclick="verEstados(); return false;"><i class="fas fa-clipboard-list"></i><span>Estados</span></a>
+                    <a href="#" class="dropdown-item" onclick="verAmigos(); return false;"><i class="fas fa-user-friends"></i><span>Amigos</span></a>
+                    <a href="#" class="dropdown-item" onclick="abrirTransmisionEnVivo(); return false;"><i class="fas fa-broadcast-tower"></i><span style="color:#FF1744">Transmitir en Vivo</span></a>
+                    <div class="menu-section-title">Rankings</div>
+                    <a href="#" class="dropdown-item" onclick="rankingJugadores(); return false;"><i class="fas fa-list-ol"></i><span>Ranking Jugadores</span></a>
+                    <a href="#" class="dropdown-item" onclick="rankingPartidos(); return false;"><i class="fas fa-chart-line"></i><span>Ranking Partidos</span></a>
+                    <a href="#" class="dropdown-item" onclick="buscarRanking(); return false;"><i class="fas fa-search"></i><span>Buscar Ranking</span></a>
+                    <div class="menu-section-title">Administración</div>
+                    <a href="#" class="dropdown-item" onclick="abrirConfiguracion(); return false;"><i class="fas fa-cog"></i><span>Configuración</span></a>
+                    <a href="#" class="dropdown-item" onclick="sugerenciasCard(); return false;"><i class="fas fa-lightbulb"></i><span>Sugerencias Card</span></a>
+                    <a href="#" class="dropdown-item" onclick="contactarSoporte(); return false;"><i class="fas fa-life-ring"></i><span>Soporte</span></a>
+                    <a href="#" class="dropdown-item" onclick="verPrivacidad(); return false;"><i class="fas fa-shield-alt"></i><span>Privacidad</span></a>
+                    <a href="#" class="dropdown-item" onclick="cerrarSesion(); return false;"><i class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span></a>
+                <button onclick="this.closest('div').parentElement.remove()" style="background: #000; color: #FFD700; border: none; padding: 8px 16px; border-radius: 5px; margin-top: 10px;">Cerrar</button>
+                btn.onclick = abrirModalPublicar;
+                <button onclick=\"cerrarModalLive()\" style=\"position:absolute;top:10px;right:10px;background:none;border:none;color:#FFD700;font-size:1.5rem;cursor:pointer;\"><i class='fas fa-times'></i></button>
+        preview.innerHTML = `<div style='color:#FFD700;text-align:center;font-size:1.1rem;margin-bottom:10px;'>🔴 Transmitiendo en vivo...</div><div style='color:#fff;font-size:1.05rem;margin-bottom:6px;'><b>${titulo}</b></div><div style='color:#ccc;font-size:0.95rem;'>${desc}</div><div style='margin-top:18px;'><button onclick='cerrarModalLive()' style='background:#FFD700;color:#181818;font-weight:bold;padding:7px 16px;border:none;border-radius:16px;font-size:1rem;box-shadow:0 2px 8px #0004;cursor:pointer;'>Finalizar transmisión</button></div>`;
+        const feed = document.getElementById('feedPublicaciones');
+                            <button onclick="mostrarMenuPublicacion('${pubId}')" style='background:none;border:none;color:#FFD700;font-size:1.2rem;cursor:pointer;padding:4px;'><i class='fas fa-ellipsis-h'></i></button>
+                                <button onclick="editarPublicacion('${pubId}')" style='width:100%;background:none;border:none;color:#FFD700;padding:10px 16px;text-align:left;cursor:pointer;font-size:0.9rem;border-bottom:1px solid #333;'><i class='fas fa-edit'></i> Editar</button>
+                                <button onclick="borrarPublicacion('${pubId}')" style='width:100%;background:none;border:none;color:#FF4444;padding:10px 16px;text-align:left;cursor:pointer;font-size:0.9rem;border-bottom:1px solid #333;'><i class='fas fa-trash'></i> Borrar</button>
+                                <button onclick="compartirURLPublicacion('${pubId}')" style='width:100%;background:none;border:none;color:#FFD700;padding:10px 16px;text-align:left;cursor:pointer;font-size:0.9rem;'><i class='fas fa-share'></i> Compartir URL</button>
+                            <button onclick="toggleLikePubGlobal('${pubId}')" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:${yaLike?'#FF1744':'#FFD700'};display:flex;align-items:center;gap:6px;"><i class='fas fa-futbol'></i> <span id='likeCount_${pubId}'>${likes.length}</span></button>
+                            <button onclick="abrirComentariosPubGlobal('${pubId}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:#FFD700;display:flex;align-items:center;gap:6px;"><i class='far fa-comment'></i> <span id='comentCount_${pubId}'>${comentarios.length}</span></button>
+                            <button onclick="cerrarModalComentPub()" style="position:absolute;top:10px;right:10px;background:none;border:none;color:#FFD700;font-size:1.3rem;cursor:pointer;"><i class='fas fa-times'></i></button>
+                                <button onclick="enviarComentarioPub('${pubId}')" style='background:#FFD700;color:#181818;font-weight:bold;padding:7px 12px;border:none;border-radius:8px;font-size:1rem;cursor:pointer;'>Enviar</button>
+                            <button onclick="cerrarModalPublicar()" style="position:absolute;top:10px;right:10px;background:none;border:none;color:#FFD700;font-size:1.5rem;cursor:pointer;"><i class='fas fa-times'></i></button>
+                    if (!e.target.closest('[id^="menu_"]') && !e.target.closest('button[onclick*="mostrarMenuPublicacion"]')) {
+                    setActiveNav(document.querySelector('[onclick="irAHome()"]'));
+                    document.getElementById('feedPublicaciones').style.display = 'block';
+                    setActiveNav(document.querySelector('[onclick="irAMarket()"]'));
+                    setActiveNav(document.querySelector('[onclick="irAVideos()"]'));
+                    setActiveNav(document.querySelector('[onclick="irAAlertas()"]'));
+                    setActiveNav(document.querySelector('[onclick="irAChat()"]'));
+                    const sections = ['feedPublicaciones', 'marketSection', 'videosSection', 'alertasSection', 'chatSection'];
+                                <button onclick="publicarProducto()" style="background:#FFD700;color:#181818;font-weight:bold;padding:8px 16px;border:none;border-radius:12px;font-size:0.9rem;">Vender</button>
+                        <div style="background:#181818;border:2px solid #FFD700;border-radius:12px;overflow:hidden;cursor:pointer;" onclick="verProducto('${p.id}')">
+                                <button onclick="enviarMensajeVendedor('${producto.vendedorId}','${producto.nombre}','${producto.imagen}')" style="flex:1;background:#FFD700;color:#181818;font-weight:bold;padding:10px;border:none;border-radius:8px;">Estoy interesado</button>
+                                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background:#666;color:#fff;padding:10px 16px;border:none;border-radius:8px;">Cerrar</button>
+                                    <button type="button" onclick="document.getElementById('modalProducto').remove()" style="background:#666;color:#fff;padding:8px 16px;border:none;border-radius:8px;">Cancelar</button>
+                    document.querySelector('[onclick*="parentElement.parentElement.parentElement.remove"]').click();
+                            <button onclick="cerrarVideos()" style="position:absolute;top:20px;left:20px;background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:20px;padding:8px 12px;border-radius:50%;cursor:pointer;z-index:10001;">
+                                    <button onclick="toggleLikeVideo()" id="likeVideoBtn" style="background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:24px;padding:12px;border-radius:50%;cursor:pointer;">
+                                    <button onclick="abrirComentariosVideo()" style="background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:24px;padding:12px;border-radius:50%;cursor:pointer;">
+                                    <button onclick="compartirVideo()" style="background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:24px;padding:12px;border-radius:50%;cursor:pointer;">
+                                <button onclick="filtrarAlertas('todas')" class="filtro-alertas active" style="background:#FFD700;color:#181818;border:none;padding:6px 12px;border-radius:16px;font-size:0.85rem;white-space:nowrap;">Todas</button>
+                                <button onclick="filtrarAlertas('equipos')" class="filtro-alertas" style="background:#333;color:#FFD700;border:none;padding:6px 12px;border-radius:16px;font-size:0.85rem;white-space:nowrap;">Equipos</button>
+                                <button onclick="filtrarAlertas('likes')" class="filtro-alertas" style="background:#333;color:#FFD700;border:none;padding:6px 12px;border-radius:16px;font-size:0.85rem;white-space:nowrap;">Likes</button>
+                                <button onclick="filtrarAlertas('comentarios')" class="filtro-alertas" style="background:#333;color:#FFD700;border:none;padding:6px 12px;border-radius:16px;font-size:0.85rem;white-space:nowrap;">Comentarios</button>
+                                <button onclick="filtrarAlertas('seguidores')" class="filtro-alertas" style="background:#333;color:#FFD700;border:none;padding:6px 12px;border-radius:16px;font-size:0.85rem;white-space:nowrap;">Seguidores</button>
+                                <button onclick="filtrarAlertas('partidos')" class="filtro-alertas" style="background:#333;color:#FFD700;border:none;padding:6px 12px;border-radius:16px;font-size:0.85rem;white-space:nowrap;">Partidos</button>
+                        <div style="background:${alerta.leida ? 'rgba(51,51,51,0.5)' : 'rgba(24,24,24,0.9)'};border:${alerta.leida ? '1px solid #333' : '2px solid #FFD700'};border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;${alerta.enVivo ? 'animation:pulse 2s infinite;' : ''}" onclick="procesarAlerta('${alerta.tipo}','${alerta.accion}')">
+                                    <button onclick="event.stopPropagation();responderInvitacion(true)" style="background:#00ff88;color:#181818;border:none;padding:6px 12px;border-radius:6px;font-size:0.8rem;">Aceptar</button>
+                                    <button onclick="event.stopPropagation();responderInvitacion(false)" style="background:#FF4444;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:0.8rem;">Rechazar</button>
+                                <button onclick="mostrarTipoChat('equipos')" class="filtro-chat active" style="background:#FFD700;color:#181818;border:none;padding:6px 12px;border-radius:16px;font-size:0.85rem;white-space:nowrap;">Equipos</button>
+                                <button onclick="mostrarTipoChat('directos')" class="filtro-chat" style="background:#333;color:#FFD700;border:none;padding:6px 12px;border-radius:16px;font-size:0.85rem;white-space:nowrap;">Mensajes Directos</button>
+                                <button onclick="mostrarTipoChat('grupos')" class="filtro-chat" style="background:#333;color:#FFD700;border:none;padding:6px 12px;border-radius:16px;font-size:0.85rem;white-space:nowrap;">Grupos</button>
+                        <div style="background:rgba(24,24,24,0.9);border:1px solid #333;border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="abrirChat('${chat.id}','${chat.nombre}','${tipo}')">
+                function abrirChat(chatId, nombre, tipo) {
+                            <button onclick="cerrarChat()" style="background:none;border:none;color:#FFD700;font-size:1.2rem;">←</button>
+                            <button onclick="enviarMensaje()" style="background:#FFD700;color:#181818;border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">➤</button>
+                <button onclick="cerrarModalPublicar()" style="position:absolute;top:10px;right:10px;background:none;border:none;color:#FFD700;font-size:1.5rem;cursor:pointer;"><i class='fas fa-times'></i></button>
+        const btn = document.querySelector('.hamburger-btn');
+    function irAInicio() {
+    function verEquipos() {
+    function crearEquipo() {
+    function verTorneos() {
+    function crearTorneo() {
+    function crearAmistoso() {
+    function jugarPenaltis() {
+    function centroJuegos() {
+    function verCardFIFA() {
+    function sugerenciasCard() {
+    function verNotificaciones() {
+    function abrirChat() {
+    function verVideos() {
+    function abrirMarketplace() {
+    function rankingJugadores() {
+    function contactarSoporte() {
+    function verPrivacidad() {
+    function cerrarSesion() {
+    <div class="stories-container" style="margin:0 auto 32px auto;max-width:1100px;display:flex;gap:32px;padding:28px 24px 18px 24px;overflow-x:auto;background:rgba(30,30,30,0.98);border-radius:22px;border:2px solid #FFD700;box-shadow:0 4px 24px #0008;align-items:flex-end;">
+        <div class="story" style="display:flex;flex-direction:column;align-items:center;min-width:90px;cursor:pointer;" onclick="abrirHistoria('mi-historia')">
+        <div class="story" style="display:flex;flex-direction:column;align-items:center;min-width:90px;cursor:pointer;" onclick="abrirHistoria('fc-barcelona')">
+        <div class="story" style="display:flex;flex-direction:column;align-items:center;min-width:90px;cursor:pointer;" onclick="abrirHistoria('real-madrid')">
+        <div class="story" style="display:flex;flex-direction:column;align-items:center;min-width:90px;cursor:pointer;" onclick="abrirHistoria('liverpool-fc')">
+        <div class="story" style="display:flex;flex-direction:column;align-items:center;min-width:90px;cursor:pointer;" onclick="abrirHistoria('en-vivo')">
+            <button onclick="cerrarHistorias()" style="position:absolute;top:20px;right:20px;background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:24px;cursor:pointer;z-index:10001;padding:8px 12px;border-radius:50%;">
+                            <button class="control-btn like-btn" onclick="toggleLikeHistoria()" style="background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:20px;padding:12px;border-radius:50%;cursor:pointer;transition:all 0.3s;">
+                            <button class="control-btn comment-btn" onclick="abrirComentarios()" style="background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:20px;padding:12px;border-radius:50%;cursor:pointer;">
+                            <button class="control-btn viewers-btn" onclick="mostrarViewersHistoria()" style="background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:20px;padding:12px;border-radius:50%;cursor:pointer;display:none;">
+                            <button class="control-btn share-btn" onclick="compartirHistoria()" style="background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:20px;padding:12px;border-radius:50%;cursor:pointer;">
+                            <button class="control-btn mute-btn" onclick="toggleMute()" style="background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:20px;padding:12px;border-radius:50%;cursor:pointer;">
+            <button onclick="historiaAnterior()" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:24px;padding:12px;border-radius:50%;cursor:pointer;" id="btnAnterior">
+            <button onclick="historiaSiguiente()" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:24px;padding:12px;border-radius:50%;cursor:pointer;" id="btnSiguiente">
+            <button onclick="abrirModalPublicar()" style="background:#FFD700;color:#181818;font-weight:bold;padding:6px 14px;border:none;border-radius:12px;font-size:0.9rem;box-shadow:0 2px 6px #0003;cursor:pointer;">Publicar</button>
+        <div id="feedPublicaciones" style="width:100%;max-width:600px;margin:0 auto 32px auto;"></div>
+                    <i class="fas fa-futbol like-btn" title="Me gusta" onclick="toggleLike(this)"></i>
+                    <i class="fas fa-futbol like-btn liked" title="Me gusta" onclick="toggleLike(this)"></i>
+                <button class="action-btn" onclick="toggleLikeBtn(this)">
+                <button class="action-btn" onclick="toggleLikeBtn(this)">
+                <button class="action-btn" onclick="toggleLikeBtn(this)">
+            <a href="#" class="nav-item active" onclick="irAHome()">
+            <a href="#" class="nav-item" onclick="irAMarket()">
+            <a href="#" class="nav-item" onclick="irAVideos()">
+            <a href="#" class="nav-item" onclick="irAAlertas()">
+            <a href="#" class="nav-item" onclick="irAChat()">
+                btn.onclick = function() {
+                btn.onclick = function() {
+                btn.onclick = function() {
+                btn.onclick = function() {
+                btn.onclick = function() {
+                btn.onclick = function() {
+            document.getElementById('generarEliminacionBtn').onclick = function() {
+                btn.onclick = function() {
+            document.getElementById('generarFixtureBtn').onclick = function() {
+                btn.onclick = function() {
+        document.getElementById('cerrarTorneo').onclick = function() {
+                btn.onclick = function() {
+                btn.onclick = function() {
+                btn.onclick = function() {
+                btn.onclick = function() {
+                btn.onclick = function() {
+                btn.onclick = function() {
+                btn.onclick = function() {
+                btn.onclick = function() {
+            document.getElementById('exportarPlantillaBtn').onclick = function() {
+            document.getElementById('btnAsignarRol').onclick = function() {
+                    document.getElementById('exportarPlantillaBtn').onclick = function() {
+                    document.getElementById('copiarPlantillaBtn').onclick = function() {
+                    document.getElementById('btnAsignarRol').onclick = function() {
+                    document.getElementById('btnEliminarMiembro').onclick = function() {
+        function verTorneos() {
+        function verEquipos() {
+        function crearTorneo() {
+        function crearEquipo() {
+        function crearAmistoso() {
+        function jugarPenaltis() {
+            const button = document.querySelector('.hamburger-btn');
+            const button = document.querySelector('.hamburger-btn');
+                const button = document.querySelector('.hamburger-btn');
+            statsBtn.onclick = () => mostrarEstadisticasHistoria();
+                            <button onclick="document.getElementById('viewersModal').remove()" style="background: none; border: none; color: white; font-size: 24px;">&times;</button>
+                            <button id="viewersTab" onclick="switchViewTab('viewers')" style="background: none; border: none; color: #00ff88; padding: 8px 16px; border-bottom: 2px solid #00ff88;">
+                            <button id="likesTab" onclick="switchViewTab('likes')" style="background: none; border: none; color: #ccc; padding: 8px 16px;">
+                        <button onclick=\"document.getElementById('comentariosModal').remove()\" style=\"background: none; border: none; color: white; font-size: 24px;\">&times;</button>
+                            <button onclick=\"enviarComentario()\" style=\"background: #00ff88; border: none; color: black; padding: 10px 20px; border-radius: 25px; font-weight: bold;\">

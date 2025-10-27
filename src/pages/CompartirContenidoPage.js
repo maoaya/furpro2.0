@@ -1,5 +1,9 @@
 import React from 'react';
-import supabase from '../supabaseClient.js'; // Usar cliente único
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = 'https://YOUR_SUPABASE_URL.supabase.co';
+const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Contenido placeholder
 

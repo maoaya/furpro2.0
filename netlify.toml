@@ -4,7 +4,6 @@
 [build]
   base = "."
   publish = "dist"
-  # homepage-instagram.html está en public/ así que Vite lo copia automáticamente
   command = "npm ci && npm run build"
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':!README.md' ':!*.md'"
 
@@ -49,23 +48,6 @@
 
 # 🔄 Redirects SPA optimizados
 [[redirects]]
-  from = "/home"
-  to = "/homepage-instagram.html"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/homepage-instagram"
-  to = "/homepage-instagram.html"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/homepage-instagram.html"
-  to = "/homepage-instagram.html"
-  status = 200
-  force = true
-[[redirects]]
   from = "/auth/*"
   to = "/index.html"
   status = 200
@@ -86,6 +68,11 @@
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/homepage-instagram.html"
+  to = "/homepage-instagram.html"
   status = 200
 
 [[redirects]]

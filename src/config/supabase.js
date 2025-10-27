@@ -1,16 +1,44 @@
-// ️ Configuración de Supabase para FutPro (unificado)
-// Importa SIEMPRE el cliente único desde '../supabaseClient.js' para evitar múltiples instancias
-import supabase from '../supabaseClient.js';
-import { getConfig } from './environment.js';
+// 📊 Funciones de base de datos
+// (Eliminado el bloque duplicado de dbOperations para evitar la redeclaración)
 
-// Configuración señalizando que el cliente está listo (simple flag para compatibilidad)
-export const supabaseConfigured = true;
+ // 🗄️ Configuración de Supabase para FutPro
+
+import { createClient } from '@supabase/supabase-js';
+
+// Utilidad para obtener variables de entorno con fallback
+export function getEnv(key, fallback = '') {
+  // Preferir import.meta.env en cliente (Vite) y caer a process.env en server
+  const viteVal = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) ||
+                  (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env['VITE_' + key])
+  const nodeVal = typeof process !== 'undefined' ? process.env[key] : undefined;
+  return viteVal || nodeVal || fallback;
+}
+
+// Usa variables de entorno para seguridad
+const SUPABASE_URL = getEnv('VITE_SUPABASE_URL', getEnv('SUPABASE_URL', 'https://TU_SUPABASE_URL.supabase.co'));
+const SUPABASE_KEY = getEnv('VITE_SUPABASE_ANON_KEY', getEnv('SUPABASE_KEY', 'TU_SUPABASE_API_KEY'));
+
+// Señalizar configuración inválida para evitar redirecciones a placeholders
+const isPlaceholderUrl = !SUPABASE_URL || /TU_SUPABASE_URL/i.test(SUPABASE_URL);
+const isPlaceholderKey = !SUPABASE_KEY || /TU_SUPABASE_API_KEY/i.test(SUPABASE_KEY);
+export const supabaseConfigured = !(isPlaceholderUrl || isPlaceholderKey);
+if (!supabaseConfigured && typeof console !== 'undefined') {
+  console.error('[Supabase] Configuración faltante: define VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en el entorno (Netlify). URL actual:', SUPABASE_URL);
+}
+
+// Nota: En producción nuestra API REST expone el esquema 'api'.
+// La mayoría de operaciones funcionan sin especificar schema porque Supabase REST resuelve por tabla.
+// Si alguna llamada requiere schema explícito, usa createClient(..., { db: { schema: 'api' } })
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // 🔐 Configuración de autenticación
 export const authConfig = {
   providers: ['google', 'facebook'],
-  // Usar SIEMPRE el callback del frontend resuelto por environment.js
-  redirectTo: getConfig().oauthCallbackUrl,
+  // Para Supabase email flows (registro/reset), usar la callback de Supabase o tu dominio
+  // Sugerido: URL de callback de Supabase (no del dominio) para evitar redirect_uri_mismatch
+  redirectTo: SUPABASE_URL && SUPABASE_URL !== 'https://TU_SUPABASE_URL.supabase.co'
+    ? `${SUPABASE_URL}/auth/v1/callback`
+    : (typeof window !== 'undefined' ? window.location.origin : ''),
   scopes: {
     google: 'email profile',
     facebook: 'email,public_profile'

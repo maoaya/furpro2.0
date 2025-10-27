@@ -1,15 +1,10 @@
 // Script para agregar usuario a Supabase
 import { createClient } from '@supabase/supabase-js';
 
-// Lee configuración desde variables de entorno para evitar claves embebidas
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
-
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  throw new Error('[agregarUsuario] Faltan VITE_SUPABASE_URL/VITE_SUPABASE_ANON_KEY en el entorno');
-}
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = createClient(
+  'https://ogm0dfdzhez3fiomlxpug.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9nbTBkZmR6aGVwejNmaW9tbHhwdWciLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczNjA5MDY2MSwiZXhwIjoyMDUxNjY2NjYxfQ.sb_publishable_ogM0DfDZHePZ3FiOmlxpUg_WPURRcKm'
+);
 
 const usuario = {
   id: "812f5bed-65b3-4868-a99a-3bdbcd9b55fa",

@@ -53,28 +53,27 @@ export default function LoginRegisterForm() {
     }, true);
 
     try {
-      // ✅ USAR ÚNICA IMPLEMENTACIÓN desde AuthContext para evitar duplicados
-      let result;
-      if (provider === 'google') {
-        result = await loginWithGoogle();
-      } else if (provider === 'facebook') {
-        result = await loginWithFacebook();
-      }
+      const config = getConfig();
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: config.oauthCallbackUrl
+        }
+      });
 
-      if (result?.error) {
-        console.error(`❌ Error ${provider}:`, result.error);
-        setError(`Error con ${provider}: ${result.error}`);
+      if (error) {
+        console.error(`❌ Error ${provider}:`, error);
+        setError(`Error con ${provider}: ${error.message}`);
 
         // 🔥 TRACK FAILED LOGIN
-        tracker.trackLogin(provider, false, { error: result.error });
+        tracker.trackLogin(provider, false, { error: error.message });
         setLoading(false);
-      } else if (result?.redirecting) {
+      } else {
         console.log(`✅ ${provider} OAuth iniciado`);
         setSuccess(`Redirigiendo a ${provider}...`);
 
         // 🔥 TRACK SUCCESSFUL OAUTH REDIRECT
         tracker.trackLogin(provider, true, { redirected: true });
-        // El loading se mantiene true porque estamos redirigiendo
       }
     } catch (error) {
       console.error(`❌ Error ${provider}:`, error);

@@ -1,24 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const HomeSimple = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-
-  // Redirección automática a homepage-instagram.html
-  useEffect(() => {
-    if (user) {
-      console.log('✅ Usuario detectado, redirigiendo a homepage-instagram.html');
-      
-      // Mostrar mensaje breve antes de redirigir
-      const timer = setTimeout(() => {
-        window.location.href = '/homepage-instagram.html';
-      }, 2000); // 2 segundos para que vean el mensaje de bienvenida
-      
-      return () => clearTimeout(timer);
-    }
-  }, [user]);
 
   const handleLogout = async () => {
     try {

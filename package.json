@@ -61,7 +61,6 @@
     "socket.io-client": "^4.8.1",
     "sqlite3": "^5.1.7",
     "twilio": "^4.15.0",
-    "vite": "^7.1.9",
     "web-push": "^3.5.0"
   },
   "devDependencies": {
@@ -95,6 +94,7 @@
     "rimraf": "^6.0.1",
     "supertest": "^7.1.4",
     "tailwindcss": "^4.1.13",
-    "typescript-eslint": "^8.43.0"
+    "typescript-eslint": "^8.43.0",
+    "vite": "^7.1.12"
   }
 }

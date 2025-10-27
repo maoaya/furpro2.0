@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import supabase, { supabaseAuth } from '../supabaseClient'; // Importar ambos clientes
+import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment.js';
 // Carga perezosa del tracking para evitar efectos secundarios durante el render
 let trackingInitializer = null;
@@ -50,8 +50,8 @@ export const AuthProvider = ({ children }) => {
           });
         }
         
-        // Intentar obtener sesión actual de Supabase (usar cliente Auth sin restricción)
-        const { data: { session }, error } = await supabaseAuth.auth.getSession();
+        // Intentar obtener sesión actual de Supabase
+        const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
           console.error('❌ Error obteniendo sesión:', error);
@@ -163,8 +163,8 @@ export const AuthProvider = ({ children }) => {
 
     initAuth();
 
-    // Escuchar cambios en el estado de autenticación (usar cliente Auth)
-    const { data: { subscription } } = supabaseAuth.auth.onAuthStateChange(
+    // Escuchar cambios en el estado de autenticación
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
   console.log('🔄 Cambio en autenticación:', event, session?.user?.email);
         

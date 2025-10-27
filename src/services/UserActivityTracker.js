@@ -274,27 +274,11 @@ class UserActivityTracker {
     console.log(`💾 Procesando ${actionsToProcess.length} acciones...`);
 
     try {
-      // Separar acciones que requieren usuario autenticado (RLS) vs. anónimas (diferir)
-      const toInsert = actionsToProcess.filter(a => a.userId && a.userId !== 'anonymous');
-      const toDefer = actionsToProcess.filter(a => !a.userId || a.userId === 'anonymous');
-
-      // Re-encolar las anónimas hasta que tengamos userId
-      if (toDefer.length > 0) {
-        console.log(`⏸️ Diferidas ${toDefer.length} acciones sin userId (esperando login)`);
-        this.pendingActions.unshift(...toDefer);
-      }
-
-      if (toInsert.length === 0) {
-        this.savePendingActions();
-        return;
-      }
-
-      // Guardar en Supabase (schema 'api')
+      // Guardar en Supabase
       const { error } = await supabase
-        .schema('api')
         .from('user_activities')
-        .insert(toInsert.map(action => ({
-          // id: lo genera la DB (uuid)
+        .insert(actionsToProcess.map(action => ({
+          id: action.id,
           user_id: action.userId,
           action_type: action.actionType,
           action_data: action.data,
@@ -302,35 +286,16 @@ class UserActivityTracker {
         })));
 
       if (error) {
-        // Detectar 404 típico de tabla inexistente bajo esquema api
-        const msg = (error?.message || '').toLowerCase();
-        const code = error?.code || '';
-        const status = error?.status || error?.statusCode || 0;
-        if (status === 404 || msg.includes('not found') || msg.includes('does not exist')) {
-          console.warn('⚠️ Tracking deshabilitado temporalmente (tabla api.user_activities no encontrada).');
-          // Backoff: guardar en localStorage y no reintentar agresivamente para evitar spam
-          this.pendingActions.unshift(...toInsert, ...toDefer);
-          this.savePendingActions();
-          // Desactivar autosave por 2 minutos
-          if (this.autoSaveInterval) clearInterval(this.autoSaveInterval);
-          setTimeout(() => {
-            this.autoSaveInterval = setInterval(() => this.processPendingActions(), 3000);
-          }, 120000);
-          return;
-        }
-
         console.error('❌ Error guardando actividades:', error);
         // Volver a añadir a la cola con incremento de intentos
-        toInsert.forEach(action => {
+        actionsToProcess.forEach(action => {
           action.attempts += 1;
           if (action.attempts < 3) {
             this.pendingActions.push(action);
           }
         });
-        // Mantener diferidas
-        if (toDefer.length > 0) this.pendingActions.unshift(...toDefer);
       } else {
-        console.log(`✅ ${toInsert.length} acciones guardadas exitosamente`);
+        console.log(`✅ ${actionsToProcess.length} acciones guardadas exitosamente`);
         this.lastSave = new Date().toISOString();
         
         // Limpiar localStorage

@@ -7,15 +7,9 @@ import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
 
-// Configuración de Supabase (leer desde variables de entorno)
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error('[activate-tracking] Faltan variables de entorno: SUPABASE_URL y/o SUPABASE_SERVICE_ROLE_KEY');
-  console.error('Configúralas antes de ejecutar este script.');
-  process.exit(1);
-}
+// Configuración de Supabase
+const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+const SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMTAyNjU4NywiZXhwIjoyMDQ2NjAyNTg3fQ.Ri_q9Q1wQRmSZHNEX8QP4uqHkUmjRJVKQWLi4gONMrU'; // Service Role Key
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { db: { schema: 'api' } });
 

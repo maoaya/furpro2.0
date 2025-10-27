@@ -42,12 +42,8 @@ function AuthAwareLoginPage() {
       
       // Si ya hay usuario, navegar inmediatamente
       if (user) {
-        console.log('✅ Usuario detectado, navegando a home (Instagram)');
-        try {
-          window.location.href = '/homepage-instagram.html';
-        } catch (e) {
-          navigate('/home', { replace: true });
-        }
+        console.log('✅ Usuario detectado, navegando a home');
+        navigate('/home', { replace: true });
         return;
       }
 
@@ -125,24 +121,15 @@ function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [waited, setWaited] = useState(false);
 
   useEffect(() => {
-    // Esperar un poco antes de redirigir para dar tiempo al AuthContext
-    if (!loading && !user && !waited) {
-      const timer = setTimeout(() => {
-        setWaited(true);
-      }, 1000); // Esperar 1 segundo adicional
-      return () => clearTimeout(timer);
-    }
-
-    if (waited && !loading && !user) {
-      console.log('🔒 ProtectedRoute: Usuario no autenticado después de espera, redirigiendo a login');
+    if (!loading && !user) {
+      console.log('🔒 ProtectedRoute: Usuario no autenticado, redirigiendo a login');
       navigate('/', { replace: true, state: { from: location } });
     }
-  }, [user, loading, navigate, location, waited]);
+  }, [user, loading, navigate, location]);
 
-  if (loading || (!user && !waited)) {
+  if (loading) {
     return (
       <div style={{
         minHeight: '100vh',
@@ -185,12 +172,8 @@ export default function FutProAppDefinitivo() {
 
       // Si ya está autenticado y en la raíz, ir a home
       if (user && currentPath === '/') {
-        console.log('🏠 Usuario autenticado en raíz, navegando a home (Instagram)');
-        try {
-          window.location.href = '/homepage-instagram.html';
-        } catch (e) {
-          navigate('/home', { replace: true });
-        }
+        console.log('🏠 Usuario autenticado en raíz, navegando a home');
+        navigate('/home', { replace: true });
       }
     };
 
@@ -279,10 +262,10 @@ export default function FutProAppDefinitivo() {
         </div>
       } />
       
-      {/* Home/Feed — ahora muestra la PerfilCard (diseño tipo Instagram) */}
+      {/* Home/Feed (vista simple solicitada) */}
       <Route path="/home" element={
         <ProtectedRoute>
-          <PerfilCard />
+          <HomeSimple />
         </ProtectedRoute>
       } />
       

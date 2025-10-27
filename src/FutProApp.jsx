@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import RegistroCompleto from './pages/RegistroCompleto';
 import LoginRegisterForm from './pages/LoginRegisterForm';
 import AuthPageUnificada from './pages/AuthPageUnificada';
+import CallbackPage from './pages/CallbackPage';
 import CallbackPageOptimized from './pages/CallbackPageOptimized';
 import ValidarUsuarioForm from './pages/ValidarUsuarioForm';
 import TorneosPage from './pages/TorneosPage';
@@ -111,7 +112,7 @@ export default function FutProApp() {
         
         {/* Callback para OAuth (Google/Facebook) - Versión optimizada */}
         <Route path="/auth/callback" element={<CallbackPageOptimized />} />
-        <Route path="/callback" element={<CallbackPageOptimized />} />
+        <Route path="/callback" element={<CallbackPage />} />
         <Route path="/oauth/callback" element={<CallbackPageOptimized />} />
         
         {/* Rutas protegidas principales */}

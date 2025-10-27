@@ -19,10 +19,8 @@ const supabaseOptions = {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true,
-        // 🔥 ESTRATEGIA: Dejar que Supabase auto-detecte el flujo
-        // Con detectSessionInUrl: true, Supabase maneja automáticamente
-        // tanto implicit (access_token en hash) como PKCE (code en query)
-        // NO especificar flowType para permitir auto-detección
+        // Configuración específica para evitar errores 502
+        flowType: 'pkce',
         storage: (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : undefined,
         storageKey: 'futpro-auth-token'
     },
@@ -37,21 +35,20 @@ const supabaseOptions = {
         params: {
             eventsPerSecond: 10
         }
+    },
+    // Configuración de reintento para evitar 502
+    db: {
+        // Supabase REST en producción expone el esquema 'api' (no 'public')
+        // Esto evita errores 406 (PGRST106: The schema must be one of...)
+        schema: 'api'
     }
-    // NO incluir db.schema aquí - se especificará por query cuando sea necesario
 };
 
-console.log('🔗 Inicializando Supabase Client (único)...');
+console.log('🔗 Inicializando Supabase Client...');
 console.log('📍 URL:', SUPABASE_URL);
 console.log('🔑 Key configurada:', SUPABASE_KEY ? 'SÍ' : 'NO');
 
-// Cliente único para TODO (Auth + DB)
-// Para queries al schema 'api', usar: supabase.schema('api').from('table')
-// Para queries al schema 'public', usar: supabase.from('table')
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, supabaseOptions);
-
-// Export del mismo cliente con nombre alternativo para compatibilidad
-export const supabaseAuth = supabase;
 
 // Test de conexión inicial
 supabase.auth.onAuthStateChange((event, session) => {
