@@ -10,22 +10,16 @@ if (typeof process !== 'undefined' && process.env) {
   FACEBOOK_CLIENT_ID = process.env.VITE_FACEBOOK_CLIENT_ID;
 }
 
-// En navegador (Vite), usar import.meta.env
-try {
-  // import.meta solo existe en entorno ESM del navegador/bundler
-  // Este bloque se ignora en Jest/Node si import.meta no existe
-  if (typeof window !== 'undefined' && typeof import.meta !== 'undefined') {
-    const viteEnv = import.meta.env || {};
-    SUPABASE_URL = viteEnv.VITE_SUPABASE_URL || SUPABASE_URL;
-    SUPABASE_ANON_KEY = viteEnv.VITE_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY;
-    GOOGLE_CLIENT_ID = viteEnv.VITE_GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID;
-    FACEBOOK_CLIENT_ID = viteEnv.VITE_FACEBOOK_CLIENT_ID || FACEBOOK_CLIENT_ID;
-  }
-} catch (e) {
-  // Ignorar si no está disponible import.meta
+
+// En navegador (Vite), usar window.VITE_* si existe
+if (typeof window !== 'undefined') {
+  SUPABASE_URL = window.VITE_SUPABASE_URL || SUPABASE_URL;
+  SUPABASE_ANON_KEY = window.VITE_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY;
+  GOOGLE_CLIENT_ID = window.VITE_GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID;
+  FACEBOOK_CLIENT_ID = window.VITE_FACEBOOK_CLIENT_ID || FACEBOOK_CLIENT_ID;
 }
 
-export const getConfig = () => {
+const getConfig = () => {
   // Detectar si estamos en Node.js (server-side)
   const isNode = typeof window === 'undefined';
   
@@ -111,4 +105,8 @@ export const getConfig = () => {
   };
 };
 
+// Exportación dual: CommonJS (Node/Jest) y ESM (Vite/frontend)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { getConfig };
+}
 export default getConfig;
