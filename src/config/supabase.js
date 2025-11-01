@@ -27,6 +27,7 @@ if (!supabaseConfigured && typeof console !== 'undefined') {
 }
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+export default supabase;
 
 // 🔐 Configuración de autenticación
 export const authConfig = {
