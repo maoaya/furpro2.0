@@ -18,14 +18,15 @@ import ConfiguracionUsuarioPage from './pages/ConfiguracionUsuarioPage';
 import CompartirContenidoPage from './pages/CompartirContenidoPage';
 import ChatSQLPage from './pages/ChatSQLPage';
 import MarketplacePage from './pages/MarketplacePage';
-import SupportPage from './pages/SupportPage';
 import LogrosPage from './pages/LogrosPage';
 import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
 import ComparativasPage from './pages/ComparativasPage';
 import NotFoundPage from './pages/NotFoundPage';
 import AuthPageUnificada from './pages/AuthPageUnificada';
 import AuthCallback from './pages/AuthCallback';
+import LoginRegisterForm from './pages/LoginRegisterForm';
 
+// import SupportPage from './pages/SupportPage';
 import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
 
@@ -47,7 +48,7 @@ export default function App() {
       <Router>
         <Routes>
           {/* Rutas de autenticación - SIN Layout */}
-          <Route path="/" element={<AuthPageUnificada />} />
+          <Route path="/" element={<LoginRegisterForm />} />
           <Route path="/login" element={<AuthPageUnificada />} />
           <Route path="/registro" element={<AuthPageUnificada />} />
           <Route path="/registro-google" element={<AuthPageUnificada />} />
@@ -74,7 +75,6 @@ export default function App() {
         <Route path="/compartir" element={<Layout><CompartirContenidoPage /></Layout>} />
         <Route path="/chat-sql" element={<Layout><ChatSQLPage /></Layout>} />
         <Route path="/marketplace" element={<Layout><MarketplacePage /></Layout>} />
-        <Route path="/soporte" element={<Layout><SupportPage /></Layout>} />
         <Route path="/logros" element={<Layout><LogrosPage /></Layout>} />
         <Route path="/estadisticas-avanzadas" element={<Layout><EstadisticasAvanzadasPage /></Layout>} />
           <Route path="/comparativas" element={<Layout><ComparativasPage /></Layout>} />
