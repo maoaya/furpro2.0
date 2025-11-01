@@ -49,9 +49,6 @@ export const getConfig = () => {
   return {
     // URLs base
     baseUrl,
-    isProduction,
-    isDevelopment,
-    isNode,
     
     // URLs de callback para OAuth
     oauthCallbackUrl: `${baseUrl}/auth/callback`,
@@ -85,6 +82,7 @@ export const getConfig = () => {
     isProduction,
     isDevelopment,
     isNetlify,
+    isNode,
     autoConfirmSignup: (typeof process !== 'undefined' && process.env?.VITE_AUTO_CONFIRM_SIGNUP === 'true'),
     
     // Configuraciones de debug

@@ -9,6 +9,18 @@ export default defineConfig(({ command, mode }) => {
   return {
     plugins: [react()],
     root: './',
+    esbuild: {
+      loader: 'jsx',
+      include: /src\/.*\.[jt]sx?$/,
+      exclude: []
+    },
+    optimizeDeps: {
+      esbuildOptions: {
+        loader: {
+          '.js': 'jsx',
+        },
+      },
+    },
     build: {
       outDir: 'dist',
       sourcemap: true,
@@ -41,9 +53,6 @@ export default defineConfig(({ command, mode }) => {
       // Variables de entorno específicas para producción
       __IS_PRODUCTION__: isProduction,
       __BASE_URL__: JSON.stringify(isProduction ? 'https://futpro.vip' : 'http://localhost:5173')
-    },
-    optimizeDeps: {
-      include: ['react', 'react-dom', '@supabase/supabase-js']
     },
     // Variables de entorno que empiecen con VITE_ se incluyen automáticamente
     envPrefix: ['VITE_']

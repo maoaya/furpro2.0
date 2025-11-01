@@ -47,7 +47,7 @@ const StreamingPage = lazy(() => import('./LiveStreamPage'));
 const MarketplacePage = lazy(() => import('./MarketplacePage'));
 const HistoriasPage = lazy(() => import('./HistoriasPage'));
 const DemoTutorialPage = lazy(() => import('./DemoTutorialPage'));
-const NotFoundPage = lazy(() => import('./NotFoundPage'));
+const NotFoundPage = lazy(() => import('./NotFoundPage.jsx'));
 
 // Rutas protegidas por rol
 function PrivateRoute({ children, roles }) {
