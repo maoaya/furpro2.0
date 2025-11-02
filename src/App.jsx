@@ -25,6 +25,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import AuthPageUnificada from './pages/AuthPageUnificada';
 import AuthCallback from './pages/AuthCallback';
 import LoginRegisterForm from './pages/LoginRegisterForm';
+import RegistroNuevo from './pages/RegistroNuevo';
 
 // import SupportPage from './pages/SupportPage';
 import BottomNav from './components/BottomNav';
@@ -51,6 +52,7 @@ export default function App() {
           <Route path="/" element={<LoginRegisterForm />} />
           <Route path="/login" element={<AuthPageUnificada />} />
           <Route path="/registro" element={<AuthPageUnificada />} />
+          <Route path="/registro-nuevo" element={<RegistroNuevo />} />
           <Route path="/registro-google" element={<AuthPageUnificada />} />
           <Route path="/registro-facebook" element={<AuthPageUnificada />} />
           <Route path="/registro-email" element={<AuthPageUnificada />} />
