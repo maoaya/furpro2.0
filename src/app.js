@@ -66,7 +66,7 @@ class FutProApp {
             }), document.getElementById('bottom-nav'));
         }
         if (window.React && window.ReactDOM) {
-            const SidebarMenu = window.SidebarMenu || require('./components/SidebarMenu.js').default;
+            const SidebarMenu = window.SidebarMenu || require('./components/SidebarMenu.jsx').default;
             window.ReactDOM.render(window.React.createElement(SidebarMenu), document.getElementById('sidebar-menu'));
         }
         document.getElementById('fab-plus').onclick = () => {

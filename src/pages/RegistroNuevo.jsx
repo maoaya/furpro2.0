@@ -34,7 +34,7 @@ const RegistroNuevo = () => {
     // Paso 2: Información personal
     nombre: '',
     apellido: '',
-  edad: 8,
+    edad: 18,
     telefono: '',
     pais: 'México',
     ubicacion: '',
@@ -583,8 +583,20 @@ const RegistroNuevo = () => {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Edad *</label>
-            <input type="number" name="edad" value={formData.edad} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 transition-all duration-300" placeholder="8" min="8" max="70" required />
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Edad *
+            </label>
+            <input
+              type="number"
+              name="edad"
+              value={formData.edad}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 transition-all duration-300"
+              placeholder="18"
+              min="16"
+              max="60"
+              required
+            />
           </div>
 
           <div>
@@ -604,18 +616,15 @@ const RegistroNuevo = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">Categoría *</label>
-          <select name="categoria" value={formData.categoria} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 transition-all duration-300" required>
-            <option value="">Selecciona categoría</option>
-            <option value="masculino_infantil">Masculino Infantil</option>
-            <option value="femenina_infantil">Femenina Infantil</option>
-            <option value="masculino">Masculino</option>
-            <option value="femenino">Femenino</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">País</label>
-          <select name="pais" value={formData.pais} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 transition-all duration-300">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            País
+          </label>
+          <select
+            name="pais"
+            value={formData.pais}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 transition-all duration-300"
+          >
             <option value="México">🇲🇽 México</option>
             <option value="España">🇪🇸 España</option>
             <option value="Argentina">🇦🇷 Argentina</option>
@@ -653,7 +662,13 @@ const RegistroNuevo = () => {
         <label className="block text-sm font-medium text-gray-300 mb-2">
           Posición Preferida *
         </label>
-        <select name="posicion" value={formData.posicion} onChange={handleInputChange} className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:border-yellow-400" required>
+        <select
+          name="posicion"
+          value={formData.posicion}
+          onChange={handleInputChange}
+          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:border-yellow-400"
+          required
+        >
           <option value="">Selecciona tu posición</option>
           <option value="Portero">🥅 Portero</option>
           <option value="Defensa Central">🛡️ Defensa Central</option>
@@ -666,10 +681,6 @@ const RegistroNuevo = () => {
           <option value="Extremo Izquierdo">🏃‍♂️ Extremo Izquierdo</option>
           <option value="Delantero Centro">⚽ Delantero Centro</option>
           <option value="Flexible">🔄 Flexible (varias posiciones)</option>
-          <option value="Microfutbol">🏟️ Microfútbol</option>
-          <option value="Futsal">🏟️ Futsal</option>
-          <option value="Micro">🏟️ Micro</option>
-          <option value="Otra">⚡ Otra</option>
         </select>
       </div>
 
@@ -852,36 +863,9 @@ const RegistroNuevo = () => {
             <span>📐 Cuadrada preferible</span>
           </div>
         </div>
-        {/* Botón Google registro al final */}
-        <div className="mt-8">
-          <button type="button" onClick={handleGoogleRegister} className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-bold shadow-md hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2">
-            <span style={{fontSize:'22px'}}>🔗</span> Registrarse con Google
-          </button>
-        </div>
       </div>
     </div>
   );
-// ...existing code...
-// Función para registro con Google
-const handleGoogleRegister = async () => {
-  setLoading(true);
-  try {
-    // Usar Supabase OAuth para Google
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin + '/home',
-      },
-    });
-    if (error) throw error;
-    // Autoguardado en localStorage
-    localStorage.setItem('futpro_registro_google', 'true');
-  } catch (error) {
-    setError('Error con Google: ' + error.message);
-  } finally {
-    setLoading(false);
-  }
-};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-900 via-blue-900 to-purple-900 flex items-center justify-center p-4 relative overflow-hidden">

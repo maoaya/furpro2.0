@@ -14,7 +14,7 @@ export default function LoginRegisterForm() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isRegister, setIsRegister] = useState(false);
-  const [showEmailForm, setShowEmailForm] = useState(true);
+  const [showEmailForm, setShowEmailForm] = useState(false);
   const navigate = useNavigate();
 
   // 🔥 TRACKING HOOKS - AUTOGUARDADO TIPO REDES SOCIALES
