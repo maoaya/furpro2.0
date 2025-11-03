@@ -13,6 +13,7 @@
     "start": "node start.js",
     "backend": "node start.js",
     "build": "vite build",
+    "postbuild": "node scripts/copy-public-htmls.js",
     "build:prod": "vite build --mode production",
     "serve:prod": "vite preview --host",
     "clean": "rimraf dist node_modules/.vite",

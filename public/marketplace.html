@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FutPro - Marketplace</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body{font-family:Segoe UI, Tahoma, Verdana;background:#0f0f0f;color:#fff;padding:20px}
+    .container{max-width:900px;margin:0 auto}
+    .filters{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+    .filter-btn{padding:8px 12px;border:none;border-radius:6px;cursor:pointer;background:#333;color:#fff}
+    .filter-btn.active{background:#FFD700;color:#181818}
+  .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;}
+  .product-card{background:#181818;border-radius:10px;padding:10px 8px 12px 8px;border:1.5px solid #FFD700;box-shadow:0 2px 8px #0006;min-width:0;max-width:210px;display:flex;flex-direction:column;align-items:center;}
+  .product-img{width:100%;height:90px;background:#222;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;font-size:32px;}
+    .product-price{color:#FFD700;font-size:18px;font-weight:bold}
+    .btn{padding:8px 12px;border:none;border-radius:6px;cursor:pointer;margin:4px}
+    .btn-primary{background:#FFD700;color:#181818}
+    .btn-secondary{background:#333;color:#fff}
+    .btn-danger{background:#c00;color:#fff}
+    .form-group{margin-bottom:12px}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:8px;border:none;border-radius:6px;background:#333;color:#fff}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="color:#FFD700">🛒 Marketplace</h1>
+    
+    <div style="margin-bottom:16px;">
+      <button onclick="mostrarFormulario()" class="btn btn-primary">➕ Publicar producto</button>
+      <button onclick="toggleFavoritos()" class="btn btn-secondary" id="btn-favoritos">❤️ Favoritos</button>
+    </div>
+    
+    <div class="filters">
+      <button onclick="filtrarCategoria('todos')" class="filter-btn active" id="filter-todos">Todos</button>
+      <button onclick="filtrarCategoria('equipamiento')" class="filter-btn" id="filter-equipamiento">Equipamiento</button>
+      <button onclick="filtrarCategoria('ropa')" class="filter-btn" id="filter-ropa">Ropa Deportiva</button>
+      <button onclick="filtrarCategoria('accesorios')" class="filter-btn" id="filter-accesorios">Accesorios</button>
+      <button onclick="filtrarCategoria('servicios')" class="filter-btn" id="filter-servicios">Servicios</button>
+    </div>
+    
+    <input type="text" id="searchInput" placeholder="Buscar productos..." style="width:100%;padding:10px;border:none;border-radius:6px;background:#333;color:#fff;margin-bottom:16px;" oninput="buscarProductos()">
+    
+    <div class="products-grid" id="productsGrid"></div>
+    
+    <!-- Modal para agregar producto -->
+    <div id="modalForm" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);z-index:1000;">
+      <div style="background:#181818;padding:24px;border-radius:12px;max-width:500px;margin:50px auto;position:relative;">
+        <button onclick="cerrarFormulario()" style="position:absolute;top:10px;right:15px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;">×</button>
+        <h2 style="color:#FFD700;margin-bottom:16px;">Publicar Producto</h2>
+        <form id="productForm">
+          <div class="form-group">
+            <input type="text" id="productNombre" placeholder="Nombre del producto" required>
+          </div>
+          <div class="form-group">
+            <textarea id="productDesc" placeholder="Descripción" rows="3" required></textarea>
+          </div>
+          <div class="form-group">
+            <input type="number" id="productPrecio" placeholder="Precio ($)" required>
+          </div>
+          <div class="form-group">
+            <select id="productCategoria" required>
+              <option value="">Selecciona categoría</option>
+              <option value="equipamiento">Equipamiento</option>
+              <option value="ropa">Ropa Deportiva</option>
+              <option value="accesorios">Accesorios</option>
+              <option value="servicios">Servicios</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input type="text" id="productUbicacion" placeholder="Ubicación" required>
+          </div>
+          <div class="form-group">
+            <input type="text" id="productImagen" placeholder="URL de imagen (opcional)">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">Publicar</button>
+        </form>
+      </div>
+    </div>
+    
+    <br>
+    <a href="./homepage-instagram.html" style="display:inline-block;padding:8px 12px;background:#FFD700;color:#181818;border-radius:8px;text-decoration:none;font-weight:bold">← Volver</a>
+  </div>
+
+  <script>
+    let categoriaActual = 'todos';
+    let mostrandoFavoritos = false;
+    
+    function getProductos() {
+      return JSON.parse(localStorage.getItem('futpro_marketplace') || '[]');
+    }
+    
+    function saveProductos(productos) {
+      localStorage.setItem('futpro_marketplace', productos);
+    }
+    
+    function getFavoritos() {
+      return JSON.parse(localStorage.getItem('futpro_favoritos') || '[]');
+    }
+    
+    function saveFavoritos(favoritos) {
+      localStorage.setItem('futpro_favoritos', JSON.stringify(favoritos));
+    }
+    
+    function renderProductos() {
+      const grid = document.getElementById('productsGrid');
+      let productos = getProductos();
+      
+      // Filtrar por categoría
+      if (categoriaActual !== 'todos') {
+        productos = productos.filter(p => p.categoria === categoriaActual);
+      }
+      
+      // Filtrar por favoritos
+      function renderProductos() {
+        const grid = document.getElementById('productsGrid');
+        let productos = getProductos();
+        // Filtrar por categoría
+        if (categoriaActual !== 'todos') {
+          productos = productos.filter(p => p.categoria === categoriaActual);
+        }
+        // Filtrar por favoritos
+        if (mostrandoFavoritos) {
+          const favoritos = getFavoritos();
+          productos = productos.filter(p => favoritos.includes(p.id));
+        }
+        // Búsqueda
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        if (search) {
+          productos = productos.filter(p => 
+            p.nombre.toLowerCase().includes(search) || 
+            p.descripcion.toLowerCase().includes(search)
+          );
+        }
+        grid.innerHTML = '';
+        if (productos.length === 0) {
+          grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#666;">No se encontraron productos</div>';
+          return;
+        }
+        const favoritos = getFavoritos();
+        productos.forEach(producto => {
+          const esFavorito = favoritos.includes(producto.id);
+          const iconoFav = esFavorito ? '❤️' : '🤍';
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          card.innerHTML = `
+            <div class="product-img">
+              ${producto.imagen ? `<img src="${producto.imagen}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">` : '📦'}
+            </div>
+            <h3 style="color:#FFD700;font-size:1rem;margin-bottom:4px;text-align:center;">${producto.nombre}</h3>
+            <p style="color:#aaa;font-size:12px;margin-bottom:4px;text-align:center;">${producto.descripcion}</p>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;width:100%;">
+              <span class="product-price" style="font-size:1rem;">$${producto.precio}</span>
+              <span style="color:#666;font-size:11px;">${producto.categoria}</span>
+            </div>
+            <p style="color:#888;font-size:11px;margin-bottom:4px;text-align:center;">📍 ${producto.ubicacion}</p>
+            <p style="color:#555;font-size:10px;margin-bottom:6px;text-align:center;">Por: ${producto.vendedor} • ${producto.fecha}</p>
+            <div style="display:flex;gap:6px;justify-content:center;width:100%;">
+              <button onclick="contactarVendedor('${producto.id}')" class="btn btn-primary" style="flex:1;font-size:0.95rem;padding:6px 0;">💬</button>
+              <button onclick="toggleFavorito('${producto.id}')" class="btn btn-secondary" style="font-size:1.1rem;">${iconoFav}</button>
+              ${producto.esPropio ? `<button onclick="eliminarProducto('${producto.id}')" class="btn btn-danger" style="font-size:1.1rem;">🗑️</button>` : ''}
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+      categoriaActual = categoria;
+      
+      // Actualizar botones
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.getElementById(`filter-${categoria}`).classList.add('active');
+      
+      renderProductos();
+    }
+    
+    function buscarProductos() {
+      renderProductos();
+    }
+    
+    function toggleFavoritos() {
+      mostrandoFavoritos = !mostrandoFavoritos;
+      const btn = document.getElementById('btn-favoritos');
+      btn.textContent = mostrandoFavoritos ? '📋 Todos' : '❤️ Favoritos';
+      btn.classList.toggle('active');
+      renderProductos();
+    }
+    
+    function toggleFavorito(id) {
+      const favoritos = getFavoritos();
+      const index = favoritos.indexOf(id);
+      
+      if (index > -1) {
+        favoritos.splice(index, 1);
+      } else {
+        favoritos.push(id);
+      }
+      
+      saveFavoritos(favoritos);
+      renderProductos();
+    }
+    
+    function mostrarFormulario() {
+      document.getElementById('modalForm').style.display = 'block';
+    }
+    
+    function cerrarFormulario() {
+      document.getElementById('modalForm').style.display = 'none';
+      document.getElementById('productForm').reset();
+    }
+    
+    function contactarVendedor(id) {
+      const producto = getProductos().find(p => p.id === id);
+      alert(`💬 Contactar vendedor: ${producto.vendedor}\n\nProducto: ${producto.nombre}\nPrecio: $${producto.precio}\n\n(Función de mensajería en desarrollo)`);
+    }
+    
+    function eliminarProducto(id) {
+      if (confirm('¿Eliminar tu producto?')) {
+        const productos = getProductos().filter(p => p.id !== id);
+        saveProductos(JSON.stringify(productos));
+        renderProductos();
+      }
+    }
+    
+    // Formulario
+    document.getElementById('productForm').onsubmit = function(e) {
+      e.preventDefault();
+      
+      const productos = getProductos();
+      const vendedor = localStorage.getItem('futpro_usuario_nombre') || 'Usuario';
+      
+      const nuevoProducto = {
+        id: Date.now().toString(),
+        nombre: document.getElementById('productNombre').value,
+        descripcion: document.getElementById('productDesc').value,
+        precio: parseFloat(document.getElementById('productPrecio').value),
+        categoria: document.getElementById('productCategoria').value,
+        ubicacion: document.getElementById('productUbicacion').value,
+        imagen: document.getElementById('productImagen').value,
+        vendedor: vendedor,
+        fecha: new Date().toLocaleDateString(),
+        esPropio: true
+      };
+      
+      productos.unshift(nuevoProducto);
+      saveProductos(JSON.stringify(productos));
+      
+      cerrarFormulario();
+      renderProductos();
+    };
+    
+    // Inicializar con datos de ejemplo
+    if (getProductos().length === 0) {
+      const ejemplos = [
+        {
+          id: '1', nombre: 'Botines Nike Mercurial', descripcion: 'Botines profesionales en excelente estado, talla 42',
+          precio: 120, categoria: 'equipamiento', ubicacion: 'Madrid', imagen: '', vendedor: 'Carlos López',
+          fecha: new Date().toLocaleDateString(), esPropio: false
+        },
+        {
+          id: '2', nombre: 'Camiseta FC Barcelona 2024', descripcion: 'Camiseta oficial nueva, talla M',
+          precio: 80, categoria: 'ropa', ubicacion: 'Barcelona', imagen: '', vendedor: 'Ana García',
+          fecha: new Date().toLocaleDateString(), esPropio: false
+        },
+        {
+          id: '3', nombre: 'Entrenamiento Personal', descripcion: 'Clases de fútbol individuales y grupales',
+          precio: 50, categoria: 'servicios', ubicacion: 'Valencia', imagen: '', vendedor: 'Miguel Trainer',
+          fecha: new Date().toLocaleDateString(), esPropio: false
+        }
+      ];
+      saveProductos(JSON.stringify(ejemplos));
+    }
+    
+    renderProductos();
+  </script>
+</body>
+</html>

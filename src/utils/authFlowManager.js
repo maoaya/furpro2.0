@@ -296,14 +296,16 @@ export class AuthFlowManager {
 }
 
 // Instancia singleton del manager
-export const authFlowManager = new AuthFlowManager();
+const authFlowManagerInstance = new AuthFlowManager();
+export { authFlowManagerInstance as authFlowManager };
+export default authFlowManagerInstance;
 
 /**
  * Función de utilidad para manejar autenticación exitosa
  * Compatible con componentes existentes
  */
 export async function handleAuthenticationSuccess(user, navigate = null, additionalData = {}) {
-  return await authFlowManager.handlePostLoginFlow(user, navigate, additionalData);
+  return await authFlowManagerInstance.handlePostLoginFlow(user, navigate, additionalData);
 }
 
 /**
@@ -311,5 +313,5 @@ export async function handleAuthenticationSuccess(user, navigate = null, additio
  * Compatible con componentes existentes  
  */
 export async function handleCompleteRegistration(formData, navigate = null) {
-  return await authFlowManager.handleCompleteRegistrationFlow(formData, navigate);
+  return await authFlowManagerInstance.handleCompleteRegistrationFlow(formData, navigate);
 }

@@ -260,7 +260,7 @@
             const golesRecibidos = stats.golesRecibidos || 0;
             const experiencia = stats.experiencia || 0;
 
-            // Calcular rating FIFA
+            // Calcular rating CarFutPro
             let rating = 65; // Base
             if (partidosJugados > 0) {
                 const winRate = (victorias / partidosJugados) * 100;
@@ -277,7 +277,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="nivel-badge">Nivel ${nivel}</div>
-                        <h3><i class="fas fa-id-card"></i> Mi Card FIFA</h3>
+                        <h3><i class="fas fa-id-card"></i> Mi CarFutPro</h3>
                         <div class="fifa-card">
                             <h4 style="margin: 0; color: #FFD700; position: relative; z-index: 1;">
                                 ${JSON.parse(localStorage.getItem('futpro_user') || '{}').nombre || 'Jugador'}

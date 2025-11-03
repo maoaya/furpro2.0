@@ -1,278 +1,67 @@
-import React, { useState } from 'react';import React, { useState, useRef, useEffect } from 'react';
-
-import { useNavigate } from 'react-router-dom';import { useNavigate } from 'react-router-dom';
-
-import supabase from '../supabaseClient';import supabase from '../supabaseClient';
-
-import { useAuth } from '../context/AuthContext.jsx';
-
-const gold = '#FFD700';import { useActivityTracker, useFormTracker, useUploadTracker } from '../hooks/useActivityTracker';
-
-const black = '#222';import '../styles/registro-animations.css';
-
-
-
-export default function RegistroNuevo() {const RegistroNuevo = () => {
-
-  const navigate = useNavigate();  const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(false);  const fileInputRef = useRef(null);
-
-  const [error, setError] = useState('');  const { user } = useAuth();
-
-  const [success, setSuccess] = useState('');  
-
-  const [paso, setPaso] = useState(1);  // Estado del formulario paso a paso
-
-  const [paso, setPaso] = useState(1);
-
-  const [formData, setFormData] = useState({  const [loading, setLoading] = useState(false);
-
-    email: '',  const [error, setError] = useState('');
-
-    password: '',  const [success, setSuccess] = useState('');
-
-    confirmPassword: '',  const [imagenPerfil, setImagenPerfil] = useState(null);
-
-    nombre: '',  const [previewImagen, setPreviewImagen] = useState(null);
-
-    apellido: '',  const [autoSaving, setAutoSaving] = useState(false);
-
-    edad: 18,  const [lastSaved, setLastSaved] = useState(null);
-
-    telefono: '',  
-
-    pais: 'México',  // 🔥 TRACKING HOOKS - AUTOGUARDADO TIPO REDES SOCIALES
-
-    posicion: '',  const tracker = useActivityTracker();
-
-    experiencia: ''  const formTracker = useFormTracker('registro_completo', paso);
-
-  });  const { trackUpload } = useUploadTracker();
-
-
-
-  const handleChange = (e) => {  const [formData, setFormData] = useState({
-
-    const { name, value } = e.target;    // Paso 1: Datos básicos
-
-    setFormData(prev => ({    email: '',
-
-      ...prev,    password: '',
-
-      [name]: value    confirmPassword: '',
-
-    }));    
-
-  };    // Paso 2: Información personal
-
-    nombre: '',
-
-  const handleSubmit = async (e) => {    apellido: '',
-
-    e.preventDefault();    edad: 18,
-
-        telefono: '',
-
-    if (paso === 1) {    pais: 'México',
-
-      if (formData.password !== formData.confirmPassword) {    ubicacion: '',
-
-        setError('Las contraseñas no coinciden');    
-
-        return;    // Paso 3: Información futbolística
-
-      }    posicion: '',
-
-      if (formData.password.length < 6) {    experiencia: '',
-
-        setError('La contraseña debe tener al menos 6 caracteres');    equipoFavorito: '',
-
-        return;    peso: '',
-
-      }    
-
-      setError('');    // Paso 4: Disponibilidad
-
-      setPaso(2);    disponibilidad: '',
-
-      return;    vecesJuegaPorSemana: '',
-
-    }    horariosPreferidos: '',
-
-    
-
-    if (paso === 2) {    // Paso 5: Foto de perfil
-
-      if (!formData.nombre || !formData.apellido) {    foto: null
-
-        setError('Nombre y apellido son obligatorios');  });
-
-        return;
-
-      }  // Redirigir si ya está autenticado
-
-      setError('');  useEffect(() => {
-
-      setPaso(3);    if (user) {
-
-      return;      navigate('/home');
-
-    }    }
-
-  }, [user, navigate]);
-
-    if (paso === 3) {
-
-      setLoading(true);  // Auto-guardado cada 30 segundos
-
-      setError('');  useEffect(() => {
-
-    const autoSaveInterval = setInterval(() => {
-
-      try {      if (paso > 1 && formData.email && formData.nombre) {
-
-        const response = await fetch('/.netlify/functions/signup-bypass', {        autoGuardarProgreso();
-
-          method: 'POST',      }
-
-          headers: {    }, 30000);
-
-            'Content-Type': 'application/json',
-
-          },    return () => clearInterval(autoSaveInterval);
-
-          body: JSON.stringify({  }, [paso, formData]);
-
-            email: formData.email.toLowerCase().trim(),
-
-            password: formData.password,  // Cargar datos guardados al iniciar
-
-            nombre: formData.nombre,  useEffect(() => {
-
-            apellido: formData.apellido,    const datosSalvados = localStorage.getItem('futpro_registro_progreso');
-
-            edad: formData.edad,    if (datosSalvados) {
-
-            telefono: formData.telefono,      try {
-
-            pais: formData.pais,        const datos = JSON.parse(datosSalvados);
-
-            posicion: formData.posicion,        setFormData(prev => ({ ...prev, ...datos }));
-
-            experiencia: formData.experiencia        setLastSaved(new Date().toLocaleTimeString());
-
-          })      } catch (e) {
-
-        });        console.log('Error cargando datos guardados:', e);
-
-      }
-
-        const result = await response.json();    }
-
-  }, []);
-
-        if (!response.ok || result.error) {
-
-          setError(result.error || 'Error al registrar usuario');  const autoGuardarProgreso = async () => {
-
-          setLoading(false);    if (!formData.email || !formData.nombre) return;
-
-          return;    
-
-        }    setAutoSaving(true);
-
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import supabase from '../supabaseClient';
+
+const gold = '#FFD700';
+
+export default function RegistroNuevo() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [formData, setFormData] = useState({ email: '', password: '', confirmPassword: '', nombre: '' });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    if (!formData.email || !formData.password || !formData.confirmPassword) {
+      setError('Completa email y contraseñas');
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
     try {
+      setLoading(true);
+      const { error: signUpError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: { data: { nombre: formData.nombre || '' } }
+      });
+      if (signUpError) throw signUpError;
+      setSuccess('Cuenta creada. Revisa tu correo para confirmar.');
+      setTimeout(() => navigate('/'), 1200);
+    } catch (err) {
+      setError(err.message || 'Error en registro');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        if (result.user) {      localStorage.setItem('futpro_registro_progreso', JSON.stringify(formData));
-
-          setSuccess('¡Registro exitoso! Redirigiendo...');      setLastSaved(new Date().toLocaleTimeString());
-
-          setLoading(false);    } catch (error) {
-
-          setTimeout(() => {      console.log('Error auto-guardando:', error);
-
-            navigate('/home');    } finally {
-
-          }, 1500);      setAutoSaving(false);
-
-        }    }
-
-      } catch (e) {  };
-
-        setError('Error al conectar con el servidor');
-
-        setLoading(false);  const handleInputChange = (e) => {
-
-      }    const { name, value } = e.target;
-
-    }    setFormData(prev => ({
-
-  };      ...prev,
-
-      [name]: value
-
-  const handleBack = () => {    }));
-
-    if (paso > 1) {    setError('');
-
-      setPaso(paso - 1);    
-
-      setError('');    // 🔥 TRACK FIELD INPUT AUTOMÁTICAMENTE (COMO REDES SOCIALES)
-
-    } else {    formTracker.trackField(name, value);
-
-      navigate('/');    
-
-    }    // Auto-guardar después de cambios importantes
-
-  };    if (name === 'email' || name === 'nombre' || name === 'apellido') {
-
-      setTimeout(() => autoGuardarProgreso(), 2000);
-
-  return (    }
-
-    <div style={{  };
-
-      minHeight: '100vh',
-
-      background: `linear-gradient(135deg, ${black} 0%, #333 100%)`,  const handleImagenChange = (e) => {
-
-      display: 'flex',    const file = e.target.files[0];
-
-      alignItems: 'center',    if (file) {
-
-      justifyContent: 'center',      setImagenPerfil(file);
-
-      fontFamily: 'Arial, sans-serif',      setFormData(prev => ({ ...prev, foto: file }));
-
-      padding: '20px'      
-
-    }}>      // 🔥 TRACK PHOTO UPLOAD AUTOMÁTICAMENTE
-
-      <div style={{      trackUpload(file, 'profile_registration');
-
-        background: '#1a1a1a',      
-
-        border: `2px solid ${gold}`,      // Crear preview
-
-        borderRadius: '20px',      const reader = new FileReader();
-
-        padding: '40px',      reader.onload = (e) => setPreviewImagen(e.target.result);
-
-        maxWidth: '500px',      reader.readAsDataURL(file);
-
-        width: '100%',    }
-
-        boxShadow: `0 10px 30px rgba(255, 215, 0, 0.3)`  };
-
-      }}>
-
-        {/* Header */}  const validarPaso = (numeroPaso) => {
-
-        <div style={{ marginBottom: '30px', textAlign: 'center' }}>    switch (numeroPaso) {
-
-          <div style={{ fontSize: '48px', marginBottom: '10px' }}>⚽</div>      case 1:
+  return (
+    <div style={{ minHeight: '100vh', background: '#0b0b0b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div style={{ width: '100%', maxWidth: 480, background: '#121212', border: `2px solid ${gold}`, borderRadius: 16, padding: 20 }}>
+        <h2 style={{ color: gold, marginTop: 0, textAlign: 'center' }}>Registro Nuevo</h2>
+        {error && <div style={{ background: '#3b0d0d', color: '#ff9b9b', border: '1px solid #ff4d4f', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>{error}</div>}
+        {success && <div style={{ background: '#0e3323', color: '#9ff2c3', border: '1px solid #27d17c', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>{success}</div>}
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 10 }}>
+          <input name="nombre" placeholder="Nombre (opcional)" value={formData.nombre} onChange={handleChange} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }} />
+          <input name="email" type="email" required placeholder="Correo" value={formData.email} onChange={handleChange} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }} />
+          <input name="password" type="password" required placeholder="Contraseña" value={formData.password} onChange={handleChange} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }} />
+          <input name="confirmPassword" type="password" required placeholder="Confirmar contraseña" value={formData.confirmPassword} onChange={handleChange} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }} />
+          <button type="submit" disabled={loading} style={{ width: '100%', padding: 12, background: 'linear-gradient(135deg,#22c55e,#16a34a)', color: '#111', border: 'none', borderRadius: 10, fontWeight: 800, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>{loading ? 'Registrando...' : 'Crear cuenta'}</button>
+        </form>
+      </div>
+    </div>
+  );
+}
 
           <h1 style={{ color: gold, margin: 0, fontSize: '24px' }}>Registro Completo</h1>        if (!formData.email || !formData.password || !formData.confirmPassword) {
 

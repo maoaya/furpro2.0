@@ -1,322 +1,135 @@
-import React, { useState, useEffect } from 'react';import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import supabase from '../supabaseClient';
+import { getConfig } from '../config/environment.js';
 
-import supabase from '../supabaseClient';import supabase from '../supabaseClient';
+const gold = '#FFD700';
 
-import { useNavigate } from 'react-router-dom';import { useNavigate } from 'react-router-dom';
+export default function LoginRegisterForm() {
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [categoria, setCategoria] = useState('infantil_femenina');
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [isRegister, setIsRegister] = useState(false);
 
-import { getConfig } from '../config/environment.js';import { getConfig } from '../config/environment.js';
+  const navigate = useNavigate();
+  const config = getConfig();
 
-
-
-const gold = '#FFD700';const gold = '#FFD700';
-
-const black = '#222';const black = '#222';
-
-
-
-export default function LoginRegisterForm() {export default function LoginRegisterForm() {
-
-  const [loading, setLoading] = useState(false);  const [loading, setLoading] = useState(false);
-
-  const [email, setEmail] = useState('');  const [email, setEmail] = useState('');
-
-  const [password, setPassword] = useState('');  const [password, setPassword] = useState('');
-
-  const [error, setError] = useState(null);  const [error, setError] = useState(null);
-
-  const [success, setSuccess] = useState(null);  const [success, setSuccess] = useState(null);
-
-  const [isRegister, setIsRegister] = useState(false);  const [isRegister, setIsRegister] = useState(false);
-
-  const [showEmailForm, setShowEmailForm] = useState(false);  const [showEmailForm, setShowEmailForm] = useState(false);
-
-  const navigate = useNavigate();  const navigate = useNavigate();
-
-  const config = getConfig();  const config = getConfig();
+  const goHome = () => {
+    try { navigate('/homepage-instagram.html'); } catch (_) { window.location.href = '/homepage-instagram.html'; }
+  };
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => { if (data?.session?.user) goHome(); });
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) { setSuccess('Inicio de sesión exitoso. Redirigiendo...'); setLoading(false); setTimeout(goHome, 600); }
+    });
+    return () => authListener?.subscription?.unsubscribe?.();
+  }, []);
 
-  useEffect(() => {    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {      
+  const handleLoginSocial = async (provider) => {
+    try {
+      setLoading(true); setError(null); setSuccess(null);
+      await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: config.oauthCallbackUrl } });
+    } catch (e) { setLoading(false); setError(`Error con ${provider}: ${e.message}`); }
+  };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {            console.log('🔐 Auth state change:', event, session?.user?.email);
-
-      console.log('🔐 Auth state change:', event, session?.user?.email);      if (event === 'SIGNED_IN' && session) {
-
-      if (event === 'SIGNED_IN' && session) {        setSuccess('¡Inicio de sesión exitoso! Redirigiendo...');
-
-        setSuccess('¡Inicio de sesión exitoso! Redirigiendo...');        setLoading(false);
-
-        setLoading(false);        setTimeout(() => {
-
-        setTimeout(() => {          navigate('/home');
-
-          navigate('/home');        }, 1500);
-
-        }, 1500);      } else if (event === 'SIGNED_OUT') {
-
-      } else if (event === 'SIGNED_OUT') {        setError('Sesión cerrada');
-
-        setError('Sesión cerrada');        setTimeout(() => setError(null), 3000);
-
-        setTimeout(() => setError(null), 3000);      }
-
-      }    });
-
-    });    return () => subscription.unsubscribe();
-
-    return () => subscription.unsubscribe();  }, [navigate]);
-
-  }, [navigate]);  const handleLoginSocial = async (provider) => {
-
-    setLoading(true);
-
-  const handleLoginSocial = async (provider) => {    setError(null);
-
-    setLoading(true);    setSuccess(null);
-
-    setError(null);
-
-    setSuccess(null);    // 🔥 TRACK SOCIAL LOGIN ATTEMPT
-
-    tracker.track('social_login_attempt', {
-
-    try {      provider,
-
-      const { data, error } = await supabase.auth.signInWithOAuth({      timestamp: new Date().toISOString()
-
-        provider: provider,    }, true);
-
-        options: {
-
-          redirectTo: config.oauthCallbackUrl    try {
-
-        }      const config = getConfig();
-
-      });      const { data, error } = await supabase.auth.signInWithOAuth({
-
-        provider: provider,
-
-      if (error) {        options: {
-
-        console.error(`❌ Error ${provider}:`, error);          redirectTo: config.oauthCallbackUrl
-
-        setError(`Error con ${provider}: ${error.message}`);        }
-
-        setLoading(false);      });
-
+  const handleSubmitEmail = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true); setError(null); setSuccess(null);
+      if (isRegister) {
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
+        if (signUpError) throw signUpError;
+        try {
+          const draft = { email, categoria, creadaEn: new Date().toISOString(), estado: 'pendiente_confirmacion' };
+          localStorage.setItem('draft_carfutpro', JSON.stringify(draft));
+          try {
+            const { database } = await import('../config/firebase.js');
+            const { ref, set } = await import('firebase/database');
+            const uid = signUpData?.user?.id || 'pending';
+            await set(ref(database, `autosave/carfutpro/${uid}`), draft);
+          } catch (_) {}
+        } catch (aux) { console.warn('Autosave inicial falló (no crítico):', aux); }
+        setSuccess('Registro iniciado. Revisa tu correo para confirmar y se creó un borrador de tu CarFutPro.');
       } else {
-
-        console.log(`✅ ${provider} OAuth iniciado`);      if (error) {
-
-        setSuccess(`Redirigiendo a ${provider}...`);        console.error(`❌ Error ${provider}:`, error);
-
-      }        setError(`Error con ${provider}: ${error.message}`);
-
-    } catch (error) {
-
-      console.error(`❌ Error ${provider}:`, error);        // 🔥 TRACK FAILED LOGIN
-
-      setError(`Error con ${provider}: ${error.message}`);        tracker.trackLogin(provider, false, { error: error.message });
-
-      setLoading(false);        setLoading(false);
-
-    }      } else {
-
-  };        console.log(`✅ ${provider} OAuth iniciado`);
-
-        setSuccess(`Redirigiendo a ${provider}...`);
-
-  const handleLogin = async (e) => {
-
-    e.preventDefault();        // 🔥 TRACK SUCCESSFUL OAUTH REDIRECT
-
-    setLoading(true);        tracker.trackLogin(provider, true, { redirected: true });
-
-    setError(null);      }
-
-    setSuccess(null);    } catch (error) {
-
-      console.error(`❌ Error ${provider}:`, error);
-
-    try {      setError(`Error con ${provider}: ${error.message}`);
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-
-        email,      // 🔥 TRACK EXCEPTION
-
-        password,      tracker.track('social_login_exception', {
-
-      });        provider,
-
-              error: error.message
-
-      if (error) {      }, true);
-
-        setError(error.message);      setLoading(false);
-
-        setLoading(false);    }
-
-      } else {  };
-
-        setSuccess('¡Ingreso exitoso! Redirigiendo...');  const handleLogin = async (e) => {
-
-        setLoading(false);    e.preventDefault();
-
-        setTimeout(() => {    setLoading(true);
-
-          navigate('/home');    setError(null);
-
-        }, 500);    setSuccess(null);
-
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInError) throw signInError;
+        try {
+          const { data: sessionRes } = await supabase.auth.getSession();
+          const userId = sessionRes?.session?.user?.id;
+          if (userId) {
+            const draftRaw = localStorage.getItem('draft_carfutpro');
+            const draft = draftRaw ? JSON.parse(draftRaw) : null;
+            const categoriaFinal = draft?.categoria || categoria;
+            try {
+              const { supabase: sb } = await import('../supabaseClient.js');
+              const { data, error } = await sb
+                .from('carfutpro')
+                .insert([{ user_id: userId, categoria: categoriaFinal, creada_en: new Date().toISOString(), estado: 'activa' }])
+                .select()
+                .single();
+              if (error) throw error;
+              try {
+                const { database } = await import('../config/firebase.js');
+                const { ref, set } = await import('firebase/database');
+                await set(ref(database, `carfutpro/${userId}`), data);
+                await set(ref(database, `autosave/carfutpro/${userId}`), null);
+              } catch (_) {}
+            } catch (eCreate) { console.warn('Creación de CarFutPro en Supabase falló (continuando):', eCreate.message); }
+          }
+        } catch (aux) { console.warn('No se pudo completar creación inicial de CarFutPro:', aux); }
+        setSuccess('Ingreso exitoso. Redirigiendo...');
+        setTimeout(goHome, 600);
       }
-
-    } catch (e) {    // 🔥 TRACK EMAIL LOGIN ATTEMPT
-
-      setError(e.message);    tracker.track('email_login_attempt', {
-
-      setLoading(false);      email: email.substring(0, 3) + '***', // Ocultar email por privacidad
-
-    }      timestamp: new Date().toISOString()
-
-  };    }, true);
-
-
-
-  const handleRegister = async (e) => {    try {
-
-    e.preventDefault();      const { data, error } = await supabase.auth.signInWithPassword({
-
-    setLoading(true);        email,
-
-    setError(null);        password,
-
-    setSuccess(null);      });
-
-      if (error) {
-
-    try {        setError(error.message);
-
-      const response = await fetch('/.netlify/functions/signup-bypass', {
-
-        method: 'POST',        // 🔥 TRACK FAILED EMAIL LOGIN
-
-        headers: {        tracker.trackLogin('email', false, {
-
-          'Content-Type': 'application/json',          email: email.substring(0, 3) + '***',
-
-        },          error: error.message
-
-        body: JSON.stringify({        });
-
-          email: email.toLowerCase().trim(),        setLoading(false);
-
-          password,      } else {
-
-          nombre: email.split('@')[0]        setSuccess('¡Ingreso exitoso! Redirigiendo...');
-
-        })
-
-      });        // 🔥 TRACK SUCCESSFUL EMAIL LOGIN
-
-        tracker.trackLogin('email', true, {
-
-      const result = await response.json();          userId: data.user.id,
-
-          email: data.user.email
-
-      if (!response.ok || result.error) {        });
-
-        setIsRegister(false);
-
-        setError(null);        setLoading(false);
-
-        setLoading(false);        // Log y redirección ultra-agresiva
-
-        setSuccess('🎯 Email detectado. Por favor ingresa tu contraseña.');        console.log('🚀 LOGIN: Usuario autenticado, forzando redirección a /home');
-
-        return;        setTimeout(() => {
-
-      }          try {
-
-            navigate('/home');
-
-      if (result.user) {          } catch (err) {
-
-        setSuccess('¡Registro exitoso! Bienvenido a FutPro. Redirigiendo...');            console.warn('⚠️ navigate falló, usando window.location.href');
-
-        setLoading(false);            window.location.href = '/home';
-
-        setTimeout(() => {          }
-
-          navigate('/home');          // Fallback siempre
-
-        }, 500);          setTimeout(() => {
-
-      }            if (window.location.pathname !== '/home') {
-
-    } catch (e) {              window.location.href = '/home';
-
-      setIsRegister(false);            }
-
-      setError(null);          }, 1000);
-
-      setLoading(false);        }, 500);
-
-      setSuccess('Por favor ingresa tu contraseña para continuar.');      }
-
-    }    } catch (e) {
-
-  };      setError(e.message);
-
-
-
-  return (      // 🔥 TRACK LOGIN EXCEPTION
-
-    <div style={{      tracker.track('email_login_exception', {
-
-      minHeight: '100vh',        error: e.message,
-
-      background: `linear-gradient(135deg, ${black} 0%, #333 100%)`,        email: email.substring(0, 3) + '***'
-
-      display: 'flex',      }, true);
-
-      alignItems: 'center',      setLoading(false);
-
-      justifyContent: 'center',    }
-
-      fontFamily: 'Arial, sans-serif',  };
-
-      padding: '20px'  const handleRegister = async (e) => {
-
-    }}>    e.preventDefault();
-
-      <div style={{    setLoading(true);
-
-        background: '#1a1a1a',    setError(null);
-
-        border: `2px solid ${gold}`,    setSuccess(null);
-
-        borderRadius: '20px',    console.log('💥 REGISTRO CON BYPASS ANTI-CAPTCHA');
-
-        padding: '40px',
-
-        maxWidth: '400px',    try {
-
-        width: '100%',      // USAR FUNCIÓN DE BYPASS ANTI-CAPTCHA
-
-        textAlign: 'center',      const response = await fetch('/.netlify/functions/signup-bypass', {
-
-        boxShadow: `0 10px 30px rgba(255, 215, 0, 0.3)`        method: 'POST',
-
-      }}>        headers: {
-
-        {/* Logo */}          'Content-Type': 'application/json',
-
-        <div style={{ marginBottom: '30px' }}>        },
-
-          <div style={{ fontSize: '48px', marginBottom: '10px' }}>⚽</div>        body: JSON.stringify({
-
-          <h1 style={{ color: gold, margin: 0, fontSize: '24px' }}>FutPro</h1>          email: email.toLowerCase().trim(),
+    } catch (e) { setError(e.message || 'Ocurrió un error'); }
+    finally { setLoading(false); }
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#0b0b0b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div style={{ width: '100%', maxWidth: 420, background: '#121212', border: `2px solid ${gold}`, borderRadius: 16, padding: 20, boxShadow: '0 10px 30px #000a' }}>
+        <h1 style={{ color: gold, margin: 0, marginBottom: 8, textAlign: 'center' }}>FutPro</h1>
+        <p style={{ color: '#bbb', marginTop: 0, textAlign: 'center' }}>{isRegister ? 'Crea tu cuenta' : 'Inicia sesión'}</p>
+
+        {error && (<div style={{ background: '#3b0d0d', color: '#ff9b9b', border: '1px solid #ff4d4f', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>{error}</div>)}
+        {success && (<div style={{ background: '#0e3323', color: '#9ff2c3', border: '1px solid #27d17c', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>{success}</div>)}
+
+        <div style={{ display: 'grid', gap: 10 }}>
+          <button onClick={() => handleLoginSocial('google')} disabled={loading} style={{ width: '100%', padding: 12, background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>Continuar con Google</button>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '14px 0' }}>
+          <div style={{ flex: 1, height: 1, background: '#333' }} />
+          <span style={{ color: '#999', fontSize: 12 }}>o con email</span>
+          <div style={{ flex: 1, height: 1, background: '#333' }} />
+        </div>
+
+        <form onSubmit={handleSubmitEmail} style={{ display: 'grid', gap: 10 }}>
+          <input type="email" required placeholder="Correo" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }}/>
+          <input type="password" required placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }}/>
+          {isRegister && (
+            <select value={categoria} onChange={(e) => setCategoria(e.target.value)} required style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }}>
+              <option value="infantil_femenina">Infantil Femenina</option>
+              <option value="infantil_masculina">Infantil Masculina</option>
+              <option value="femenina">Femenina</option>
+              <option value="masculina">Masculina</option>
+            </select>
+          )}
+          <button type="submit" disabled={loading} style={{ width: '100%', padding: 12, background: isRegister ? 'linear-gradient(135deg,#22c55e,#16a34a)' : 'linear-gradient(135deg,#f59e0b,#d97706)', color: '#111', border: 'none', borderRadius: 10, fontWeight: 800, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>{loading ? 'Procesando...' : (isRegister ? 'Crear cuenta' : 'Ingresar')}</button>
+        </form>
+
+        <div style={{ marginTop: 12, textAlign: 'center' }}>
+          <button onClick={() => setIsRegister(!isRegister)} style={{ background: 'transparent', color: gold, border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
+            {isRegister ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
           <p style={{ color: '#ccc', margin: '5px 0 0 0', fontSize: '14px' }}>Plataforma de Fútbol</p>          password,
 
