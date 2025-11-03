@@ -107,4 +107,4 @@ const getConfig = () => {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { getConfig };
 }
-export default getConfig;
+export default getConfig;export { getConfig }; 
