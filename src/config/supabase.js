@@ -30,6 +30,7 @@ if (!supabaseConfigured && typeof console !== 'undefined') {
 // La mayoría de operaciones funcionan sin especificar schema porque Supabase REST resuelve por tabla.
 // Si alguna llamada requiere schema explícito, usa createClient(..., { db: { schema: 'api' } })
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+export default supabase;
 
 // 🔐 Configuración de autenticación
 export const authConfig = {

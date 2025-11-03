@@ -592,7 +592,7 @@
                     <div class="menu-section-title">Juegos & Cards</div>
                     <a href="#" class="dropdown-item" onclick="jugarPenaltis(); return false;"><i class="fas fa-futbol"></i><span>Juego de Penaltis</span></a>
                     <a href="#" class="dropdown-item" onclick="centroJuegos(); return false;"><i class="fas fa-gamepad"></i><span>Centro de Juegos</span></a>
-                    <a href="#" class="dropdown-item" onclick="verCardFIFA(); return false;"><i class="fas fa-id-card"></i><span>CarFutPro</span></a>
+                    <a href="#" class="dropdown-item" onclick="verCardFIFA(); return false;"><i class="fas fa-id-card"></i><span>Card FIFA</span></a>
                     <a href="#" class="dropdown-item" onclick="sugerenciasCard(); return false;"><i class="fas fa-lightbulb"></i><span>Sugerencias Card</span></a>
                     <div class="menu-separator"></div>
                     <!-- SECCIÓN SOCIAL -->
@@ -2958,27 +2958,31 @@
     </div>
 
     <!-- BARRA DE NAVEGACIÓN INFERIOR -->
-    <div class="bottom-nav" style="position:fixed;bottom:0;left:0;width:100vw;height:60px;background:#222;display:flex;justify-content:space-around;align-items:center;z-index:10001;box-shadow:0 -2px 12px #000a;">
-        <button class="nav-item" id="navHome" onclick="window.location.href='home.html'" style="background:none;border:none;color:#FFD700;font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;">
-            <i class="fas fa-home"></i>
-            <span style="font-size:12px;">Home</span>
-        </button>
-        <button class="nav-item" id="navMarket" onclick="window.location.href='marketplace.html'" style="background:none;border:none;color:#FFD700;font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;">
-            <i class="fas fa-store"></i>
-            <span style="font-size:12px;">Market</span>
-        </button>
-        <button class="nav-item" id="navVideos" onclick="window.location.href='videos.html'" style="background:none;border:none;color:#FFD700;font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;">
-            <i class="fas fa-video"></i>
-            <span style="font-size:12px;">Videos</span>
-        </button>
-        <button class="nav-item" id="navAlertas" onclick="window.location.href='notificaciones.html'" style="background:none;border:none;color:#FFD700;font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;">
-            <i class="fas fa-bell"></i>
-            <span style="font-size:12px;">Alertas</span>
-        </button>
-        <button class="nav-item" id="navChat" onclick="window.location.href='chat.html'" style="background:none;border:none;color:#FFD700;font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;">
-            <i class="fas fa-comments"></i>
-            <span style="font-size:12px;">Chat</span>
-        </button>
+    <div class="bottom-nav">
+        <div class="nav-container">
+            <a href="#" class="nav-item active" onclick="irAHome()">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item" onclick="irAMarket()">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Market</span>
+            </a>
+            <a href="#" class="nav-item" onclick="irAVideos()">
+                <i class="fas fa-play-circle"></i>
+                <span>Videos</span>
+            </a>
+            <a href="#" class="nav-item" onclick="irAAlertas()">
+                <i class="fas fa-bell"></i>
+                <span>Alertas</span>
+                <div id="alertasBadge" style="position:absolute;top:2px;right:8px;background:#FF1744;color:#fff;border-radius:10px;padding:2px 6px;font-size:8px;display:none;">0</div>
+            </a>
+            <a href="#" class="nav-item" onclick="irAChat()">
+                <i class="fas fa-comments"></i>
+                <span>Chat</span>
+                <div id="chatBadge" style="position:absolute;top:2px;right:8px;background:#00ff88;color:#181818;border-radius:10px;padding:2px 6px;font-size:8px;display:none;">0</div>
+            </a>
+        </div>
     </div>
 
     <script>

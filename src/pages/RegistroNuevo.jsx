@@ -1,408 +1,602 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useActivityTracker, useFormTracker, useUploadTracker } from '../hooks/useActivityTracker';
-import '../styles/registro-animations.css';
 
-const RegistroNuevo = () => {
+const gold = '#FFD700';
+
+export default function RegistroNuevo() {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
-  const { user } = useAuth();
-  
-  // Estado del formulario paso a paso
-  const [paso, setPaso] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [imagenPerfil, setImagenPerfil] = useState(null);
-  const [previewImagen, setPreviewImagen] = useState(null);
-  const [autoSaving, setAutoSaving] = useState(false);
-  const [lastSaved, setLastSaved] = useState(null);
-  
-  // 🔥 TRACKING HOOKS - AUTOGUARDADO TIPO REDES SOCIALES
-  const tracker = useActivityTracker();
-  const formTracker = useFormTracker('registro_completo', paso);
-  const { trackUpload } = useUploadTracker();
+  const [formData, setFormData] = useState({ email: '', password: '', confirmPassword: '', nombre: '' });
 
-  const [formData, setFormData] = useState({
-    // Paso 1: Datos básicos
-    email: '',
-    password: '',
-    confirmPassword: '',
-    
-    // Paso 2: Información personal
-    nombre: '',
-    apellido: '',
-    edad: 18,
-    telefono: '',
-    pais: 'México',
-    ubicacion: '',
-    
-    // Paso 3: Información futbolística
-    posicion: '',
-    experiencia: '',
-    equipoFavorito: '',
-    peso: '',
-    
-    // Paso 4: Disponibilidad
-    disponibilidad: '',
-    vecesJuegaPorSemana: '',
-    horariosPreferidos: '',
-    
-    // Paso 5: Foto de perfil
-    foto: null
-  });
-
-  // Redirigir si ya está autenticado
-  useEffect(() => {
-    if (user) {
-      navigate('/home');
-    }
-  }, [user, navigate]);
-
-  // Auto-guardado cada 30 segundos
-  useEffect(() => {
-    const autoSaveInterval = setInterval(() => {
-      if (paso > 1 && formData.email && formData.nombre) {
-        autoGuardarProgreso();
-      }
-    }, 30000);
-
-    return () => clearInterval(autoSaveInterval);
-  }, [paso, formData]);
-
-  // Cargar datos guardados al iniciar
-  useEffect(() => {
-    const datosSalvados = localStorage.getItem('futpro_registro_progreso');
-    if (datosSalvados) {
-      try {
-        const datos = JSON.parse(datosSalvados);
-        setFormData(prev => ({ ...prev, ...datos }));
-        setLastSaved(new Date().toLocaleTimeString());
-      } catch (e) {
-        console.log('Error cargando datos guardados:', e);
-      }
-    }
-  }, []);
-
-  const autoGuardarProgreso = async () => {
-    if (!formData.email || !formData.nombre) return;
-    
-    setAutoSaving(true);
-    try {
-      localStorage.setItem('futpro_registro_progreso', JSON.stringify(formData));
-      setLastSaved(new Date().toLocaleTimeString());
-    } catch (error) {
-      console.log('Error auto-guardando:', error);
-    } finally {
-      setAutoSaving(false);
-    }
-  };
-
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setError('');
-    
-    // 🔥 TRACK FIELD INPUT AUTOMÁTICAMENTE (COMO REDES SOCIALES)
-    formTracker.trackField(name, value);
-    
-    // Auto-guardar después de cambios importantes
-    if (name === 'email' || name === 'nombre' || name === 'apellido') {
-      setTimeout(() => autoGuardarProgreso(), 2000);
+    setSuccess('');
+    if (!formData.email || !formData.password || !formData.confirmPassword) {
+      setError('Completa email y contraseñas');
+      return;
     }
-  };
-
-  const handleImagenChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImagenPerfil(file);
-      setFormData(prev => ({ ...prev, foto: file }));
-      
-      // 🔥 TRACK PHOTO UPLOAD AUTOMÁTICAMENTE
-      trackUpload(file, 'profile_registration');
-      
-      // Crear preview
-      const reader = new FileReader();
-      reader.onload = (e) => setPreviewImagen(e.target.result);
-      reader.readAsDataURL(file);
+    if (formData.password !== formData.confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
     }
-  };
-
-  const validarPaso = (numeroPaso) => {
-    switch (numeroPaso) {
-      case 1:
-        if (!formData.email || !formData.password || !formData.confirmPassword) {
-          setError('Por favor completa todos los campos básicos');
-          return false;
-        }
-        if (formData.password !== formData.confirmPassword) {
-          setError('Las contraseñas no coinciden');
-          return false;
-        }
-        if (formData.password.length < 6) {
-          setError('La contraseña debe tener al menos 6 caracteres');
-          return false;
-        }
-        break;
-        
-      case 2:
-        if (!formData.nombre || !formData.apellido || !formData.edad || !formData.telefono || !formData.ubicacion) {
-          setError('Por favor completa todos los campos personales');
-          return false;
-        }
-        if (formData.edad < 16 || formData.edad > 60) {
-          setError('La edad debe estar entre 16 y 60 años');
-          return false;
-        }
-        break;
-        
-      case 3:
-        if (!formData.posicion || !formData.experiencia || !formData.equipoFavorito) {
-          setError('Por favor completa la información futbolística');
-          return false;
-        }
-        break;
-        
-      case 4:
-        if (!formData.disponibilidad || !formData.vecesJuegaPorSemana) {
-          setError('Por favor completa la información de disponibilidad');
-          return false;
-        }
-        break;
-    }
-    
-    setError('');
-    return true;
-  };
-
-  const siguientePaso = () => {
-    if (validarPaso(paso)) {
-      // 🔥 TRACK STEP COMPLETION
-      formTracker.trackStepComplete(paso);
-      
-      setPaso(paso + 1);
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const pasoAnterior = () => {
-    // 🔥 TRACK STEP BACK
-    tracker.track('form_step_back', { fromStep: paso, toStep: paso - 1 });
-    
-    setPaso(paso - 1);
-    setError('');
-    window.scrollTo(0, 0);
-  };
-
-  const completarRegistro = async () => {
-    if (!validarPaso(4)) return;
-    
-    setLoading(true);
-    setError('');
-    
-    // 🔥 TRACK FINAL SUBMISSION START
-    tracker.track('registration_final_attempt', { 
-      step: 5, 
-      hasPhoto: !!imagenPerfil,
-      formData: {
-        hasNombre: !!formData.nombre,
-        hasEmail: !!formData.email,
-        hasPosicion: !!formData.posicion,
-        hasExperiencia: !!formData.experiencia
-      }
-    }, true);
-    
     try {
-      // 1. Crear cuenta en Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      setLoading(true);
+      const { error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            full_name: `${formData.nombre} ${formData.apellido}`,
-            display_name: formData.nombre
-          }
-        }
+        options: { data: { nombre: formData.nombre || '' } }
+      });
+      if (signUpError) throw signUpError;
+      setSuccess('Cuenta creada. Revisa tu correo para confirmar.');
+      setTimeout(() => navigate('/'), 1200);
+    } catch (err) {
+      setError(err.message || 'Error en registro');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#0b0b0b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div style={{ width: '100%', maxWidth: 480, background: '#121212', border: `2px solid ${gold}`, borderRadius: 16, padding: 20 }}>
+        <h2 style={{ color: gold, marginTop: 0, textAlign: 'center' }}>Registro Nuevo</h2>
+        {error && <div style={{ background: '#3b0d0d', color: '#ff9b9b', border: '1px solid #ff4d4f', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>{error}</div>}
+        {success && <div style={{ background: '#0e3323', color: '#9ff2c3', border: '1px solid #27d17c', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>{success}</div>}
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 10 }}>
+          <input name="nombre" placeholder="Nombre (opcional)" value={formData.nombre} onChange={handleChange} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }} />
+          <input name="email" type="email" required placeholder="Correo" value={formData.email} onChange={handleChange} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }} />
+          <input name="password" type="password" required placeholder="Contraseña" value={formData.password} onChange={handleChange} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }} />
+          <input name="confirmPassword" type="password" required placeholder="Confirmar contraseña" value={formData.confirmPassword} onChange={handleChange} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }} />
+          <button type="submit" disabled={loading} style={{ width: '100%', padding: 12, background: 'linear-gradient(135deg,#22c55e,#16a34a)', color: '#111', border: 'none', borderRadius: 10, fontWeight: 800, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>{loading ? 'Registrando...' : 'Crear cuenta'}</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+          <h1 style={{ color: gold, margin: 0, fontSize: '24px' }}>Registro Completo</h1>        if (!formData.email || !formData.password || !formData.confirmPassword) {
+
+          <p style={{ color: '#ccc', margin: '5px 0 0 0', fontSize: '14px' }}>          setError('Por favor completa todos los campos básicos');
+
+            Paso {paso} de 3          return false;
+
+          </p>        }
+
+        </div>        if (formData.password !== formData.confirmPassword) {
+
+          setError('Las contraseñas no coinciden');
+
+        {/* Progress Bar */}          return false;
+
+        <div style={{ marginBottom: '30px', background: '#333', borderRadius: '10px', height: '8px', overflow: 'hidden' }}>        }
+
+          <div style={{        if (formData.password.length < 6) {
+
+            width: `${(paso / 3) * 100}%`,          setError('La contraseña debe tener al menos 6 caracteres');
+
+            height: '100%',          return false;
+
+            background: gold,        }
+
+            transition: 'width 0.3s ease'        break;
+
+          }}></div>        
+
+        </div>      case 2:
+
+        if (!formData.nombre || !formData.apellido || !formData.edad || !formData.telefono || !formData.ubicacion) {
+
+        {/* Mensajes */}          setError('Por favor completa todos los campos personales');
+
+        {error && (          return false;
+
+          <div style={{ background: '#dc3545', color: '#fff', padding: '10px', borderRadius: '5px', marginBottom: '20px', fontSize: '14px' }}>        }
+
+            {error}        if (formData.edad < 16 || formData.edad > 60) {
+
+          </div>          setError('La edad debe estar entre 16 y 60 años');
+
+        )}          return false;
+
+        {success && (        }
+
+          <div style={{ background: '#28a745', color: '#fff', padding: '10px', borderRadius: '5px', marginBottom: '20px', fontSize: '14px' }}>        break;
+
+            {success}        
+
+          </div>      case 3:
+
+        )}        if (!formData.posicion || !formData.experiencia || !formData.equipoFavorito) {
+
+          setError('Por favor completa la información futbolística');
+
+        {/* Formulario */}          return false;
+
+        <form onSubmit={handleSubmit}>        }
+
+          {paso === 1 && (        break;
+
+            <>        
+
+              <h3 style={{ color: gold, marginBottom: '20px' }}>Datos de Acceso</h3>      case 4:
+
+              <input        if (!formData.disponibilidad || !formData.vecesJuegaPorSemana) {
+
+                type="email"          setError('Por favor completa la información de disponibilidad');
+
+                name="email"          return false;
+
+                value={formData.email}        }
+
+                onChange={handleChange}        break;
+
+                placeholder="Email"    }
+
+                required    
+
+                style={{    setError('');
+
+                  width: '100%',    return true;
+
+                  padding: '12px',  };
+
+                  marginBottom: '16px',
+
+                  border: '1px solid #555',  const siguientePaso = () => {
+
+                  borderRadius: '8px',    if (validarPaso(paso)) {
+
+                  background: '#2a2a2a',      // 🔥 TRACK STEP COMPLETION
+
+                  color: '#fff',      formTracker.trackStepComplete(paso);
+
+                  fontSize: '16px',      
+
+                  boxSizing: 'border-box'      setPaso(paso + 1);
+
+                }}      window.scrollTo(0, 0);
+
+              />    }
+
+              <input  };
+
+                type="password"
+
+                name="password"  const pasoAnterior = () => {
+
+                value={formData.password}    // 🔥 TRACK STEP BACK
+
+                onChange={handleChange}    tracker.track('form_step_back', { fromStep: paso, toStep: paso - 1 });
+
+                placeholder="Contraseña"    
+
+                required    setPaso(paso - 1);
+
+                style={{    setError('');
+
+                  width: '100%',    window.scrollTo(0, 0);
+
+                  padding: '12px',  };
+
+                  marginBottom: '16px',
+
+                  border: '1px solid #555',  const completarRegistro = async () => {
+
+                  borderRadius: '8px',    if (!validarPaso(4)) return;
+
+                  background: '#2a2a2a',    
+
+                  color: '#fff',    setLoading(true);
+
+                  fontSize: '16px',    setError('');
+
+                  boxSizing: 'border-box'    
+
+                }}    // 🔥 TRACK FINAL SUBMISSION START
+
+              />    tracker.track('registration_final_attempt', { 
+
+              <input      step: 5, 
+
+                type="password"      hasPhoto: !!imagenPerfil,
+
+                name="confirmPassword"      formData: {
+
+                value={formData.confirmPassword}        hasNombre: !!formData.nombre,
+
+                onChange={handleChange}        hasEmail: !!formData.email,
+
+                placeholder="Confirmar Contraseña"        hasPosicion: !!formData.posicion,
+
+                required        hasExperiencia: !!formData.experiencia
+
+                style={{      }
+
+                  width: '100%',    }, true);
+
+                  padding: '12px',    
+
+                  marginBottom: '16px',    try {
+
+                  border: '1px solid #555',      // 1. Crear cuenta en Supabase Auth
+
+                  borderRadius: '8px',      const { data: authData, error: authError } = await supabase.auth.signUp({
+
+                  background: '#2a2a2a',        email: formData.email,
+
+                  color: '#fff',        password: formData.password,
+
+                  fontSize: '16px',        options: {
+
+                  boxSizing: 'border-box'          data: {
+
+                }}            full_name: `${formData.nombre} ${formData.apellido}`,
+
+              />            display_name: formData.nombre
+
+            </>          }
+
+          )}        }
+
       });
 
-      if (authError) {
-        if (authError.message?.includes('already registered')) {
-          setError('Este email ya está registrado. ¿Deseas iniciar sesión?');
-          
-          // 🔥 TRACK DUPLICATE EMAIL
-          tracker.track('registration_duplicate_email', { 
-            email: formData.email.substring(0, 3) + '***' 
-          }, true);
-          return;
-        }
-        throw authError;
-      }
+          {paso === 2 && (
 
-      if (!authData.user) {
-        throw new Error('No se pudo crear el usuario');
-      }
+            <>      if (authError) {
 
-      // 2. Subir foto de perfil con configuración mejorada
-      let fotoUrl = null;
-      let fotoPath = null;
-      
-      if (imagenPerfil) {
-        setSuccess('Subiendo foto de perfil...');
-        
-        // 🔥 TRACK PHOTO UPLOAD START
-        tracker.track('profile_photo_upload_start', { 
-          fileName: imagenPerfil.name,
-          fileSize: imagenPerfil.size 
-        });
-        
-        // Crear nombre único para la foto
-        const fileExt = imagenPerfil.name.split('.').pop().toLowerCase();
-        const fileName = `perfil_${authData.user.id}_${Date.now()}.${fileExt}`;
-        fotoPath = fileName;
-        
-        try {
-          // Subir a bucket public de avatars
-          const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('avatars')
-            .upload(fileName, imagenPerfil, {
-              cacheControl: '3600',
-              upsert: false
-            });
+              <h3 style={{ color: gold, marginBottom: '20px' }}>Información Personal</h3>        if (authError.message?.includes('already registered')) {
 
-          if (uploadError) {
-            console.warn('⚠️ Error subiendo foto:', uploadError.message);
-            // Continuar sin foto si falla
-          } else {
-            // Obtener URL pública
-            const { data: { publicUrl } } = supabase.storage
-              .from('avatars')
-              .getPublicUrl(fileName);
-            fotoUrl = publicUrl;
-            console.log('✅ Foto subida exitosamente:', fotoUrl);
-          }
-        } catch (photoError) {
-          console.warn('⚠️ Error en proceso de foto:', photoError);
-          // Continuar sin foto
-        }
-      }
+              <input          setError('Este email ya está registrado. ¿Deseas iniciar sesión?');
 
-      // 3. Calcular puntaje inicial basado en datos del formulario
-      const calcularPuntajeInicial = () => {
-        let puntaje = 50; // Base
-        
-        // Puntos por experiencia
-        switch(formData.experiencia.toLowerCase()) {
-          case 'principiante': puntaje += 10; break;
-          case 'intermedio': puntaje += 25; break;
-          case 'avanzado': puntaje += 40; break;
-          case 'semi-profesional': puntaje += 55; break;
-          case 'profesional': puntaje += 70; break;
-        }
-        
-        // Puntos por frecuencia de juego
-        const frecuencia = parseInt(formData.vecesJuegaPorSemana);
-        if (frecuencia >= 5) puntaje += 20;
-        else if (frecuencia >= 3) puntaje += 15;
-        else if (frecuencia >= 2) puntaje += 10;
-        else if (frecuencia >= 1) puntaje += 5;
-        
-        // Puntos por disponibilidad
-        if (formData.disponibilidad === 'Todos los días') puntaje += 15;
-        else if (formData.disponibilidad === 'Flexible') puntaje += 10;
-        else if (formData.disponibilidad === 'Fines de semana') puntaje += 8;
-        else if (formData.disponibilidad === 'Entre semana') puntaje += 5;
-        
-        // Puntos por foto de perfil
-        if (fotoUrl) puntaje += 15;
-        
-        // Puntos por edad (edad ideal 20-30)
-        const edad = parseInt(formData.edad);
-        if (edad >= 20 && edad <= 30) puntaje += 10;
-        else if (edad >= 18 && edad <= 35) puntaje += 5;
-        
-        return Math.min(puntaje, 100); // Máximo 100 puntos
-      };
+                type="text"          
 
-      const puntajeInicial = calcularPuntajeInicial();
+                name="nombre"          // 🔥 TRACK DUPLICATE EMAIL
 
-      // 4. Crear perfil completo en la tabla usuarios
-      const perfilCompleto = {
-        id: authData.user.id,
-        email: formData.email,
-        nombre: formData.nombre,
-        edad: parseInt(formData.edad),
-        telefono: formData.telefono,
-        pais: formData.pais,
-        ciudad: formData.ubicacion,
-        posicion_favorita: formData.posicion,
-        nivel_habilidad: formData.experiencia.toLowerCase(),
-        equipo: formData.equipoFavorito,
-        descripcion: `Jugador de ${formData.posicion}. Nivel: ${formData.experiencia}. Disponibilidad: ${formData.disponibilidad}. Juega ${formData.vecesJuegaPorSemana} veces por semana.`,
-        avatar_url: fotoUrl,
-        foto_path: fotoPath,
-        puntaje: puntajeInicial,
-        partidos_jugados: 0,
-        victorias: 0,
-        derrotas: 0,
-        goles: 0,
-        asistencias: 0,
-        tarjetas_amarillas: 0,
-        tarjetas_rojas: 0,
-        is_active: true,
-        email_confirmado: true,
-        fecha_registro: new Date().toISOString(),
-        tiene_foto: !!fotoUrl
-      };
+                value={formData.nombre}          tracker.track('registration_duplicate_email', { 
 
-      // 🔥 TRACK REGISTRATION SUCCESS FINAL
+                onChange={handleChange}            email: formData.email.substring(0, 3) + '***' 
+
+                placeholder="Nombre"          }, true);
+
+                required          return;
+
+                style={{        }
+
+                  width: '100%',        throw authError;
+
+                  padding: '12px',      }
+
+                  marginBottom: '16px',
+
+                  border: '1px solid #555',      if (!authData.user) {
+
+                  borderRadius: '8px',        throw new Error('No se pudo crear el usuario');
+
+                  background: '#2a2a2a',      }
+
+                  color: '#fff',
+
+                  fontSize: '16px',      // 2. Subir foto de perfil con configuración mejorada
+
+                  boxSizing: 'border-box'      let fotoUrl = null;
+
+                }}      let fotoPath = null;
+
+              />      
+
+              <input      if (imagenPerfil) {
+
+                type="text"        setSuccess('Subiendo foto de perfil...');
+
+                name="apellido"        
+
+                value={formData.apellido}        // 🔥 TRACK PHOTO UPLOAD START
+
+                onChange={handleChange}        tracker.track('profile_photo_upload_start', { 
+
+                placeholder="Apellido"          fileName: imagenPerfil.name,
+
+                required          fileSize: imagenPerfil.size 
+
+                style={{        });
+
+                  width: '100%',        
+
+                  padding: '12px',        // Crear nombre único para la foto
+
+                  marginBottom: '16px',        const fileExt = imagenPerfil.name.split('.').pop().toLowerCase();
+
+                  border: '1px solid #555',        const fileName = `perfil_${authData.user.id}_${Date.now()}.${fileExt}`;
+
+                  borderRadius: '8px',        fotoPath = fileName;
+
+                  background: '#2a2a2a',        
+
+                  color: '#fff',        try {
+
+                  fontSize: '16px',          // Subir a bucket public de avatars
+
+                  boxSizing: 'border-box'          const { data: uploadData, error: uploadError } = await supabase.storage
+
+                }}            .from('avatars')
+
+              />            .upload(fileName, imagenPerfil, {
+
+              <input              cacheControl: '3600',
+
+                type="number"              upsert: false
+
+                name="edad"            });
+
+                value={formData.edad}
+
+                onChange={handleChange}          if (uploadError) {
+
+                placeholder="Edad"            console.warn('⚠️ Error subiendo foto:', uploadError.message);
+
+                min="13"            // Continuar sin foto si falla
+
+                max="100"          } else {
+
+                style={{            // Obtener URL pública
+
+                  width: '100%',            const { data: { publicUrl } } = supabase.storage
+
+                  padding: '12px',              .from('avatars')
+
+                  marginBottom: '16px',              .getPublicUrl(fileName);
+
+                  border: '1px solid #555',            fotoUrl = publicUrl;
+
+                  borderRadius: '8px',            console.log('✅ Foto subida exitosamente:', fotoUrl);
+
+                  background: '#2a2a2a',          }
+
+                  color: '#fff',        } catch (photoError) {
+
+                  fontSize: '16px',          console.warn('⚠️ Error en proceso de foto:', photoError);
+
+                  boxSizing: 'border-box'          // Continuar sin foto
+
+                }}        }
+
+              />      }
+
+              <input
+
+                type="tel"      // 3. Calcular puntaje inicial basado en datos del formulario
+
+                name="telefono"      const calcularPuntajeInicial = () => {
+
+                value={formData.telefono}        let puntaje = 50; // Base
+
+                onChange={handleChange}        
+
+                placeholder="Teléfono (opcional)"        // Puntos por experiencia
+
+                style={{        switch(formData.experiencia.toLowerCase()) {
+
+                  width: '100%',          case 'principiante': puntaje += 10; break;
+
+                  padding: '12px',          case 'intermedio': puntaje += 25; break;
+
+                  marginBottom: '16px',          case 'avanzado': puntaje += 40; break;
+
+                  border: '1px solid #555',          case 'semi-profesional': puntaje += 55; break;
+
+                  borderRadius: '8px',          case 'profesional': puntaje += 70; break;
+
+                  background: '#2a2a2a',        }
+
+                  color: '#fff',        
+
+                  fontSize: '16px',        // Puntos por frecuencia de juego
+
+                  boxSizing: 'border-box'        const frecuencia = parseInt(formData.vecesJuegaPorSemana);
+
+                }}        if (frecuencia >= 5) puntaje += 20;
+
+              />        else if (frecuencia >= 3) puntaje += 15;
+
+            </>        else if (frecuencia >= 2) puntaje += 10;
+
+          )}        else if (frecuencia >= 1) puntaje += 5;
+
+        
+
+          {paso === 3 && (        // Puntos por disponibilidad
+
+            <>        if (formData.disponibilidad === 'Todos los días') puntaje += 15;
+
+              <h3 style={{ color: gold, marginBottom: '20px' }}>Información Futbolística</h3>        else if (formData.disponibilidad === 'Flexible') puntaje += 10;
+
+              <select        else if (formData.disponibilidad === 'Fines de semana') puntaje += 8;
+
+                name="posicion"        else if (formData.disponibilidad === 'Entre semana') puntaje += 5;
+
+                value={formData.posicion}        
+
+                onChange={handleChange}        // Puntos por foto de perfil
+
+                style={{        if (fotoUrl) puntaje += 15;
+
+                  width: '100%',        
+
+                  padding: '12px',        // Puntos por edad (edad ideal 20-30)
+
+                  marginBottom: '16px',        const edad = parseInt(formData.edad);
+
+                  border: '1px solid #555',        if (edad >= 20 && edad <= 30) puntaje += 10;
+
+                  borderRadius: '8px',        else if (edad >= 18 && edad <= 35) puntaje += 5;
+
+                  background: '#2a2a2a',        
+
+                  color: '#fff',        return Math.min(puntaje, 100); // Máximo 100 puntos
+
+                  fontSize: '16px',      };
+
+                  boxSizing: 'border-box'
+
+                }}      const puntajeInicial = calcularPuntajeInicial();
+
+              >
+
+                <option value="">Selecciona tu posición</option>      // 4. Crear perfil completo en la tabla usuarios
+
+                <option value="Portero">Portero</option>      const perfilCompleto = {
+
+                <option value="Defensa">Defensa</option>        id: authData.user.id,
+
+                <option value="Mediocampista">Mediocampista</option>        email: formData.email,
+
+                <option value="Delantero">Delantero</option>        nombre: formData.nombre,
+
+              </select>        edad: parseInt(formData.edad),
+
+              <select        telefono: formData.telefono,
+
+                name="experiencia"        pais: formData.pais,
+
+                value={formData.experiencia}        ciudad: formData.ubicacion,
+
+                onChange={handleChange}        posicion_favorita: formData.posicion,
+
+                style={{        nivel_habilidad: formData.experiencia.toLowerCase(),
+
+                  width: '100%',        equipo: formData.equipoFavorito,
+
+                  padding: '12px',        descripcion: `Jugador de ${formData.posicion}. Nivel: ${formData.experiencia}. Disponibilidad: ${formData.disponibilidad}. Juega ${formData.vecesJuegaPorSemana} veces por semana.`,
+
+                  marginBottom: '16px',        avatar_url: fotoUrl,
+
+                  border: '1px solid #555',        foto_path: fotoPath,
+
+                  borderRadius: '8px',        puntaje: puntajeInicial,
+
+                  background: '#2a2a2a',        partidos_jugados: 0,
+
+                  color: '#fff',        victorias: 0,
+
+                  fontSize: '16px',        derrotas: 0,
+
+                  boxSizing: 'border-box'        goles: 0,
+
+                }}        asistencias: 0,
+
+              >        tarjetas_amarillas: 0,
+
+                <option value="">Nivel de experiencia</option>        tarjetas_rojas: 0,
+
+                <option value="Principiante">Principiante</option>        is_active: true,
+
+                <option value="Intermedio">Intermedio</option>        email_confirmado: true,
+
+                <option value="Avanzado">Avanzado</option>        fecha_registro: new Date().toISOString(),
+
+                <option value="Profesional">Profesional</option>        tiene_foto: !!fotoUrl
+
+              </select>      };
+
+            </>
+
+          )}      // 🔥 TRACK REGISTRATION SUCCESS FINAL
+
       tracker.track('registration_completed_success', {
-        userId: authData.user.id,
-        email: authData.user.email,
-        hasPhoto: !!fotoUrl,
-        puntajeCalculado: puntajeInicial,
-        steps_completed: 5,
-        registration_method: 'complete_form'
-      }, true);
 
-      const { error: profileError } = await supabase
-        .from('usuarios')
-        .insert([perfilCompleto]);
+          {/* Botones */}        userId: authData.user.id,
 
-      if (profileError) {
-        // 🔥 TRACK PROFILE CREATION ERROR
-        tracker.track('profile_creation_error', {
-          error: profileError.message,
-          userId: authData.user.id
-        }, true);
-        throw profileError;
-      }
+          <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>        email: authData.user.email,
 
-      // 🔥 TRACK PROFILE CREATED SUCCESSFULLY
-      tracker.track('profile_created_success', {
-        userId: authData.user.id,
-        profileData: {
-          nombre: perfilCompleto.nombre,
-          posicion: perfilCompleto.posicion,
-          experiencia: perfilCompleto.experiencia,
-          puntaje: puntajeInicial
-        }
-      }, true);
+            <button        hasPhoto: !!fotoUrl,
 
-      // 5. Auto-login y redirección a card de perfil tipo Instagram
-      setSuccess(`¡Usuario creado exitosamente! Puntaje inicial: ${puntajeInicial}/100. Redirigiendo a tu card de jugador...`);
-      
-      // Limpiar datos temporales del registro
-      localStorage.removeItem('futpro_registro_progreso');
-      localStorage.removeItem('tempRegistroData');
-      
-      // Guardar datos de sesión completos para la card
-      const datosCard = {
-        ...perfilCompleto,
+              type="button"        puntajeCalculado: puntajeInicial,
+
+              onClick={handleBack}        steps_completed: 5,
+
+              style={{        registration_method: 'complete_form'
+
+                flex: 1,      }, true);
+
+                padding: '12px',
+
+                background: 'transparent',      const { error: profileError } = await supabase
+
+                color: gold,        .from('usuarios')
+
+                border: `2px solid ${gold}`,        .insert([perfilCompleto]);
+
+                borderRadius: '8px',
+
+                fontSize: '16px',      if (profileError) {
+
+                cursor: 'pointer',        // 🔥 TRACK PROFILE CREATION ERROR
+
+                fontWeight: 'bold'        tracker.track('profile_creation_error', {
+
+              }}          error: profileError.message,
+
+            >          userId: authData.user.id
+
+              ← Atrás        }, true);
+
+            </button>        throw profileError;
+
+            <button      }
+
+              type="submit"
+
+              disabled={loading}      // 🔥 TRACK PROFILE CREATED SUCCESSFULLY
+
+              style={{      tracker.track('profile_created_success', {
+
+                flex: 2,        userId: authData.user.id,
+
+                padding: '12px',        profileData: {
+
+                background: loading ? '#666' : gold,          nombre: perfilCompleto.nombre,
+
+                color: loading ? '#ccc' : black,          posicion: perfilCompleto.posicion,
+
+                border: 'none',          experiencia: perfilCompleto.experiencia,
+
+                borderRadius: '8px',          puntaje: puntajeInicial
+
+                fontSize: '16px',        }
+
+                fontWeight: 'bold',      }, true);
+
+                cursor: loading ? 'not-allowed' : 'pointer'
+
+              }}      // 5. Auto-login y redirección a card de perfil tipo Instagram
+
+            >      setSuccess(`¡Usuario creado exitosamente! Puntaje inicial: ${puntajeInicial}/100. Redirigiendo a tu card de jugador...`);
+
+              {loading ? 'Procesando...' : (paso === 3 ? 'Completar Registro' : 'Siguiente →')}      
+
+            </button>      // Limpiar datos temporales del registro
+
+          </div>      localStorage.removeItem('futpro_registro_progreso');
+
+        </form>      localStorage.removeItem('tempRegistroData');
+
+      </div>      
+
+    </div>      // Guardar datos de sesión completos para la card
+
+  );      const datosCard = {
+
+}        ...perfilCompleto,
+
         puntajeCalculado: puntajeInicial,
         tipoCard: 'jugador',
         fechaCreacion: new Date().toISOString(),

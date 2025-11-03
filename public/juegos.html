@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>FutPro - Centro de Juegos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body{font-family:Segoe UI, Tahoma, Verdana;background:#0f0f0f;color:#fff;padding:20px;margin:0;overflow-x:hidden}
+        .container{max-width:1200px;margin:0 auto}
+        .games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:20px}
+        .game-card{background:#1a1a1a;border-radius:12px;padding:20px;border:2px solid #333;transition:all 0.3s ease;cursor:pointer}
+        .game-card:hover{border-color:#FFD700;transform:translateY(-5px)}
+        .game-card.active{border-color:#4CAF50;background:#1a2e1a}
+        .game-icon{font-size:48px;text-align:center;margin-bottom:16px}
+        .game-title{color:#FFD700;font-size:20px;font-weight:bold;margin-bottom:8px;text-align:center}
+        .game-description{color:#ccc;font-size:14px;line-height:1.4;margin-bottom:16px}
+        .game-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:#888}
+        .game-area{background:#181818;border-radius:12px;padding:20px;margin-bottom:20px;display:none}
+        .game-area.active{display:block}
+        .field{width:100%;height:300px;background:linear-gradient(45deg, #228b22 25%, #32cd32 25%, #32cd32 50%, #228b22 50%, #228b22 75%, #32cd32 75%);background-size:30px 30px;position:relative;border-radius:8px;margin-bottom:16px}
+        .player{position:absolute;width:20px;height:20px;background:#FFD700;border-radius:50%;cursor:pointer;transition:all 0.3s ease}
+        .ball{position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;transition:all 0.5s ease}
+        .goal{position:absolute;width:80px;height:40px;border:2px solid #fff;background:rgba(255,255,255,0.1)}
+        .btn{padding:12px 20px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;margin:4px;transition:all 0.3s}
+        .btn-primary{background:#FFD700;color:#181818}
+        .btn-secondary{background:#333;color:#fff}
+        .btn-success{background:#4CAF50;color:#fff}
+        .btn-danger{background:#c00;color:#fff}
+        .btn:hover{transform:scale(1.05)}
+        .modal{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center}
+        .modal-content{background:#181818;padding:24px;border-radius:12px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto}
+        .leaderboard{background:#1a1a1a;border-radius:8px;padding:16px;margin-bottom:16px}
+        .achievement{background:#2d2d2d;border-left:4px solid #FFD700;padding:12px;margin:8px 0;border-radius:4px}
+        .game-controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+        .score-display{text-align:center;font-size:24px;color:#FFD700;margin-bottom:16px}
+        .mini-game{background:#2d2d2d;border-radius:8px;padding:16px;margin-bottom:16px}
+        .progress-bar{width:100%;height:20px;background:#333;border-radius:10px;overflow:hidden;margin:8px 0}
+        .progress-fill{height:100%;background:linear-gradient(90deg,#4CAF50,#FFD700);transition:width 0.3s ease}
+        .timer{font-size:18px;color:#FFD700;text-align:center;margin-bottom:12px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color:#FFD700;text-align:center">🎮 Centro de Juegos FutPro</h1>
+        
+        <div class="games-grid">
+            <!-- Juego de Tiros Libres -->
+            <div class="game-card" onclick="selectGame('freekicks')">
+                <div class="game-icon">⚽</div>
+                <div class="game-title">Tiros Libres</div>
+                <div class="game-description">Demuestra tu precisión lanzando tiros libres. Supera la barrera y vence al arquero.</div>
+                <div class="game-stats">
+                    <div>Dificultad: ⭐⭐⭐</div>
+                    <div>Mejores: <span id="freekick-best">0</span></div>
+                </div>
+            </div>
+
+            <!-- Juego de Penalties -->
+            <div class="game-card" onclick="window.location.href='./penaltis.html'">
+                <div class="game-icon">🥅</div>
+                <div class="game-title">Penaltis FIFA</div>
+                <div class="game-description">El clásico juego de penaltis con sistema de niveles y ranking global.</div>
+                <div class="game-stats">
+                    <div>Dificultad: ⭐⭐⭐⭐⭐</div>
+                    <div>Tu nivel: <span id="penalty-level">1</span></div>
+                </div>
+            </div>
+
+            <!-- Juego de Regate -->
+            <div class="game-card" onclick="selectGame('dribble')">
+                <div class="game-icon">🏃‍♂️</div>
+                <div class="game-title">Regate y Velocidad</div>
+                <div class="game-description">Esquiva conos y rivales mientras corres hacia la portería.</div>
+                <div class="game-stats">
+                    <div>Dificultad: ⭐⭐⭐⭐</div>
+                    <div>Récord: <span id="dribble-record">0s</span></div>
+                </div>
+            </div>
+
+            <!-- Juego de Pases -->
+            <div class="game-card" onclick="selectGame('passing')">
+                <div class="game-icon">🎯</div>
+                <div class="game-title">Precisión de Pases</div>
+                <div class="game-description">Conecta pases precisos entre jugadores sin que los intercepten.</div>
+                <div class="game-stats">
+                    <div>Dificultad: ⭐⭐⭐</div>
+                    <div>Racha: <span id="passing-streak">0</span></div>
+                </div>
+            </div>
+
+            <!-- Juego de Reacción -->
+            <div class="game-card" onclick="selectGame('reaction')">
+                <div class="game-icon">⚡</div>
+                <div class="game-title">Tiempo de Reacción</div>
+                <div class="game-description">Atrapa el balón lo más rápido posible cuando aparezca en pantalla.</div>
+                <div class="game-stats">
+                    <div>Dificultad: ⭐⭐</div>
+                    <div>Mejor: <span id="reaction-best">0ms</span></div>
+                </div>
+            </div>
+
+            <!-- Juego de Memoria -->
+            <div class="game-card" onclick="selectGame('memory')">
+                <div class="game-icon">🧠</div>
+                <div class="game-title">Memoria Táctica</div>
+                <div class="game-description">Memoriza las posiciones de los jugadores y repítelas correctamente.</div>
+                <div class="game-stats">
+                    <div>Dificultad: ⭐⭐⭐⭐</div>
+                    <div>Nivel: <span id="memory-level">1</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área de juego para Tiros Libres -->
+        <div class="game-area" id="freekicks-area">
+            <h3 style="color:#FFD700;text-align:center">⚽ Tiros Libres</h3>
+            <div class="score-display">Goles: <span id="freekick-score">0</span> | Intentos: <span id="freekick-attempts">0</span></div>
+            <div class="field" id="freekick-field">
+                <div class="goal" style="top:20px;right:10px;width:60px;height:30px"></div>
+                <div class="player" id="freekick-player" style="bottom:50px;left:50px"></div>
+                <div class="ball" id="freekick-ball" style="bottom:60px;left:60px"></div>
+                <!-- Barrera -->
+                <div style="position:absolute;bottom:120px;left:200px;width:80px;height:20px;background:#333;border-radius:10px"></div>
+            </div>
+            <div class="game-controls">
+                <button class="btn btn-primary" onclick="shootFreekick()">🎯 Disparar</button>
+                <button class="btn btn-secondary" onclick="resetFreekick()">🔄 Reiniciar</button>
+            </div>
+        </div>
+
+        <!-- Área de juego para Regate -->
+        <div class="game-area" id="dribble-area">
+            <h3 style="color:#FFD700;text-align:center">🏃‍♂️ Regate y Velocidad</h3>
+            <div class="timer">Tiempo: <span id="dribble-timer">0.0s</span></div>
+            <div class="field" id="dribble-field">
+                <div class="goal" style="top:10px;left:50%;transform:translateX(-50%);width:100px;height:40px"></div>
+                <div class="player" id="dribble-player" style="bottom:20px;left:50%;transform:translateX(-50%)"></div>
+                <div class="ball" id="dribble-ball" style="bottom:30px;left:50%;transform:translateX(-50%)"></div>
+            </div>
+            <div class="game-controls">
+                <button class="btn btn-primary" onclick="startDribble()">🏃‍♂️ Comenzar</button>
+                <button class="btn btn-secondary" onclick="resetDribble()">🔄 Reiniciar</button>
+            </div>
+            <div style="text-align:center;margin-top:12px;color:#888;font-size:14px">
+                Usa las flechas del teclado o toca la pantalla para moverte
+            </div>
+        </div>
+
+        <!-- Área de juego para Pases -->
+        <div class="game-area" id="passing-area">
+            <h3 style="color:#FFD700;text-align:center">🎯 Precisión de Pases</h3>
+            <div class="score-display">Pases consecutivos: <span id="passing-score">0</span></div>
+            <div class="field" id="passing-field">
+                <div class="player" id="pass-player1" style="bottom:50px;left:50px"></div>
+                <div class="player" id="pass-player2" style="top:50px;right:50px;background:#4CAF50"></div>
+                <div class="ball" id="pass-ball" style="bottom:60px;left:60px"></div>
+            </div>
+            <div class="game-controls">
+                <button class="btn btn-primary" onclick="makePass()">⚽ Pasar Balón</button>
+                <button class="btn btn-secondary" onclick="resetPassing()">🔄 Reiniciar</button>
+            </div>
+        </div>
+
+        <!-- Área de juego para Reacción -->
+        <div class="game-area" id="reaction-area">
+            <h3 style="color:#FFD700;text-align:center">⚡ Tiempo de Reacción</h3>
+            <div class="score-display">Mejor tiempo: <span id="reaction-time">0ms</span></div>
+            <div class="field" id="reaction-field" onclick="catchBall()" style="cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px">
+                <div id="reaction-message">Haz clic cuando aparezca el balón</div>
+                <div class="ball" id="reaction-ball" style="display:none"></div>
+            </div>
+            <div class="game-controls">
+                <button class="btn btn-primary" onclick="startReaction()">⚡ Comenzar Test</button>
+                <button class="btn btn-secondary" onclick="resetReaction()">🔄 Reiniciar</button>
+            </div>
+        </div>
+
+        <!-- Área de juego para Memoria -->
+        <div class="game-area" id="memory-area">
+            <h3 style="color:#FFD700;text-align:center">🧠 Memoria Táctica</h3>
+            <div class="score-display">Nivel: <span id="memory-current-level">1</span> | Puntos: <span id="memory-points">0</span></div>
+            <div class="field" id="memory-field" style="display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);gap:4px;padding:10px">
+                <!-- Grid de posiciones se genera dinámicamente -->
+            </div>
+            <div class="game-controls">
+                <button class="btn btn-primary" onclick="startMemoryGame()">🧠 Mostrar Posiciones</button>
+                <button class="btn btn-secondary" onclick="resetMemoryGame()">🔄 Reiniciar</button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="memory-progress" style="width:0%"></div>
+            </div>
+        </div>
+
+        <br>
+        <div style="text-align:center">
+            <button class="btn btn-secondary" onclick="showAchievements()">🏆 Logros</button>
+            <button class="btn btn-secondary" onclick="showLeaderboard()">📊 Tabla de Líderes</button>
+            <a href="./homepage-instagram.html" class="btn btn-primary">← Volver al Inicio</a>
+        </div>
+
+        <!-- Modal de Logros -->
+        <div class="modal" id="achievementsModal">
+            <div class="modal-content">
+                <h3 style="color:#FFD700;margin-bottom:16px">🏆 Logros Desbloqueados</h3>
+                <div id="achievementsList"></div>
+                <button class="btn btn-secondary" onclick="closeModal('achievementsModal')">Cerrar</button>
+            </div>
+        </div>
+
+        <!-- Modal de Tabla de Líderes -->
+        <div class="modal" id="leaderboardModal">
+            <div class="modal-content">
+                <h3 style="color:#FFD700;margin-bottom:16px">📊 Tabla de Líderes Global</h3>
+                <div id="leaderboardContent"></div>
+                <button class="btn btn-secondary" onclick="closeModal('leaderboardModal')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de juegos y estadísticas
+        let currentGame = null;
+        let gameStats = getGameStats();
+        let gameTimers = {};
+
+        function getGameStats() {
+            return JSON.parse(localStorage.getItem('futpro_games_stats') || JSON.stringify({
+                freekicks: {score: 0, attempts: 0, best: 0},
+                dribble: {record: 0, completions: 0},
+                passing: {streak: 0, best: 0, total: 0},
+                reaction: {best: 0, attempts: 0},
+                memory: {level: 1, points: 0, best: 1},
+                achievements: [],
+                totalPoints: 0,
+                gamesPlayed: 0
+            }));
+        }
+
+        function saveGameStats() {
+            localStorage.setItem('futpro_games_stats', JSON.stringify(gameStats));
+            updateUI();
+        }
+
+        function updateUI() {
+            // Actualizar estadísticas en las tarjetas
+            document.getElementById('freekick-best').textContent = gameStats.freekicks.best;
+            document.getElementById('dribble-record').textContent = gameStats.dribble.record > 0 ? gameStats.dribble.record + 's' : '0s';
+            document.getElementById('passing-streak').textContent = gameStats.passing.best;
+            document.getElementById('reaction-best').textContent = gameStats.reaction.best + 'ms';
+            document.getElementById('memory-level').textContent = gameStats.memory.best;
+            
+            // Actualizar nivel de penaltis desde el otro juego
+            const penaltyStats = JSON.parse(localStorage.getItem('futpro_penalty_stats') || '{"experience": 0}');
+            document.getElementById('penalty-level').textContent = Math.floor(penaltyStats.experience / 500) + 1;
+        }
+
+        function selectGame(gameType) {
+            // Ocultar todas las áreas de juego
+            document.querySelectorAll('.game-area').forEach(area => {
+                area.classList.remove('active');
+            });
+            
+            // Desactivar todas las tarjetas
+            document.querySelectorAll('.game-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Activar juego seleccionado
+            const gameArea = document.getElementById(gameType + '-area');
+            if (gameArea) {
+                gameArea.classList.add('active');
+                event.target.closest('.game-card').classList.add('active');
+                currentGame = gameType;
+                
+                // Inicializar juego específico
+                switch(gameType) {
+                    case 'freekicks': resetFreekick(); break;
+                    case 'dribble': resetDribble(); break;
+                    case 'passing': resetPassing(); break;
+                    case 'reaction': resetReaction(); break;
+                    case 'memory': resetMemoryGame(); break;
+                }
+            }
+        }
+
+        // JUEGO DE TIROS LIBRES
+        function shootFreekick() {
+            const success = Math.random() < 0.3; // 30% probabilidad
+            gameStats.freekicks.attempts++;
+            
+            if (success) {
+                gameStats.freekicks.score++;
+                gameStats.freekicks.best = Math.max(gameStats.freekicks.best, gameStats.freekicks.score);
+                document.getElementById('freekick-ball').style.cssText = 'top:30px;right:30px;background:#4CAF50;transition:all 1s ease';
+                setTimeout(() => {
+                    alert('🎉 ¡GOLAZO! ¡Excelente tiro libre!');
+                    resetFreekick();
+                }, 1000);
+            } else {
+                document.getElementById('freekick-ball').style.cssText = 'top:10px;right:100px;background:#f44336;transition:all 1s ease';
+                setTimeout(() => {
+                    alert('❌ ¡Falló! La barrera bloqueó el tiro.');
+                    resetFreekick();
+                }, 1000);
+            }
+            
+            document.getElementById('freekick-score').textContent = gameStats.freekicks.score;
+            document.getElementById('freekick-attempts').textContent = gameStats.freekicks.attempts;
+            saveGameStats();
+            checkAchievements('freekicks');
+        }
+
+        function resetFreekick() {
+            document.getElementById('freekick-ball').style.cssText = 'bottom:60px;left:60px;background:#fff';
+        }
+
+        // JUEGO DE REGATE
+        let dribbleStartTime = 0;
+        let dribbleActive = false;
+
+        function startDribble() {
+            if (dribbleActive) return;
+            dribbleActive = true;
+            dribbleStartTime = Date.now();
+            
+            // Crear obstáculos
+            createObstacles();
+            
+            // Iniciar timer
+            gameTimers.dribble = setInterval(() => {
+                const elapsed = ((Date.now() - dribbleStartTime) / 1000).toFixed(1);
+                document.getElementById('dribble-timer').textContent = elapsed + 's';
+            }, 100);
+            
+            // Controles de teclado
+            document.addEventListener('keydown', handleDribbleMovement);
+        }
+
+        function createObstacles() {
+            const field = document.getElementById('dribble-field');
+            // Limpiar obstáculos existentes
+            field.querySelectorAll('.obstacle').forEach(obs => obs.remove());
+            
+            // Crear 5 obstáculos aleatorios
+            for (let i = 0; i < 5; i++) {
+                const obstacle = document.createElement('div');
+                obstacle.className = 'obstacle';
+                obstacle.style.cssText = `
+                    position:absolute;
+                    width:15px;
+                    height:15px;
+                    background:#f44336;
+                    border-radius:50%;
+                    left:${Math.random() * 80 + 10}%;
+                    bottom:${Math.random() * 60 + 80}px;
+                `;
+                field.appendChild(obstacle);
+            }
+        }
+
+        function handleDribbleMovement(event) {
+            if (!dribbleActive) return;
+            
+            const player = document.getElementById('dribble-player');
+            const ball = document.getElementById('dribble-ball');
+            const rect = player.getBoundingClientRect();
+            const field = document.getElementById('dribble-field');
+            const fieldRect = field.getBoundingClientRect();
+            
+            let currentLeft = parseInt(player.style.left) || 50;
+            let currentBottom = parseInt(player.style.bottom) || 20;
+            
+            switch(event.key) {
+                case 'ArrowLeft':
+                    currentLeft = Math.max(0, currentLeft - 5);
+                    break;
+                case 'ArrowRight':
+                    currentLeft = Math.min(95, currentLeft + 5);
+                    break;
+                case 'ArrowUp':
+                    currentBottom = Math.min(95, currentBottom + 5);
+                    break;
+                case 'ArrowDown':
+                    currentBottom = Math.max(5, currentBottom - 5);
+                    break;
+            }
+            
+            player.style.left = currentLeft + '%';
+            player.style.bottom = currentBottom + '%';
+            ball.style.left = currentLeft + '%';
+            ball.style.bottom = (currentBottom + 2) + '%';
+            
+            // Verificar si llegó a la meta
+            if (currentBottom > 85) {
+                finishDribble();
+            }
+        }
+
+        function finishDribble() {
+            dribbleActive = false;
+            clearInterval(gameTimers.dribble);
+            document.removeEventListener('keydown', handleDribbleMovement);
+            
+            const time = ((Date.now() - dribbleStartTime) / 1000).toFixed(1);
+            gameStats.dribble.completions++;
+            
+            if (gameStats.dribble.record === 0 || time < gameStats.dribble.record) {
+                gameStats.dribble.record = parseFloat(time);
+                alert(`🏆 ¡NUEVO RÉCORD! Tiempo: ${time}s`);
+            } else {
+                alert(`⚽ ¡Meta alcanzada! Tiempo: ${time}s`);
+            }
+            
+            saveGameStats();
+            checkAchievements('dribble');
+        }
+
+        function resetDribble() {
+            dribbleActive = false;
+            clearInterval(gameTimers.dribble);
+            document.removeEventListener('keydown', handleDribbleMovement);
+            document.getElementById('dribble-timer').textContent = '0.0s';
+            document.getElementById('dribble-player').style.cssText = 'bottom:20px;left:50%;transform:translateX(-50%)';
+            document.getElementById('dribble-ball').style.cssText = 'bottom:30px;left:50%;transform:translateX(-50%)';
+            
+            // Limpiar obstáculos
+            document.getElementById('dribble-field').querySelectorAll('.obstacle').forEach(obs => obs.remove());
+        }
+
+        // JUEGO DE PASES
+        function makePass() {
+            const success = Math.random() < 0.6; // 60% probabilidad
+            
+            if (success) {
+                gameStats.passing.streak++;
+                gameStats.passing.total++;
+                gameStats.passing.best = Math.max(gameStats.passing.best, gameStats.passing.streak);
+                
+                // Animación de pase exitoso
+                const ball = document.getElementById('pass-ball');
+                ball.style.cssText = 'top:60px;right:60px;background:#4CAF50;transition:all 0.5s ease';
+                
+                setTimeout(() => {
+                    ball.style.cssText = 'bottom:60px;left:60px;background:#fff';
+                }, 500);
+            } else {
+                gameStats.passing.streak = 0;
+                alert('❌ ¡Pase interceptado! La racha se reinicia.');
+            }
+            
+            document.getElementById('passing-score').textContent = gameStats.passing.streak;
+            saveGameStats();
+            checkAchievements('passing');
+        }
+
+        function resetPassing() {
+            gameStats.passing.streak = 0;
+            document.getElementById('passing-score').textContent = '0';
+            document.getElementById('pass-ball').style.cssText = 'bottom:60px;left:60px;background:#fff';
+        }
+
+        // JUEGO DE REACCIÓN
+        let reactionStartTime = 0;
+        let reactionActive = false;
+
+        function startReaction() {
+            if (reactionActive) return;
+            
+            document.getElementById('reaction-message').textContent = 'Preparándose...';
+            document.getElementById('reaction-ball').style.display = 'none';
+            
+            // Tiempo aleatorio entre 1-5 segundos
+            setTimeout(() => {
+                if (!reactionActive) {
+                    reactionActive = true;
+                    reactionStartTime = Date.now();
+                    document.getElementById('reaction-message').textContent = '¡AHORA!';
+                    document.getElementById('reaction-ball').style.display = 'block';
+                    document.getElementById('reaction-ball').style.cssText = `
+                        display:block;
+                        left:${Math.random() * 80 + 10}%;
+                        top:${Math.random() * 60 + 20}%;
+                    `;
+                }
+            }, Math.random() * 4000 + 1000);
+        }
+
+        function catchBall() {
+            if (!reactionActive) return;
+            
+            const reactionTime = Date.now() - reactionStartTime;
+            gameStats.reaction.attempts++;
+            
+            if (gameStats.reaction.best === 0 || reactionTime < gameStats.reaction.best) {
+                gameStats.reaction.best = reactionTime;
+                alert(`🏆 ¡NUEVO RÉCORD! Tiempo: ${reactionTime}ms`);
+            } else {
+                alert(`⚡ Tiempo de reacción: ${reactionTime}ms`);
+            }
+            
+            document.getElementById('reaction-time').textContent = gameStats.reaction.best + 'ms';
+            saveGameStats();
+            checkAchievements('reaction');
+            resetReaction();
+        }
+
+        function resetReaction() {
+            reactionActive = false;
+            document.getElementById('reaction-message').textContent = 'Haz clic cuando aparezca el balón';
+            document.getElementById('reaction-ball').style.display = 'none';
+        }
+
+        // JUEGO DE MEMORIA
+        let memorySequence = [];
+        let memoryPlayerSequence = [];
+        let memoryShowingSequence = false;
+
+        function generateMemoryField() {
+            const field = document.getElementById('memory-field');
+            field.innerHTML = '';
+            
+            for (let i = 0; i < 12; i++) {
+                const cell = document.createElement('div');
+                cell.style.cssText = `
+                    background:#2d2d2d;
+                    border:1px solid #444;
+                    border-radius:4px;
+                    cursor:pointer;
+                    transition:all 0.3s ease;
+                    min-height:60px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                `;
+                cell.dataset.index = i;
+                cell.addEventListener('click', () => handleMemoryClick(i));
+                field.appendChild(cell);
+            }
+        }
+
+        function startMemoryGame() {
+            if (memoryShowingSequence) return;
+            
+            memoryPlayerSequence = [];
+            const level = gameStats.memory.level;
+            memorySequence = [];
+            
+            // Generar secuencia basada en el nivel
+            for (let i = 0; i < level + 2; i++) {
+                memorySequence.push(Math.floor(Math.random() * 12));
+            }
+            
+            showMemorySequence();
+        }
+
+        function showMemorySequence() {
+            memoryShowingSequence = true;
+            const cells = document.querySelectorAll('#memory-field div');
+            
+            let index = 0;
+            const showNext = () => {
+                if (index < memorySequence.length) {
+                    const cellIndex = memorySequence[index];
+                    cells[cellIndex].style.background = '#FFD700';
+                    cells[cellIndex].textContent = '⚽';
+                    
+                    setTimeout(() => {
+                        cells[cellIndex].style.background = '#2d2d2d';
+                        cells[cellIndex].textContent = '';
+                        index++;
+                        setTimeout(showNext, 300);
+                    }, 600);
+                } else {
+                    memoryShowingSequence = false;
+                    document.getElementById('memory-message').textContent = '¡Repite la secuencia!';
+                }
+            };
+            
+            showNext();
+        }
+
+        function handleMemoryClick(cellIndex) {
+            if (memoryShowingSequence) return;
+            
+            memoryPlayerSequence.push(cellIndex);
+            const cell = document.querySelectorAll('#memory-field div')[cellIndex];
+            cell.style.background = '#4CAF50';
+            cell.textContent = '✓';
+            
+            setTimeout(() => {
+                cell.style.background = '#2d2d2d';
+                cell.textContent = '';
+            }, 300);
+            
+            // Verificar secuencia
+            const currentIndex = memoryPlayerSequence.length - 1;
+            if (memoryPlayerSequence[currentIndex] !== memorySequence[currentIndex]) {
+                alert('❌ ¡Secuencia incorrecta! Reiniciando nivel.');
+                resetMemoryGame();
+                return;
+            }
+            
+            // Secuencia completada correctamente
+            if (memoryPlayerSequence.length === memorySequence.length) {
+                gameStats.memory.points += gameStats.memory.level * 10;
+                gameStats.memory.level++;
+                gameStats.memory.best = Math.max(gameStats.memory.best, gameStats.memory.level);
+                
+                document.getElementById('memory-current-level').textContent = gameStats.memory.level;
+                document.getElementById('memory-points').textContent = gameStats.memory.points;
+                
+                alert(`🎉 ¡Nivel completado! Avanzando al nivel ${gameStats.memory.level}`);
+                saveGameStats();
+                checkAchievements('memory');
+                
+                // Actualizar barra de progreso
+                const progress = Math.min((gameStats.memory.level / 10) * 100, 100);
+                document.getElementById('memory-progress').style.width = progress + '%';
+            }
+        }
+
+        function resetMemoryGame() {
+            gameStats.memory.level = 1;
+            memorySequence = [];
+            memoryPlayerSequence = [];
+            memoryShowingSequence = false;
+            document.getElementById('memory-current-level').textContent = '1';
+            document.getElementById('memory-progress').style.width = '0%';
+            generateMemoryField();
+        }
+
+        // SISTEMA DE LOGROS
+        function checkAchievements(gameType) {
+            const achievements = [
+                {id: 'first_goal', name: 'Primer Gol', desc: 'Anota tu primer gol en tiros libres', check: () => gameStats.freekicks.score >= 1},
+                {id: 'speed_demon', name: 'Demonio de Velocidad', desc: 'Completa el regate en menos de 10 segundos', check: () => gameStats.dribble.record > 0 && gameStats.dribble.record < 10},
+                {id: 'pass_master', name: 'Maestro del Pase', desc: 'Conecta 10 pases consecutivos', check: () => gameStats.passing.best >= 10},
+                {id: 'lightning_fast', name: 'Rayo', desc: 'Tiempo de reacción menor a 300ms', check: () => gameStats.reaction.best > 0 && gameStats.reaction.best < 300},
+                {id: 'memory_expert', name: 'Experto en Memoria', desc: 'Alcanza el nivel 5 en memoria táctica', check: () => gameStats.memory.best >= 5}
+            ];
+            
+            achievements.forEach(achievement => {
+                if (!gameStats.achievements.includes(achievement.id) && achievement.check()) {
+                    gameStats.achievements.push(achievement.id);
+                    setTimeout(() => {
+                        alert(`🏆 ¡LOGRO DESBLOQUEADO!\n\n${achievement.name}\n${achievement.desc}`);
+                    }, 1000);
+                }
+            });
+        }
+
+        function showAchievements() {
+            const achievements = [
+                {id: 'first_goal', name: 'Primer Gol', desc: 'Anota tu primer gol en tiros libres', icon: '⚽'},
+                {id: 'speed_demon', name: 'Demonio de Velocidad', desc: 'Completa el regate en menos de 10 segundos', icon: '🏃‍♂️'},
+                {id: 'pass_master', name: 'Maestro del Pase', desc: 'Conecta 10 pases consecutivos', icon: '🎯'},
+                {id: 'lightning_fast', name: 'Rayo', desc: 'Tiempo de reacción menor a 300ms', icon: '⚡'},
+                {id: 'memory_expert', name: 'Experto en Memoria', desc: 'Alcanza el nivel 5 en memoria táctica', icon: '🧠'}
+            ];
+            
+            let html = '';
+            achievements.forEach(achievement => {
+                const unlocked = gameStats.achievements.includes(achievement.id);
+                html += `
+                    <div class="achievement" style="opacity:${unlocked ? 1 : 0.5}">
+                        <span style="font-size:24px;margin-right:12px">${unlocked ? achievement.icon : '🔒'}</span>
+                        <strong>${achievement.name}</strong>
+                        <div style="font-size:14px;color:#ccc;margin-top:4px">${achievement.desc}</div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('achievementsList').innerHTML = html;
+            document.getElementById('achievementsModal').style.display = 'flex';
+        }
+
+        function showLeaderboard() {
+            const content = `
+                <div class="leaderboard">
+                    <h4 style="color:#FFD700">🏆 Tus Mejores Marcas</h4>
+                    <div>Mejor racha en tiros libres: ${gameStats.freekicks.best}</div>
+                    <div>Récord en regate: ${gameStats.dribble.record > 0 ? gameStats.dribble.record + 's' : 'N/A'}</div>
+                    <div>Mejor racha de pases: ${gameStats.passing.best}</div>
+                    <div>Mejor tiempo de reacción: ${gameStats.reaction.best > 0 ? gameStats.reaction.best + 'ms' : 'N/A'}</div>
+                    <div>Nivel máximo en memoria: ${gameStats.memory.best}</div>
+                    <div>Logros desbloqueados: ${gameStats.achievements.length}/5</div>
+                </div>
+            `;
+            
+            document.getElementById('leaderboardContent').innerHTML = content;
+            document.getElementById('leaderboardModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Inicialización
+        updateUI();
+        generateMemoryField();
+    </script>
+</body>
+</html>

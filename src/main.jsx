@@ -28,19 +28,15 @@ async function bootstrap() {
   }
 
   try {
-    // Importar dinámicamente el app shell para capturar errores de bundle
-    const mod = await import('./FutProAppDefinitivo.jsx');
-    const FutProAppDefinitivo = mod.default;
+    // Usar App.jsx como punto de entrada principal para la SPA
+    const mod = await import('./App.jsx');
+    const App = mod.default;
 
     const root = ReactDOM.createRoot(container);
     root.render(
       <React.StrictMode>
         <I18nextProvider i18n={i18n}>
-          <BrowserRouter>
-            <AuthProvider>
-              <FutProAppDefinitivo />
-            </AuthProvider>
-          </BrowserRouter>
+          <App />
         </I18nextProvider>
       </React.StrictMode>
     );
