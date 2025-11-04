@@ -87,11 +87,4 @@ export default function App() {
       </Router>
     </AuthProvider>
   );
-}// Test unitario básico
-import { render, screen } from '@testing-library/react';
-describe('App', () => {
-  it('renderiza el layout y SidebarMenu', () => {
-    render(<App />);
-    expect(screen.getByRole('main')).toBeInTheDocument();
-  });
-});
+}
