@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Buscar Ranking</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#111;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:720px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    .card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:16px;margin-top:16px}
+    input{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#181818;color:#fff}
+    .item{padding:10px 0;border-bottom:1px solid #333}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Buscar en Ranking</h1>
+    <div class="card">
+      <input id="q" placeholder="Jugador, equipo o torneo" oninput="buscar(this.value)" />
+      <div id="res"></div>
+    </div>
+  </div>
+  <script>
+    const data = (JSON.parse(localStorage.getItem('futpro_ranking_demo')||'null')||[
+      {tipo:'jugador', nombre:'Carlos Pérez', valor:98},
+      {tipo:'equipo', nombre:'FC Barcelona', valor:96},
+      {tipo:'jugador', nombre:'Ana García', valor:92}
+    ]);
+    function buscar(v){
+      const q = (v||'').toLowerCase();
+      const res = data.filter(x=>x.nombre.toLowerCase().includes(q));
+      document.getElementById('res').innerHTML = res.map(x=>`<div class=item>${x.tipo} · ${x.nombre} · ${x.valor}</div>`).join('')||'<p>Sin resultados</p>';
+      localStorage.setItem('futpro_last_page','buscar-ranking');
+    }
+    buscar('');
+  </script>
+</body>
+</html>

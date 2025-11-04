@@ -54,11 +54,11 @@
 </head>
 <body>
     <div class="container">
-    <h1 style="color:#FFD700;text-align:center">⚽ Juego de Penaltis CarFutPro</h1>
+        <h1 style="color:#FFD700;text-align:center">⚽ Juego de Penaltis FIFA</h1>
         
         <div class="stats">
             <div class="stat-card">
-                <h3 style="color:#FFD700">Mi CarFutPro</h3>
+                <h3 style="color:#FFD700">Mi Card FIFA</h3>
                 <div class="fifa-card" id="playerCard">
                     <div class="card-level" id="cardLevel">LVL 1</div>
                     <h4 style="margin:0;color:#FFD700" id="playerName">Tu Jugador</h4>
@@ -86,7 +86,7 @@
             
             <div class="stat-card">
                 <h3 style="color:#FFD700">Dificultad</h3>
-                <div>Probabilidad de gol: <strong style="color:#c00">20%</strong></div>
+                <div>Probabilidad de gol: <strong style="color:#c00">15%</strong></div>
                 <div>Arquero: <strong>Nivel Profesional</strong></div>
                 <div>Experiencia por gol: <strong>+25 EXP</strong></div>
                 <div>Experiencia por fallo: <strong>+5 EXP</strong></div>
@@ -156,7 +156,7 @@
         <!-- Modal Sistema de Niveles -->
         <div class="modal" id="levelModal">
             <div class="modal-content">
-                <h3 style="color:#FFD700;margin-bottom:16px">📊 Sistema de Niveles CarFutPro</h3>
+                <h3 style="color:#FFD700;margin-bottom:16px">📊 Sistema de Niveles FIFA</h3>
                 <div id="levelSystem"></div>
                 <button class="btn btn-secondary" onclick="closeModal('levelModal')" style="margin-top:16px">Cerrar</button>
             </div>
@@ -238,7 +238,7 @@
             document.getElementById('currentStreak').textContent = gameStats.currentStreak;
             document.getElementById('bestStreak').textContent = gameStats.bestStreak;
 
-            // Actualizar CarFutPro
+            // Actualizar card FIFA
             document.getElementById('cardLevel').textContent = `LVL ${level}`;
             document.getElementById('playerName').textContent = gameStats.playerName;
             document.getElementById('playerRating').textContent = rating;
@@ -296,7 +296,7 @@
             ball.style.cssText = ballPositions[selectedZone] + '; transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);';
 
             setTimeout(() => {
-                const isGoal = Math.random() < 0.20; // 20% probabilidad
+                const isGoal = Math.random() < 0.15; // 15% probabilidad
                 const goalkeeperSaved = selectedZone === goalkeeperZone;
                 
                 gameStats.totalShots++;
@@ -618,7 +618,7 @@
                 }
 
                 function updatePlayerCard() {
-                    // Simular mejora en la CarFutPro
+                    // Simular mejora en el card FIFA
                     const newStats = JSON.parse(localStorage.getItem('futpro_player_card') || '{}');
             
                     // Guardar estadísticas en el card

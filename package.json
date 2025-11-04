@@ -13,7 +13,6 @@
     "start": "node start.js",
     "backend": "node start.js",
     "build": "vite build",
-    "postbuild": "node scripts/copy-public-htmls.js",
     "build:prod": "vite build --mode production",
     "serve:prod": "vite preview --host",
     "clean": "rimraf dist node_modules/.vite",
@@ -62,6 +61,7 @@
     "socket.io-client": "^4.8.1",
     "sqlite3": "^5.1.7",
     "twilio": "^4.15.0",
+    "vite": "^7.1.9",
     "web-push": "^3.5.0"
   },
   "devDependencies": {
@@ -84,7 +84,6 @@
     "babel-jest": "^30.2.0",
     "cross-env": "^10.1.0",
     "cypress": "^15.2.0",
-    "esbuild": "^0.25.11",
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.3.0",
@@ -93,11 +92,9 @@
     "jest-environment-jsdom": "^30.1.2",
     "postcss": "^8.5.6",
     "prettier": "^3.2.5",
-    "puppeteer": "^24.26.1",
     "rimraf": "^6.0.1",
     "supertest": "^7.1.4",
     "tailwindcss": "^4.1.13",
-    "typescript-eslint": "^8.43.0",
-    "vite": "^7.1.12"
+    "typescript-eslint": "^8.43.0"
   }
 }

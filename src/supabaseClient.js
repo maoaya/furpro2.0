@@ -38,9 +38,7 @@ const supabaseOptions = {
     },
     // Configuración de reintento para evitar 502
     db: {
-        // Supabase REST en producción expone el esquema 'api' (no 'public')
-        // Esto evita errores 406 (PGRST106: The schema must be one of...)
-        schema: 'api'
+        schema: 'public'
     }
 };
 

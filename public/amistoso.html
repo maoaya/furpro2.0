@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Amistoso</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#111;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:720px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    .card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:16px;margin-top:16px}
+    input{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#181818;color:#fff}
+    .actions{margin-top:12px}
+    button{padding:10px 14px;border-radius:8px;border:1px solid #FFD700;background:#FFD700;color:#181818;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Crear Amistoso</h1>
+    <div class="card">
+      <label>Rival</label>
+      <input id="rival" placeholder="Nombre del rival" />
+      <div class="actions"><button onclick="crearAmistoso()">Crear</button></div>
+    </div>
+  </div>
+  <script>
+    function crearAmistoso(){
+      const rival = document.getElementById('rival').value.trim();
+      if(!rival) return alert('Ingresa un rival');
+      const amistosos = JSON.parse(localStorage.getItem('futpro_amistosos')||'[]');
+      amistosos.push({id:Date.now(), rival, fecha:new Date().toLocaleString(), estado:'Pendiente'});
+      localStorage.setItem('futpro_amistosos', JSON.stringify(amistosos));
+      alert('Amistoso creado');
+    }
+  </script>
+</body>
+</html>

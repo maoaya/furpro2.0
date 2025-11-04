@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Tarjetas FIFA</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#0f0f0f;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:960px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    .card{display:flex;align-items:center;justify-content:center;margin-top:16px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Tarjetas FIFA</h1>
+    <p>Tu tarjeta se genera a partir de tu rendimiento.</p>
+    <div id="card" class="card"></div>
+  </div>
+  <script>
+    function calcOVR(stats){
+      const w={pac:.15,sho:.20,pas:.15,dri:.20,def:.15,phy:.15};
+      const v=Math.floor(stats.pac*w.pac+stats.sho*w.sho+stats.pas*w.pas+stats.dri*w.dri+stats.def*w.def+stats.phy*w.phy);
+      return Math.max(1,Math.min(99,v));
+    }
+    function determineType(ovr){
+      if(ovr>=75) return 'GOLD';
+      if(ovr>=65) return 'SILVER';
+      return 'BRONZE';
+    }
+    function renderCard(c){
+      return `
+      <div style="background:linear-gradient(135deg, ${c.color}, ${c.color}88);width:300px;height:450px;border-radius:15px;padding:20px;color:white;font-family:Inter,system-ui,Arial;position:relative;box-shadow:0 10px 40px rgba(0,0,0,.3);">
+        <div style="font-size:48px;font-weight:800;text-align:center;">${c.ovr}</div>
+        <div style="text-align:center;font-size:14px;margin-top:-10px;">${c.position}</div>
+        <div style="text-align:center;margin-top:20px;">
+          ${c.avatar?`<img src="${c.avatar}" style="width:120px;height:120px;border-radius:50%;object-fit:cover;"/>`:`<div style="width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.2);margin:0 auto;"></div>`}
+        </div>
+        <div style="text-align:center;font-size:20px;font-weight:700;margin-top:15px;">${c.nombre}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px;font-size:12px;">
+          ${[['PAC','pac'],['SHO','sho'],['PAS','pas'],['DRI','dri'],['DEF','def'],['PHY','phy']].map(([k,prop])=>`<div style='text-align:center;'><div style='font-weight:800;'>${c.stats[prop]}</div><div>${k}</div></div>`).join('')}
+        </div>
+        <div style="position:absolute;bottom:15px;left:20px;right:20px;text-align:center;font-size:11px;opacity:.85;">${c.team} • ${c.cardType}</div>
+      </div>`;
+    }
+    (function main(){
+      try{
+        const u = JSON.parse(localStorage.getItem('futpro_user')||'{}');
+        if(!u.id){
+          u.id = localStorage.getItem('futpro_user_id') || `local_${Date.now()}`;
+          localStorage.setItem('futpro_user_id', u.id);
+          localStorage.setItem('futpro_user', JSON.stringify(u));
+        }
+        const baseStats = {pac:65,sho:60,pas:65,dri:70,def:55,phy:65,position:'CAM'};
+        const stats = JSON.parse(localStorage.getItem('futpro_stats')||'null') || baseStats;
+        const ovr = calcOVR(stats);
+        const cardType = determineType(ovr);
+        const card = {
+          userId: u.id,
+          username: u.username||u.email||'usuario',
+          nombre: u.nombre||'Jugador FutPro',
+          avatar: u.avatar_url||null,
+          ovr, stats,
+          cardType,
+          color: cardType==='GOLD'?'#FFD700':(cardType==='SILVER'?'#C0C0C0':'#CD7F32'),
+          position: stats.position||'CAM',
+          nationality: u.nacionalidad||'—',
+          team: u.equipo_nombre||'Free Agent',
+          createdAt: new Date().toISOString()
+        };
+        document.getElementById('card').innerHTML = renderCard(card);
+        localStorage.setItem('futpro_last_page','tarjetas');
+      }catch(e){
+        document.getElementById('card').innerHTML = '<p>No se pudo generar la tarjeta.</p>';
+      }
+    })();
+  </script>
+</body>
+</html>

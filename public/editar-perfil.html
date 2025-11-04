@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FutPro · Editar Perfil</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#121212;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:960px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    .card{background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:16px;margin-top:16px}
+    label{display:block;margin:10px 0 6px}
+    input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#181818;color:#fff}
+    .actions{margin-top:16px;display:flex;gap:10px}
+    button{padding:10px 14px;border-radius:8px;border:1px solid #FFD700;background:#FFD700;color:#181818;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Editar Perfil</h1>
+    <p>Actualiza tu información básica para mejorar tu experiencia en FutPro.</p>
+    <div class="card">
+      <form id="formPerfil">
+        <label>Nombre completo</label>
+        <input id="nombre" placeholder="Tu nombre" />
+        <label>Posición</label>
+        <select id="posicion">
+          <option value="Delantero">Delantero</option>
+          <option value="Mediocampista">Mediocampista</option>
+          <option value="Defensa">Defensa</option>
+          <option value="Portero">Portero</option>
+        </select>
+        <label>Biografía</label>
+        <textarea id="bio" rows="4" placeholder="Cuéntanos sobre ti..."></textarea>
+        <div class="actions">
+          <button type="button" onclick="guardarPerfil()">Guardar cambios</button>
+          <a class="btn" href="/perfil-instagram.html">Ver perfil</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    (function init(){
+      try{
+        const u = JSON.parse(localStorage.getItem('futpro_user')||'{}');
+        if(u.nombre) document.getElementById('nombre').value = u.nombre;
+        if(u.posicion) document.getElementById('posicion').value = u.posicion;
+        if(u.bio) document.getElementById('bio').value = u.bio;
+        localStorage.setItem('futpro_last_page','editar-perfil');
+      }catch(e){}
+    })();
+    function guardarPerfil(){
+      const nombre = document.getElementById('nombre').value.trim();
+      const posicion = document.getElementById('posicion').value;
+      const bio = document.getElementById('bio').value.trim();
+      const u = JSON.parse(localStorage.getItem('futpro_user')||'{}');
+      const user = { ...u, nombre, posicion, bio };
+      localStorage.setItem('futpro_user', JSON.stringify(user));
+      alert('Perfil actualizado');
+    }
+  </script>
+</body>
+</html>

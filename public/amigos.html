@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Amigos</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#0f0f0f;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:960px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:16px}
+    .item{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:14px}
+    .online{color:#4CAF50}
+    .offline{color:#FF5252}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Amigos</h1>
+    <div id="list" class="grid"></div>
+  </div>
+  <script>
+    (function(){
+      const amigos = JSON.parse(localStorage.getItem('futpro_amigos')||'null')||[
+        {nombre:'Carlos Pérez', equipo:'FC Barcelona', online:true},
+        {nombre:'Ana García', equipo:'Real Madrid', online:false},
+        {nombre:'Luis Torres', equipo:'Atlético', online:true}
+      ];
+      localStorage.setItem('futpro_amigos', JSON.stringify(amigos));
+      document.getElementById('list').innerHTML = amigos.map(a=>`<div class=item><strong>${a.nombre}</strong><div>${a.equipo}</div><div class='${a.online?'online':'offline'}'>${a.online?'Online':'Offline'}</div></div>`).join('');
+      localStorage.setItem('futpro_last_page','amigos');
+    })();
+  </script>
+</body>
+</html>

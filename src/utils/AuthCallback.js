@@ -17,15 +17,15 @@ class AuthCallbackHandler {
     async handleAuthCallback() {
         try {
             console.log('[DEBUG] 🔄 Procesando callback de autenticación...');
-            // Esperar un momento para que supabase procese el callback
-            await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // Intentar obtener la sesión actual de Supabase
+            // Obtener la sesión actual de Supabase
             const { data: { session }, error } = await supabase.auth.getSession();
-            console.log('[DEBUG] Sesión obtenida:', !!session, { error });
+            console.log('[DEBUG] Sesión obtenida:', session);
 
             if (error) {
-                console.warn('[DEBUG] getSession warning:', error);
+                console.error('[DEBUG] Error obteniendo sesión:', error);
+                this.redirectToError('Error de autenticación');
+                return;
             }
 
             if (session) {
@@ -49,46 +49,7 @@ class AuthCallbackHandler {
                 console.log('[DEBUG] Redirigiendo a la app principal...');
                 this.redirectToApp();
             } else {
-                console.warn('[DEBUG] No se encontró sesión en callback, intentando setSession desde tokens en URL');
-                // Intentar recuperar tokens del fragment (hash) o query
-                const hash = window.location.hash || '';
-                const search = window.location.search || '';
-                const params = new URLSearchParams(hash.startsWith('#') ? hash.substring(1) : (search.startsWith('?') ? search.substring(1) : ''));
-                const access_token = params.get('access_token') || params.get('accessToken');
-                const refresh_token = params.get('refresh_token') || params.get('refreshToken');
-
-                if (access_token) {
-                    try {
-                        const { data, error: setErr } = await supabase.auth.setSession({ access_token, refresh_token: refresh_token || '' });
-                        if (setErr) {
-                            console.error('[DEBUG] setSession error:', setErr);
-                            this.redirectToLogin('No se pudo completar la autenticación');
-                            return;
-                        }
-                        if (data && data.session) {
-                            console.log('[DEBUG] Sesión establecida desde tokens:', data.session.user.email);
-                            // Continuar con la lógica: verificar/crear usuario en BD
-                            const user = data.session.user;
-                            const { data: existingUser } = await supabase
-                                .from('users')
-                                .select('*')
-                                .eq('id', user.id)
-                                .single();
-
-                            if (!existingUser) {
-                                await this.createUserFromOAuth(user);
-                            }
-                            this.redirectToApp();
-                            return;
-                        }
-                    } catch (err) {
-                        console.error('[DEBUG] Error estableciendo sesión desde tokens:', err);
-                        this.redirectToLogin('No se pudo completar la autenticación');
-                        return;
-                    }
-                }
-
-                // Si no hay tokens o no se pudo establecer sesión
+                console.warn('[DEBUG] No se encontró sesión en callback');
                 this.redirectToLogin('No se pudo completar la autenticación');
             }
 

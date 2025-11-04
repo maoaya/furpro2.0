@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import supabase from '../supabaseClient';
 
 const gold = '#FFD700';
 const black = '#222';
@@ -26,8 +25,7 @@ export default function CallbackPage() {
         loginSuccess: localStorage.getItem('loginSuccess'),
         session: localStorage.getItem('session'),
         userEmail: localStorage.getItem('userEmail'),
-        userId: localStorage.getItem('userId'),
-        draft: localStorage.getItem('futpro_registro_draft')
+        userId: localStorage.getItem('userId')
       };
       console.log('🗃️ Estado localStorage:', ls);
       console.log('🔑 Estado user:', user);
@@ -35,62 +33,17 @@ export default function CallbackPage() {
 
       if (user) {
         console.log('✅ Usuario autenticado via OAuth:', user.email);
-        
-        // NUEVO: Verificar si hay draft del registro y crear perfil completo
-        if (ls.draft) {
-          try {
-            const draftData = JSON.parse(ls.draft);
-            console.log('📝 Draft encontrado, creando perfil completo:', draftData);
-            
-            // Crear perfil en la tabla usuarios
-            const perfilData = {
-              id: user.id,
-              email: user.email,
-              nombre: draftData.nombre || user.user_metadata?.full_name?.split(' ')[0] || '',
-              apellido: draftData.apellido || user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || '',
-              telefono: draftData.telefono || '',
-              edad: draftData.edad ? parseInt(draftData.edad) : null,
-              pais: draftData.pais || 'Colombia',
-              ciudad: draftData.ciudad || '',
-              posicion: draftData.posicion || [],
-              experiencia: draftData.experiencia || '',
-              dias_disponibles: draftData.diasDisponibles || [],
-              horarios_entrenamiento: draftData.horariosEntrenamiento || '',
-              equipo_favorito: draftData.equipoFavorito || '',
-              foto_url: user.user_metadata?.avatar_url || null,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            };
-
-            const { data, error } = await supabase
-              .from('usuarios')
-              .upsert(perfilData, { onConflict: 'id' });
-
-            if (error) {
-              console.error('❌ Error creando perfil en usuarios:', error);
-            } else {
-              console.log('✅ Perfil creado exitosamente en usuarios:', data);
-              localStorage.setItem('registroCompleto', 'true');
-              localStorage.removeItem('futpro_registro_draft');
-            }
-          } catch (err) {
-            console.error('❌ Error procesando draft:', err);
-          }
-        }
-
         // Establecer todos los indicadores de autenticación exitosa
         localStorage.setItem('authCompleted', 'true');
         localStorage.setItem('loginSuccess', 'true');
         localStorage.setItem('userEmail', user.email);
         localStorage.setItem('userId', user.id);
         localStorage.setItem('session', JSON.stringify(user));
-        
         console.log('🚀 CALLBACK: Forzando redirección ultra-agresiva a /home');
         const targetRoute = ls.postLoginRedirect || '/home';
         if (ls.postLoginRedirect) {
           localStorage.removeItem('postLoginRedirect');
         }
-        
         // Redirección ultra-agresiva
         setTimeout(() => {
           try {

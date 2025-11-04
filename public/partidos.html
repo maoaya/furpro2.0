@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Partidos</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#101010;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:960px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    table{width:100%;border-collapse:collapse;margin-top:16px}
+    th,td{padding:10px;border-bottom:1px solid #333}
+    th{color:#FFD700;text-align:left}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Historial de Partidos</h1>
+    <table>
+      <thead><tr><th>Fecha</th><th>Rival</th><th>Resultado</th><th>Goles</th><th>Asist.</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <script>
+    (function(){
+      try{
+        const demo = [
+          {fecha:'2025-10-01', rival:'FC Barcelona', resultado:'2-1', goles:1, asistencias:0},
+          {fecha:'2025-09-28', rival:'Real Madrid', resultado:'0-3', goles:0, asistencias:1}
+        ];
+        const data = JSON.parse(localStorage.getItem('futpro_partidos')||'null') || demo;
+        const tbody = document.getElementById('rows');
+        tbody.innerHTML = data.map(p=>`<tr><td>${p.fecha}</td><td>${p.rival}</td><td>${p.resultado}</td><td>${p.goles}</td><td>${p.asistencias}</td></tr>`).join('');
+        localStorage.setItem('futpro_last_page','partidos');
+      }catch(e){}
+    })();
+  </script>
+</body>
+</html>

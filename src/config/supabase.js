@@ -26,9 +26,6 @@ if (!supabaseConfigured && typeof console !== 'undefined') {
   console.error('[Supabase] Configuración faltante: define VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en el entorno (Netlify). URL actual:', SUPABASE_URL);
 }
 
-// Nota: En producción nuestra API REST expone el esquema 'api'.
-// La mayoría de operaciones funcionan sin especificar schema porque Supabase REST resuelve por tabla.
-// Si alguna llamada requiere schema explícito, usa createClient(..., { db: { schema: 'api' } })
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 export default supabase;
 

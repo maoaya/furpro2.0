@@ -13,7 +13,7 @@ import HomePage from './pages/HomePage.jsx';
 import HomeSimple from './pages/HomeSimple.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal.jsx';
-import CallbackPageOptimized from './pages/CallbackPageOptimized.jsx';
+import CallbackPage from './pages/CallbackPage.jsx';
 import PageInDevelopment from './components/PageInDevelopment.jsx';
 import OAuthLiveTest from './pages/OAuthLiveTest.jsx';
 import UsuariosPage from './pages/UsuariosPage.jsx';
@@ -206,8 +206,8 @@ export default function FutProAppDefinitivo() {
         </ProtectedRoute>
       } />
       
-  {/* Callback para OAuth (Optimizado con recuperación de sesión desde hash) */}
-  <Route path="/auth/callback" element={<CallbackPageOptimized />} />
+      {/* Callback para OAuth */}
+      <Route path="/auth/callback" element={<CallbackPage />} />
 
       {/* Live test de OAuth en el dominio actual */}
       <Route path="/auth/test" element={<OAuthLiveTest />} />

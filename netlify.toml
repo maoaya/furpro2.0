@@ -71,11 +71,6 @@
   status = 200
 
 [[redirects]]
-  from = "/homepage-instagram.html"
-  to = "/homepage-instagram.html"
-  status = 200
-
-[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

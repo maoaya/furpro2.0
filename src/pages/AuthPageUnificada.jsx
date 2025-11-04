@@ -106,16 +106,16 @@ const AuthPageUnificada = () => {
         
         setTimeout(() => {
           try {
-            navigate('/homepage-instagram.html', { replace: true });
+            navigate('/home', { replace: true });
           } catch (error) {
-            window.location.href = '/homepage-instagram.html';
+            window.location.href = '/home';
           }
         }, 500);
       }
     } catch (error) {
       console.error('❌ Error con AuthFlowManager:', error);
       // Fallback de emergencia
-  window.location.href = '/homepage-instagram.html';
+      window.location.href = '/home';
     }
   };
 

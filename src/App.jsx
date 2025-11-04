@@ -20,15 +20,17 @@ import ChatSQLPage from './pages/ChatSQLPage';
 import MarketplacePage from './pages/MarketplacePage';
 import LogrosPage from './pages/LogrosPage';
 import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
+import ComparativasPage from './pages/ComparativasPage';
 import NotFoundPage from './pages/NotFoundPage';
 import AuthPageUnificada from './pages/AuthPageUnificada';
 import AuthCallback from './pages/AuthCallback';
-import LoginRegisterForm from './pages/LoginRegisterFormClean.jsx';
-import RegistroNuevo from './pages/RegistroNuevoClean.jsx';
+import LoginRegisterForm from './pages/LoginRegisterForm';
+import RegistroNuevo from './pages/RegistroNuevo';
 
 // import SupportPage from './pages/SupportPage';
 import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
+import HomeRedirect from './pages/HomeRedirect';
 
 function Layout({ children }) {
   return (
@@ -59,7 +61,8 @@ export default function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           
           {/* Rutas principales - CON Layout */}
-          <Route path="/home" element={<Layout><HomePage /></Layout>} />
+          {/* Redirigir /home al home definitivo estático */}
+          <Route path="/home" element={<HomeRedirect />} />
           <Route path="/feed" element={<Layout><FeedPage /></Layout>} />
           <Route path="/perfil/:userId" element={<Layout><PerfilPage /></Layout>} />
           <Route path="/notificaciones" element={<Layout><NotificationsPage /></Layout>} />
@@ -78,9 +81,17 @@ export default function App() {
         <Route path="/marketplace" element={<Layout><MarketplacePage /></Layout>} />
         <Route path="/logros" element={<Layout><LogrosPage /></Layout>} />
         <Route path="/estadisticas-avanzadas" element={<Layout><EstadisticasAvanzadasPage /></Layout>} />
+          <Route path="/comparativas" element={<Layout><ComparativasPage /></Layout>} />
           <Route path="*" element={<Layout><NotFoundPage /></Layout>} />
         </Routes>
       </Router>
     </AuthProvider>
   );
-}
+}// Test unitario básico
+import { render, screen } from '@testing-library/react';
+describe('App', () => {
+  it('renderiza el layout y SidebarMenu', () => {
+    render(<App />);
+    expect(screen.getByRole('main')).toBeInTheDocument();
+  });
+});

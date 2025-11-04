@@ -138,78 +138,36 @@
         
         const supabase = createClient(
             'https://qqrxetxcglwrejtblwut.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU4MzQwMTQsImV4cCI6MjA0MTQxMDAxNH0.WaJRwm3fGSoOZzYpU5xhMc82rP6FqJKM52kQGYlXJz8'
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0IiwicmVsZSI6ImFub24iLCJpYXQiOjE2OTQyNjE0NzMsImV4cCI6MjAwOTgzNzQ3M30.dummy_key_here'
         );
 
         async function handleAuthCallback() {
             try {
                 console.log('🔄 Procesando callback de autenticación...');
 
-                // Esperar un momento para la UI y para que supabase procese el callback
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Esperar un momento para la UI
+                await new Promise(resolve => setTimeout(resolve, 2000));
 
-                // Intentar obtener la sesión actual
-                const { data: { session }, error: getSessionErr } = await supabase.auth.getSession();
-                if (getSessionErr) {
-                    console.warn('⚠️ getSession error (no crítico):', getSessionErr);
+                // Verificar sesión
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (error) {
+                    console.error('Error:', error);
+                    window.location.href = '/?error=' + encodeURIComponent('Error de autenticación');
+                    return;
                 }
 
-                if (session && session.user) {
-                    console.log('✅ Sesión existente encontrada, redirigiendo al SPA...');
-                    // Redirigir al SPA principal; la app React se encargará del resto
+                if (session) {
+                    console.log('✅ Autenticación exitosa');
                     window.location.href = '/';
-                    return;
+                } else {
+                    console.warn('⚠️ No se encontró sesión');
+                    window.location.href = '/?error=' + encodeURIComponent('No se pudo completar la autenticación');
                 }
-
-                // Si no hay sesión, intentar recuperar tokens desde el fragmento (hash) de la URL
-                const hash = window.location.hash || '';
-                const search = window.location.search || '';
-                const params = new URLSearchParams(hash.startsWith('#') ? hash.substring(1) : (search.startsWith('?') ? search.substring(1) : ''));
-
-                // Manejar errores devueltos en la URL y ofrecer un reintento controlado
-                const cb_error = params.get('error') || new URLSearchParams(search.replace(/^\?/, '')).get('error');
-                const cb_error_code = params.get('error_code') || new URLSearchParams(search.replace(/^\?/, '')).get('error_code');
-                const cb_error_description = params.get('error_description') || new URLSearchParams(search.replace(/^\?/, '')).get('error_description');
-                if (cb_error) {
-                    console.warn('⚠️ Error en callback estático:', { error: cb_error, error_code: cb_error_code, error_description: cb_error_description });
-                    // Evitar loops dobles de error en hash+query
-                    try { history.replaceState(null, '', window.location.pathname); } catch (e) {}
-                    // Redirigir al SPA con mensaje limpio
-                    window.location.href = '/?error=' + encodeURIComponent('Autenticación: ' + (cb_error_description ? decodeURIComponent(cb_error_description) : cb_error));
-                    return;
-                }
-                const access_token = params.get('access_token') || params.get('accessToken');
-                const refresh_token = params.get('refresh_token') || params.get('refreshToken');
-
-                if (access_token) {
-                    console.log('🔑 access_token encontrado en URL fragment. Intentando setSession...');
-                    try {
-                        const { data, error: setErr } = await supabase.auth.setSession({ access_token, refresh_token: refresh_token || '' });
-                        if (setErr) {
-                            console.error('❌ setSession error:', setErr);
-                            window.location.href = '/?error=' + encodeURIComponent('No se pudo completar la autenticación');
-                            return;
-                        }
-                        if (data && data.session) {
-                            console.log('✅ Sesión establecida desde tokens. Redirigiendo al SPA...');
-                            // Limpiar el hash para evitar exponer tokens en la URL
-                            try { history.replaceState(null, '', window.location.pathname); } catch (e) {}
-                            window.location.href = '/';
-                            return;
-                        }
-                    } catch (err) {
-                        console.error('❌ Error estableciendo sesión desde tokens:', err);
-                        window.location.href = '/?error=' + encodeURIComponent('No se pudo completar la autenticación');
-                        return;
-                    }
-                }
-
-                console.warn('⚠️ No se encontró sesión ni tokens en la URL');
-                window.location.href = '/?error=' + encodeURIComponent('No se pudo completar la autenticación');
 
             } catch (error) {
-                console.error('❌ Error inesperado en callback static:', error);
-                window.location.href = '/?error=' + encodeURIComponent(error?.message || 'Error en autenticación');
+                console.error('❌ Error:', error);
+                window.location.href = '/?error=' + encodeURIComponent(error.message);
             }
         }
 

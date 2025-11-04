@@ -10,16 +10,7 @@ if (typeof process !== 'undefined' && process.env) {
   FACEBOOK_CLIENT_ID = process.env.VITE_FACEBOOK_CLIENT_ID;
 }
 
-
-// En navegador (Vite), usar window.VITE_* si existe
-if (typeof window !== 'undefined') {
-  SUPABASE_URL = window.VITE_SUPABASE_URL || SUPABASE_URL;
-  SUPABASE_ANON_KEY = window.VITE_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY;
-  GOOGLE_CLIENT_ID = window.VITE_GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID;
-  FACEBOOK_CLIENT_ID = window.VITE_FACEBOOK_CLIENT_ID || FACEBOOK_CLIENT_ID;
-}
-
-const getConfig = () => {
+export const getConfig = () => {
   // Detectar si estamos en Node.js (server-side)
   const isNode = typeof window === 'undefined';
   
@@ -80,8 +71,8 @@ const getConfig = () => {
     },
     
     // Configuraciones de Supabase - Compatible con Jest y navegador
-  supabaseUrl: SUPABASE_URL || 'https://qqrxetxcglwrejtblwut.supabase.co',
-  supabaseAnonKey: SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU4MzQwMTQsImV4cCI6MjA0MTQxMDAxNH0.WaJRwm3fGSoOZzYpU5xhMc82rP6FqJKM52kQGYlXJz8',
+    supabaseUrl: SUPABASE_URL || 'https://qqrxetxcglwrejtblwut.supabase.co',
+    supabaseAnonKey: SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU4MzQwMTQsImV4cCI6MjA0MTQxMDAxNH0.WaJRwm3fGSoOZzYpU5xhMc82rP6FqJKM52kQGYlXJz8',
     
     // OAuth credentials - Compatible con Jest y navegador  
     googleClientId: GOOGLE_CLIENT_ID || '760210878835-bnl2k6qfb4vuhm9v6fqpj1dqh5kul6d8.apps.googleusercontent.com',
@@ -103,8 +94,4 @@ const getConfig = () => {
   };
 };
 
-// Exportación dual: CommonJS (Node/Jest) y ESM (Vite/frontend)
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { getConfig };
-}
-export default getConfig;export { getConfig }; 
+export default getConfig;

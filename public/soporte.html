@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Soporte</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#111;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:720px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    .card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:16px;margin-top:16px}
+    textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#181818;color:#fff}
+    button{padding:10px 14px;border-radius:8px;border:1px solid #FFD700;background:#FFD700;color:#181818;cursor:pointer;margin-top:10px}
+    .item{padding:10px;border-bottom:1px solid #333}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Soporte</h1>
+    <div class="card">
+      <textarea id="msg" rows="4" placeholder="Describe tu problema"></textarea>
+      <button onclick="enviar()">Enviar</button>
+    </div>
+    <div id="tickets" class="card"></div>
+  </div>
+  <script>
+    function render(){
+      const tickets = JSON.parse(localStorage.getItem('futpro_soporte')||'[]').reverse();
+      document.getElementById('tickets').innerHTML = tickets.map(t=>`<div class=item>#${t.id} • ${t.estado}<br>${t.problema}<br><small>${t.fecha}</small></div>`).join('')||'<p>Sin tickets</p>';
+      localStorage.setItem('futpro_last_page','soporte');
+    }
+    function enviar(){
+      const p = document.getElementById('msg').value.trim();
+      if(!p) return;
+      const tickets = JSON.parse(localStorage.getItem('futpro_soporte')||'[]');
+      const nuevo = { id:Date.now(), problema:p, fecha:new Date().toLocaleDateString(), estado:'Pendiente' };
+      tickets.push(nuevo);
+      localStorage.setItem('futpro_soporte', JSON.stringify(tickets));
+      document.getElementById('msg').value='';
+      render();
+    }
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Notificaciones</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#101010;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:960px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    .list{margin-top:16px}
+    .item{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:12px;margin-bottom:10px}
+    .item small{opacity:.7}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Notificaciones</h1>
+    <div id="list" class="list"></div>
+  </div>
+  <script>
+    (function(){
+      const defaultN=[{tipo:'partido',mensaje:'Nuevo partido programado para mañana',fecha:new Date().toLocaleDateString()},{tipo:'logro',mensaje:'Has desbloqueado el logro "Goleador"',fecha:new Date().toLocaleDateString()}];
+      const items = JSON.parse(localStorage.getItem('futpro_notificaciones')||'null')||defaultN;
+      document.getElementById('list').innerHTML = items.map(n=>`<div class=item><div>${n.mensaje}</div><small>${n.tipo} • ${n.fecha}</small></div>`).join('');
+      localStorage.setItem('futpro_last_page','notificaciones');
+    })();
+  </script>
+</body>
+</html>

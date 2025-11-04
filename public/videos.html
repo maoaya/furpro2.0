@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videos - FutPro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* CONTENEDOR PRINCIPAL - SCROLL VERTICAL */
+        .video-container {
+            width: 100vw;
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .video-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* CADA VIDEO OCUPA PANTALLA COMPLETA */
+        .video-item {
+            width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        .video-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* OVERLAY CON INFO DEL VIDEO */
+        .video-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            z-index: 10;
+        }
+
+        .video-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .video-author img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #FFD700;
+        }
+
+        .video-author-info {
+            flex: 1;
+        }
+
+        .video-author-name {
+            font-weight: bold;
+            font-size: 15px;
+            color: #FFD700;
+        }
+
+        .video-author-username {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .video-description {
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .video-hashtags {
+            font-size: 13px;
+            color: #FFD700;
+        }
+
+        /* BADGE DE EN VIVO */
+        .live-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #FF1744, #FF6B9D);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(255,23,68,0.5);
+            animation: pulse 2s ease-in-out infinite;
+            z-index: 20;
+        }
+
+        .live-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* BARRA LATERAL DE ACCIONES */
+        .actions-bar {
+            position: absolute;
+            right: 12px;
+            bottom: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 15;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .action-btn:active {
+            transform: scale(0.9);
+        }
+
+        .action-btn i {
+            font-size: 28px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .action-btn.liked i {
+            color: #FF1744;
+            animation: heartBeat 0.3s;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .action-count {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* HEADER */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(0,0,0,0.8), transparent);
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            gap: 16px;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            color: #FFD700;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            transition: transform 0.2s;
+        }
+
+        .header-btn:active {
+            transform: scale(0.9);
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        /* TABS DE NAVEGACIÓN */
+        .tabs {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            padding: 12px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            z-index: 99;
+        }
+
+        .tab {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 0;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .tab.active {
+            color: #FFD700;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #FFD700;
+            border-radius: 2px;
+        }
+
+        /* MODAL DE COMENTARIOS */
+        .comments-modal {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            max-height: 70vh;
+            background: #1a1a1a;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            z-index: 200;
+            transition: bottom 0.3s ease-in-out;
+            overflow-y: auto;
+        }
+
+        .comments-modal.show {
+            bottom: 0;
+        }
+
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #333;
+        }
+
+        .comments-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .close-comments {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .comment {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #FFD700;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            font-size: 13px;
+            color: #FFD700;
+            margin-bottom: 4px;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            color: #ccc;
+            line-height: 1.4;
+        }
+
+        .comment-time {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* MODAL DE TRANSMISIÓN EN VIVO */
+        .live-stream-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 300;
+            padding: 20px;
+        }
+
+        .live-stream-modal.show {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .live-stream-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .live-viewers {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+
+        .live-viewers i {
+            color: #FF1744;
+        }
+
+        .live-stream-video {
+            flex: 1;
+            background: #000;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .live-stream-chat {
+            position: absolute;
+            bottom: 60px;
+            left: 12px;
+            right: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .live-chat-message {
+            background: rgba(0,0,0,0.6);
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            max-width: 80%;
+            animation: slideInLeft 0.3s;
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .live-chat-author {
+            color: #FFD700;
+            font-weight: bold;
+            margin-right: 4px;
+        }
+
+        .live-controls {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+        }
+
+        .live-controls input {
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .live-controls button {
+            background: #FFD700;
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* LOADING */
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,215,0,0.1);
+            border-top-color: #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .video-description {
+                font-size: 13px;
+            }
+            .action-btn i {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <button class="header-btn" onclick="irAInicio()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <span class="header-title">Videos</span>
+        </div>
+        <button class="header-btn" onclick="iniciarTransmision()">
+            <i class="fas fa-video"></i>
+        </button>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab active" onclick="cambiarTab('paraTi')">Para Ti</button>
+        <button class="tab" onclick="cambiarTab('siguiendo')">Siguiendo</button>
+        <button class="tab" onclick="cambiarTab('enVivo')">En Vivo</button>
+    </div>
+
+    <!-- CONTENEDOR DE VIDEOS -->
+    <div class="video-container" id="videoContainer">
+        <!-- Los videos se cargan dinámicamente -->
+    </div>
+
+    <!-- MODAL DE COMENTARIOS -->
+    <div class="comments-modal" id="commentsModal">
+        <div class="comments-header">
+            <span class="comments-title">Comentarios</span>
+            <button class="close-comments" onclick="cerrarComentarios()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="commentsContent">
+            <!-- Comentarios dinámicos -->
+        </div>
+    </div>
+
+    <!-- MODAL DE TRANSMISIÓN EN VIVO -->
+    <div class="live-stream-modal" id="liveStreamModal">
+        <div class="live-stream-header">
+            <div class="live-viewers">
+                <i class="fas fa-eye"></i>
+                <span id="viewerCount">0</span>
+            </div>
+            <button class="header-btn" onclick="cerrarTransmision()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="live-stream-video">
+            <video id="liveVideo" autoplay muted style="width:100%;height:100%;object-fit:cover;border-radius:12px;"></video>
+            <div class="live-stream-chat" id="liveChat">
+                <!-- Mensajes de chat en vivo -->
+            </div>
+        </div>
+        <div class="live-controls">
+            <input type="text" id="chatInput" placeholder="Enviar mensaje..." />
+            <button onclick="enviarMensajeChat()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DATOS DE EJEMPLO
+        const videosData = [
+            {
+                id: 1,
+                author: 'Carlos Gómez',
+                username: '@carlosg',
+                avatar: 'https://i.pravatar.cc/150?img=1',
+                description: 'Golazo increíble en el último minuto! ⚽🔥',
+                hashtags: '#futpro #golazo #partidazo',
+                likes: 1245,
+                comments: 89,
+                shares: 34,
+                isLive: false,
+                videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4'
+            },
+            {
+                id: 2,
+                author: 'María Torres',
+                username: '@mariaft',
+                avatar: 'https://i.pravatar.cc/150?img=2',
+                description: 'Entrenamiento matutino 💪 Preparándome para el torneo',
+                hashtags: '#entrenamiento #futpro #dedicacion',
+                likes: 892,
+                comments: 45,
+                shares: 12,
+                isLive: false,
+                videoUrl: 'https://www.w3schools.com/html/movie.mp4'
+            },
+            {
+                id: 3,
+                author: 'FutPro TV',
+                username: '@futprotv',
+                avatar: 'https://i.pravatar.cc/150?img=3',
+                description: 'Transmisión EN VIVO del campeonato regional',
+                hashtags: '#envivo #futpro #campeonato',
+                likes: 3421,
+                comments: 567,
+                shares: 234,
+                isLive: true,
+                viewers: 1523,
+                videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4'
+            }
+        ];
+
+        let currentVideoIndex = 0;
+        let currentTab = 'paraTi';
+
+        // INICIALIZACIÓN
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarVideos();
+            configurarScroll();
+        });
+
+        function cargarVideos() {
+            const container = document.getElementById('videoContainer');
+            container.innerHTML = '';
+
+            const videos = filtrarPorTab(videosData);
+
+            videos.forEach((video, index) => {
+                const videoHtml = `
+                    <div class="video-item" data-index="${index}">
+                        ${video.isLive ? '<div class="live-badge">EN VIVO</div>' : ''}
+                        <video 
+                            src="${video.videoUrl}" 
+                            loop 
+                            ${index === 0 ? 'autoplay' : ''}
+                            muted
+                            playsinline
+                        ></video>
+                        
+                        <div class="video-overlay">
+                            <div class="video-author">
+                                <img src="${video.avatar}" alt="${video.author}">
+                                <div class="video-author-info">
+                                    <div class="video-author-name">${video.author}</div>
+                                    <div class="video-author-username">${video.username}</div>
+                                </div>
+                            </div>
+                            <div class="video-description">${video.description}</div>
+                            <div class="video-hashtags">${video.hashtags}</div>
+                        </div>
+
+                        <div class="actions-bar">
+                            ${video.isLive ? `
+                                <button class="action-btn" onclick="verTransmision(${video.id})">
+                                    <i class="fas fa-broadcast-tower" style="color:#FF1744"></i>
+                                    <span class="action-count">${formatNumber(video.viewers)}</span>
+                                </button>
+                            ` : ''}
+                            <button class="action-btn" onclick="toggleLike(this, ${video.id})">
+                                <i class="fas fa-heart"></i>
+                                <span class="action-count">${formatNumber(video.likes)}</span>
+                            </button>
+                            <button class="action-btn" onclick="abrirComentarios(${video.id})">
+                                <i class="fas fa-comment"></i>
+                                <span class="action-count">${formatNumber(video.comments)}</span>
+                            </button>
+                            <button class="action-btn" onclick="compartir(${video.id})">
+                                <i class="fas fa-share"></i>
+                                <span class="action-count">${formatNumber(video.shares)}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += videoHtml;
+            });
+        }
+
+        function configurarScroll() {
+            const container = document.getElementById('videoContainer');
+            let lastScrollTop = 0;
+
+            container.addEventListener('scroll', () => {
+                const scrollTop = container.scrollTop;
+                const videoHeight = window.innerHeight;
+                const newIndex = Math.round(scrollTop / videoHeight);
+
+                if (newIndex !== currentVideoIndex) {
+                    // Pausar video anterior
+                    const videos = container.querySelectorAll('video');
+                    videos[currentVideoIndex]?.pause();
+                    
+                    // Reproducir nuevo video
+                    videos[newIndex]?.play();
+                    currentVideoIndex = newIndex;
+                }
+
+                lastScrollTop = scrollTop;
+            });
+        }
+
+        function filtrarPorTab(videos) {
+            if (currentTab === 'enVivo') {
+                return videos.filter(v => v.isLive);
+            }
+            return videos;
+        }
+
+        function cambiarTab(tab) {
+            currentTab = tab;
+            
+            // Actualizar UI de tabs
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Recargar videos
+            cargarVideos();
+        }
+
+        function toggleLike(btn, videoId) {
+            btn.classList.toggle('liked');
+            const countSpan = btn.querySelector('.action-count');
+            let count = parseInt(countSpan.textContent.replace(/[^0-9]/g, ''));
+            
+            if (btn.classList.contains('liked')) {
+                count++;
+            } else {
+                count--;
+            }
+            
+            countSpan.textContent = formatNumber(count);
+
+            // Auto-guardar like
+            guardarAccion('like', { videoId, timestamp: Date.now() });
+        }
+
+        function abrirComentarios(videoId) {
+            const modal = document.getElementById('commentsModal');
+            const content = document.getElementById('commentsContent');
+            
+            // Comentarios de ejemplo
+            const comentarios = [
+                { author: 'Juan P.', avatar: 'https://i.pravatar.cc/150?img=4', text: 'Qué golazo! 🔥', time: 'hace 2h' },
+                { author: 'Ana M.', avatar: 'https://i.pravatar.cc/150?img=5', text: 'Increíble jugada', time: 'hace 1h' },
+                { author: 'Luis R.', avatar: 'https://i.pravatar.cc/150?img=6', text: 'Así se juega al fútbol!', time: 'hace 30min' }
+            ];
+
+            content.innerHTML = comentarios.map(c => `
+                <div class="comment">
+                    <img src="${c.avatar}" class="comment-avatar">
+                    <div class="comment-content">
+                        <div class="comment-author">${c.author}</div>
+                        <div class="comment-text">${c.text}</div>
+                        <div class="comment-time">${c.time}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            modal.classList.add('show');
+        }
+
+        function cerrarComentarios() {
+            document.getElementById('commentsModal').classList.remove('show');
+        }
+
+        function compartir(videoId) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'FutPro Video',
+                    text: 'Mira este increíble video en FutPro',
+                    url: window.location.href
+                });
+            } else {
+                alert('Enlace copiado al portapapeles');
+            }
+
+            guardarAccion('compartir', { videoId, timestamp: Date.now() });
+        }
+
+        function iniciarTransmision() {
+            const modal = document.getElementById('liveStreamModal');
+            modal.classList.add('show');
+
+            // Iniciar cámara
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(stream => {
+                    const video = document.getElementById('liveVideo');
+                    video.srcObject = stream;
+                    video.muted = false;
+                    
+                    // Simular espectadores
+                    let viewers = 0;
+                    setInterval(() => {
+                        viewers += Math.floor(Math.random() * 5);
+                        document.getElementById('viewerCount').textContent = viewers;
+                    }, 3000);
+                })
+                .catch(err => {
+                    console.error('Error accediendo a la cámara:', err);
+                    alert('No se pudo acceder a la cámara. Verifica los permisos.');
+                });
+
+            guardarAccion('iniciar_transmision', { timestamp: Date.now() });
+        }
+
+        function verTransmision(videoId) {
+            iniciarTransmision();
+            guardarAccion('ver_transmision', { videoId, timestamp: Date.now() });
+        }
+
+        function cerrarTransmision() {
+            const modal = document.getElementById('liveStreamModal');
+            const video = document.getElementById('liveVideo');
+            
+            // Detener stream
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+            
+            modal.classList.remove('show');
+        }
+
+        function enviarMensajeChat() {
+            const input = document.getElementById('chatInput');
+            const mensaje = input.value.trim();
+            
+            if (!mensaje) return;
+
+            const chat = document.getElementById('liveChat');
+            const usuario = JSON.parse(localStorage.getItem('futpro_user') || '{}');
+            
+            const mensajeHtml = `
+                <div class="live-chat-message">
+                    <span class="live-chat-author">${usuario.nombre || 'Usuario'}</span>
+                    ${mensaje}
+                </div>
+            `;
+            
+            chat.innerHTML += mensajeHtml;
+            chat.scrollTop = chat.scrollHeight;
+            input.value = '';
+
+            guardarAccion('mensaje_chat', { mensaje, timestamp: Date.now() });
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function irAInicio() {
+            window.location.href = './homepage-instagram.html';
+        }
+
+        // AUTO-GUARDADO
+        function guardarAccion(tipo, data) {
+            try {
+                const acciones = JSON.parse(localStorage.getItem('futpro_videos_acciones') || '[]');
+                acciones.push({ tipo, data, timestamp: Date.now() });
+                localStorage.setItem('futpro_videos_acciones', JSON.stringify(acciones));
+            } catch (e) {
+                console.error('Error guardando acción:', e);
+            }
+        }
+
+        // Pausar videos cuando se oculta la página
+        document.addEventListener('visibilitychange', () => {
+            const videos = document.querySelectorAll('video');
+            if (document.hidden) {
+                videos.forEach(v => v.pause());
+            } else {
+                videos[currentVideoIndex]?.play();
+            }
+        });
+    </script>
+</body>
+</html>

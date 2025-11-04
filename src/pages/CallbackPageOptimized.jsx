@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import supabase from '../supabaseClient';
 import { authFlowManager, handleAuthenticationSuccess } from '../utils/authFlowManager.js';
-import getConfig from '../config/environment.js';
 
 export default function CallbackPageOptimized() {
   const navigate = useNavigate();
@@ -17,54 +16,8 @@ export default function CallbackPageOptimized() {
         console.log('🔄 CallbackPage: Procesando callback OAuth...');
         setStatus('Verificando autenticación...');
 
-        // 0) Si viene con error en la URL, intentar un reintento seguro UNA sola vez
-        const searchParams = new URLSearchParams(window.location.search);
-        const hashParamsRaw = window.location.hash?.startsWith('#') ? window.location.hash.substring(1) : '';
-        const hashParams = new URLSearchParams(hashParamsRaw);
-        const errorParam = searchParams.get('error') || hashParams.get('error');
-        const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
-
-        if (errorParam) {
-          console.warn('⚠️ Error recibido en callback:', { errorParam, errorCode });
-          const alreadyRetried = sessionStorage.getItem('oauth_retry_once') === 'true';
-          if (!alreadyRetried && (
-            errorParam.includes('server_error') ||
-            (errorCode && errorCode.includes('unexpected_failure')) ||
-            decodeURIComponent((searchParams.get('error_description') || hashParams.get('error_description') || '')).toLowerCase().includes('exchange')
-          )) {
-            sessionStorage.setItem('oauth_retry_once', 'true');
-            setStatus('Hubo un problema intercambiando el código. Reintentando login de forma segura...');
-            const config = getConfig();
-            try {
-              const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                  redirectTo: config.oauthCallbackUrl,
-                  queryParams: { prompt: 'select_account' }
-                }
-              });
-              if (error) {
-                console.error('❌ Reintento OAuth falló:', error);
-                setTimeout(() => navigate('/?error=' + encodeURIComponent('No se pudo completar la autenticación'), { replace: true }), 1500);
-                return;
-              }
-              // Supabase redirigirá, detener flujo actual
-              return;
-            } catch (e) {
-              console.error('💥 Excepción en reintento OAuth:', e);
-              setTimeout(() => navigate('/?error=' + encodeURIComponent('No se pudo completar la autenticación'), { replace: true }), 1500);
-              return;
-            }
-          }
-        }
-
-  // Esperar un poco para que Supabase procese el callback
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
         // Obtener la sesión actual
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        console.log('📊 Estado de sesión:', { session: !!session, user: !!session?.user, error: sessionError });
         
         if (sessionError) {
           console.error('❌ Error obteniendo sesión:', sessionError);
@@ -75,70 +28,13 @@ export default function CallbackPageOptimized() {
 
         if (!session || !session.user) {
           console.warn('⚠️ No hay sesión válida en callback');
-          console.log('🔍 Intentando recuperar sesión desde URL...');
-          // 1) Si viene flujo con code/state (PKCE), intentar intercambio explícito
-          const urlHasCode = window.location.search.includes('code=') && window.location.search.includes('state=');
-          if (urlHasCode) {
-            try {
-              setStatus('Intercambiando código por sesión...');
-              const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-              if (error) {
-                console.error('❌ exchangeCodeForSession error:', error);
-              } else if (data?.session?.user) {
-                console.log('✅ Sesión establecida vía exchangeCodeForSession');
-                await processUserProfile(data.session.user);
-                return;
-              }
-            } catch (ex) {
-              console.error('💥 Excepción en exchangeCodeForSession:', ex);
-            }
-          }
-          
-          // Intentar obtener sesión desde el hash de la URL
-          const accessToken = hashParams.get('access_token');
-          
-          if (accessToken) {
-            console.log('✅ Token encontrado en URL, estableciendo sesión...');
-            const { data, error } = await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: hashParams.get('refresh_token') || ''
-            });
-            
-            if (error || !data.session) {
-              console.error('❌ Error estableciendo sesión:', error);
-              setStatus('No se pudo completar la autenticación. Redirigiendo a tu dashboard...');
-              setTimeout(() => navigate('/home', { replace: true }), 1500);
-              return;
-            }
-            
-            // Usar la sesión establecida
-            const user = data.session.user;
-            console.log('✅ Sesión establecida correctamente para:', user.email);
-            await processUserProfile(user);
-            return;
-          }
-          
           setStatus('No se pudo completar la autenticación. Redirigiendo...');
-          setTimeout(() => navigate('/home', { replace: true }), 1500);
+          setTimeout(() => navigate('/', { replace: true }), 2000);
           return;
         }
 
         const user = session.user;
         console.log('✅ Usuario OAuth autenticado:', user.email);
-        await processUserProfile(user);
-
-      } catch (error) {
-  console.error('💥 Error inesperado en callback:', error);
-  setStatus('Error inesperado. Redirigiendo a tu dashboard...');
-  setTimeout(() => navigate('/home', { replace: true }), 1500);
-      } finally {
-        setProcessing(false);
-      }
-    };
-
-    // Función auxiliar para procesar el perfil del usuario
-    const processUserProfile = async (user) => {
-      try {
         setStatus('Usuario autenticado. Configurando perfil...');
 
         // Verificar si el usuario ya tiene perfil en la DB
@@ -155,39 +51,19 @@ export default function CallbackPageOptimized() {
           console.log('📝 Creando nuevo perfil para usuario OAuth...');
           setStatus('Creando perfil de usuario...');
 
-          // NUEVO: Verificar si hay draft del registro
-          const draftString = localStorage.getItem('futpro_registro_draft');
-          let draftData = null;
-          
-          if (draftString) {
-            try {
-              draftData = JSON.parse(draftString);
-              console.log('📝 Draft de registro encontrado:', draftData);
-            } catch (e) {
-              console.error('Error parseando draft:', e);
-            }
-          }
-
-          // Crear perfil para nuevo usuario OAuth - Con datos del draft si existen
+          // Crear perfil para nuevo usuario OAuth
           const perfilData = {
             id: user.id,
             email: user.email,
-            nombre: draftData?.nombre || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
-            apellido: draftData?.apellido || '',
-            telefono: draftData?.telefono || '',
-            edad: draftData?.edad ? parseInt(draftData.edad) : null,
-            pais: draftData?.pais || 'Colombia',
-            ciudad: draftData?.ciudad || '',
-            posicion: draftData?.posicion || [],
-            experiencia: draftData?.experiencia || '',
-            dias_disponibles: draftData?.diasDisponibles || [],
-            horarios_entrenamiento: draftData?.horariosEntrenamiento || '',
-            equipo_favorito: draftData?.equipoFavorito || '',
+            nombre: user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
+            apellido: '',
             avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
             rol: 'usuario',
             tipo_usuario: 'jugador',
             estado: 'activo',
+            posicion: 'Por definir',
             frecuencia_juego: 1,
+            pais: 'España',
             provider: user.app_metadata?.provider || 'oauth',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
@@ -200,15 +76,9 @@ export default function CallbackPageOptimized() {
 
           if (createError) {
             console.error('❌ Error creando perfil:', createError);
-            setStatus('Error creando perfil, pero tu sesión está activa. Redirigiendo...');
-            setTimeout(() => navigate('/home', { replace: true }), 1200);
+            // Continuar sin perfil, el usuario puede completarlo después
           } else {
-            console.log('✅ Perfil creado exitosamente para usuario OAuth con datos completos');
-            // Limpiar draft si se usó
-            if (draftData) {
-              localStorage.removeItem('futpro_registro_draft');
-              localStorage.setItem('registroCompleto', 'true');
-            }
+            console.log('✅ Perfil creado exitosamente para usuario OAuth');
           }
         }
 
@@ -238,18 +108,21 @@ export default function CallbackPageOptimized() {
             }
           }, 1000);
         }
+
       } catch (error) {
-  console.error('💥 Error procesando perfil:', error);
-  setStatus('Error configurando perfil. Redirigiendo a tu dashboard...');
-  setTimeout(() => navigate('/home', { replace: true }), 1200);
+        console.error('💥 Error inesperado en callback:', error);
+        setStatus('Error inesperado. Redirigiendo...');
+        setTimeout(() => navigate('/', { replace: true }), 2000);
+      } finally {
+        setProcessing(false);
       }
     };
 
-    // Ejecutar callback si no está cargando
-    if (!loading) {
-      handleCallback();
-    }
-  }, [navigate, loading]);
+    // Ejecutar callback después de un breve delay para asegurar que todo esté listo
+    const timer = setTimeout(handleCallback, 1000);
+    
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   // Si el usuario ya está autenticado (desde AuthContext), redirigir inmediatamente
   useEffect(() => {

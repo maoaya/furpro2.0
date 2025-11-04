@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Sesión Cerrada</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#0f0f0f;color:#fff;font-family:Inter,system-ui,Arial;display:flex;align-items:center;justify-content:center;min-height:100vh}
+    .card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:24px;text-align:center}
+    a.btn{display:inline-block;margin-top:12px;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Has cerrado sesión</h1>
+    <p>Gracias por usar FutPro. ¡Te esperamos pronto!</p>
+    <a class="btn" href="/">Ir a iniciar sesión</a>
+  </div>
+  <script>
+    (function(){ localStorage.setItem('futpro_last_page','logout'); })();
+  </script>
+</body>
+</html>

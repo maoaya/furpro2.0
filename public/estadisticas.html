@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Estadísticas</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#121212;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:960px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:16px}
+    .card{background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:16px}
+    .num{font-size:28px;color:#FFD700;font-weight:700}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Estadísticas</h1>
+    <div id="stats" class="grid"></div>
+  </div>
+  <script>
+    (function(){
+      try{
+        const base = { partidos:0, goles:0, asistencias:0, tarjetas:0, posicion:'No definida', equipo:'Sin equipo' };
+        const s = JSON.parse(localStorage.getItem('futpro_stats')||'null') || base;
+        const el = document.getElementById('stats');
+        const tiles = [
+          ['Partidos', s.partidos],
+          ['Goles', s.goles],
+          ['Asistencias', s.asistencias],
+          ['Tarjetas', s.tarjetas],
+          ['Posición', s.posicion],
+          ['Equipo', s.equipo]
+        ];
+        el.innerHTML = tiles.map(([k,v])=>`<div class=card><div>${k}</div><div class=num>${v}</div></div>`).join('');
+        localStorage.setItem('futpro_last_page','estadisticas');
+      }catch(e){}
+    })();
+  </script>
+</body>
+</html>

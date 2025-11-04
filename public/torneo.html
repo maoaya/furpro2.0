@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Torneos</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#0e0e0e;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:960px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    .list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:16px}
+    .item{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:14px}
+    .actions{margin-top:12px;display:flex;gap:8px}
+    button{padding:8px 12px;border-radius:8px;border:1px solid #FFD700;background:#FFD700;color:#181818;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Torneos</h1>
+    <div class="actions"><button onclick="crearTorneo()">Crear torneo</button></div>
+    <div id="torneos" class="list"></div>
+  </div>
+  <script>
+    function render(){
+      const list = JSON.parse(localStorage.getItem('futpro_torneos')||'[]');
+      document.getElementById('torneos').innerHTML = list.map(t=>`<div class=item><strong>${t.nombre}</strong><div>Inicio: ${t.fechaInicio}</div><div>Estado: ${t.estado}</div></div>`).join('')||'<p>No hay torneos aún.</p>';
+      localStorage.setItem('futpro_last_page','torneo');
+    }
+    function crearTorneo(){
+      const nombre = prompt('Nombre del nuevo torneo:');
+      if(!nombre) return;
+      const torneos = JSON.parse(localStorage.getItem('futpro_torneos')||'[]');
+      const nuevo = { id:Date.now(), nombre:nombre.trim(), equipos:[], fechaInicio:new Date().toLocaleDateString(), estado:'Inscripciones abiertas' };
+      torneos.push(nuevo);
+      localStorage.setItem('futpro_torneos', JSON.stringify(torneos));
+      render();
+    }
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Configuración</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#0f0f0f;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:720px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    .card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:16px;margin-top:16px}
+    label{display:flex;align-items:center;gap:10px;margin:10px 0}
+    input[type=checkbox]{transform:scale(1.2)}
+    button{padding:10px 14px;border-radius:8px;border:1px solid #FFD700;background:#FFD700;color:#181818;cursor:pointer;margin-top:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Configuración</h1>
+    <div class="card">
+      <label><input id="track" type="checkbox" /> Activar tracking anónimo</label>
+      <label><input id="autosave" type="checkbox" /> Activar auto-guardado</label>
+      <button onclick="guardar()">Guardar</button>
+    </div>
+  </div>
+  <script>
+    (function(){
+      const cfg = JSON.parse(localStorage.getItem('futpro_config')||'{}');
+      document.getElementById('track').checked = cfg.track!==false;
+      document.getElementById('autosave').checked = cfg.autosave!==false;
+      localStorage.setItem('futpro_last_page','configuracion');
+    })();
+    function guardar(){
+      const cfg = {
+        track: document.getElementById('track').checked,
+        autosave: document.getElementById('autosave').checked
+      };
+      localStorage.setItem('futpro_config', JSON.stringify(cfg));
+      alert('Configuración guardada');
+    }
+  </script>
+</body>
+</html>

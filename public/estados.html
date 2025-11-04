@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro · Estados</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    body{margin:0;background:#0f0f0f;color:#fff;font-family:Inter,system-ui,Arial}
+    .wrap{max-width:720px;margin:0 auto;padding:24px}
+    a.btn{display:inline-block;padding:10px 14px;border:1px solid #FFD700;border-radius:8px;color:#FFD700;text-decoration:none}
+    h1{color:#FFD700}
+    .card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:12px;margin:12px 0}
+    input{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#181818;color:#fff}
+    button{padding:10px 14px;border-radius:8px;border:1px solid #FFD700;background:#FFD700;color:#181818;cursor:pointer;margin-top:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="btn" href="/homepage-instagram.html">← Inicio</a>
+    <h1>Estados</h1>
+    <div class="card">
+      <input id="estado" placeholder="¿Qué estás pensando?" />
+      <button onclick="publicar()">Publicar</button>
+    </div>
+    <div id="feed"></div>
+  </div>
+  <script>
+    function render(){
+      const estados = JSON.parse(localStorage.getItem('futpro_estados')||'[]').reverse();
+      document.getElementById('feed').innerHTML = estados.map(e=>`<div class=card><div>${e.text}</div><small>${e.fecha}</small></div>`).join('')||'<p>Aún no hay estados.</p>';
+      localStorage.setItem('futpro_last_page','estados');
+    }
+    function publicar(){
+      const text = document.getElementById('estado').value.trim();
+      if(!text) return;
+      const estados = JSON.parse(localStorage.getItem('futpro_estados')||'[]');
+      estados.push({text, fecha:new Date().toLocaleString()});
+      localStorage.setItem('futpro_estados', JSON.stringify(estados));
+      document.getElementById('estado').value='';
+      render();
+    }
+    render();
+  </script>
+</body>
+</html>
