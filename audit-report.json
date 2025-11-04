@@ -1,0 +1,432 @@
+{
+  "timestamp": "2025-11-04T02:20:10.152Z",
+  "summary": {
+    "total": 84,
+    "ok": 84,
+    "warning": 0,
+    "error": 0,
+    "percentage": 100
+  },
+  "details": [
+    {
+      "name": "Página: homepage-instagram.html",
+      "status": "ok",
+      "details": "Encontrado: public\\homepage-instagram.html"
+    },
+    {
+      "name": "Página: editar-perfil.html",
+      "status": "ok",
+      "details": "Encontrado: public\\editar-perfil.html"
+    },
+    {
+      "name": "Página: estadisticas.html",
+      "status": "ok",
+      "details": "Encontrado: public\\estadisticas.html"
+    },
+    {
+      "name": "Página: partidos.html",
+      "status": "ok",
+      "details": "Encontrado: public\\partidos.html"
+    },
+    {
+      "name": "Página: logros.html",
+      "status": "ok",
+      "details": "Encontrado: public\\logros.html"
+    },
+    {
+      "name": "Página: tarjetas.html",
+      "status": "ok",
+      "details": "Encontrado: public\\tarjetas.html"
+    },
+    {
+      "name": "Página: equipos.html",
+      "status": "ok",
+      "details": "Encontrado: public\\equipos.html"
+    },
+    {
+      "name": "Página: torneo.html",
+      "status": "ok",
+      "details": "Encontrado: public\\torneo.html"
+    },
+    {
+      "name": "Página: amistoso.html",
+      "status": "ok",
+      "details": "Encontrado: public\\amistoso.html"
+    },
+    {
+      "name": "Página: penaltis.html",
+      "status": "ok",
+      "details": "Encontrado: public\\penaltis.html"
+    },
+    {
+      "name": "Página: juegos.html",
+      "status": "ok",
+      "details": "Encontrado: public\\juegos.html"
+    },
+    {
+      "name": "Página: notificaciones.html",
+      "status": "ok",
+      "details": "Encontrado: public\\notificaciones.html"
+    },
+    {
+      "name": "Página: chat.html",
+      "status": "ok",
+      "details": "Encontrado: public\\chat.html"
+    },
+    {
+      "name": "Página: videos.html",
+      "status": "ok",
+      "details": "Encontrado: public\\videos.html"
+    },
+    {
+      "name": "Página: marketplace.html",
+      "status": "ok",
+      "details": "Encontrado: public\\marketplace.html"
+    },
+    {
+      "name": "Página: estados.html",
+      "status": "ok",
+      "details": "Encontrado: public\\estados.html"
+    },
+    {
+      "name": "Página: amigos.html",
+      "status": "ok",
+      "details": "Encontrado: public\\amigos.html"
+    },
+    {
+      "name": "Página: ranking.html",
+      "status": "ok",
+      "details": "Encontrado: public\\ranking.html"
+    },
+    {
+      "name": "Página: buscar-ranking.html",
+      "status": "ok",
+      "details": "Encontrado: public\\buscar-ranking.html"
+    },
+    {
+      "name": "Página: soporte.html",
+      "status": "ok",
+      "details": "Encontrado: public\\soporte.html"
+    },
+    {
+      "name": "Página: privacidad.html",
+      "status": "ok",
+      "details": "Encontrado: public\\privacidad.html"
+    },
+    {
+      "name": "Página: perfil-instagram.html",
+      "status": "ok",
+      "details": "Encontrado: public\\perfil-instagram.html"
+    },
+    {
+      "name": "Servicio: AutoSaveService.js",
+      "status": "ok",
+      "details": "Encontrado: src\\services\\AutoSaveService.js"
+    },
+    {
+      "name": "  └─ Clase AutoSaveService definida",
+      "status": "ok",
+      "details": "✓ \"class AutoSaveService...\""
+    },
+    {
+      "name": "  └─ Método startAutoSave() implementado",
+      "status": "ok",
+      "details": "✓ \"startAutoSave...\""
+    },
+    {
+      "name": "Servicio: RealtimeService.js",
+      "status": "ok",
+      "details": "Encontrado: src\\services\\RealtimeService.js"
+    },
+    {
+      "name": "  └─ Clase RealtimeService definida",
+      "status": "ok",
+      "details": "✓ \"class RealtimeService...\""
+    },
+    {
+      "name": "  └─ Método subscribe() implementado",
+      "status": "ok",
+      "details": "✓ \"subscribe...\""
+    },
+    {
+      "name": "Servicio: CardService.js",
+      "status": "ok",
+      "details": "Encontrado: src\\services\\CardService.js"
+    },
+    {
+      "name": "  └─ Clase CardService definida",
+      "status": "ok",
+      "details": "✓ \"class CardService...\""
+    },
+    {
+      "name": "  └─ Método generateCard() implementado",
+      "status": "ok",
+      "details": "✓ \"generateCard...\""
+    },
+    {
+      "name": "Servicio: AuthService.js",
+      "status": "ok",
+      "details": "Encontrado: src\\services\\AuthService.js"
+    },
+    {
+      "name": "  └─ Clase AuthService definida",
+      "status": "ok",
+      "details": "✓ \"class AuthService...\""
+    },
+    {
+      "name": "  └─ Método signInWithEmail() implementado",
+      "status": "ok",
+      "details": "✓ \"signInWithEmail...\""
+    },
+    {
+      "name": "Servicio: AnalyticsManager.js",
+      "status": "ok",
+      "details": "Encontrado: src\\services\\AnalyticsManager.js"
+    },
+    {
+      "name": "  └─ Clase AnalyticsManager definida",
+      "status": "ok",
+      "details": "✓ \"class AnalyticsManager...\""
+    },
+    {
+      "name": "  └─ Método track() implementado",
+      "status": "ok",
+      "details": "✓ \"track...\""
+    },
+    {
+      "name": "Servicio: ChatManager.js",
+      "status": "ok",
+      "details": "Encontrado: src\\services\\ChatManager.js"
+    },
+    {
+      "name": "  └─ Clase ChatManager definida",
+      "status": "ok",
+      "details": "✓ \"class ChatManager...\""
+    },
+    {
+      "name": "  └─ Método sendMessage() implementado",
+      "status": "ok",
+      "details": "✓ \"sendMessage...\""
+    },
+    {
+      "name": "Servicio: StreamManager.js",
+      "status": "ok",
+      "details": "Encontrado: src\\services\\StreamManager.js"
+    },
+    {
+      "name": "  └─ Clase StreamManager definida",
+      "status": "ok",
+      "details": "✓ \"class StreamManager...\""
+    },
+    {
+      "name": "  └─ Método startStream() implementado",
+      "status": "ok",
+      "details": "✓ \"startStream...\""
+    },
+    {
+      "name": "Servicio: UserService.js",
+      "status": "ok",
+      "details": "Encontrado: src\\services\\UserService.js"
+    },
+    {
+      "name": "  └─ Clase UserService definida",
+      "status": "ok",
+      "details": "✓ \"class UserService...\""
+    },
+    {
+      "name": "  └─ Método getUser() implementado",
+      "status": "ok",
+      "details": "✓ \"getUser...\""
+    },
+    {
+      "name": "App.jsx (Router principal)",
+      "status": "ok",
+      "details": "Encontrado: src\\App.jsx"
+    },
+    {
+      "name": "Ruta: /configuracion → ConfiguracionUsuarioPage",
+      "status": "ok",
+      "details": "✓ \"path=\"/configuracion\"...\""
+    },
+    {
+      "name": "Ruta: /ranking → RankingPage",
+      "status": "ok",
+      "details": "✓ \"path=\"/ranking\"...\""
+    },
+    {
+      "name": "Ruta: /perfil/:userId → PerfilPage",
+      "status": "ok",
+      "details": "✓ \"path=\"/perfil/:userId\"...\""
+    },
+    {
+      "name": "Ruta: /feed → FeedPage",
+      "status": "ok",
+      "details": "✓ \"path=\"/feed\"...\""
+    },
+    {
+      "name": "Ruta: /admin → AdminPanelPage",
+      "status": "ok",
+      "details": "✓ \"path=\"/admin\"...\""
+    },
+    {
+      "name": "Ruta: /auth/callback → AuthCallback",
+      "status": "ok",
+      "details": "✓ \"path=\"/auth/callback\"...\""
+    },
+    {
+      "name": "Función: irAInicio() → homepage-instagram.html",
+      "status": "ok",
+      "details": "✓ \"function irAInicio()...\""
+    },
+    {
+      "name": "Función: editarPerfil() → editar-perfil.html",
+      "status": "ok",
+      "details": "✓ \"function editarPerfil()...\""
+    },
+    {
+      "name": "Función: verEstadisticas() → estadisticas.html",
+      "status": "ok",
+      "details": "✓ \"function verEstadisticas()...\""
+    },
+    {
+      "name": "Función: verPartidos() → partidos.html",
+      "status": "ok",
+      "details": "✓ \"function verPartidos()...\""
+    },
+    {
+      "name": "Función: verTarjetas() → tarjetas.html",
+      "status": "ok",
+      "details": "✓ \"function verTarjetas()...\""
+    },
+    {
+      "name": "Función: crearAmistoso() → amistoso.html",
+      "status": "ok",
+      "details": "✓ \"function crearAmistoso()...\""
+    },
+    {
+      "name": "Función: verVideos() → videos.html",
+      "status": "ok",
+      "details": "✓ \"function verVideos()...\""
+    },
+    {
+      "name": "Función: verEstados() → estados.html",
+      "status": "ok",
+      "details": "✓ \"function verEstados()...\""
+    },
+    {
+      "name": "Función: verAmigos() → amigos.html",
+      "status": "ok",
+      "details": "✓ \"function verAmigos()...\""
+    },
+    {
+      "name": "Función: abrirConfiguracion() → /configuracion",
+      "status": "ok",
+      "details": "✓ \"function abrirConfiguracion()...\""
+    },
+    {
+      "name": "Función: contactarSoporte() → soporte.html",
+      "status": "ok",
+      "details": "✓ \"function contactarSoporte()...\""
+    },
+    {
+      "name": "Estilos badge \"Nuevo\" definidos",
+      "status": "ok",
+      "details": "✓ \".badge-new...\""
+    },
+    {
+      "name": "Estilos badge \"React\" definidos",
+      "status": "ok",
+      "details": "✓ \".badge-react...\""
+    },
+    {
+      "name": "Badge en \"Mis Tarjetas\"",
+      "status": "ok",
+      "details": "✓ \"Mis Tarjetas</span><span class=\"badge-new\">Nuevo</...\""
+    },
+    {
+      "name": "Badge en \"Videos\"",
+      "status": "ok",
+      "details": "✓ \"Videos</span><span class=\"badge-new\">Nuevo</span>...\""
+    },
+    {
+      "name": "Badge en \"Estados\"",
+      "status": "ok",
+      "details": "✓ \"Estados</span><span class=\"badge-new\">Nuevo</span>...\""
+    },
+    {
+      "name": "Badge en \"Amigos\"",
+      "status": "ok",
+      "details": "✓ \"Amigos</span><span class=\"badge-new\">Nuevo</span>...\""
+    },
+    {
+      "name": "Badge en \"Configuración\"",
+      "status": "ok",
+      "details": "✓ \"Configuración</span><span class=\"badge-react\">Reac...\""
+    },
+    {
+      "name": "Sección \"Atajos React (SPA)\"",
+      "status": "ok",
+      "details": "✓ \"Atajos React (SPA)...\""
+    },
+    {
+      "name": "netlify.toml",
+      "status": "ok",
+      "details": "Encontrado: netlify.toml"
+    },
+    {
+      "name": "Directorio de publicación correcto",
+      "status": "ok",
+      "details": "✓ \"publish = \"dist\"...\""
+    },
+    {
+      "name": "Comando de build configurado",
+      "status": "ok",
+      "details": "✓ \"npm run build...\""
+    },
+    {
+      "name": "Escaneo de secretos deshabilitado",
+      "status": "ok",
+      "details": "✓ \"SECRETS_SCAN_ENABLED = \"false\"...\""
+    },
+    {
+      "name": "package.json",
+      "status": "ok",
+      "details": "Encontrado: package.json"
+    },
+    {
+      "name": "Script \"build\" definido",
+      "status": "ok",
+      "details": "\"vite build\""
+    },
+    {
+      "name": "Script \"dev\" definido",
+      "status": "ok",
+      "details": "\"vite\""
+    },
+    {
+      "name": "Configuración de entorno",
+      "status": "ok",
+      "details": "Encontrado: src\\config\\environment.js"
+    },
+    {
+      "name": "Callback OAuth",
+      "status": "ok",
+      "details": "Encontrado: src\\pages\\AuthCallback.jsx"
+    },
+    {
+      "name": "Redirección a homepage",
+      "status": "ok",
+      "details": "Encontrado: src\\pages\\HomeRedirect.jsx"
+    },
+    {
+      "name": "Redirección a /home después de OAuth",
+      "status": "ok",
+      "details": "✓ \"navigate('/home')...\""
+    },
+    {
+      "name": "Redirección a homepage estática",
+      "status": "ok",
+      "details": "✓ \"homepage-instagram.html...\""
+    }
+  ]
+}
