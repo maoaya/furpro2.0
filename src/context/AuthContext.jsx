@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import supabase from '../supabaseClient';
+import { detectSupabaseOnline } from '../config/supabase.js';
 import { getConfig } from '../config/environment.js';
 // Carga perezosa del tracking para evitar efectos secundarios durante el render
 let trackingInitializer = null;
@@ -38,6 +39,18 @@ export const AuthProvider = ({ children }) => {
       
       try {
         console.log('🔄 AuthContext: Inicializando autenticación...');
+        // Verificar conectividad con Supabase para evitar bucles de errores si hay problemas de DNS/red
+        const online = await detectSupabaseOnline().catch(() => false);
+        if (!online) {
+          console.warn('⚠️ Supabase no alcanzable. Entrando en modo invitado.');
+          setUser(null);
+          setRole('guest');
+          setEquipoId(null);
+          setUserProfile(null);
+          setError('Servicio de autenticación no disponible en este momento.');
+          setLoading(false);
+          return; // No llamar a supabase.auth.* si no está accesible
+        }
         
         // Verificar localStorage primero para indicaciones de auth exitosa
         const authCompleted = localStorage.getItem('authCompleted') === 'true';
@@ -163,8 +176,10 @@ export const AuthProvider = ({ children }) => {
 
     initAuth();
 
-    // Escuchar cambios en el estado de autenticación
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    // Escuchar cambios en el estado de autenticación (solo si hay conectividad)
+    let subscription;
+    if (typeof window === 'undefined' || window.__SUPABASE_ONLINE__ !== false) {
+      const { data: { subscription: sub } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
   console.log('🔄 Cambio en autenticación:', event, session?.user?.email);
         
@@ -247,8 +262,10 @@ export const AuthProvider = ({ children }) => {
         }
       }
     );
+      subscription = sub;
+    }
 
-    return () => subscription.unsubscribe();
+    return () => subscription?.unsubscribe?.();
   }, []);
 
   const login = async (email, password) => {

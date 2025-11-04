@@ -29,6 +29,24 @@ if (!supabaseConfigured && typeof console !== 'undefined') {
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 export default supabase;
 
+// Pequeña utilidad para detectar si el endpoint de Supabase está alcanzable desde el cliente.
+// Evita tormentas de errores cuando hay problemas de DNS/red del usuario.
+export async function detectSupabaseOnline(timeoutMs = 4000) {
+  try {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), timeoutMs);
+    // health endpoint público (puede devolver opaque en no-cors, nos basta que no explote)
+    const url = `${SUPABASE_URL.replace(/\/$/, '')}/auth/v1/health`;
+    await fetch(url, { method: 'GET', mode: 'no-cors', signal: controller.signal });
+    clearTimeout(t);
+    if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = true;
+    return true;
+  } catch (_) {
+    if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = false;
+    return false;
+  }
+}
+
 // 🔐 Configuración de autenticación
 export const authConfig = {
   providers: ['google', 'facebook'],
