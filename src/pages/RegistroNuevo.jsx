@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment.js';
 
@@ -15,11 +15,37 @@ export default function RegistroNuevo() {
   const [isRegister, setIsRegister] = useState(true);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const config = getConfig();
 
   const goHome = () => {
     try { navigate('/homepage-instagram.html'); } catch (_) { window.location.href = '/homepage-instagram.html'; }
   };
+
+  // Lee categoría inicial desde estado de navegación, querystring o draft
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const qs = params.get('categoria') || params.get('cat');
+      const fromState = location.state?.categoria;
+      const draftRaw = localStorage.getItem('draft_carfutpro');
+      const draft = draftRaw ? JSON.parse(draftRaw) : null;
+      const initial = fromState || qs || draft?.categoria;
+      if (initial) setCategoria(initial);
+    } catch (e) {
+      console.warn('No se pudo inicializar categoría desde navegación:', e);
+    }
+  // solo en primer render
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Autoguardado local inmediato cuando cambia la categoría (antes de registro)
+  useEffect(() => {
+    try {
+      const draft = { email, categoria, creadaEn: new Date().toISOString(), estado: 'borrador' };
+      localStorage.setItem('draft_carfutpro', JSON.stringify(draft));
+    } catch (_) {}
+  }, [categoria, email]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => { if (data?.session?.user) goHome(); });
@@ -72,6 +98,27 @@ export default function RegistroNuevo() {
                 .select()
                 .single();
               if (error) throw error;
+              // Guardar datos para la Card y navegar a la pantalla de Card
+              try {
+                const cardData = {
+                  id: data.id,
+                  categoria: data.categoria,
+                  nombre: data.nombre || 'Nuevo jugador',
+                  ciudad: data.ciudad || '',
+                  pais: data.pais || '',
+                  posicion_favorita: data.posicion_favorita || 'Flexible',
+                  nivel_habilidad: data.nivel_habilidad || 'Principiante',
+                  puntaje: data.puntaje || 50,
+                  equipo: data.equipo || '—',
+                  fecha_registro: new Date().toISOString(),
+                  esPrimeraCard: true,
+                  avatar_url: data.avatar_url || ''
+                };
+                localStorage.setItem('futpro_user_card_data', JSON.stringify(cardData));
+                localStorage.setItem('show_first_card', 'true');
+                // Redirige a la vista de Card
+                navigate('/perfil-card', { state: { cardData } });
+              } catch (e) { console.warn('No se pudo preparar la card:', e); }
               try {
                 const { database } = await import('../config/firebase.js');
                 const { ref, set } = await import('firebase/database');
@@ -81,8 +128,7 @@ export default function RegistroNuevo() {
             } catch (eCreate) { console.warn('Creación de CarFutPro en Supabase falló (continuando):', eCreate.message); }
           }
         } catch (aux) { console.warn('No se pudo completar creación inicial de CarFutPro:', aux); }
-        setSuccess('Ingreso exitoso. Redirigiendo...');
-        setTimeout(goHome, 600);
+        setSuccess('Ingreso exitoso. Preparando tu card...');
       }
     } catch (e) { setError(e.message || 'Ocurrió un error'); }
     finally { setLoading(false); }

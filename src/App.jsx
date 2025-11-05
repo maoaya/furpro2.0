@@ -19,6 +19,7 @@ import CompartirContenidoPage from './pages/CompartirContenidoPage';
 import ChatSQLPage from './pages/ChatSQLPage';
 import MarketplacePage from './pages/MarketplacePage';
 import LogrosPage from './pages/LogrosPage';
+import SeleccionCategoria from './pages/SeleccionCategoria';
 import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
 import ComparativasPage from './pages/ComparativasPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -31,6 +32,7 @@ import RegistroNuevo from './pages/RegistroNuevo';
 import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
 import HomeRedirect from './pages/HomeRedirect';
+import PerfilCard from './pages/PerfilCard';
 
 function Layout({ children }) {
   return (
@@ -54,6 +56,8 @@ export default function App() {
           <Route path="/login" element={<AuthPageUnificada />} />
           <Route path="/registro" element={<AuthPageUnificada />} />
           <Route path="/registro-nuevo" element={<RegistroNuevo />} />
+          <Route path="/seleccionar-categoria" element={<SeleccionCategoria />} />
+          <Route path="/perfil-card" element={<PerfilCard />} />
           <Route path="/registro-google" element={<AuthPageUnificada />} />
           <Route path="/registro-facebook" element={<AuthPageUnificada />} />
           <Route path="/registro-email" element={<AuthPageUnificada />} />
