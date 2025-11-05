@@ -11,6 +11,7 @@ export default function FormularioRegistroCompleto() {
   const [pasoActual, setPasoActual] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [geoApplied, setGeoApplied] = useState(false);
   
   // Estado del formulario completo
   const [formData, setFormData] = useState({
@@ -59,6 +60,20 @@ export default function FormularioRegistroCompleto() {
     Otro: ['Otra ciudad']
   };
 
+  // Alias para normalizar países que devuelven APIs de geolocalización
+  const COUNTRY_ALIASES = {
+    'United States': 'USA',
+    'United States of America': 'USA',
+    'US': 'USA',
+    'Mexico': 'México',
+    'Spain': 'España',
+    'Peru': 'Perú',
+    'Colombia': 'Colombia',
+    'Argentina': 'Argentina',
+    'Chile': 'Chile',
+    'Ecuador': 'Ecuador'
+  };
+
   // Si cambia el país, asegurar que la ciudad sea válida
   useEffect(() => {
     const ciudades = PAISES_CIUDADES[formData.pais] || [];
@@ -95,6 +110,52 @@ export default function FormularioRegistroCompleto() {
     }, 30000);
     return () => clearInterval(interval);
   }, [formData]);
+
+  // Localizar automáticamente país/ciudad por IP (best-effort con fallback)
+  useEffect(() => {
+    if (geoApplied) return;
+    (async () => {
+      try {
+        // Intento 1: ipapi.co (sin API key, público, con límites)
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 3000);
+        const res = await fetch('https://ipapi.co/json/', { signal: ctrl.signal });
+        clearTimeout(t);
+        if (!res.ok) throw new Error('ipapi.co no disponible');
+        const info = await res.json();
+        const countryName = info?.country_name;
+        const cityName = info?.city;
+        const mapped = COUNTRY_ALIASES[countryName] || countryName;
+        // Si el país está en nuestra lista, aplicamos; si no, usamos "Otro"
+        const pais = PAISES_CIUDADES[mapped] ? mapped : 'Otro';
+        const ciudadesDisponibles = PAISES_CIUDADES[pais] || [];
+        const ciudad = ciudadesDisponibles.includes(cityName) ? cityName : (ciudadesDisponibles[0] || 'Otra ciudad');
+        setFormData(prev => ({ ...prev, pais, ciudad }));
+      } catch (e) {
+        try {
+          // Intento 2: ipwho.is como fallback
+          const ctrl2 = new AbortController();
+          const t2 = setTimeout(() => ctrl2.abort(), 3000);
+          const res2 = await fetch('https://ipwho.is/', { signal: ctrl2.signal });
+          clearTimeout(t2);
+          if (res2.ok) {
+            const info2 = await res2.json();
+            const countryName = info2?.country;
+            const cityName = info2?.city;
+            const mapped = COUNTRY_ALIASES[countryName] || countryName;
+            const pais = PAISES_CIUDADES[mapped] ? mapped : 'Otro';
+            const ciudadesDisponibles = PAISES_CIUDADES[pais] || [];
+            const ciudad = ciudadesDisponibles.includes(cityName) ? cityName : (ciudadesDisponibles[0] || 'Otra ciudad');
+            setFormData(prev => ({ ...prev, pais, ciudad }));
+          }
+        } catch (_) {
+          // Silencioso: mantener defaults si falla
+        }
+      } finally {
+        setGeoApplied(true);
+      }
+    })();
+  }, [geoApplied]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
