@@ -12,8 +12,8 @@ export default function SeleccionCategoria() {
   const navigate = useNavigate();
 
   const handleSelect = (value) => {
-    // Redirige al registro con la categoría seleccionada en el estado y como querystring para deep-linking
-    navigate(`/registro-nuevo?categoria=${encodeURIComponent(value)}`, {
+    // Redirige al formulario completo con la categoría seleccionada
+    navigate(`/formulario-registro?categoria=${encodeURIComponent(value)}`, {
       state: { categoria: value }
     });
   };

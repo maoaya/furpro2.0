@@ -58,6 +58,8 @@ export default function RegistroNuevo() {
   const handleLoginSocial = async (provider) => {
     try {
       setLoading(true); setError(null); setSuccess(null);
+      // tras OAuth, queremos continuar en el perfil
+      try { localStorage.setItem('post_auth_target', '/registro-perfil'); } catch {}
       await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: config.oauthCallbackUrl } });
     } catch (e) { setLoading(false); setError(`Error con ${provider}: ${e.message}`); }
   };
@@ -79,7 +81,9 @@ export default function RegistroNuevo() {
             await set(ref(database, `autosave/carfutpro/${uid}`), draft);
           } catch (_) {}
         } catch (aux) { console.warn('Autosave inicial falló (no crítico):', aux); }
-        setSuccess('Registro iniciado. Revisa tu correo para confirmar y se creó un borrador de tu CarFutPro.');
+        setSuccess('Registro iniciado. Revisa tu correo para confirmar. Ahora completa tu perfil...');
+        // Redirigir a completar perfil
+        try { navigate('/registro-perfil', { state: { draft: { email, categoria } } }); } catch {}
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) throw signInError;

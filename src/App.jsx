@@ -20,6 +20,7 @@ import ChatSQLPage from './pages/ChatSQLPage';
 import MarketplacePage from './pages/MarketplacePage';
 import LogrosPage from './pages/LogrosPage';
 import SeleccionCategoria from './pages/SeleccionCategoria';
+import FormularioRegistroCompleto from './pages/FormularioRegistroCompleto';
 import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
 import ComparativasPage from './pages/ComparativasPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -27,6 +28,7 @@ import AuthPageUnificada from './pages/AuthPageUnificada';
 import AuthCallback from './pages/AuthCallback';
 import LoginRegisterForm from './pages/LoginRegisterForm';
 import RegistroNuevo from './pages/RegistroNuevo';
+import RegistroPerfil from './pages/RegistroPerfil';
 
 // import SupportPage from './pages/SupportPage';
 import BottomNav from './components/BottomNav';
@@ -57,7 +59,9 @@ export default function App() {
           <Route path="/registro" element={<AuthPageUnificada />} />
           <Route path="/registro-nuevo" element={<RegistroNuevo />} />
           <Route path="/seleccionar-categoria" element={<SeleccionCategoria />} />
+          <Route path="/formulario-registro" element={<FormularioRegistroCompleto />} />
           <Route path="/perfil-card" element={<PerfilCard />} />
+            <Route path="/registro-perfil" element={<RegistroPerfil />} />
           <Route path="/registro-google" element={<AuthPageUnificada />} />
           <Route path="/registro-facebook" element={<AuthPageUnificada />} />
           <Route path="/registro-email" element={<AuthPageUnificada />} />
