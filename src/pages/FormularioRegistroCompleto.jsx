@@ -138,6 +138,36 @@ export default function FormularioRegistroCompleto() {
     setPasoActual(prev => Math.max(prev - 1, 1));
   };
 
+  // Función para calcular puntaje inicial basado en datos del usuario
+  const calcularPuntajeInicial = (datos) => {
+    let puntaje = 50; // Base para todos
+    
+    // Bonus por nivel de habilidad
+    const bonusNivel = {
+      'Principiante': 0,
+      'Intermedio': 10,
+      'Avanzado': 20,
+      'Élite': 30
+    };
+    puntaje += bonusNivel[datos.nivelHabilidad] || 0;
+    
+    // Bonus por edad (menores de 18 años)
+    if (datos.edad < 18) {
+      puntaje += 5;
+    }
+    
+    // Bonus por frecuencia de juego
+    const bonusFrecuencia = {
+      'ocasional': 0,
+      'regular': 5,
+      'frecuente': 10,
+      'intensivo': 15
+    };
+    puntaje += bonusFrecuencia[datos.frecuenciaJuego] || 0;
+    
+    return puntaje;
+  };
+
   const completarRegistro = async () => {
     if (!validarPaso(pasoActual)) return;
     
@@ -175,6 +205,13 @@ export default function FormularioRegistroCompleto() {
         }
       }
 
+      // 2.5. Calcular puntaje inicial basado en datos del usuario
+      const puntajeInicial = calcularPuntajeInicial({
+        edad: parseInt(formData.edad),
+        nivelHabilidad: formData.nivelHabilidad,
+        frecuenciaJuego: formData.frecuenciaJuego
+      });
+
       // 3. Crear registro en tabla carfutpro
       if (authData.user) {
         const cardData = {
@@ -185,7 +222,7 @@ export default function FormularioRegistroCompleto() {
           pais: formData.pais,
           posicion_favorita: formData.posicion,
           nivel_habilidad: formData.nivelHabilidad,
-          puntaje: 50, // Puntaje inicial
+          puntaje: puntajeInicial, // Puntaje calculado basado en datos del usuario
           equipo: formData.equipoFavorito,
           avatar_url: fotoUrl,
           creada_en: new Date().toISOString(),

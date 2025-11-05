@@ -40,7 +40,8 @@ const PerfilCard = () => {
 
   const continuarAlHome = () => {
     localStorage.removeItem('show_first_card');
-    navigate('/home', { replace: true });
+    // Navegar a homepage-instagram.html (página estática)
+    window.location.href = '/homepage-instagram.html';
   };
 
   const getColorByCategory = (categoria) => {
