@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import supabase from '../supabaseClient';
+import { getConfig } from '../config/environment';
 
 const gold = '#FFD700';
 
@@ -24,8 +25,8 @@ export default function FormularioRegistroCompleto() {
     apellido: '',
     edad: '',
     telefono: '',
-    pais: '',
-    ciudad: '',
+  pais: 'Colombia',
+  ciudad: 'Bogotá',
     
     // Paso 3: Info Futbolística
     posicion: 'Flexible',
@@ -37,13 +38,34 @@ export default function FormularioRegistroCompleto() {
     
     // Paso 4: Disponibilidad
     frecuenciaJuego: 'ocasional',
-    horarioPreferido: 'tardes',
+  horarioPreferido: 'tardes',
     objetivos: '',
     
     // Paso 5: Foto
     imagenPerfil: null,
     previewUrl: null
   });
+
+  // Mapa dinámico de países y ciudades comunes (extensible)
+  const PAISES_CIUDADES = {
+    Colombia: ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Bucaramanga'],
+    México: ['Ciudad de México', 'Guadalajara', 'Monterrey', 'Puebla', 'Tijuana'],
+    Argentina: ['Buenos Aires', 'Córdoba', 'Rosario', 'Mendoza', 'La Plata'],
+    Chile: ['Santiago', 'Valparaíso', 'Concepción', 'La Serena', 'Antofagasta'],
+    Perú: ['Lima', 'Arequipa', 'Trujillo', 'Cusco', 'Piura'],
+    Ecuador: ['Quito', 'Guayaquil', 'Cuenca', 'Manta', 'Ambato'],
+    España: ['Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'Bilbao'],
+    USA: ['Miami', 'New York', 'Los Angeles', 'Houston', 'Chicago'],
+    Otro: ['Otra ciudad']
+  };
+
+  // Si cambia el país, asegurar que la ciudad sea válida
+  useEffect(() => {
+    const ciudades = PAISES_CIUDADES[formData.pais] || [];
+    if (ciudades.length && !ciudades.includes(formData.ciudad)) {
+      setFormData(prev => ({ ...prev, ciudad: ciudades[0] }));
+    }
+  }, [formData.pais]);
 
   // Leer categoría desde navegación
   useEffect(() => {
@@ -136,6 +158,22 @@ export default function FormularioRegistroCompleto() {
 
   const pasoAnterior = () => {
     setPasoActual(prev => Math.max(prev - 1, 1));
+  };
+
+  const handleGoogleSignup = async () => {
+    try {
+      setLoading(true);
+      const { oauthCallbackUrl } = getConfig();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: oauthCallbackUrl }
+      });
+      if (error) throw error;
+    } catch (e) {
+      setError(e.message || 'No se pudo iniciar sesión con Google');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Función para calcular puntaje inicial basado en datos del usuario
@@ -315,8 +353,16 @@ export default function FormularioRegistroCompleto() {
             <input type="text" name="apellido" required placeholder="Apellido" value={formData.apellido} onChange={handleChange} style={inputStyle} />
             <input type="number" name="edad" required placeholder="Edad" value={formData.edad} onChange={handleChange} style={inputStyle} min="5" max="99" />
             <input type="tel" name="telefono" placeholder="Teléfono (opcional)" value={formData.telefono} onChange={handleChange} style={inputStyle} />
-            <input type="text" name="pais" placeholder="País" value={formData.pais} onChange={handleChange} style={inputStyle} />
-            <input type="text" name="ciudad" placeholder="Ciudad" value={formData.ciudad} onChange={handleChange} style={inputStyle} />
+            <select name="pais" value={formData.pais} onChange={handleChange} style={inputStyle}>
+              {Object.keys(PAISES_CIUDADES).map(p => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+            <select name="ciudad" value={formData.ciudad} onChange={handleChange} style={inputStyle}>
+              {(PAISES_CIUDADES[formData.pais] || []).map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </>
         );
       
@@ -329,12 +375,19 @@ export default function FormularioRegistroCompleto() {
               <option value="Defensa Central">🛡️ Defensa Central</option>
               <option value="Lateral Derecho">➡️ Lateral Derecho</option>
               <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
+              <option value="Carrilero Derecho">➡️ Carrilero Derecho</option>
+              <option value="Carrilero Izquierdo">⬅️ Carrilero Izquierdo</option>
               <option value="Mediocampista Defensivo">🔒 Mediocampista Defensivo</option>
               <option value="Mediocampista Central">⚖️ Mediocampista Central</option>
               <option value="Mediocampista Ofensivo">🎯 Mediocampista Ofensivo</option>
+              <option value="Pivote">🧭 Pivote</option>
+              <option value="Interior Derecho">➡️ Interior Derecho</option>
+              <option value="Interior Izquierdo">⬅️ Interior Izquierdo</option>
+              <option value="Enganche / Media Punta">🎩 Enganche / Media Punta</option>
               <option value="Extremo Derecho">🏃‍♂️ Extremo Derecho</option>
               <option value="Extremo Izquierdo">🏃‍♂️ Extremo Izquierdo</option>
               <option value="Delantero Centro">⚽ Delantero Centro</option>
+              <option value="Segundo Delantero">🎯 Segundo Delantero</option>
               <option value="Flexible">🔄 Flexible</option>
             </select>
             <select name="nivelHabilidad" value={formData.nivelHabilidad} onChange={handleChange} style={inputStyle}>
@@ -457,6 +510,16 @@ export default function FormularioRegistroCompleto() {
               </button>
             )}
           </div>
+
+          {pasoActual === 5 && (
+            <>
+              <div style={{ textAlign: 'center', color: '#aaa', margin: '10px 0' }}>— o —</div>
+              <button type="button" onClick={handleGoogleSignup} disabled={loading} style={{ width: '100%', padding: 12, background: '#fff', color: '#000', border: '1px solid #ddd', borderRadius: 10, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <span style={{ fontSize: 18 }}>🔵</span>
+                Continuar con Google
+              </button>
+            </>
+          )}
         </form>
 
         <div style={{ marginTop: 16, textAlign: 'center', fontSize: 12, color: '#999' }}>
