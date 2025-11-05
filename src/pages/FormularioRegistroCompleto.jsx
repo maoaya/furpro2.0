@@ -12,6 +12,259 @@ export default function FormularioRegistroCompleto() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [geoApplied, setGeoApplied] = useState(false);
+  const [lang, setLang] = useState('es');
+
+  // Diccionario mínimo de traducciones (ES por defecto)
+  const I18N = {
+    es: {
+      step1Title: 'Paso 1: Credenciales',
+      step2Title: 'Paso 2: Datos Personales',
+      step3Title: 'Paso 3: Info Futbolística',
+      step4Title: 'Paso 4: Disponibilidad',
+      step5Title: 'Paso 5: Foto de Perfil',
+      email: 'Correo electrónico',
+      password: 'Contraseña',
+      confirmPassword: 'Confirmar contraseña',
+      categoria: 'Categoría',
+      nombre: 'Nombre',
+      apellido: 'Apellido',
+      edad: 'Edad',
+      telefono: 'Teléfono (opcional)',
+      pais: 'País',
+      ciudad: 'Ciudad',
+      equipoFavorito: 'Equipo favorito',
+      peso: 'Peso (kg)',
+      altura: 'Altura (cm)',
+      pieHabil_Derecho: 'Pie Derecho',
+      pieHabil_Izquierdo: 'Pie Izquierdo',
+      pieHabil_Ambidiestro: 'Ambidiestro',
+      frecuencia_ocasional: 'Ocasional (1-2 veces/mes)',
+      frecuencia_regular: 'Regular (1 vez/semana)',
+      frecuencia_frecuente: 'Frecuente (2-3 veces/semana)',
+      frecuencia_intensivo: 'Intensivo (4+ veces/semana)',
+      horario_madrugadas: 'Madrugadas',
+      horario_mañanas: 'Mañanas',
+      horario_mediodia: 'Mediodía',
+      horario_tardes: 'Tardes',
+      horario_tardes_noche: 'Tardes – Noche',
+      horario_noches: 'Noches',
+      horario_fines_semana: 'Fines de semana',
+      objetivos: '¿Qué buscas en FutPro? (opcional)',
+      infantil_femenina: 'Infantil Femenina',
+      infantil_masculina: 'Infantil Masculina',
+      femenina: 'Femenina',
+      masculina: 'Masculina',
+      pos_Portero: '🥅 Portero',
+      pos_DefensaCentral: '🛡️ Defensa Central',
+      pos_LateralDerecho: '➡️ Lateral Derecho',
+      pos_LateralIzquierdo: '⬅️ Lateral Izquierdo',
+      pos_CarrileroDerecho: '➡️ Carrilero Derecho',
+      pos_CarrileroIzquierdo: '⬅️ Carrilero Izquierdo',
+      pos_MediocampistaDefensivo: '🔒 Mediocampista Defensivo',
+      pos_MediocampistaCentral: '⚖️ Mediocampista Central',
+      pos_MediocampistaOfensivo: '🎯 Mediocampista Ofensivo',
+      pos_Pivote: '🧭 Pivote',
+      pos_InteriorDerecho: '➡️ Interior Derecho',
+      pos_InteriorIzquierdo: '⬅️ Interior Izquierdo',
+      pos_Enganche: '🎩 Enganche / Media Punta',
+      pos_ExtremoDerecho: '🏃‍♂️ Extremo Derecho',
+      pos_ExtremoIzquierdo: '🏃‍♂️ Extremo Izquierdo',
+      pos_DelanteroCentro: '⚽ Delantero Centro',
+      pos_SegundoDelantero: '🎯 Segundo Delantero',
+      pos_Flexible: '🔄 Flexible',
+      anterior: '← Anterior',
+      siguiente: 'Siguiente →',
+      completar: '✓ Completar',
+      creando: 'Creando cuenta...',
+      continuarGoogle: 'Continuar con Google',
+      errEmailPassReq: 'Email y contraseña son requeridos',
+      errPasswordMismatch: 'Las contraseñas no coinciden',
+      errPasswordShort: 'La contraseña debe tener al menos 6 caracteres',
+      errNombreApellidoEdadReq: 'Nombre, apellido y edad son requeridos',
+      errSeleccionaPosicion: 'Selecciona una posición'
+    },
+    en: {
+      step1Title: 'Step 1: Credentials',
+      step2Title: 'Step 2: Personal Info',
+      step3Title: 'Step 3: Football Info',
+      step4Title: 'Step 4: Availability',
+      step5Title: 'Step 5: Profile Photo',
+      email: 'Email address',
+      password: 'Password',
+      confirmPassword: 'Confirm password',
+      categoria: 'Category',
+      nombre: 'First name',
+      apellido: 'Last name',
+      edad: 'Age',
+      telefono: 'Phone (optional)',
+      pais: 'Country',
+      ciudad: 'City',
+      equipoFavorito: 'Favorite team',
+      peso: 'Weight (kg)',
+      altura: 'Height (cm)',
+      pieHabil_Derecho: 'Right foot',
+      pieHabil_Izquierdo: 'Left foot',
+      pieHabil_Ambidiestro: 'Both feet',
+      frecuencia_ocasional: 'Occasional (1-2/month)',
+      frecuencia_regular: 'Regular (1/week)',
+      frecuencia_frecuente: 'Frequent (2-3/week)',
+      frecuencia_intensivo: 'Intensive (4+/week)',
+      horario_madrugadas: 'Early morning',
+      horario_mañanas: 'Mornings',
+      horario_mediodia: 'Midday',
+      horario_tardes: 'Afternoons',
+      horario_tardes_noche: 'Evening',
+      horario_noches: 'Nights',
+      horario_fines_semana: 'Weekends',
+      objetivos: 'What are your goals in FutPro? (optional)',
+      infantil_femenina: 'Girls U',
+      infantil_masculina: 'Boys U',
+      femenina: 'Women',
+      masculina: 'Men',
+      pos_Portero: '🥅 Goalkeeper',
+      pos_DefensaCentral: '🛡️ Center Back',
+      pos_LateralDerecho: '➡️ Right Back',
+      pos_LateralIzquierdo: '⬅️ Left Back',
+      pos_CarrileroDerecho: '➡️ Right Wing-back',
+      pos_CarrileroIzquierdo: '⬅️ Left Wing-back',
+      pos_MediocampistaDefensivo: '🔒 Defensive Midfielder',
+      pos_MediocampistaCentral: '⚖️ Central Midfielder',
+      pos_MediocampistaOfensivo: '🎯 Attacking Midfielder',
+      pos_Pivote: '🧭 Pivot',
+      pos_InteriorDerecho: '➡️ Right Interior',
+      pos_InteriorIzquierdo: '⬅️ Left Interior',
+      pos_Enganche: '🎩 Playmaker / AM',
+      pos_ExtremoDerecho: '🏃‍♂️ Right Winger',
+      pos_ExtremoIzquierdo: '🏃‍♂️ Left Winger',
+      pos_DelanteroCentro: '⚽ Striker',
+      pos_SegundoDelantero: '🎯 Second Striker',
+      pos_Flexible: '🔄 Versatile',
+      anterior: '← Back',
+      siguiente: 'Next →',
+      completar: '✓ Finish',
+      creando: 'Creating account...',
+      continuarGoogle: 'Continue with Google',
+      errEmailPassReq: 'Email and password are required',
+      errPasswordMismatch: 'Passwords do not match',
+      errPasswordShort: 'Password must be at least 6 characters',
+      errNombreApellidoEdadReq: 'First name, last name and age are required',
+      errSeleccionaPosicion: 'Select a position'
+    },
+    pt: {
+      step1Title: 'Passo 1: Credenciais',
+      step2Title: 'Passo 2: Dados Pessoais',
+      step3Title: 'Passo 3: Info de Futebol',
+      step4Title: 'Passo 4: Disponibilidade',
+      step5Title: 'Passo 5: Foto de Perfil',
+      email: 'E-mail',
+      password: 'Senha',
+      confirmPassword: 'Confirmar senha',
+      categoria: 'Categoria',
+      nombre: 'Nome',
+      apellido: 'Sobrenome',
+      edad: 'Idade',
+      telefono: 'Telefone (opcional)',
+      pais: 'País',
+      ciudad: 'Cidade',
+      equipoFavorito: 'Time favorito',
+      peso: 'Peso (kg)',
+      altura: 'Altura (cm)',
+      pieHabil_Derecho: 'Destro',
+      pieHabil_Izquierdo: 'Canhoto',
+      pieHabil_Ambidiestro: 'Ambidestro',
+      frecuencia_ocasional: 'Ocasional (1-2/mês)',
+      frecuencia_regular: 'Regular (1/semana)',
+      frecuencia_frecuente: 'Frequente (2-3/semana)',
+      frecuencia_intensivo: 'Intensivo (4+/semana)',
+      horario_madrugadas: 'Madrugada',
+      horario_mañanas: 'Manhãs',
+      horario_mediodia: 'Meio-dia',
+      horario_tardes: 'Tardes',
+      horario_tardes_noche: 'Fim de tarde',
+      horario_noches: 'Noites',
+      horario_fines_semana: 'Fins de semana',
+      objetivos: 'Quais seus objetivos no FutPro? (opcional)',
+      infantil_femenina: 'Infantil Feminino',
+      infantil_masculina: 'Infantil Masculino',
+      femenina: 'Feminino',
+      masculina: 'Masculino',
+      pos_Portero: '🥅 Goleiro',
+      pos_DefensaCentral: '🛡️ Zagueiro',
+      pos_LateralDerecho: '➡️ Lateral Direito',
+      pos_LateralIzquierdo: '⬅️ Lateral Esquerdo',
+      pos_CarrileroDerecho: '➡️ Ala Direito',
+      pos_CarrileroIzquierdo: '⬅️ Ala Esquerdo',
+      pos_MediocampistaDefensivo: '🔒 Volante',
+      pos_MediocampistaCentral: '⚖️ Meio-campista Central',
+      pos_MediocampistaOfensivo: '🎯 Meia Ofensivo',
+      pos_Pivote: '🧭 Pivô',
+      pos_InteriorDerecho: '➡️ Interior Direito',
+      pos_InteriorIzquierdo: '⬅️ Interior Esquerdo',
+      pos_Enganche: '🎩 Armador / Meia',
+      pos_ExtremoDerecho: '🏃‍♂️ Ponta Direita',
+      pos_ExtremoIzquierdo: '🏃‍♂️ Ponta Esquerda',
+      pos_DelanteroCentro: '⚽ Centroavante',
+      pos_SegundoDelantero: '🎯 Segundo Atacante',
+      pos_Flexible: '🔄 Versátil',
+      anterior: '← Voltar',
+      siguiente: 'Avançar →',
+      completar: '✓ Concluir',
+      creando: 'Criando conta...',
+      continuarGoogle: 'Continuar com Google',
+      errEmailPassReq: 'E-mail e senha são obrigatórios',
+      errPasswordMismatch: 'As senhas não coincidem',
+      errPasswordShort: 'A senha deve ter pelo menos 6 caracteres',
+      errNombreApellidoEdadReq: 'Nome, sobrenome e idade são obrigatórios',
+      errSeleccionaPosicion: 'Selecione uma posição'
+    }
+  };
+
+  const UI_MISC = {
+    es: {
+      regTitle: 'Registro Completo',
+      photoOptionalNote: 'Foto opcional. Puedes agregarla después desde tu perfil.',
+      stepWord: 'Paso',
+      ofWord: 'de',
+      autosaveActive: 'Autoguardado activo',
+      niveles: { principiante: 'Principiante', intermedio: 'Intermedio', avanzado: 'Avanzado', elite: 'Élite' },
+      errGoogleSignIn: 'No se pudo iniciar sesión con Google',
+      errCompleteRegistration: 'Error al completar registro'
+    },
+    en: {
+      regTitle: 'Complete Registration',
+      photoOptionalNote: 'Optional photo. You can add it later from your profile.',
+      stepWord: 'Step',
+      ofWord: 'of',
+      autosaveActive: 'Auto-save enabled',
+      niveles: { principiante: 'Beginner', intermedio: 'Intermediate', avanzado: 'Advanced', elite: 'Elite' },
+      errGoogleSignIn: 'Could not sign in with Google',
+      errCompleteRegistration: 'Error completing registration'
+    },
+    pt: {
+      regTitle: 'Cadastro Completo',
+      photoOptionalNote: 'Foto opcional. Você pode adicioná-la depois no seu perfil.',
+      stepWord: 'Passo',
+      ofWord: 'de',
+      autosaveActive: 'Salvamento automático ativo',
+      niveles: { principiante: 'Iniciante', intermedio: 'Intermediário', avanzado: 'Avançado', elite: 'Elite' },
+      errGoogleSignIn: 'Não foi possível entrar com o Google',
+      errCompleteRegistration: 'Erro ao concluir o cadastro'
+    }
+  };
+
+  const t = (key) => (I18N[lang] && I18N[lang][key]) || I18N.es[key] || key;
+
+  // Auto-detectar idioma por navegador (fallback EN/ES)
+  useEffect(() => {
+    try {
+      const nav = (navigator.language || 'es').toLowerCase();
+      if (nav.startsWith('es')) setLang('es');
+      else if (nav.startsWith('pt')) setLang('pt');
+      else setLang('en');
+    } catch (_) {
+      setLang('es');
+    }
+  }, []);
   
   // Estado del formulario completo
   const [formData, setFormData] = useState({
@@ -221,27 +474,27 @@ export default function FormularioRegistroCompleto() {
     switch (paso) {
       case 1:
         if (!formData.email || !formData.password) {
-          setError('Email y contraseña son requeridos');
+          setError(t('errEmailPassReq'));
           return false;
         }
         if (formData.password !== formData.confirmPassword) {
-          setError('Las contraseñas no coinciden');
+          setError(t('errPasswordMismatch'));
           return false;
         }
         if (formData.password.length < 6) {
-          setError('La contraseña debe tener al menos 6 caracteres');
+          setError(t('errPasswordShort'));
           return false;
         }
         return true;
       case 2:
         if (!formData.nombre || !formData.apellido || !formData.edad) {
-          setError('Nombre, apellido y edad son requeridos');
+          setError(t('errNombreApellidoEdadReq'));
           return false;
         }
         return true;
       case 3:
         if (!formData.posicion) {
-          setError('Selecciona una posición');
+          setError(t('errSeleccionaPosicion'));
           return false;
         }
         return true;
@@ -274,7 +527,7 @@ export default function FormularioRegistroCompleto() {
       });
       if (error) throw error;
     } catch (e) {
-      setError(e.message || 'No se pudo iniciar sesión con Google');
+      setError(e.message || UI_MISC[lang].errGoogleSignIn);
     } finally {
       setLoading(false);
     }
@@ -424,7 +677,7 @@ export default function FormularioRegistroCompleto() {
         navigate('/perfil-card', { state: { cardData: cardDisplay } });
       }
     } catch (e) {
-      setError(e.message || 'Error al completar registro');
+      setError(e.message || UI_MISC[lang].errCompleteRegistration);
       console.error('Error en registro:', e);
     } finally {
       setLoading(false);
@@ -436,15 +689,15 @@ export default function FormularioRegistroCompleto() {
       case 1:
         return (
           <>
-            <h2 style={{ color: gold, marginBottom: 16 }}>Paso 1: Credenciales</h2>
-            <input type="email" name="email" required placeholder="Correo electrónico" value={formData.email} onChange={handleChange} style={inputStyle} />
-            <input type="password" name="password" required placeholder="Contraseña" value={formData.password} onChange={handleChange} style={inputStyle} />
-            <input type="password" name="confirmPassword" required placeholder="Confirmar contraseña" value={formData.confirmPassword} onChange={handleChange} style={inputStyle} />
+            <h2 style={{ color: gold, marginBottom: 16 }}>{t('step1Title')}</h2>
+            <input type="email" name="email" required placeholder={t('email')} value={formData.email} onChange={handleChange} style={inputStyle} />
+            <input type="password" name="password" required placeholder={t('password')} value={formData.password} onChange={handleChange} style={inputStyle} />
+            <input type="password" name="confirmPassword" required placeholder={t('confirmPassword')} value={formData.confirmPassword} onChange={handleChange} style={inputStyle} />
             <select name="categoria" value={formData.categoria} onChange={handleChange} required style={inputStyle}>
-              <option value="infantil_femenina">Infantil Femenina</option>
-              <option value="infantil_masculina">Infantil Masculina</option>
-              <option value="femenina">Femenina</option>
-              <option value="masculina">Masculina</option>
+              <option value="infantil_femenina">{t('infantil_femenina')}</option>
+              <option value="infantil_masculina">{t('infantil_masculina')}</option>
+              <option value="femenina">{t('femenina')}</option>
+              <option value="masculina">{t('masculina')}</option>
             </select>
           </>
         );
@@ -452,11 +705,11 @@ export default function FormularioRegistroCompleto() {
       case 2:
         return (
           <>
-            <h2 style={{ color: gold, marginBottom: 16 }}>Paso 2: Datos Personales</h2>
-            <input type="text" name="nombre" required placeholder="Nombre" value={formData.nombre} onChange={handleChange} style={inputStyle} />
-            <input type="text" name="apellido" required placeholder="Apellido" value={formData.apellido} onChange={handleChange} style={inputStyle} />
-            <input type="number" name="edad" required placeholder="Edad" value={formData.edad} onChange={handleChange} style={inputStyle} min="5" max="99" />
-            <input type="tel" name="telefono" placeholder="Teléfono (opcional)" value={formData.telefono} onChange={handleChange} style={inputStyle} />
+            <h2 style={{ color: gold, marginBottom: 16 }}>{t('step2Title')}</h2>
+            <input type="text" name="nombre" required placeholder={t('nombre')} value={formData.nombre} onChange={handleChange} style={inputStyle} />
+            <input type="text" name="apellido" required placeholder={t('apellido')} value={formData.apellido} onChange={handleChange} style={inputStyle} />
+            <input type="number" name="edad" required placeholder={t('edad')} value={formData.edad} onChange={handleChange} style={inputStyle} min="5" max="99" />
+            <input type="tel" name="telefono" placeholder={t('telefono')} value={formData.telefono} onChange={handleChange} style={inputStyle} />
             <select name="pais" value={formData.pais} onChange={handleChange} style={inputStyle}>
               {Object.keys(PAISES_CIUDADES).map(p => (
                 <option key={p} value={p}>{p}</option>
@@ -473,42 +726,42 @@ export default function FormularioRegistroCompleto() {
       case 3:
         return (
           <>
-            <h2 style={{ color: gold, marginBottom: 16 }}>Paso 3: Info Futbolística</h2>
+            <h2 style={{ color: gold, marginBottom: 16 }}>{t('step3Title')}</h2>
             <select name="posicion" value={formData.posicion} onChange={handleChange} required style={inputStyle}>
-              <option value="Portero">🥅 Portero</option>
-              <option value="Defensa Central">🛡️ Defensa Central</option>
-              <option value="Lateral Derecho">➡️ Lateral Derecho</option>
-              <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
-              <option value="Carrilero Derecho">➡️ Carrilero Derecho</option>
-              <option value="Carrilero Izquierdo">⬅️ Carrilero Izquierdo</option>
-              <option value="Mediocampista Defensivo">🔒 Mediocampista Defensivo</option>
-              <option value="Mediocampista Central">⚖️ Mediocampista Central</option>
-              <option value="Mediocampista Ofensivo">🎯 Mediocampista Ofensivo</option>
-              <option value="Pivote">🧭 Pivote</option>
-              <option value="Interior Derecho">➡️ Interior Derecho</option>
-              <option value="Interior Izquierdo">⬅️ Interior Izquierdo</option>
-              <option value="Enganche / Media Punta">🎩 Enganche / Media Punta</option>
-              <option value="Extremo Derecho">🏃‍♂️ Extremo Derecho</option>
-              <option value="Extremo Izquierdo">🏃‍♂️ Extremo Izquierdo</option>
-              <option value="Delantero Centro">⚽ Delantero Centro</option>
-              <option value="Segundo Delantero">🎯 Segundo Delantero</option>
-              <option value="Flexible">🔄 Flexible</option>
+              <option value="Portero">{t('pos_Portero')}</option>
+              <option value="Defensa Central">{t('pos_DefensaCentral')}</option>
+              <option value="Lateral Derecho">{t('pos_LateralDerecho')}</option>
+              <option value="Lateral Izquierdo">{t('pos_LateralIzquierdo')}</option>
+              <option value="Carrilero Derecho">{t('pos_CarrileroDerecho')}</option>
+              <option value="Carrilero Izquierdo">{t('pos_CarrileroIzquierdo')}</option>
+              <option value="Mediocampista Defensivo">{t('pos_MediocampistaDefensivo')}</option>
+              <option value="Mediocampista Central">{t('pos_MediocampistaCentral')}</option>
+              <option value="Mediocampista Ofensivo">{t('pos_MediocampistaOfensivo')}</option>
+              <option value="Pivote">{t('pos_Pivote')}</option>
+              <option value="Interior Derecho">{t('pos_InteriorDerecho')}</option>
+              <option value="Interior Izquierdo">{t('pos_InteriorIzquierdo')}</option>
+              <option value="Enganche / Media Punta">{t('pos_Enganche')}</option>
+              <option value="Extremo Derecho">{t('pos_ExtremoDerecho')}</option>
+              <option value="Extremo Izquierdo">{t('pos_ExtremoIzquierdo')}</option>
+              <option value="Delantero Centro">{t('pos_DelanteroCentro')}</option>
+              <option value="Segundo Delantero">{t('pos_SegundoDelantero')}</option>
+              <option value="Flexible">{t('pos_Flexible')}</option>
             </select>
             <select name="nivelHabilidad" value={formData.nivelHabilidad} onChange={handleChange} style={inputStyle}>
-              <option value="Principiante">Principiante</option>
-              <option value="Intermedio">Intermedio</option>
-              <option value="Avanzado">Avanzado</option>
-              <option value="Élite">Élite</option>
+              <option value="Principiante">{UI_MISC[lang].niveles.principiante}</option>
+              <option value="Intermedio">{UI_MISC[lang].niveles.intermedio}</option>
+              <option value="Avanzado">{UI_MISC[lang].niveles.avanzado}</option>
+              <option value="Élite">{UI_MISC[lang].niveles.elite}</option>
             </select>
-            <input type="text" name="equipoFavorito" placeholder="Equipo favorito" value={formData.equipoFavorito} onChange={handleChange} style={inputStyle} />
+            <input type="text" name="equipoFavorito" placeholder={t('equipoFavorito')} value={formData.equipoFavorito} onChange={handleChange} style={inputStyle} />
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <input type="number" name="peso" placeholder="Peso (kg)" value={formData.peso} onChange={handleChange} style={inputStyle} />
-              <input type="number" name="altura" placeholder="Altura (cm)" value={formData.altura} onChange={handleChange} style={inputStyle} />
+              <input type="number" name="peso" placeholder={t('peso')} value={formData.peso} onChange={handleChange} style={inputStyle} />
+              <input type="number" name="altura" placeholder={t('altura')} value={formData.altura} onChange={handleChange} style={inputStyle} />
             </div>
             <select name="pieHabil" value={formData.pieHabil} onChange={handleChange} style={inputStyle}>
-              <option value="Derecho">Pie Derecho</option>
-              <option value="Izquierdo">Pie Izquierdo</option>
-              <option value="Ambidiestro">Ambidiestro</option>
+              <option value="Derecho">{t('pieHabil_Derecho')}</option>
+              <option value="Izquierdo">{t('pieHabil_Izquierdo')}</option>
+              <option value="Ambidiestro">{t('pieHabil_Ambidiestro')}</option>
             </select>
           </>
         );
@@ -516,27 +769,30 @@ export default function FormularioRegistroCompleto() {
       case 4:
         return (
           <>
-            <h2 style={{ color: gold, marginBottom: 16 }}>Paso 4: Disponibilidad</h2>
+            <h2 style={{ color: gold, marginBottom: 16 }}>{t('step4Title')}</h2>
             <select name="frecuenciaJuego" value={formData.frecuenciaJuego} onChange={handleChange} style={inputStyle}>
-              <option value="ocasional">Ocasional (1-2 veces/mes)</option>
-              <option value="regular">Regular (1 vez/semana)</option>
-              <option value="frecuente">Frecuente (2-3 veces/semana)</option>
-              <option value="intensivo">Intensivo (4+ veces/semana)</option>
+              <option value="ocasional">{t('frecuencia_ocasional')}</option>
+              <option value="regular">{t('frecuencia_regular')}</option>
+              <option value="frecuente">{t('frecuencia_frecuente')}</option>
+              <option value="intensivo">{t('frecuencia_intensivo')}</option>
             </select>
             <select name="horarioPreferido" value={formData.horarioPreferido} onChange={handleChange} style={inputStyle}>
-              <option value="mañanas">Mañanas</option>
-              <option value="tardes">Tardes</option>
-              <option value="noches">Noches</option>
-              <option value="fines_semana">Fines de semana</option>
+              <option value="madrugadas">{t('horario_madrugadas')}</option>
+              <option value="mañanas">{t('horario_mañanas')}</option>
+              <option value="mediodia">{t('horario_mediodia')}</option>
+              <option value="tardes">{t('horario_tardes')}</option>
+              <option value="tardes_noche">{t('horario_tardes_noche')}</option>
+              <option value="noches">{t('horario_noches')}</option>
+              <option value="fines_semana">{t('horario_fines_semana')}</option>
             </select>
-            <textarea name="objetivos" placeholder="¿Qué buscas en FutPro? (opcional)" value={formData.objetivos} onChange={handleChange} style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }} />
+            <textarea name="objetivos" placeholder={t('objetivos')} value={formData.objetivos} onChange={handleChange} style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }} />
           </>
         );
       
       case 5:
         return (
           <>
-            <h2 style={{ color: gold, marginBottom: 16 }}>Paso 5: Foto de Perfil</h2>
+            <h2 style={{ color: gold, marginBottom: 16 }}>{t('step5Title')}</h2>
             <div style={{ textAlign: 'center', marginBottom: 16 }}>
               {formData.previewUrl ? (
                 <img src={formData.previewUrl} alt="Preview" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', border: `3px solid ${gold}` }} />
@@ -545,7 +801,7 @@ export default function FormularioRegistroCompleto() {
               )}
             </div>
             <input type="file" accept="image/*" onChange={handleImageChange} style={{ ...inputStyle, padding: 8 }} />
-            <p style={{ color: '#999', fontSize: 12, marginTop: 8 }}>Foto opcional. Puedes agregarla después desde tu perfil.</p>
+            <p style={{ color: '#999', fontSize: 12, marginTop: 8 }}>{UI_MISC[lang].photoOptionalNote}</p>
           </>
         );
       
@@ -567,7 +823,7 @@ export default function FormularioRegistroCompleto() {
   return (
     <div style={{ minHeight: '100vh', background: '#0b0b0b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ width: '100%', maxWidth: 520, background: '#121212', border: `2px solid ${gold}`, borderRadius: 16, padding: 20 }}>
-        <h1 style={{ color: gold, margin: 0, marginBottom: 8, textAlign: 'center' }}>Registro Completo</h1>
+        <h1 style={{ color: gold, margin: 0, marginBottom: 8, textAlign: 'center' }}>{UI_MISC[lang].regTitle}</h1>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
           {[1, 2, 3, 4, 5].map(num => (
             <div
@@ -601,16 +857,16 @@ export default function FormularioRegistroCompleto() {
           <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
             {pasoActual > 1 && (
               <button type="button" onClick={pasoAnterior} disabled={loading} style={{ flex: 1, padding: 12, background: '#333', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>
-                ← Anterior
+                {t('anterior')}
               </button>
             )}
             {pasoActual < 5 ? (
               <button type="button" onClick={siguientePaso} disabled={loading} style={{ flex: 1, padding: 12, background: `linear-gradient(135deg, ${gold}, #ff8c00)`, color: '#000', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>
-                Siguiente →
+                {t('siguiente')}
               </button>
             ) : (
               <button type="button" onClick={completarRegistro} disabled={loading} style={{ flex: 1, padding: 12, background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>
-                {loading ? 'Creando cuenta...' : '✓ Completar'}
+                {loading ? t('creando') : t('completar')}
               </button>
             )}
           </div>
@@ -620,14 +876,14 @@ export default function FormularioRegistroCompleto() {
               <div style={{ textAlign: 'center', color: '#aaa', margin: '10px 0' }}>— o —</div>
               <button type="button" onClick={handleGoogleSignup} disabled={loading} style={{ width: '100%', padding: 12, background: '#fff', color: '#000', border: '1px solid #ddd', borderRadius: 10, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                 <span style={{ fontSize: 18 }}>🔵</span>
-                Continuar con Google
+                {t('continuarGoogle')}
               </button>
             </>
           )}
         </form>
 
         <div style={{ marginTop: 16, textAlign: 'center', fontSize: 12, color: '#999' }}>
-          Paso {pasoActual} de 5 • Autoguardado activo
+          {`${UI_MISC[lang].stepWord} ${pasoActual} ${UI_MISC[lang].ofWord} 5 • ${UI_MISC[lang].autosaveActive}`}
         </div>
       </div>
     </div>

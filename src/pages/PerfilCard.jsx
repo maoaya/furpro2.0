@@ -9,6 +9,64 @@ const PerfilCard = () => {
   const [cardData, setCardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAnimation, setShowAnimation] = useState(false);
+  const [lang, setLang] = useState('es');
+
+  // Traducciones mínimas
+  const I18N = {
+    es: {
+      loading: '⚽ Cargando tu card de jugador...',
+      error: '❌ Error cargando datos',
+      newBadge: '¡NUEVA!',
+      partidos: 'Partidos',
+      goles: 'Goles',
+      asist: 'Asist.',
+      equipoFavorito: 'Equipo Favorito',
+      miembroDesde: 'Miembro desde',
+      cardReady: '¡Tu Card de Jugador está lista! 🎉',
+      irAlHomepage: '🏠 Ir al Homepage',
+      verPerfil: '👤 Ver Perfil Completo'
+    },
+    en: {
+      loading: '⚽ Loading your player card...',
+      error: '❌ Error loading data',
+      newBadge: 'NEW!',
+      partidos: 'Matches',
+      goles: 'Goals',
+      asist: 'Assists',
+      equipoFavorito: 'Favorite Team',
+      miembroDesde: 'Member since',
+      cardReady: 'Your Player Card is ready! 🎉',
+      irAlHomepage: '🏠 Go to Homepage',
+      verPerfil: '👤 View Full Profile'
+    },
+    pt: {
+      loading: '⚽ Carregando seu card de jogador...',
+      error: '❌ Erro ao carregar dados',
+      newBadge: 'NOVO!',
+      partidos: 'Partidas',
+      goles: 'Gols',
+      asist: 'Assist.',
+      equipoFavorito: 'Time Favorito',
+      miembroDesde: 'Membro desde',
+      cardReady: 'Seu Card de Jogador está pronto! 🎉',
+      irAlHomepage: '🏠 Ir para Homepage',
+      verPerfil: '👤 Ver Perfil Completo'
+    }
+  };
+
+  const t = (key) => (I18N[lang] && I18N[lang][key]) || I18N.es[key] || key;
+
+  // Auto-detectar idioma
+  useEffect(() => {
+    try {
+      const nav = (navigator.language || 'es').toLowerCase();
+      if (nav.startsWith('es')) setLang('es');
+      else if (nav.startsWith('pt')) setLang('pt');
+      else setLang('en');
+    } catch (_) {
+      setLang('es');
+    }
+  }, []);
 
   useEffect(() => {
     // Cargar datos de la card
@@ -74,7 +132,7 @@ const PerfilCard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
-        <div className="text-yellow-400 text-xl">⚽ Cargando tu card de jugador...</div>
+        <div className="text-yellow-400 text-xl">{t('loading')}</div>
       </div>
     );
   }
@@ -82,7 +140,7 @@ const PerfilCard = () => {
   if (!cardData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
-        <div className="text-red-400 text-xl">❌ Error cargando datos</div>
+        <div className="text-red-400 text-xl">{t('error')}</div>
       </div>
     );
   }
@@ -154,15 +212,15 @@ const PerfilCard = () => {
             <div className="flex justify-around text-center text-xs px-4">
               <div>
                 <div className="font-bold">{cardData.partidos_jugados || 0}</div>
-                <div className="opacity-80">Partidos</div>
+                <div className="opacity-80">{t('partidos')}</div>
               </div>
               <div>
                 <div className="font-bold">{cardData.goles || 0}</div>
-                <div className="opacity-80">Goles</div>
+                <div className="opacity-80">{t('goles')}</div>
               </div>
               <div>
                 <div className="font-bold">{cardData.asistencias || 0}</div>
-                <div className="opacity-80">Asist.</div>
+                <div className="opacity-80">{t('asist')}</div>
               </div>
             </div>
           </div>
@@ -170,17 +228,17 @@ const PerfilCard = () => {
           {/* Badge de Nueva Card */}
           {cardData.esPrimeraCard && (
             <div className="absolute top-4 right-4 bg-yellow-400 text-black px-2 py-1 rounded-full text-xs font-bold animate-pulse">
-              ¡NUEVA!
+              {t('newBadge')}
             </div>
           )}
 
           {/* Footer con Equipo */}
           <div className="absolute bottom-4 left-0 right-0 text-center">
             <div className="text-white text-xs opacity-80 mb-2">
-              Equipo Favorito: {cardData.equipo}
+              {t('equipoFavorito')}: {cardData.equipo}
             </div>
             <div className="text-white text-xs opacity-60">
-              Miembro desde {new Date(cardData.fecha_registro).getFullYear()}
+              {t('miembroDesde')} {new Date(cardData.fecha_registro).getFullYear()}
             </div>
           </div>
         </div>
@@ -188,21 +246,21 @@ const PerfilCard = () => {
         {/* Botones de Acción */}
         <div className="mt-8 space-y-4 text-center">
           <div className="text-white text-lg font-bold mb-2">
-            ¡Tu Card de Jugador está lista! 🎉
+            {t('cardReady')}
           </div>
           
           <button
             onClick={continuarAlHome}
             className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
           >
-            🏠 Ir al Homepage
+            {t('irAlHomepage')}
           </button>
           
           <button
             onClick={() => navigate('/perfil')}
             className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
           >
-            👤 Ver Perfil Completo
+            {t('verPerfil')}
           </button>
         </div>
       </div>
