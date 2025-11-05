@@ -13,27 +13,113 @@ export default function LoginRegisterFormClean() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isRegister, setIsRegister] = useState(false);
+  const [lang, setLang] = useState('es');
 
   const navigate = useNavigate();
   const config = getConfig();
 
+  // Traducciones
+  const I18N = {
+    es: {
+      title: 'FutPro',
+      createAccount: 'Crea tu cuenta',
+      signIn: 'Inicia sesión',
+      continueGoogle: 'Continuar con Google',
+      orEmail: 'o con email',
+      emailPlaceholder: 'Correo',
+      passwordPlaceholder: 'Contraseña',
+      processing: 'Procesando...',
+      createBtn: 'Crear cuenta',
+      signInBtn: 'Ingresar',
+      hasAccount: '¿Ya tienes cuenta? Inicia sesión',
+      noAccount: '¿No tienes cuenta? Regístrate',
+      loginSuccess: 'Inicio de sesión exitoso. Redirigiendo...',
+      signupSuccess: 'Registro iniciado. Revisa tu correo para confirmar y se creó un borrador de tu CarFutPro.',
+      signupSuccess2: 'Ingreso exitoso. Redirigiendo...',
+      errorWith: 'Error con',
+      infantil_femenina: 'Infantil Femenina',
+      infantil_masculina: 'Infantil Masculina',
+      femenina: 'Femenina',
+      masculina: 'Masculina'
+    },
+    en: {
+      title: 'FutPro',
+      createAccount: 'Create your account',
+      signIn: 'Sign in',
+      continueGoogle: 'Continue with Google',
+      orEmail: 'or with email',
+      emailPlaceholder: 'Email',
+      passwordPlaceholder: 'Password',
+      processing: 'Processing...',
+      createBtn: 'Create account',
+      signInBtn: 'Sign in',
+      hasAccount: 'Already have an account? Sign in',
+      noAccount: "Don't have an account? Sign up",
+      loginSuccess: 'Sign in successful. Redirecting...',
+      signupSuccess: 'Registration started. Check your email to confirm and a draft of your CarFutPro was created.',
+      signupSuccess2: 'Sign in successful. Redirecting...',
+      errorWith: 'Error with',
+      infantil_femenina: 'Girls U18',
+      infantil_masculina: 'Boys U18',
+      femenina: 'Women',
+      masculina: 'Men'
+    },
+    pt: {
+      title: 'FutPro',
+      createAccount: 'Crie sua conta',
+      signIn: 'Entrar',
+      continueGoogle: 'Continuar com Google',
+      orEmail: 'ou com e-mail',
+      emailPlaceholder: 'E-mail',
+      passwordPlaceholder: 'Senha',
+      processing: 'Processando...',
+      createBtn: 'Criar conta',
+      signInBtn: 'Entrar',
+      hasAccount: 'Já tem uma conta? Entre',
+      noAccount: 'Não tem uma conta? Cadastre-se',
+      loginSuccess: 'Login bem-sucedido. Redirecionando...',
+      signupSuccess: 'Cadastro iniciado. Verifique seu e-mail para confirmar e um rascunho do seu CarFutPro foi criado.',
+      signupSuccess2: 'Login bem-sucedido. Redirecionando...',
+      errorWith: 'Erro com',
+      infantil_femenina: 'Infantil Feminino',
+      infantil_masculina: 'Infantil Masculino',
+      femenina: 'Feminino',
+      masculina: 'Masculino'
+    }
+  };
+
+  const t = (key) => (I18N[lang] && I18N[lang][key]) || I18N.es[key] || key;
+
+  // Auto-detectar idioma
+  useEffect(() => {
+    try {
+      const nav = (navigator.language || 'es').toLowerCase();
+      if (nav.startsWith('es')) setLang('es');
+      else if (nav.startsWith('pt')) setLang('pt');
+      else setLang('en');
+    } catch (_) {
+      setLang('es');
+    }
+  }, []);
+
   const goHome = () => {
-    try { navigate('/homepage-instagram.html'); } catch (_) { window.location.href = '/homepage-instagram.html'; }
+    // Nuevo flujo: siempre pasar por selección de categoría antes del formulario y la card
+    try { navigate('/seleccionar-categoria'); } catch (_) { window.location.href = '/seleccionar-categoria'; }
   };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => { if (data?.session?.user) goHome(); });
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) { setSuccess('Inicio de sesión exitoso. Redirigiendo...'); setLoading(false); setTimeout(goHome, 600); }
+      if (session?.user) { setSuccess(t('loginSuccess')); setLoading(false); setTimeout(goHome, 600); }
     });
     return () => authListener?.subscription?.unsubscribe?.();
-  }, []);
+  }, [lang]);
 
   const handleLoginSocial = async (provider) => {
     try {
       setLoading(true); setError(null); setSuccess(null);
       await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: config.oauthCallbackUrl } });
-    } catch (e) { setLoading(false); setError(`Error con ${provider}: ${e.message}`); }
+    } catch (e) { setLoading(false); setError(`${t('errorWith')} ${provider}: ${e.message}`); }
   };
 
   const handleSubmitEmail = async (e) => {
@@ -53,7 +139,7 @@ export default function LoginRegisterFormClean() {
             await set(ref(database, `autosave/carfutpro/${uid}`), draft);
           } catch (_) {}
         } catch (aux) { console.warn('Autosave inicial falló (no crítico):', aux); }
-        setSuccess('Registro iniciado. Revisa tu correo para confirmar y se creó un borrador de tu CarFutPro.');
+        setSuccess(t('signupSuccess'));
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) throw signInError;
@@ -81,7 +167,7 @@ export default function LoginRegisterFormClean() {
             } catch (eCreate) { console.warn('Creación de CarFutPro en Supabase falló (continuando):', eCreate.message); }
           }
         } catch (aux) { console.warn('No se pudo completar creación inicial de CarFutPro:', aux); }
-        setSuccess('Ingreso exitoso. Redirigiendo...');
+        setSuccess(t('signupSuccess2'));
         setTimeout(goHome, 600);
       }
     } catch (e) { setError(e.message || 'Ocurrió un error'); }
@@ -91,39 +177,39 @@ export default function LoginRegisterFormClean() {
   return (
     <div style={{ minHeight: '100vh', background: '#0b0b0b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ width: '100%', maxWidth: 420, background: '#121212', border: `2px solid ${gold}`, borderRadius: 16, padding: 20, boxShadow: '0 10px 30px #000a' }}>
-        <h1 style={{ color: gold, margin: 0, marginBottom: 8, textAlign: 'center' }}>FutPro</h1>
-        <p style={{ color: '#bbb', marginTop: 0, textAlign: 'center' }}>{isRegister ? 'Crea tu cuenta' : 'Inicia sesión'}</p>
+        <h1 style={{ color: gold, margin: 0, marginBottom: 8, textAlign: 'center' }}>{t('title')}</h1>
+        <p style={{ color: '#bbb', marginTop: 0, textAlign: 'center' }}>{isRegister ? t('createAccount') : t('signIn')}</p>
 
         {error && (<div style={{ background: '#3b0d0d', color: '#ff9b9b', border: '1px solid #ff4d4f', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>{error}</div>)}
         {success && (<div style={{ background: '#0e3323', color: '#9ff2c3', border: '1px solid #27d17c', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>{success}</div>)}
 
         <div style={{ display: 'grid', gap: 10 }}>
-          <button onClick={() => handleLoginSocial('google')} disabled={loading} style={{ width: '100%', padding: 12, background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>Continuar con Google</button>
+          <button onClick={() => handleLoginSocial('google')} disabled={loading} style={{ width: '100%', padding: 12, background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>{t('continueGoogle')}</button>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '14px 0' }}>
           <div style={{ flex: 1, height: 1, background: '#333' }} />
-          <span style={{ color: '#999', fontSize: 12 }}>o con email</span>
+          <span style={{ color: '#999', fontSize: 12 }}>{t('orEmail')}</span>
           <div style={{ flex: 1, height: 1, background: '#333' }} />
         </div>
 
         <form onSubmit={handleSubmitEmail} style={{ display: 'grid', gap: 10 }}>
-          <input type="email" required placeholder="Correo" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }}/>
-          <input type="password" required placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }}/>
+          <input type="email" required placeholder={t('emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }}/>
+          <input type="password" required placeholder={t('passwordPlaceholder')} value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }}/>
           {isRegister && (
             <select value={categoria} onChange={(e) => setCategoria(e.target.value)} required style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }}>
-              <option value="infantil_femenina">Infantil Femenina</option>
-              <option value="infantil_masculina">Infantil Masculina</option>
-              <option value="femenina">Femenina</option>
-              <option value="masculina">Masculina</option>
+              <option value="infantil_femenina">{t('infantil_femenina')}</option>
+              <option value="infantil_masculina">{t('infantil_masculina')}</option>
+              <option value="femenina">{t('femenina')}</option>
+              <option value="masculina">{t('masculina')}</option>
             </select>
           )}
-          <button type="submit" disabled={loading} style={{ width: '100%', padding: 12, background: isRegister ? 'linear-gradient(135deg,#22c55e,#16a34a)' : 'linear-gradient(135deg,#f59e0b,#d97706)', color: '#111', border: 'none', borderRadius: 10, fontWeight: 800, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>{loading ? 'Procesando...' : (isRegister ? 'Crear cuenta' : 'Ingresar')}</button>
+          <button type="submit" disabled={loading} style={{ width: '100%', padding: 12, background: isRegister ? 'linear-gradient(135deg,#22c55e,#16a34a)' : 'linear-gradient(135deg,#f59e0b,#d97706)', color: '#111', border: 'none', borderRadius: 10, fontWeight: 800, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>{loading ? t('processing') : (isRegister ? t('createBtn') : t('signInBtn'))}</button>
         </form>
 
         <div style={{ marginTop: 12, textAlign: 'center' }}>
           <button onClick={() => setIsRegister(!isRegister)} style={{ background: 'transparent', color: gold, border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
-            {isRegister ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}
+            {isRegister ? t('hasAccount') : t('noAccount')}
           </button>
         </div>
       </div>

@@ -31,8 +31,14 @@ const AuthCallback = () => {
               provider: 'oauth_redirect'
             });
             
-            // Redireccionar a home
-            navigate('/home');
+            // Redireccionar al flujo de selección/registro
+            try {
+              const target = localStorage.getItem('post_auth_target') || '/seleccionar-categoria';
+              localStorage.removeItem('post_auth_target');
+              navigate(target);
+            } catch {
+              window.location.href = '/seleccionar-categoria';
+            }
           } else {
             console.log('❌ No se encontró usuario después del callback');
             setError('Error en la autenticación');

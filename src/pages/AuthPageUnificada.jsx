@@ -46,7 +46,7 @@ const AuthPageUnificada = () => {
   // Si el usuario ya está autenticado, redirigir a home inmediatamente
   useEffect(() => {
     if (user) {
-      console.log('✅ Usuario ya autenticado, redirigiendo a home...');
+      console.log('✅ Usuario ya autenticado, redirigiendo al flujo de selección...');
       
       // Marcar inmediatamente como autenticado
       localStorage.setItem('authCompleted', 'true');
@@ -54,7 +54,7 @@ const AuthPageUnificada = () => {
       
       // Navegación inmediata
       setTimeout(() => {
-        navigate('/home', { replace: true });
+        navigate('/seleccionar-categoria', { replace: true });
       }, 100);
     }
   }, [user, navigate]);
@@ -72,7 +72,7 @@ const AuthPageUnificada = () => {
         setTimeout(() => {
           if (!user) {
             console.log('⚠️ Forzando navegación debido a indicadores de auth');
-            navigate('/home', { replace: true });
+            navigate('/seleccionar-categoria', { replace: true });
           }
         }, 2000);
       }
@@ -106,16 +106,16 @@ const AuthPageUnificada = () => {
         
         setTimeout(() => {
           try {
-            navigate('/home', { replace: true });
+            navigate('/seleccionar-categoria', { replace: true });
           } catch (error) {
-            window.location.href = '/home';
+            window.location.href = '/seleccionar-categoria';
           }
         }, 500);
       }
     } catch (error) {
       console.error('❌ Error con AuthFlowManager:', error);
       // Fallback de emergencia
-      window.location.href = '/home';
+  window.location.href = '/seleccionar-categoria';
     }
   };
 

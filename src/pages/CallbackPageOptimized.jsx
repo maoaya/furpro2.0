@@ -8,34 +8,90 @@ export default function CallbackPageOptimized() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [processing, setProcessing] = useState(true);
-  const [status, setStatus] = useState('Procesando autenticación...');
+  const [status, setStatus] = useState('');
+  const [lang, setLang] = useState('es');
+
+  // Traducciones
+  const I18N = {
+    es: {
+      processing: 'Procesando autenticación...',
+      verifying: 'Verificando autenticación...',
+      errorAuth: 'Error en autenticación. Redirigiendo...',
+      noSession: 'No se pudo completar la autenticación. Redirigiendo...',
+      authenticated: 'Usuario autenticado. Configurando perfil...',
+      welcomeBack: '¡Bienvenido de vuelta! Redirigiendo...',
+      creatingProfile: 'Creando perfil de usuario...',
+      success: '¡Éxito! Configurando navegación...',
+      redirecting: '¡Redirigiendo a tu dashboard!',
+      finalizing: 'Finalizando configuración...'
+    },
+    en: {
+      processing: 'Processing authentication...',
+      verifying: 'Verifying authentication...',
+      errorAuth: 'Authentication error. Redirecting...',
+      noSession: 'Could not complete authentication. Redirecting...',
+      authenticated: 'User authenticated. Setting up profile...',
+      welcomeBack: 'Welcome back! Redirecting...',
+      creatingProfile: 'Creating user profile...',
+      success: 'Success! Setting up navigation...',
+      redirecting: 'Redirecting to your dashboard!',
+      finalizing: 'Finalizing setup...'
+    },
+    pt: {
+      processing: 'Processando autenticação...',
+      verifying: 'Verificando autenticação...',
+      errorAuth: 'Erro na autenticação. Redirecionando...',
+      noSession: 'Não foi possível completar a autenticação. Redirecionando...',
+      authenticated: 'Usuário autenticado. Configurando perfil...',
+      welcomeBack: 'Bem-vindo de volta! Redirecionando...',
+      creatingProfile: 'Criando perfil de usuário...',
+      success: 'Sucesso! Configurando navegação...',
+      redirecting: 'Redirecionando para seu painel!',
+      finalizing: 'Finalizando configuração...'
+    }
+  };
+
+  const t = (key) => (I18N[lang] && I18N[lang][key]) || I18N.es[key] || key;
+
+  // Auto-detectar idioma
+  useEffect(() => {
+    try {
+      const nav = (navigator.language || 'es').toLowerCase();
+      if (nav.startsWith('es')) setLang('es');
+      else if (nav.startsWith('pt')) setLang('pt');
+      else setLang('en');
+    } catch (_) {
+      setLang('es');
+    }
+    setStatus(t('processing'));
+  }, []);
 
   useEffect(() => {
     const handleCallback = async () => {
       try {
         console.log('🔄 CallbackPage: Procesando callback OAuth...');
-        setStatus('Verificando autenticación...');
+        setStatus(t('verifying'));
 
         // Obtener la sesión actual
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
           console.error('❌ Error obteniendo sesión:', sessionError);
-          setStatus('Error en autenticación. Redirigiendo...');
+          setStatus(t('errorAuth'));
           setTimeout(() => navigate('/', { replace: true }), 2000);
           return;
         }
 
         if (!session || !session.user) {
           console.warn('⚠️ No hay sesión válida en callback');
-          setStatus('No se pudo completar la autenticación. Redirigiendo...');
+          setStatus(t('noSession'));
           setTimeout(() => navigate('/', { replace: true }), 2000);
           return;
         }
 
         const user = session.user;
         console.log('✅ Usuario OAuth autenticado:', user.email);
-        setStatus('Usuario autenticado. Configurando perfil...');
+        setStatus(t('authenticated'));
 
         // Verificar si el usuario ya tiene perfil en la DB
         const { data: existingProfile, error: profileError } = await supabase
@@ -46,10 +102,10 @@ export default function CallbackPageOptimized() {
 
         if (!profileError && existingProfile) {
           console.log('✅ Perfil existente encontrado:', existingProfile.nombre);
-          setStatus('¡Bienvenido de vuelta! Redirigiendo...');
+          setStatus(t('welcomeBack'));
         } else {
           console.log('📝 Creando nuevo perfil para usuario OAuth...');
-          setStatus('Creando perfil de usuario...');
+          setStatus(t('creatingProfile'));
 
           // Crear perfil para nuevo usuario OAuth
           const perfilData = {
@@ -83,7 +139,7 @@ export default function CallbackPageOptimized() {
         }
 
         console.log('🎉 OAuth callback procesado. Usando AuthFlowManager...');
-        setStatus('¡Éxito! Configurando navegación...');
+        setStatus(t('success'));
 
         // Usar el nuevo AuthFlowManager para navegación robusta
         const resultado = await handleAuthenticationSuccess(user, navigate, {
@@ -93,10 +149,10 @@ export default function CallbackPageOptimized() {
 
         if (resultado.success) {
           console.log('✅ Navegación exitosa con AuthFlowManager');
-          setStatus('¡Redirigiendo a tu dashboard!');
+          setStatus(t('redirecting'));
         } else {
           console.log('⚠️ Problema con AuthFlowManager, usando fallback');
-          setStatus('Finalizando configuración...');
+          setStatus(t('finalizing'));
           
           // Fallback al método anterior
           localStorage.setItem('authCompleted', 'true');
