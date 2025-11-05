@@ -74,6 +74,19 @@ export default function FormularioRegistroCompleto() {
     'Ecuador': 'Ecuador'
   };
 
+  // Prefijos telefónicos por país (para autocompletar teléfono)
+  const DIAL_CODES = {
+    Colombia: '+57',
+    México: '+52',
+    Argentina: '+54',
+    Chile: '+56',
+    Perú: '+51',
+    Ecuador: '+593',
+    España: '+34',
+    USA: '+1',
+    Otro: ''
+  };
+
   // Si cambia el país, asegurar que la ciudad sea válida
   useEffect(() => {
     const ciudades = PAISES_CIUDADES[formData.pais] || [];
@@ -130,7 +143,23 @@ export default function FormularioRegistroCompleto() {
         const pais = PAISES_CIUDADES[mapped] ? mapped : 'Otro';
         const ciudadesDisponibles = PAISES_CIUDADES[pais] || [];
         const ciudad = ciudadesDisponibles.includes(cityName) ? cityName : (ciudadesDisponibles[0] || 'Otra ciudad');
-        setFormData(prev => ({ ...prev, pais, ciudad }));
+        setFormData(prev => ({
+          ...prev,
+          pais,
+          ciudad,
+          // Autorelleno de teléfono si está vacío
+          telefono: prev.telefono || (DIAL_CODES[pais] ? `${DIAL_CODES[pais]} ` : prev.telefono),
+          // Ajuste de horario sugerido según hora local
+          horarioPreferido: (() => {
+            const h = new Date().getHours();
+            if (h < 5) return 'madrugadas';
+            if (h < 12) return 'mañanas';
+            if (h < 14) return 'mediodia';
+            if (h < 19) return 'tardes';
+            if (h < 21) return 'tardes_noche';
+            return 'noches';
+          })()
+        }));
       } catch (e) {
         try {
           // Intento 2: ipwho.is como fallback
@@ -146,7 +175,21 @@ export default function FormularioRegistroCompleto() {
             const pais = PAISES_CIUDADES[mapped] ? mapped : 'Otro';
             const ciudadesDisponibles = PAISES_CIUDADES[pais] || [];
             const ciudad = ciudadesDisponibles.includes(cityName) ? cityName : (ciudadesDisponibles[0] || 'Otra ciudad');
-            setFormData(prev => ({ ...prev, pais, ciudad }));
+            setFormData(prev => ({
+              ...prev,
+              pais,
+              ciudad,
+              telefono: prev.telefono || (DIAL_CODES[pais] ? `${DIAL_CODES[pais]} ` : prev.telefono),
+              horarioPreferido: (() => {
+                const h = new Date().getHours();
+                if (h < 5) return 'madrugadas';
+                if (h < 12) return 'mañanas';
+                if (h < 14) return 'mediodia';
+                if (h < 19) return 'tardes';
+                if (h < 21) return 'tardes_noche';
+                return 'noches';
+              })()
+            }));
           }
         } catch (_) {
           // Silencioso: mantener defaults si falla
