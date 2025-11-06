@@ -2,7 +2,8 @@
 
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import supabase from '../../supabaseClient.js';
+// Usar el cliente de Node para evitar import.meta/env en entorno de tests (Jest)
+import supabase from '../../supabaseNodeClient.js';
 
 export async function register(req, res) {
   try {

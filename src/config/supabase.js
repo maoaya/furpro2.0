@@ -5,8 +5,13 @@
 // ⚠️ DEPRECADO: Usar src/supabaseClient.js en su lugar para evitar instancias duplicadas
 
 // Re-exportar la instancia única desde supabaseClient.js
-export { default as supabase, supabaseConfigured } from '../supabaseClient.js';
+export { default as supabase } from '../supabaseClient.js';
 export { default } from '../supabaseClient.js';
+
+// Cargar configuración estándar (evita globals no definidas en runtime)
+import { getConfig } from '../config/environment.js';
+const __env = getConfig();
+const SUPABASE_URL = __env.supabaseUrl; // evita ReferenceError en producción
 
 // Utilidad para obtener variables de entorno con fallback
 export function getEnv(key, fallback = '') {
@@ -24,7 +29,8 @@ export async function detectSupabaseOnline(timeoutMs = 4000) {
     const controller = new AbortController();
     const t = setTimeout(() => controller.abort(), timeoutMs);
     // health endpoint público (puede devolver opaque en no-cors, nos basta que no explote)
-    const url = `${SUPABASE_URL.replace(/\/$/, '')}/auth/v1/health`;
+    const base = (SUPABASE_URL || '').replace(/\/$/, '');
+    const url = `${base}/auth/v1/health`;
     await fetch(url, { method: 'GET', mode: 'no-cors', signal: controller.signal });
     clearTimeout(t);
     if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = true;
@@ -40,9 +46,7 @@ export const authConfig = {
   providers: ['google', 'facebook'],
   // Para Supabase email flows (registro/reset), usar la callback de Supabase o tu dominio
   // Sugerido: URL de callback de Supabase (no del dominio) para evitar redirect_uri_mismatch
-  redirectTo: SUPABASE_URL && SUPABASE_URL !== 'https://TU_SUPABASE_URL.supabase.co'
-    ? `${SUPABASE_URL}/auth/v1/callback`
-    : (typeof window !== 'undefined' ? window.location.origin : ''),
+  redirectTo: __env.oauthCallbackUrl,
   scopes: {
     google: 'email profile',
     facebook: 'email,public_profile'
