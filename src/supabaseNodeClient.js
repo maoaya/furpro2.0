@@ -14,7 +14,9 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 
 // Crear instancia con configuración específica de Node.js
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  db: { schema: 'api' },
+  db: {
+    schema: 'public' // Schema donde están las tablas de FutPro
+  },
   auth: {
     persistSession: false, // En backend no necesitamos persistir sesiones
     autoRefreshToken: false,

@@ -24,11 +24,10 @@ const transporter = nodemailer.createTransport({
 // });
 
 // 1. Registro de usuario con validación de edad y email de bienvenida
-import { createClient } from '@supabase/supabase-js';
+import supabase from '../supabaseNodeClient.js';
 import OpenAI from 'openai';
 import { enviarSMS } from '../services/twilioService.js';
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Registro real de usuario en Supabase y envío de email/SMS
