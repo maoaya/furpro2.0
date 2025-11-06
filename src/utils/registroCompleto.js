@@ -85,23 +85,48 @@ export const registrarUsuarioCompleto = async (datosUsuario) => {
           })
         });
 
-        const bypassResult = await response.json();
-
-        if (response.ok && bypassResult.success) {
-          pasos.push('✅ Bypass exitoso');
-          authResult = {
-            user: {
-              id: bypassResult.user.id,
-              email: bypassResult.user.email,
-              user_metadata: {
+        // 🛡️ Si signup-bypass falla con 500, reintentar con signUp directo
+        if (response.status === 500) {
+          pasos.push('⚠️ Bypass falló con error 500, reintentando signup directo...');
+          console.warn('Bypass 500, fallback a signUp directo');
+          
+          const { data: retryData, error: retryError } = await supabase.auth.signUp({
+            email: email.toLowerCase().trim(),
+            password,
+            options: {
+              data: {
                 nombre: nombre,
                 full_name: nombre + (apellido ? ` ${apellido}` : '')
               }
             }
-          };
+          });
+
+          if (retryError) {
+            throw new Error(`Todos los métodos fallaron: ${retryError.message}`);
+          }
+
+          authResult = retryData;
           authError = null;
+          pasos.push('✅ Signup directo exitoso tras fallo de bypass');
         } else {
-          throw new Error(bypassResult.error || 'Error en función de bypass');
+          const bypassResult = await response.json();
+
+          if (response.ok && bypassResult.success) {
+            pasos.push('✅ Bypass exitoso');
+            authResult = {
+              user: {
+                id: bypassResult.user.id,
+                email: bypassResult.user.email,
+                user_metadata: {
+                  nombre: nombre,
+                  full_name: nombre + (apellido ? ` ${apellido}` : '')
+                }
+              }
+            };
+            authError = null;
+          } else {
+            throw new Error(bypassResult.error || 'Error en función de bypass');
+          }
         }
       } catch (bypassError) {
         pasos.push(`❌ Error en bypass: ${bypassError.message}`);

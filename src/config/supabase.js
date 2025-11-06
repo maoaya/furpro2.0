@@ -31,12 +31,25 @@ export async function detectSupabaseOnline(timeoutMs = 4000) {
     // health endpoint público (puede devolver opaque en no-cors, nos basta que no explote)
     const base = (SUPABASE_URL || '').replace(/\/$/, '');
     const url = `${base}/auth/v1/health`;
-    await fetch(url, { method: 'GET', mode: 'no-cors', signal: controller.signal });
+    await fetch(url, { 
+      method: 'GET', 
+      mode: 'no-cors', 
+      signal: controller.signal,
+      // NO enviar credenciales para evitar 401
+      credentials: 'omit'
+    });
     clearTimeout(t);
     if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = true;
     return true;
-  } catch (_) {
-    if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = false;
+  } catch (err) {
+    // Silenciar errores 401/403 - no son críticos para health check
+    if (typeof window !== 'undefined') {
+      window.__SUPABASE_ONLINE__ = false;
+      // Solo log en development para debugging
+      if (__env.isDevelopment) {
+        console.debug('Health check fallido (no crítico):', err.message);
+      }
+    }
     return false;
   }
 }
