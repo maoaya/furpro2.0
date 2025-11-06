@@ -37,9 +37,8 @@ const supabaseOptions = {
         }
     },
     // Configuración de reintento para evitar 502
-    db: {
-        schema: 'public' // Schema donde están las tablas de FutPro
-    }
+    // NOTA: No especificar db.schema - usar default de Supabase
+    // El error PGRST106 indica que 'public' no es válido en PostgREST v12+
 };
 
 console.log('🔗 Inicializando Supabase Client...');

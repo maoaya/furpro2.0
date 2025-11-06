@@ -14,9 +14,8 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 
 // Crear instancia con configuración específica de Node.js
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  db: {
-    schema: 'public' // Schema donde están las tablas de FutPro
-  },
+  // NOTA: No especificar db.schema - usar default de Supabase
+  // El error PGRST106 indica que 'public' no es válido en PostgREST v12+
   auth: {
     persistSession: false, // En backend no necesitamos persistir sesiones
     autoRefreshToken: false,

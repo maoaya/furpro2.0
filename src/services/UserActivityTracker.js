@@ -8,6 +8,14 @@ import supabase from '../supabaseClient';
 
 class UserActivityTracker {
   constructor() {
+    // 🛡️ PROTECCIÓN: No inicializar si tracking está deshabilitado
+    if (localStorage.getItem('futpro_tracking_disabled') === 'true') {
+      console.warn('⚠️ UserActivityTracker deshabilitado por error de schema');
+      this.disabled = true;
+      return;
+    }
+
+    this.disabled = false;
     this.isOnline = navigator.onLine;
     this.pendingActions = [];
     this.lastSave = null;
@@ -23,6 +31,12 @@ class UserActivityTracker {
    * 🚀 INICIALIZAR TRACKER
    */
   initializeTracker() {
+    // Verificar si tracking está deshabilitado por errores previos
+    if (localStorage.getItem('futpro_tracking_disabled') === 'true') {
+      console.warn('⚠️ UserActivityTracker DESHABILITADO por errores previos de schema');
+      return;
+    }
+    
     console.log('🔥 UserActivityTracker iniciado - Modo Red Social');
     
     // Auto-save cada 3 segundos (más agresivo que redes sociales)
@@ -87,6 +101,11 @@ class UserActivityTracker {
    * 📊 TRACKEAR ACCIÓN PRINCIPAL
    */
   trackAction(actionType, data = {}, saveImmediate = false) {
+    // 🛡️ PROTECCIÓN: No trackear si está deshabilitado
+    if (this.disabled) {
+      return null;
+    }
+
     const action = {
       id: this.generateActionId(),
       userId: this.user?.id || 'anonymous',
@@ -287,7 +306,17 @@ class UserActivityTracker {
 
       if (error) {
         console.error('❌ Error guardando actividades:', error);
-        // Volver a añadir a la cola con incremento de intentos
+        
+        // Si el error es de schema (PGRST106), deshabilitar tracking permanentemente
+        if (error.code === 'PGRST106') {
+          console.warn('⚠️ TRACKING DESHABILITADO: Error de schema en Supabase');
+          localStorage.setItem('futpro_tracking_disabled', 'true');
+          this.pendingActions = []; // Limpiar cola
+          clearInterval(this.autoSaveInterval); // Detener auto-save
+          return;
+        }
+        
+        // Volver a añadir a la cola con incremento de intentos (solo para otros errores)
         actionsToProcess.forEach(action => {
           action.attempts += 1;
           if (action.attempts < 3) {
