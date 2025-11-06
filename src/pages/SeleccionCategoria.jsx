@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 export default function SeleccionCategoria() {
   const navigate = useNavigate();
   const [lang, setLang] = useState('es');
+  const [selected, setSelected] = useState(null);
+  const [confirming, setConfirming] = useState(false);
 
   // Traducciones
   const I18N = {
@@ -58,10 +60,25 @@ export default function SeleccionCategoria() {
   }, []);
 
   const handleSelect = (value) => {
-    // Redirige al formulario completo con la categoría seleccionada
-    navigate(`/formulario-registro?categoria=${encodeURIComponent(value)}`, {
-      state: { categoria: value }
-    });
+    setSelected(value);
+  };
+
+  const handleConfirm = () => {
+    if (!selected) return;
+    try {
+      setConfirming(true);
+      // Pre-semilla en localStorage para el formulario (compatibilidad con lector draft_carfutpro)
+      localStorage.setItem('draft_carfutpro', JSON.stringify({ categoria: selected, ts: Date.now() }));
+    } catch (e) {
+      console.warn('No se pudo guardar draft categoria', e);
+    }
+    const target = `/formulario-registro?categoria=${encodeURIComponent(selected)}`;
+    try {
+      navigate(target, { state: { categoria: selected } });
+    } catch (navErr) {
+      console.warn('Fallback a navegación directa (window.location) por error en navigate:', navErr);
+      window.location.href = target;
+    }
   };
 
   return (
@@ -71,24 +88,50 @@ export default function SeleccionCategoria() {
         <p style={{ color: '#bbb', marginTop: 0, textAlign: 'center' }}>{t('subtitle')}</p>
 
         <div style={{ display: 'grid', gap: 12, marginTop: 16 }}>
-          {categorias.map((c) => (
-            <button
-              key={c.value}
-              onClick={() => handleSelect(c.value)}
-              style={{
-                width: '100%',
-                padding: 14,
-                background: 'linear-gradient(135deg,#2a2a2a,#1a1a1a)',
-                color: '#eee',
-                border: '1px solid #333',
-                borderRadius: 10,
-                fontWeight: 700,
-                cursor: 'pointer'
-              }}
-            >
-              {c.label}
-            </button>
-          ))}
+          {categorias.map((c) => {
+            const isActive = selected === c.value;
+            return (
+              <button
+                key={c.value}
+                onClick={() => handleSelect(c.value)}
+                style={{
+                  width: '100%',
+                  padding: 14,
+                  background: isActive ? 'linear-gradient(135deg,#FFD700,#c49c00)' : 'linear-gradient(135deg,#2a2a2a,#1a1a1a)',
+                  color: isActive ? '#000' : '#eee',
+                  border: isActive ? '2px solid #FFD700' : '1px solid #333',
+                  borderRadius: 10,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  boxShadow: isActive ? '0 0 12px rgba(255,215,0,0.5)' : 'none',
+                  transition: 'all .25s'
+                }}
+              >
+                {c.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div style={{ marginTop: 20, textAlign: 'center' }}>
+          <button
+            onClick={handleConfirm}
+            disabled={!selected || confirming}
+            style={{
+              width: '100%',
+              padding: 16,
+              background: selected ? '#FFD700' : '#333',
+              color: selected ? '#000' : '#777',
+              fontWeight: 800,
+              border: 'none',
+              borderRadius: 12,
+              cursor: selected ? 'pointer' : 'not-allowed',
+              opacity: confirming ? .7 : 1,
+              transition: 'background .3s'
+            }}
+          >
+            {selected ? 'Crear usuario con categoría seleccionada' : 'Selecciona una categoría'}
+          </button>
         </div>
 
         <div style={{ marginTop: 16, textAlign: 'center' }}>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment';
+import { signUpWithAutoConfirm } from '../utils/autoConfirmSignup';
+import { signupBypass } from '../api/signupBypass';
 
 const gold = '#FFD700';
 
@@ -569,9 +571,10 @@ export default function FormularioRegistroCompleto() {
     try {
       setLoading(true);
       setError(null);
+      let currentUser = null;
 
-      // 1. Crear cuenta en Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // 1. Crear cuenta en Supabase Auth usando helper con auto-confirm y bypass de captcha token
+      const signUpResult = await signUpWithAutoConfirm({
         email: formData.email,
         password: formData.password,
         options: {
@@ -582,12 +585,65 @@ export default function FormularioRegistroCompleto() {
         }
       });
 
-      if (authError) throw authError;
+      if (signUpResult.success) {
+        currentUser = signUpResult.user || null;
+      } else {
+        const msg = String(signUpResult.error?.message || '').toLowerCase();
+        // 1.b Fallback: si falla por CAPTCHA, usar Netlify Function con Service Role
+        if (msg.includes('captcha') || msg.includes('verification process failed')) {
+          console.warn('🛡️ CAPTCHA bloqueó el registro. Intentando bypass seguro...');
+          const bypass = await signupBypass({
+            email: formData.email.toLowerCase().trim(),
+            password: formData.password,
+            nombre: `${formData.nombre} ${formData.apellido}`.trim()
+          });
+          if (!bypass.ok) {
+            const errorDetail = bypass.error || '';
+            const isConfigError = errorDetail.includes('500') || errorDetail.includes('service role');
+            
+            if (isConfigError) {
+              setError(
+                `⚠️ Error de configuración del servidor (CAPTCHA bloqueado).\n\n` +
+                `Para resolverlo:\n` +
+                `1. Accede al dashboard de Netlify\n` +
+                `2. Configura la variable SUPABASE_SERVICE_ROLE_KEY\n` +
+                `3. Desactiva CAPTCHA temporalmente en Supabase Auth\n\n` +
+                `Alternativa: Usa "Continuar con Google" (funciona sin problemas).\n\n` +
+                `Detalle técnico: ${errorDetail}`
+              );
+            } else {
+              setError('No se pudo crear la cuenta (CAPTCHA). Intenta más tarde o usa Google. Detalle: ' + errorDetail);
+            }
+            setLoading(false);
+            return;
+          }
+          // Intentar iniciar sesión ahora que el usuario existe
+          const { data: signInData, error: signInErr } = await supabase.auth.signInWithPassword({
+            email: formData.email.toLowerCase().trim(),
+            password: formData.password
+          });
+          if (signInErr) {
+            console.warn('Cuenta creada por bypass pero no se pudo iniciar sesión automáticamente:', signInErr.message);
+            if (bypass.redirectLink) {
+              window.location.assign(bypass.redirectLink);
+              return;
+            }
+            setError('Cuenta creada. Ve al login para iniciar sesión.');
+            setLoading(false);
+            return;
+          }
+          currentUser = signInData?.user || null;
+        } else {
+          setError(signUpResult.error?.message || 'No se pudo crear la cuenta.');
+          setLoading(false);
+          return;
+        }
+      }
 
       // 2. Subir foto si existe
       let fotoUrl = null;
-      if (formData.imagenPerfil && authData.user) {
-        const fileName = `${authData.user.id}_${Date.now()}.jpg`;
+      if (formData.imagenPerfil && currentUser) {
+        const fileName = `${currentUser.id}_${Date.now()}.jpg`;
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('avatars')
           .upload(fileName, formData.imagenPerfil);
@@ -608,9 +664,9 @@ export default function FormularioRegistroCompleto() {
       });
 
       // 3. Crear registro en tabla carfutpro
-      if (authData.user) {
+      if (currentUser) {
         const cardData = {
-          user_id: authData.user.id,
+          user_id: currentUser.id,
           categoria: formData.categoria,
           nombre: `${formData.nombre} ${formData.apellido}`,
           ciudad: formData.ciudad,

@@ -432,9 +432,63 @@ class UserActivityTracker {
     // Procesar acciones pendientes finales
     this.processPendingActions(true);
   }
+
+  /**
+   * 🔁 INTENTO MANUAL DE REACTIVACIÓN
+   * Permite reactivar el tracking si el schema ya fue corregido en Supabase.
+   * Uso desde consola: window.futproReactivateTracking()
+   */
+  async reactivateIfSchemaOk() {
+    if (!this.disabled) {
+      console.info('ℹ️ Tracking ya está activo. No se requiere reactivación.');
+      return false;
+    }
+    try {
+      // Consulta mínima para verificar que el schema ya no devuelve PGRST106
+      const { data, error } = await supabase
+        .from('user_activities')
+        .select('id')
+        .limit(1);
+
+      if (error) {
+        if (error.code === 'PGRST106') {
+          console.warn('⛔ Schema aún inválido (PGRST106). Manteniendo tracking deshabilitado.');
+          return false;
+        }
+        console.warn('⚠️ Error al verificar schema, no se reactiva:', error.message);
+        return false;
+      }
+
+      console.log('✅ Schema OK. Reactivando UserActivityTracker...');
+      localStorage.removeItem('futpro_tracking_disabled');
+      this.disabled = false;
+      this.initializeTracker();
+      return true;
+    } catch (e) {
+      console.warn('⚠️ Fallo en verificación de schema para reactivar:', e.message);
+      return false;
+    }
+  }
+
+  /**
+   * 🧪 Forzar reactivación sin comprobar schema (debug)
+   */
+  forceReactivate() {
+    localStorage.removeItem('futpro_tracking_disabled');
+    this.disabled = false;
+    this.initializeTracker();
+    console.log('🔧 Reactivación forzada ejecutada.');
+    return true;
+  }
 }
 
 // Crear instancia global
 const userActivityTracker = new UserActivityTracker();
+
+// Exponer helper global para facilitar pruebas desde DevTools
+if (typeof window !== 'undefined') {
+  window.futproReactivateTracking = () => userActivityTracker.reactivateIfSchemaOk();
+  window.futproForceReactivateTracking = () => userActivityTracker.forceReactivate();
+}
 
 export default userActivityTracker;
