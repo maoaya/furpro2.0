@@ -1,8 +1,11 @@
 // 🧪 TEST SIMPLE DE REGISTRO - Diagnóstico directo
-// Para usar en la consola del navegador
+// ⚠️ DEPRECADO: Este script crea instancias temporales de Supabase
+// Para testing normal, usar src/supabaseClient.js
+// Este archivo se mantiene solo para diagnóstico de emergencia
 
 async function testRegistroSimple() {
   console.log('🚀 INICIANDO TEST SIMPLE DE REGISTRO');
+  console.warn('⚠️ Este test crea una instancia temporal de Supabase');
   
   // Generar email único
   const timestamp = Date.now();
@@ -16,13 +19,15 @@ async function testRegistroSimple() {
     // Importar Supabase
     const { createClient } = await import('@supabase/supabase-js');
     
-    // Configuración Supabase
-    const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.kXZzpXZQf3rS_LRNnWf0Bz7r4Ik8vqhAoTKxGzgwWFA';
+    // Configuración Supabase (valores de emergencia, preferir .env)
+    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://qqrxetxcglwrejtblwut.supabase.co';
+    const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8';
     
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+      db: { schema: 'api' }
+    });
     
-    console.log('✅ Cliente Supabase creado');
+    console.log('✅ Cliente Supabase temporal creado');
     
     // PASO 1: Test de conexión básica
     console.log('\n1️⃣ Probando conexión básica...');

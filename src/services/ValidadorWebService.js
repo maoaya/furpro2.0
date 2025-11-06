@@ -1,8 +1,7 @@
 
 import express from 'express';
-import { createClient } from '@supabase/supabase-js';
+import supabase from '../supabaseClient.js';
 const router = express.Router();
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 // Validar dominio (ejemplo: buscar en tabla dominios)
 router.post('/validador-web/dominio', async (req, res) => {

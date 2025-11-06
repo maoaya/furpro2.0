@@ -1,7 +1,6 @@
 
 
-import { createClient } from '@supabase/supabase-js';
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+import supabase from '../supabaseClient.js';
 
 export async function crearUsuario(data) {
   const { email, nombre, telefono } = data;

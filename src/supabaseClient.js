@@ -38,7 +38,7 @@ const supabaseOptions = {
     },
     // Configuración de reintento para evitar 502
     db: {
-        schema: 'public'
+        schema: 'api' // Usar el schema correcto para user_activities
     }
 };
 

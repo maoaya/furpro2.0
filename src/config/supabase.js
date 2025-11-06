@@ -2,8 +2,11 @@
 // (Eliminado el bloque duplicado de dbOperations para evitar la redeclaración)
 
  // 🗄️ Configuración de Supabase para FutPro
+// ⚠️ DEPRECADO: Usar src/supabaseClient.js en su lugar para evitar instancias duplicadas
 
-import { createClient } from '@supabase/supabase-js';
+// Re-exportar la instancia única desde supabaseClient.js
+export { default as supabase, supabaseConfigured } from '../supabaseClient.js';
+export { default } from '../supabaseClient.js';
 
 // Utilidad para obtener variables de entorno con fallback
 export function getEnv(key, fallback = '') {
@@ -13,21 +16,6 @@ export function getEnv(key, fallback = '') {
   const nodeVal = typeof process !== 'undefined' ? process.env[key] : undefined;
   return viteVal || nodeVal || fallback;
 }
-
-// Usa variables de entorno para seguridad
-const SUPABASE_URL = getEnv('VITE_SUPABASE_URL', getEnv('SUPABASE_URL', 'https://TU_SUPABASE_URL.supabase.co'));
-const SUPABASE_KEY = getEnv('VITE_SUPABASE_ANON_KEY', getEnv('SUPABASE_KEY', 'TU_SUPABASE_API_KEY'));
-
-// Señalizar configuración inválida para evitar redirecciones a placeholders
-const isPlaceholderUrl = !SUPABASE_URL || /TU_SUPABASE_URL/i.test(SUPABASE_URL);
-const isPlaceholderKey = !SUPABASE_KEY || /TU_SUPABASE_API_KEY/i.test(SUPABASE_KEY);
-export const supabaseConfigured = !(isPlaceholderUrl || isPlaceholderKey);
-if (!supabaseConfigured && typeof console !== 'undefined') {
-  console.error('[Supabase] Configuración faltante: define VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en el entorno (Netlify). URL actual:', SUPABASE_URL);
-}
-
-export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-export default supabase;
 
 // Pequeña utilidad para detectar si el endpoint de Supabase está alcanzable desde el cliente.
 // Evita tormentas de errores cuando hay problemas de DNS/red del usuario.

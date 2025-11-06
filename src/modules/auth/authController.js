@@ -2,11 +2,7 @@
 
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { createClient } from '@supabase/supabase-js';
-
-// Usar SUPABASE_KEY si existe, si no SUPABASE_ANON_KEY
-const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;
-const supabase = createClient(process.env.SUPABASE_URL, supabaseKey);
+import supabase from '../../supabaseClient.js';
 
 export async function register(req, res) {
   try {
