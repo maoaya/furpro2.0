@@ -4,7 +4,7 @@
 [build]
   base = "."
   publish = "dist"
-  command = "npm ci && npm run build"
+  command = "cp .env.netlify .env.production && npm ci && npm run build"
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':!README.md' ':!*.md'"
 
 [build.environment]
@@ -24,6 +24,10 @@
   VITE_PRODUCTION_MODE = "true"
   VITE_TRACKING_ENABLED = "true"
   VITE_AUTO_SAVE_ENABLED = "true"
+  # Configuración Supabase (valores públicos, seguros para git)
+  VITE_SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8"
+  VITE_GOOGLE_CLIENT_ID = "760210878835-r15nffmc9ldt4hb1a5k8mvs9dql7pkrf.apps.googleusercontent.com"
   # Build ID actualizado para 2025
   NETLIFY_BUILD_ID = "futpro-2025-no-secrets-scan-v2.1"
   # Omitir archivos específicos del escaneo de secretos

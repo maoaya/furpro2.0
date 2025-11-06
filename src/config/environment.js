@@ -10,6 +10,14 @@ if (typeof process !== 'undefined' && process.env) {
   FACEBOOK_CLIENT_ID = process.env.VITE_FACEBOOK_CLIENT_ID;
 }
 
+// En navegador, usar import.meta.env (Vite)
+if (typeof import.meta !== 'undefined' && import.meta.env) {
+  SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+  SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  FACEBOOK_CLIENT_ID = import.meta.env.VITE_FACEBOOK_CLIENT_ID;
+}
+
 export const getConfig = () => {
   // Detectar si estamos en Node.js (server-side)
   const isNode = typeof window === 'undefined';
