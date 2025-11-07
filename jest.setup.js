@@ -119,9 +119,16 @@ if (!global.import) {
   });
 }
 Object.defineProperty(global.import, 'meta', {
-  value: { env: { VITE_SUPABASE_URL: 'http://localhost:54321', VITE_SUPABASE_KEY: 'test-key' } },
+  value: { env: { 
+    VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL || 'http://localhost:54321', 
+    VITE_SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY || 'test-key',
+    MODE: 'test'
+  } },
   writable: true
 });
+
+// Forzar idioma consistente en tests que esperan etiquetas en español
+Object.defineProperty(global.navigator, 'language', { value: 'es-ES', configurable: true });
 // Setup global fetch for Jest (Node.js)
 
 if (typeof global.fetch === 'undefined') {

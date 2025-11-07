@@ -12,9 +12,13 @@ export function useWebSocketLikes(onNewLike, options = {}) {
     if (!enabled) return () => {};
 
     const isLocal = typeof window !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
-    const WS_URL = url
-      || (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_WS_URL)
-      || (isLocal ? 'ws://localhost:8080' : 'wss://futpro.vip/ws');
+    const viteEnv = (typeof globalThis !== 'undefined' && globalThis.import && globalThis.import.meta && globalThis.import.meta.env)
+      ? globalThis.import.meta.env
+      : undefined;
+    const wsFromEnv = (typeof process !== 'undefined' && process.env && (process.env.VITE_WS_URL || process.env.WS_URL))
+      || (typeof window !== 'undefined' && window.__ENV && (window.__ENV.VITE_WS_URL || window.__ENV.WS_URL))
+      || (viteEnv && (viteEnv.VITE_WS_URL || viteEnv.WS_URL));
+    const WS_URL = url || wsFromEnv || (isLocal ? 'ws://localhost:8080' : 'wss://futpro.vip/ws');
 
     const cleanupTimer = () => {
       if (stateRef.current.timer) {

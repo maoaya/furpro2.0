@@ -2,6 +2,12 @@
 // Variables de configuración - compatibles con Jest y navegador
 let SUPABASE_URL, SUPABASE_ANON_KEY, GOOGLE_CLIENT_ID, FACEBOOK_CLIENT_ID;
 
+// Acceso seguro a variables de Vite evitando el uso directo de import.meta (que rompe en Jest CommonJS)
+// jest.setup.js define globalThis.import.meta.env para los tests
+const viteEnv = (typeof globalThis !== 'undefined' && globalThis.import && globalThis.import.meta && globalThis.import.meta.env)
+  ? globalThis.import.meta.env
+  : undefined;
+
 // En Jest/Node.js, usar process.env (definido en jest.setup.js)
 if (typeof process !== 'undefined' && process.env) {
   SUPABASE_URL = process.env.VITE_SUPABASE_URL;
@@ -10,12 +16,12 @@ if (typeof process !== 'undefined' && process.env) {
   FACEBOOK_CLIENT_ID = process.env.VITE_FACEBOOK_CLIENT_ID;
 }
 
-// En navegador, usar import.meta.env (Vite)
-if (typeof import.meta !== 'undefined' && import.meta.env) {
-  SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-  SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-  GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-  FACEBOOK_CLIENT_ID = import.meta.env.VITE_FACEBOOK_CLIENT_ID;
+// En navegador (Vite) si viteEnv está disponible
+if (viteEnv) {
+  SUPABASE_URL = viteEnv.VITE_SUPABASE_URL;
+  SUPABASE_ANON_KEY = viteEnv.VITE_SUPABASE_ANON_KEY;
+  GOOGLE_CLIENT_ID = viteEnv.VITE_GOOGLE_CLIENT_ID;
+  FACEBOOK_CLIENT_ID = viteEnv.VITE_FACEBOOK_CLIENT_ID;
 }
 
 export const getConfig = () => {

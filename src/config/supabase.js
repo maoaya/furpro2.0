@@ -15,11 +15,14 @@ const SUPABASE_URL = __env.supabaseUrl; // evita ReferenceError en producción
 
 // Utilidad para obtener variables de entorno con fallback
 export function getEnv(key, fallback = '') {
-  // Preferir import.meta.env en cliente (Vite) y caer a process.env en server
-  const viteVal = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) ||
-                  (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env['VITE_' + key])
-  const nodeVal = typeof process !== 'undefined' ? process.env[key] : undefined;
-  return viteVal || nodeVal || fallback;
+  // Preferir entorno de Vite si está inyectado de forma segura (globalThis.import.meta.env)
+  const viteEnv = (typeof globalThis !== 'undefined' && globalThis.import && globalThis.import.meta && globalThis.import.meta.env)
+    ? globalThis.import.meta.env
+    : undefined;
+  const viteVal = (viteEnv && (viteEnv[key] || viteEnv['VITE_' + key])) || undefined;
+  const nodeVal = (typeof process !== 'undefined' && process.env) ? (process.env[key] || process.env['VITE_' + key]) : undefined;
+  const winVal = (typeof window !== 'undefined' && window.__ENV) ? (window.__ENV[key] || window.__ENV['VITE_' + key]) : undefined;
+  return viteVal || nodeVal || winVal || fallback;
 }
 
 // Pequeña utilidad para detectar si el endpoint de Supabase está alcanzable desde el cliente.
