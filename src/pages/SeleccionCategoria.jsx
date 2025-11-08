@@ -69,15 +69,37 @@ export default function SeleccionCategoria() {
       setConfirming(true);
       // Pre-semilla en localStorage para el formulario (compatibilidad con lector draft_carfutpro)
       localStorage.setItem('draft_carfutpro', JSON.stringify({ categoria: selected, ts: Date.now() }));
+      console.log('✅ Draft categoría guardado:', selected);
     } catch (e) {
       console.warn('No se pudo guardar draft categoria', e);
     }
     const target = `/formulario-registro?categoria=${encodeURIComponent(selected)}`;
+    console.log('➡️ [SeleccionCategoria] Navegando a formulario de registro:', target, 'categoría:', selected);
+    
     try {
-      navigate(target, { state: { categoria: selected } });
+      navigate(target, { state: { categoria: selected }, replace: true });
+      console.log('🔄 React Router navigate() llamado');
+      
+      // Verificar navegación efectiva y aplicar fallback si no cambió pathname
+      setTimeout(() => {
+        if (window.location.pathname.indexOf('/formulario-registro') !== 0) {
+          console.warn('⚠️ React Router no aplicó la navegación (pathname no cambió), usando window.location');
+          try {
+            window.location.assign(target);
+          } catch (_) {
+            window.location.href = target;
+          }
+        } else {
+          console.log('✅ Navegación confirmada a:', window.location.pathname);
+        }
+      }, 500);
     } catch (navErr) {
-      console.warn('Fallback a navegación directa (window.location) por error en navigate:', navErr);
-      window.location.href = target;
+      console.warn('❌ Error en navigate(), usando fallback window.location:', navErr);
+      try {
+        window.location.assign(target);
+      } catch (_) {
+        window.location.href = target;
+      }
     }
   };
 

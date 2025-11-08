@@ -175,8 +175,36 @@ export default function LoginRegisterFormClean() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0b0b0b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <div style={{ width: '100%', maxWidth: 420, background: '#121212', border: `2px solid ${gold}`, borderRadius: 16, padding: 20, boxShadow: '0 10px 30px #000a' }}>
+    <div style={{ minHeight: '100vh', background: 'radial-gradient(circle at top,#1a1a1a,#050505)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      {/* Barra de navegación mínima visible incluso antes de login para evitar pantalla "vacía" */}
+      <div style={{ position: 'fixed', top: 8, left: 8, right: 8, display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', zIndex: 50 }}>
+        {[
+          { to: '/home', label: 'Home' },
+          { to: '/marketplace', label: 'Market' },
+          { to: '/feed', label: 'Videos' },
+          { to: '/notificaciones', label: 'Alertas' },
+          { to: '/chat-sql', label: 'Chat' }
+        ].map(btn => (
+          <button
+            key={btn.to}
+            onClick={() => { try { navigate(btn.to); } catch { window.location.href = btn.to; } }}
+            style={{
+              background: 'linear-gradient(135deg,#2d2d2d,#1a1a1a)',
+              color: '#FFD700',
+              border: '1px solid #333',
+              padding: '8px 14px',
+              borderRadius: 8,
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: 'pointer',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+              transition: 'all .25s'
+            }}
+          >{btn.label}</button>
+        ))}
+      </div>
+      {/* Contenedor del formulario */}
+      <div style={{ width: '100%', maxWidth: 440, background: 'linear-gradient(165deg,#121212,#0b0b0b 60%)', border: `2px solid ${gold}`, borderRadius: 20, padding: 24, boxShadow: '0 12px 38px #000c, inset 0 0 0 1px #333' }}>
         <h1 style={{ color: gold, margin: 0, marginBottom: 8, textAlign: 'center' }}>{t('title')}</h1>
         <p style={{ color: '#bbb', marginTop: 0, textAlign: 'center' }}>{isRegister ? t('createAccount') : t('signIn')}</p>
 
@@ -193,7 +221,7 @@ export default function LoginRegisterFormClean() {
           <div style={{ flex: 1, height: 1, background: '#333' }} />
         </div>
 
-        <form onSubmit={handleSubmitEmail} style={{ display: 'grid', gap: 10 }}>
+        <form onSubmit={handleSubmitEmail} style={{ display: 'grid', gap: 12 }}>
           <input type="email" required placeholder={t('emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }}/>
           <input type="password" required placeholder={t('passwordPlaceholder')} value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: 12, background: '#1c1c1c', color: '#eee', border: '1px solid #333', borderRadius: 10 }}/>
           {isRegister && (
@@ -204,11 +232,11 @@ export default function LoginRegisterFormClean() {
               <option value="masculina">{t('masculina')}</option>
             </select>
           )}
-          <button type="submit" disabled={loading} style={{ width: '100%', padding: 12, background: isRegister ? 'linear-gradient(135deg,#22c55e,#16a34a)' : 'linear-gradient(135deg,#f59e0b,#d97706)', color: '#111', border: 'none', borderRadius: 10, fontWeight: 800, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>{loading ? t('processing') : (isRegister ? t('createBtn') : t('signInBtn'))}</button>
+          <button type="submit" disabled={loading} style={{ width: '100%', padding: 14, background: isRegister ? 'linear-gradient(135deg,#22c55e,#16a34a)' : 'linear-gradient(135deg,#f59e0b,#d97706)', color: '#111', border: 'none', borderRadius: 12, fontWeight: 800, letterSpacing: '.5px', cursor: 'pointer', opacity: loading ? 0.7 : 1, boxShadow: '0 4px 14px rgba(0,0,0,.5)' }}>{loading ? t('processing') : (isRegister ? t('createBtn') : t('signInBtn'))}</button>
         </form>
 
-        <div style={{ marginTop: 12, textAlign: 'center' }}>
-          <button onClick={() => setIsRegister(!isRegister)} style={{ background: 'transparent', color: gold, border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
+        <div style={{ marginTop: 14, textAlign: 'center' }}>
+          <button onClick={() => setIsRegister(!isRegister)} style={{ background: 'transparent', color: gold, border: 'none', cursor: 'pointer', textDecoration: 'underline', fontWeight: 600 }}>
             {isRegister ? t('hasAccount') : t('noAccount')}
           </button>
         </div>

@@ -70,6 +70,13 @@
   force = true
 
 [[redirects]]
+  # Registro multi-step completo (no coincidía con /registro*)
+  from = "/formulario-registro*"
+  to = "/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
