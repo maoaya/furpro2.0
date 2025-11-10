@@ -44,7 +44,7 @@ const AuthCallback = () => {
             setError('Error en la autenticación');
             
             // 🔥 TRACK FAILED OAUTH CALLBACK
-            userActivityTracker.track('oauth_callback_failed', {
+            userActivityTracker.trackAction('oauth_callback_failed', {
               timestamp: new Date().toISOString(),
               error: 'No user found after callback'
             });
@@ -60,7 +60,7 @@ const AuthCallback = () => {
         setError('Error procesando autenticación');
         
         // 🔥 TRACK OAUTH CALLBACK EXCEPTION
-        userActivityTracker.track('oauth_callback_exception', {
+        userActivityTracker.trackAction('oauth_callback_exception', {
           error: error.message,
           timestamp: new Date().toISOString()
         });
