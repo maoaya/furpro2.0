@@ -70,8 +70,12 @@ class FutProTrackingInitializer {
   }
 
   cleanup() {
-    if (userActivityTracker && typeof userActivityTracker.destroy === 'function') {
-      userActivityTracker.destroy();
+    try {
+      if (userActivityTracker && typeof userActivityTracker.destroy === 'function') {
+        userActivityTracker.destroy();
+      }
+    } catch (error) {
+      console.error('Error en cleanup de tracking:', error);
     }
   }
 

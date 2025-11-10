@@ -4,7 +4,7 @@
 [build]
   base = "."
   publish = "dist"
-  command = "cp .env.netlify .env.production && npm ci && npm run build"
+  command = "node copy-env.js && npm ci && npm run build"
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':!README.md' ':!*.md'"
 
 [build.environment]

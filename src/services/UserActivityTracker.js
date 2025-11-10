@@ -421,16 +421,27 @@ class UserActivityTracker {
    * 🧹 CLEANUP
    */
   destroy() {
-    if (this.autoSaveInterval) {
-      clearInterval(this.autoSaveInterval);
+    try {
+      if (this.autoSaveInterval) {
+        clearInterval(this.autoSaveInterval);
+        this.autoSaveInterval = null;
+      }
+      
+      // Limpiar todos los timers de debounce con protección
+      if (this.debounceTimers && typeof this.debounceTimers.forEach === 'function') {
+        this.debounceTimers.forEach(timer => {
+          if (timer) clearTimeout(timer);
+        });
+        this.debounceTimers.clear();
+      }
+      
+      // Procesar acciones pendientes finales
+      if (!this.disabled && this.processPendingActions) {
+        this.processPendingActions(true);
+      }
+    } catch (error) {
+      console.error('Error en cleanup del tracker:', error);
     }
-    
-    // Limpiar todos los timers de debounce
-    this.debounceTimers.forEach(timer => clearTimeout(timer));
-    this.debounceTimers.clear();
-    
-    // Procesar acciones pendientes finales
-    this.processPendingActions(true);
   }
 
   /**
