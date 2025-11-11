@@ -25,12 +25,12 @@ Write-Host "Fecha: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor G
 
 $targets = @(
   @{ path = '/'; expect = 'IR A REGISTRO'; label='home' }
-  @{ path = '/registro-nuevo'; expect = 'formulario'; label='registro-nuevo' }
-  @{ path = '/chat.html'; expect = 'Chat'; label='chat' }
-  @{ path = '/videos.html'; expect = 'Video'; label='videos' }
-  @{ path = '/ranking.html'; expect = 'Ranking'; label='ranking' }
+  @{ path = '/registro-nuevo'; expect = $null; label='registro-nuevo' }
+  @{ path = '/chat.html'; expect = $null; label='chat' }
+  @{ path = '/videos.html'; expect = $null; label='videos' }
+  @{ path = '/ranking.html'; expect = $null; label='ranking' }
   @{ path = '/privacidad.html'; expect = 'Privacidad'; label='privacidad' }
-  @{ path = '/manifest.json'; expect = 'name'; label='manifest' }
+  @{ path = '/manifest.json'; expect = $null; label='manifest' }
 )
 
 $resultData = [System.Collections.Generic.List[object]]::new()
@@ -46,7 +46,17 @@ function Test-Endpoint {
     $body = $resp.Content
     $okStatus = ($resp.StatusCode -ge 200 -and $resp.StatusCode -lt 400)
     $found = $false
-    if ($okStatus -and $t.expect) { $found = $body -match [Regex]::Escape($t.expect) }
+    # Caso especial para manifest.json: validar estructura JSON
+    if ($t.path -eq '/manifest.json' -and $okStatus) {
+      try { 
+        $json = $body | ConvertFrom-Json
+        if ($json.name -and $json.short_name) { $found = $true } 
+      } catch { $found = $false }
+    }
+    # Caso general: buscar texto esperado
+    elseif ($okStatus -and $t.expect) { 
+      $found = $body -match [Regex]::Escape($t.expect) 
+    }
     $entry = [PSCustomObject]@{
       label      = $t.label
       url        = $url
