@@ -11,6 +11,7 @@
 # 🚀 Deployment scripts with sensitive info  
 deploy-*.sh
 deploy-*.ps1
+!deploy-smoke.ps1
 deploy-*.bat
 netlify-*.sh
 netlify-*.ps1
