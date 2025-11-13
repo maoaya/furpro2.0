@@ -1,8 +1,7 @@
-jest.mock('../../src/config/supabase', () => ({ supabase: {} }));
-jest.mock('../../src/config/firebase', () => ({ auth: {}, googleProvider: {}, facebookProvider: {} }));
+jest.mock('../../src/supabaseClient', () => ({}));
 import FutProApp from '../../src/FutProApp.jsx';
-import LoginRegisterForm from '../../src/LoginRegisterForm.jsx';
-import { AuthContext } from '../../src/AuthContext.jsx';
+import LoginRegisterForm from '../../src/pages/LoginRegisterForm.jsx';
+import { AuthContext } from '../../src/context/AuthContext.jsx';
 
 describe('Componentes React puros FutPro (con mocks)', () => {
   it('FutProApp se puede importar sin errores', () => {

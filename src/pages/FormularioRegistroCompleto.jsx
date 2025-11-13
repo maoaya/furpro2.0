@@ -522,6 +522,54 @@ export default function FormularioRegistroCompleto() {
   const handleGoogleSignup = async () => {
     try {
       setLoading(true);
+      // Guardar intención de navegación post-OAuth: ir directo a mostrar Card
+      try {
+        // CAMBIO: Target ahora es /perfil-card para mostrar Card directamente después de OAuth
+        localStorage.setItem('post_auth_target', '/perfil-card');
+        localStorage.setItem('oauth_origin', 'formulario_registro');
+
+        // Preparar datos mínimos para mostrar la Card al volver del OAuth
+        const puntaje = calcularPuntajeInicial({
+          nivelHabilidad: formData.nivelHabilidad,
+          edad: Number(formData.edad) || 0,
+          frecuenciaJuego: formData.frecuenciaJuego
+        });
+
+        const cardData = {
+          id: `temp-${Date.now()}`,
+          categoria: formData.categoria || 'infantil_femenina',
+          nombre: `${formData.nombre || 'Jugador'} ${formData.apellido || ''}`.trim(),
+          ciudad: formData.ciudad || '',
+          pais: formData.pais || '',
+          posicion_favorita: formData.posicion || 'Flexible',
+          nivel_habilidad: formData.nivelHabilidad || 'Principiante',
+          puntaje: puntaje,
+          equipo: formData.equipoFavorito || '—',
+          fecha_registro: new Date().toISOString(),
+          esPrimeraCard: true,
+          avatar_url: formData.previewUrl || ''
+        };
+        localStorage.setItem('futpro_user_card_data', JSON.stringify(cardData));
+        localStorage.setItem('show_first_card', 'true');
+
+        // Guardar borrador completo del formulario por si se necesita completar
+        const draft = { ...formData, ultimoGuardado: new Date().toISOString() };
+        localStorage.setItem('futpro_registro_draft', JSON.stringify(draft));
+        localStorage.setItem('draft_carfutpro', JSON.stringify({
+          categoria: formData.categoria,
+          nombre: cardData.nombre,
+          ciudad: formData.ciudad,
+          pais: formData.pais,
+          posicion_favorita: cardData.posicion_favorita,
+          nivel_habilidad: cardData.nivel_habilidad,
+          equipo: cardData.equipo,
+          avatar_url: cardData.avatar_url,
+          estado: 'borrador_perfil',
+          updatedAt: new Date().toISOString()
+        }));
+      } catch (e) {
+        console.warn('No se pudo preparar el estado previo a OAuth:', e);
+      }
       const { oauthCallbackUrl } = getConfig();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',

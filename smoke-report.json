@@ -1,0 +1,72 @@
+﻿[
+    {
+        "label":  "home",
+        "url":  "https://futpro.vip/",
+        "statusCode":  200,
+        "ms":  695,
+        "size":  7954,
+        "expect":  "IR A REGISTRO",
+        "expectFound":  true,
+        "ok":  true
+    },
+    {
+        "label":  "registro-nuevo",
+        "url":  "https://futpro.vip/registro-nuevo",
+        "statusCode":  200,
+        "ms":  116,
+        "size":  7954,
+        "expect":  null,
+        "expectFound":  false,
+        "ok":  true
+    },
+    {
+        "label":  "chat",
+        "url":  "https://futpro.vip/chat.html",
+        "statusCode":  200,
+        "ms":  157,
+        "size":  4246,
+        "expect":  null,
+        "expectFound":  false,
+        "ok":  true
+    },
+    {
+        "label":  "videos",
+        "url":  "https://futpro.vip/videos.html",
+        "statusCode":  200,
+        "ms":  218,
+        "size":  26282,
+        "expect":  null,
+        "expectFound":  false,
+        "ok":  true
+    },
+    {
+        "label":  "ranking",
+        "url":  "https://futpro.vip/ranking.html",
+        "statusCode":  200,
+        "ms":  130,
+        "size":  0,
+        "expect":  null,
+        "expectFound":  false,
+        "ok":  true
+    },
+    {
+        "label":  "privacidad",
+        "url":  "https://futpro.vip/privacidad.html",
+        "statusCode":  200,
+        "ms":  480,
+        "size":  1079,
+        "expect":  "Privacidad",
+        "expectFound":  true,
+        "ok":  true
+    },
+    {
+        "label":  "manifest",
+        "url":  "https://futpro.vip/manifest.json",
+        "statusCode":  200,
+        "ms":  159,
+        "size":  2748,
+        "expect":  null,
+        "expectFound":  false,
+        "ok":  true
+    }
+]

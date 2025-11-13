@@ -8,20 +8,32 @@ import supabase from '../supabaseClient';
 
 class UserActivityTracker {
   constructor() {
+    // 🛡️ PROTECCIÓN ENTORNO: Evitar acceso a APIs del navegador si no existen (tests backend/Node)
+    const hasWindow = typeof window !== 'undefined';
+    const hasLocalStorage = typeof localStorage !== 'undefined';
+    const hasNavigator = typeof navigator !== 'undefined';
+
+    // Inicializaciones seguras por defecto
+    this.disabled = false;
+    this.isOnline = hasNavigator ? !!navigator.onLine : false;
+    this.pendingActions = [];
+    this.lastSave = null;
+    this.user = null;
+    this.autoSaveInterval = null;
+    this.debounceTimers = new Map();
+    
+    // Si estamos en entorno no navegador, deshabilitar el tracker pero permitir import seguro
+    if (!hasWindow || !hasLocalStorage || !hasNavigator) {
+      this.disabled = true;
+      return;
+    }
+
     // 🛡️ PROTECCIÓN: No inicializar si tracking está deshabilitado
     if (localStorage.getItem('futpro_tracking_disabled') === 'true') {
       console.warn('⚠️ UserActivityTracker deshabilitado por error de schema');
       this.disabled = true;
       return;
     }
-
-    this.disabled = false;
-    this.isOnline = navigator.onLine;
-    this.pendingActions = [];
-    this.lastSave = null;
-    this.user = null;
-    this.autoSaveInterval = null;
-    this.debounceTimers = new Map();
     
     this.initializeTracker();
     this.setupEventListeners();
@@ -52,6 +64,7 @@ class UserActivityTracker {
    * 📱 CONFIGURAR EVENT LISTENERS
    */
   setupEventListeners() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return; // entorno no navegador
     // Detectar cambios de conectividad
     window.addEventListener('online', () => {
       this.isOnline = true;
@@ -113,8 +126,8 @@ class UserActivityTracker {
       data: {
         ...data,
         timestamp: new Date().toISOString(),
-        url: window.location.pathname,
-        userAgent: navigator.userAgent.substring(0, 100),
+        url: (typeof window !== 'undefined' && window.location) ? window.location.pathname : '',
+        userAgent: (typeof navigator !== 'undefined' && navigator.userAgent) ? navigator.userAgent.substring(0, 100) : 'node',
         sessionId: this.getSessionId()
       },
       attempts: 0,
@@ -348,6 +361,7 @@ class UserActivityTracker {
   }
 
   getSessionId() {
+    if (typeof localStorage === 'undefined') return 'session_test_env';
     let sessionId = localStorage.getItem('futpro_session_id');
     if (!sessionId) {
       sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -357,6 +371,7 @@ class UserActivityTracker {
   }
 
   getSessionDuration() {
+    if (typeof localStorage === 'undefined') return 0;
     const sessionStart = localStorage.getItem('futpro_session_start');
     if (sessionStart) {
       return Date.now() - parseInt(sessionStart);
@@ -385,7 +400,9 @@ class UserActivityTracker {
 
   savePendingActions() {
     try {
-      localStorage.setItem('futpro_pending_actions', JSON.stringify(this.pendingActions));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('futpro_pending_actions', JSON.stringify(this.pendingActions));
+      }
     } catch (error) {
       console.error('Error guardando acciones pendientes:', error);
     }
@@ -393,6 +410,7 @@ class UserActivityTracker {
 
   loadPendingActions() {
     try {
+      if (typeof localStorage === 'undefined') return;
       const saved = localStorage.getItem('futpro_pending_actions');
       if (saved) {
         this.pendingActions = JSON.parse(saved);
@@ -471,7 +489,9 @@ class UserActivityTracker {
       }
 
       console.log('✅ Schema OK. Reactivando UserActivityTracker...');
-      localStorage.removeItem('futpro_tracking_disabled');
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('futpro_tracking_disabled');
+      }
       this.disabled = false;
       this.initializeTracker();
       return true;
@@ -485,7 +505,9 @@ class UserActivityTracker {
    * 🧪 Forzar reactivación sin comprobar schema (debug)
    */
   forceReactivate() {
-    localStorage.removeItem('futpro_tracking_disabled');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('futpro_tracking_disabled');
+    }
     this.disabled = false;
     this.initializeTracker();
     console.log('🔧 Reactivación forzada ejecutada.');

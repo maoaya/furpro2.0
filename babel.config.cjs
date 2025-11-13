@@ -6,6 +6,9 @@ module.exports = {
     }],
     '@babel/preset-react'
   ],
+  plugins: [
+    '@babel/plugin-syntax-dynamic-import'
+  ],
   env: {
     test: {
       presets: [
@@ -14,6 +17,9 @@ module.exports = {
           modules: 'commonjs'
         }],
         '@babel/preset-react'
+      ],
+      plugins: [
+        '@babel/plugin-syntax-dynamic-import'
       ]
     }
   }

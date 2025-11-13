@@ -1,25 +1,3 @@
-// import supabase from '../supabaseClient';
-  // Borrar partido en Supabase
-  const handleBorrar = async (id) => {
-    setLoading(true);
-    const { error } = await supabase.from('partidos').delete().eq('id', id);
-    if (error) setError('Error al borrar partido');
-    else navigate('/partidos');
-    setLoading(false);
-  };
-
-  // Ejemplo de tiempo real con Supabase (partidos)
-  React.useEffect(() => {
-    const subscription = supabase
-      .channel('partidos-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'partidos' }, payload => {
-        handleActualizar();
-      })
-      .subscribe();
-    return () => {
-      supabase.removeChannel(subscription);
-    };
-  }, []);
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -35,6 +13,19 @@ export default function PartidoDetalle() {
   const [partido, setPartido] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Ejemplo de tiempo real con Supabase (partidos)
+  React.useEffect(() => {
+    const subscription = supabase
+      .channel('partidos-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'partidos' }, payload => {
+        handleActualizar();
+      })
+      .subscribe();
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, []);
 
   React.useEffect(() => {
     const partidoId = window.location.pathname.split('/').pop();
@@ -66,6 +57,15 @@ export default function PartidoDetalle() {
 
   const handleHistorial = () => {
     if (partido) navigate(`/partidos/${partido.id}/historial`);
+  };
+
+  // Borrar partido en Supabase
+  const handleBorrar = async (id) => {
+    setLoading(true);
+    const { error } = await supabase.from('partidos').delete().eq('id', id);
+    if (error) setError('Error al borrar partido');
+    else navigate('/partidos');
+    setLoading(false);
   };
 
   return (

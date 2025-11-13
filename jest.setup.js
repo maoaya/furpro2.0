@@ -19,6 +19,7 @@ jest.mock('@supabase/supabase-js', () => ({
       signUp: jest.fn(), 
       signOut: jest.fn(), 
       user: jest.fn(),
+      getSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
       onAuthStateChange: jest.fn(() => ({ 
         data: { subscription: { unsubscribe: jest.fn() } } 
       })),
@@ -30,8 +31,45 @@ jest.mock('@supabase/supabase-js', () => ({
       insert: jest.fn(), 
       update: jest.fn(), 
       delete: jest.fn() 
-    }))
+    })),
+    channel: jest.fn(() => ({
+      on: jest.fn(function() { return this; }),
+      subscribe: jest.fn()
+    })),
+    removeChannel: jest.fn()
   })
+}));
+
+// Mock de supabaseClient.js para tests
+jest.mock('./src/supabaseClient.js', () => ({
+  __esModule: true,
+  default: {
+    auth: {
+      getSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
+      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+      signInWithOAuth: jest.fn(),
+      signInWithPassword: jest.fn(),
+      signUp: jest.fn(),
+      signOut: jest.fn()
+    },
+    from: jest.fn(() => ({
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          single: jest.fn(() => Promise.resolve({ data: null, error: null }))
+        }))
+      })),
+      insert: jest.fn(() => Promise.resolve({ data: null, error: null })),
+      update: jest.fn(() => Promise.resolve({ data: null, error: null })),
+      delete: jest.fn(() => ({
+        eq: jest.fn(() => Promise.resolve({ error: null }))
+      }))
+    })),
+    channel: jest.fn(() => ({
+      on: jest.fn(function() { return this; }),
+      subscribe: jest.fn()
+    })),
+    removeChannel: jest.fn()
+  }
 }));
 
 // Mock global para Firebase

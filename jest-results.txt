@@ -1,0 +1,351 @@
+Usage: jest.js [--config=<pathToConfigFile>] [TestPathPatterns]
+
+Opciones:
+  -h, --help                        Muestra ayuda                     [booleano]
+      --version                     Muestra número de versión         [booleano]
+      --all                         The opposite of `onlyChanged`. If
+                                    `onlyChanged` is set by default, running
+                                    jest with `--all` will force Jest to run all
+                                    tests instead of running only tests related
+                                    to changed files.                 [booleano]
+      --automock                    Automock all files by default.    [booleano]
+  -b, --bail                        Exit the test suite immediately after `n`
+                                    number of failing tests.          [booleano]
+      --cache                       Whether to use the transform cache. Disable
+                                    the cache using --no-cache.       [booleano]
+      --cacheDirectory              The directory where Jest should store its
+                                    cached  dependency information.
+                                                          [cadena de caracteres]
+      --changedFilesWithAncestor    Runs tests related to the current changes
+                                    and the changes made in the last commit.
+                                    Behaves similarly to `--onlyChanged`.
+                                                                      [booleano]
+      --changedSince                Runs tests related to the changes since the
+                                    provided branch. If the current branch has
+                                    diverged from the given branch, then only
+                                    changes made locally will be tested. Behaves
+                                    similarly to `--onlyChanged`.
+                                                          [cadena de caracteres]
+      --ci                          Whether to run Jest in continuous
+                                    integration (CI) mode. This option is on by
+                                    default in most popular CI environments. It
+                                    will prevent snapshots from being written
+                                    unless explicitly requested.      [booleano]
+      --clearCache                  Clears the configured Jest cache directory
+                                    and then exits. Default directory can be
+                                    found by calling jest --showConfig[booleano]
+      --clearMocks                  Automatically clear mock calls, instances,
+                                    contexts and results before every test.
+                                    Equivalent to calling jest.clearAllMocks()
+                                    before each test.                 [booleano]
+      --collectCoverage             Alias for --coverage.             [booleano]
+      --collectCoverageFrom         A glob pattern relative to <rootDir>
+                                    matching the files that coverage info needs
+                                    to be collected from. [cadena de caracteres]
+      --color                       Forces test results output color
+                                    highlighting (even if stdout is not a TTY).
+                                    Set to false if you would like to have no
+                                    colors.                           [booleano]
+      --colors                      Alias for `--color`.              [booleano]
+  -c, --config                      The path to a jest config file specifying
+                                    how to find and execute tests. If no rootDir
+                                    is set in the config, the directory
+                                    containing the config file is assumed to be
+                                    the rootDir for the project. This can also
+                                    be a JSON encoded value which Jest will use
+                                    as configuration.     [cadena de caracteres]
+      --coverage                    Indicates that test coverage information
+                                    should be collected and reported in the
+                                    output.                           [booleano]
+      --coverageDirectory           The directory where Jest should output its
+                                    coverage files.       [cadena de caracteres]
+      --coveragePathIgnorePatterns  An array of regexp pattern strings that are
+                                    matched against all file paths before
+                                    executing the test. If the file path matches
+                                    any of the patterns, coverage information
+                                    will be skipped.                     [tabla]
+      --coverageProvider            Select between Babel and V8 to collect
+                                    coverage          [selección: "babel", "v8"]
+      --coverageReporters           A list of reporter names that Jest uses when
+                                    writing coverage reports. Any istanbul
+                                    reporter can be used.                [tabla]
+      --coverageThreshold           A JSON string with which will be used to
+                                    configure minimum threshold enforcement for
+                                    coverage results      [cadena de caracteres]
+      --debug                       Print debugging info about your jest config.
+                                                                      [booleano]
+      --detectLeaks                 **EXPERIMENTAL**: Detect memory leaks in
+                                    tests. After executing a test, it will try
+                                    to garbage collect the global object used,
+                                    and fail if it was leaked         [booleano]
+      --detectOpenHandles           Print out remaining open handles preventing
+                                    Jest from exiting at the end of a test run.
+                                    Implies `runInBand`.              [booleano]
+      --errorOnDeprecated           Make calling deprecated APIs throw helpful
+                                    error messages.                   [booleano]
+  -e, --expand                      Use this flag to show full diffs instead of
+                                    a patch.                          [booleano]
+      --filter                      Path to a module exporting a filtering
+                                    function. This method receives a list of
+                                    tests which can be manipulated to exclude
+                                    tests from running. Especially useful when
+                                    used in conjunction with a testing
+                                    infrastructure to filter known broken tests.
+                                                          [cadena de caracteres]
+      --findRelatedTests            Find related tests for a list of source
+                                    files that were passed in as arguments.
+                                    Useful for pre-commit hook integration to
+                                    run the minimal amount of tests necessary.
+                                                                      [booleano]
+      --forceExit                   Force Jest to exit after all tests have
+                                    completed running. This is useful when
+                                    resources set up by test code cannot be
+                                    adequately cleaned up.            [booleano]
+      --globalSetup                 The path to a module that runs before All
+                                    Tests.                [cadena de caracteres]
+      --globalTeardown              The path to a module that runs after All
+                                    Tests.                [cadena de caracteres]
+      --globals                     A JSON string with map of global variables
+                                    that need to be available in all test
+                                    environments.         [cadena de caracteres]
+      --haste                       A JSON string with map of variables for the
+                                    haste module system   [cadena de caracteres]
+      --ignoreProjects              Ignore the tests of the specified projects.
+                                    Jest uses the attribute `displayName` in the
+                                    configuration to identify each project.
+                                                                         [tabla]
+      --injectGlobals               Should Jest inject global variables or not
+                                                                      [booleano]
+      --json                        Prints the test results in JSON. This mode
+                                    will send all other test output and user
+                                    messages to stderr.               [booleano]
+      --lastCommit                  Run all tests affected by file changes in
+                                    the last commit made. Behaves similarly to
+                                    `--onlyChanged`.                  [booleano]
+      --listTests                   Lists all tests Jest will run given the
+                                    arguments and exits. Most useful in a CI
+                                    system together with `--findRelatedTests` to
+                                    determine the tests Jest will run based on
+                                    specific files                    [booleano]
+      --logHeapUsage                Logs the heap usage after every test. Useful
+                                    to debug memory leaks. Use together with
+                                    `--runInBand` and `--expose-gc` in node.
+                                                                      [booleano]
+      --maxConcurrency              Specifies the maximum number of tests that
+                                    are allowed to run concurrently. This only
+                                    affects tests using `test.concurrent`.
+                                                                        [número]
+  -w, --maxWorkers                  Specifies the maximum number of workers the
+                                    worker-pool will spawn for running tests.
+                                    This defaults to the number of the cores
+                                    available on your machine. (its usually best
+                                    not to override this default)
+                                                          [cadena de caracteres]
+      --moduleDirectories           An array of directory names to be searched
+                                    recursively up from the requiring module's
+                                    location.                            [tabla]
+      --moduleFileExtensions        An array of file extensions your modules
+                                    use. If you require modules without
+                                    specifying a file extension, these are the
+                                    extensions Jest will look for.       [tabla]
+      --moduleNameMapper            A JSON string with a map from regular
+                                    expressions to module names or to arrays of
+                                    module names that allow to stub out
+                                    resources, like images or styles with a
+                                    single module         [cadena de caracteres]
+      --modulePathIgnorePatterns    An array of regexp pattern strings that are
+                                    matched against all module paths before
+                                    those paths are to be considered "visible"
+                                    to the module loader.                [tabla]
+      --modulePaths                 An alternative API to setting the NODE_PATH
+                                    env variable, modulePaths is an array of
+                                    absolute paths to additional locations to
+                                    search when resolving modules.       [tabla]
+      --noStackTrace                Disables stack trace in test results output
+                                                                      [booleano]
+      --notify                      Activates notifications for test results.
+                                                                      [booleano]
+      --notifyMode                  Specifies when notifications will appear for
+                                    test results.
+         [selección: "always", "failure", "success", "change", "success-change",
+                                                               "failure-change"]
+  -o, --onlyChanged                 Attempts to identify which tests to run
+                                    based on which files have changed in the
+                                    current repository. Only works if you're
+                                    running tests in a git or hg repository at
+                                    the moment.                       [booleano]
+  -f, --onlyFailures                Run tests that failed in the previous
+                                    execution.                        [booleano]
+      --openHandlesTimeout          Print a warning about probable open handles
+                                    if Jest does not exit cleanly after this
+                                    number of milliseconds. `0` to disable.
+                                                                        [número]
+      --outputFile                  Write test results to a file when the --json
+                                    option is also specified.
+                                                          [cadena de caracteres]
+      --passWithNoTests             Will not fail if no tests are found (for
+                                    example while using `--testPathPatterns`.)
+                                                                      [booleano]
+      --preset                      A preset that is used as a base for Jest's
+                                    configuration.        [cadena de caracteres]
+      --prettierPath                The path to the "prettier" module used for
+                                    inline snapshots.     [cadena de caracteres]
+      --projects                    A list of projects that use Jest to run all
+                                    tests of all projects in a single instance
+                                    of Jest.                             [tabla]
+      --randomize                   Shuffle the order of the tests within a
+                                    file. In order to choose the seed refer to
+                                    the `--seed` CLI option.          [booleano]
+      --reporters                   A list of custom reporters for the test
+                                    suite.                               [tabla]
+      --resetMocks                  Automatically reset mock state before every
+                                    test. Equivalent to calling
+                                    jest.resetAllMocks() before each test.
+                                                                      [booleano]
+      --resetModules                If enabled, the module registry for every
+                                    test file will be reset before running each
+                                    individual test.                  [booleano]
+      --resolver                    A JSON string which allows the use of a
+                                    custom resolver.      [cadena de caracteres]
+      --restoreMocks                Automatically restore mock state and
+                                    implementation before every test. Equivalent
+                                    to calling jest.restoreAllMocks() before
+                                    each test.                        [booleano]
+      --rootDir                     The root directory that Jest should scan for
+                                    tests and modules within.
+                                                          [cadena de caracteres]
+      --roots                       A list of paths to directories that Jest
+                                    should use to search for files in.   [tabla]
+  -i, --runInBand                   Run all tests serially in the current
+                                    process (rather than creating a worker pool
+                                    of child processes that run tests). This is
+                                    sometimes useful for debugging, but such use
+                                    cases are pretty rare.            [booleano]
+      --runTestsByPath              Used when provided patterns are exact file
+                                    paths. This avoids converting them into a
+                                    regular expression and matching it against
+                                    every single file.                [booleano]
+      --runner                      Allows to use a custom runner instead of
+                                    Jest's default test runner.
+                                                          [cadena de caracteres]
+      --seed                        Sets a seed value that can be retrieved in a
+                                    tests file via `jest.getSeed()`. If this
+                                    option is not specified Jest will randomly
+                                    generate the value. The seed value must be
+                                    between `-0x80000000` and `0x7fffffff`
+                                    inclusive.                          [número]
+      --selectProjects              Run the tests of the specified projects.
+                                    Jest uses the attribute `displayName` in the
+                                    configuration to identify each project.
+                                                                         [tabla]
+      --setupFiles                  A list of paths to modules that run some
+                                    code to configure or set up the testing
+                                    environment before each test.        [tabla]
+      --setupFilesAfterEnv          A list of paths to modules that run some
+                                    code to configure or set up the testing
+                                    framework before each test           [tabla]
+      --shard                       Shard tests and execute only the selected
+                                    shard, specify in the form "current/all".
+                                    1-based, for example "3/5".
+                                                          [cadena de caracteres]
+      --showConfig                  Print your jest config and then exits.
+                                                                      [booleano]
+      --showSeed                    Prints the seed value in the test report
+                                    summary. See `--seed` for how to set this
+                                    value                             [booleano]
+      --silent                      Prevent tests from printing messages through
+                                    the console.                      [booleano]
+      --skipFilter                  Disables the filter provided by --filter.
+                                    Useful for CI jobs, or local enforcement
+                                    when fixing tests.                [booleano]
+      --snapshotSerializers         A list of paths to snapshot serializer
+                                    modules Jest should use for snapshot
+                                    testing.                             [tabla]
+      --testEnvironment, --env      The test environment used for all tests.
+                                    This can point to any file or node module.
+                                    Examples: `jsdom`, `node` or
+                                    `path/to/my-environment.js`
+                                                          [cadena de caracteres]
+      --testEnvironmentOptions      A JSON string with options that will be
+                                    passed to the `testEnvironment`. The
+                                    relevant options depend on the environment.
+                                                          [cadena de caracteres]
+      --testFailureExitCode         Exit code of `jest` command if the test run
+                                    failed                [cadena de caracteres]
+      --testLocationInResults       Add `location` information to the test
+                                    results                           [booleano]
+      --testMatch                   The glob patterns Jest uses to detect test
+                                    files.                               [tabla]
+  -t, --testNamePattern             Run only tests with a name that matches the
+                                    regex pattern.        [cadena de caracteres]
+      --testPathIgnorePatterns      An array of regexp pattern strings that are
+                                    matched against all test paths before
+                                    executing the test. If the test path matches
+                                    any of the patterns, it will be skipped.
+                                                                         [tabla]
+      --testPathPatterns            An array of regexp pattern strings that are
+                                    matched against all tests paths before
+                                    executing the test.                  [tabla]
+      --testRegex                   A string or array of string regexp patterns
+                                    that Jest uses to detect test files. [tabla]
+      --testResultsProcessor        Allows the use of a custom results
+                                    processor. This processor must be a node
+                                    module that exports a function expecting as
+                                    the first argument the result object.
+                                                          [cadena de caracteres]
+      --testRunner                  Allows to specify a custom test runner. The
+                                    default is `jest-circus/runner`. A path to a
+                                    custom test runner can be provided:
+                                    `<rootDir>/path/to/testRunner.js`.
+                                                          [cadena de caracteres]
+      --testSequencer               Allows to specify a custom test sequencer.
+                                    The default is `@jest/test-sequencer`. A
+                                    path to a custom test sequencer can be
+                                    provided:
+                                    `<rootDir>/path/to/testSequencer.js`
+                                                          [cadena de caracteres]
+      --testTimeout                 This option sets the default timeouts of
+                                    test cases.                         [número]
+      --transform                   A JSON string which maps from regular
+                                    expressions to paths to transformers.
+                                                          [cadena de caracteres]
+      --transformIgnorePatterns     An array of regexp pattern strings that are
+                                    matched against all source file paths before
+                                    transformation.                      [tabla]
+      --unmockedModulePathPatterns  An array of regexp pattern strings that are
+                                    matched against all modules before the
+                                    module loader will automatically return a
+                                    mock for them.                       [tabla]
+  -u, --updateSnapshot              Use this flag to re-record snapshots. Can be
+                                    used together with a test suite pattern or
+                                    with `--testNamePattern` to re-record
+                                    snapshot for test matching the pattern
+                                                                      [booleano]
+      --useStderr                   Divert all output to stderr.      [booleano]
+      --verbose                     Display individual test results with the
+                                    test suite hierarchy.             [booleano]
+      --waitForUnhandledRejections  Gives one event loop turn to handle
+                                    `rejectionHandled`, `uncaughtException` or
+                                    `unhandledRejection`.             [booleano]
+      --watch                       Watch files for changes and rerun tests
+                                    related to changed files. If you want to
+                                    re-run all tests when a file has changed,
+                                    use the `--watchAll` option.      [booleano]
+      --watchAll                    Watch files for changes and rerun all tests.
+                                    If you want to re-run only the tests related
+                                    to the changed files, use the `--watch`
+                                    option.                           [booleano]
+      --watchPathIgnorePatterns     An array of regexp pattern strings that are
+                                    matched against all paths before trigger
+                                    test re-run in watch mode. If the test path
+                                    matches any of the patterns, it will be
+                                    skipped.                             [tabla]
+      --watchman                    Whether to use watchman for file crawling.
+                                    Disable using --no-watchman.      [booleano]
+      --workerThreads               Whether to use worker threads for
+                                    parallelization. Child processes are used by
+                                    default.                          [booleano]
+
+Documentation: https://jestjs.io/docs/cli
+
+Both --runInBand and --maxWorkers were specified, only one is allowed.

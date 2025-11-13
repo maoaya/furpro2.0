@@ -73,7 +73,7 @@ export default function RegistroPerfil() {
       if (!userId) {
         setMsg('Tu cuenta está creada. Inicia sesión para finalizar y crear tu perfil.');
         // Guardar intención de post-login
-        try { localStorage.setItem('post_auth_target', '/perfil-card'); } catch {}
+        try { localStorage.setItem('post_auth_target', '/registro-perfil'); } catch {}
         setLoading(false);
         return navigate('/login');
       }

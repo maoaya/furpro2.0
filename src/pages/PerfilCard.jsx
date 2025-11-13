@@ -23,7 +23,7 @@ const PerfilCard = () => {
       equipoFavorito: 'Equipo Favorito',
       miembroDesde: 'Miembro desde',
       cardReady: '¡Tu Card de Jugador está lista! 🎉',
-      irAlHomepage: '🏠 Ir al Homepage',
+      irAlHomepage: 'Continuar',
       verPerfil: '👤 Ver Perfil Completo'
     },
     en: {
@@ -36,7 +36,7 @@ const PerfilCard = () => {
       equipoFavorito: 'Favorite Team',
       miembroDesde: 'Member since',
       cardReady: 'Your Player Card is ready! 🎉',
-      irAlHomepage: '🏠 Go to Homepage',
+      irAlHomepage: 'Continue',
       verPerfil: '👤 View Full Profile'
     },
     pt: {
@@ -49,7 +49,7 @@ const PerfilCard = () => {
       equipoFavorito: 'Time Favorito',
       miembroDesde: 'Membro desde',
       cardReady: 'Seu Card de Jogador está pronto! 🎉',
-      irAlHomepage: '🏠 Ir para Homepage',
+      irAlHomepage: 'Continuar',
       verPerfil: '👤 Ver Perfil Completo'
     }
   };
@@ -98,7 +98,7 @@ const PerfilCard = () => {
 
   const continuarAlHome = () => {
     localStorage.removeItem('show_first_card');
-    // Navegar a homepage-instagram.html (página estática)
+    // Navegar a página estática HTML (no SPA route)
     window.location.href = '/homepage-instagram.html';
   };
 
