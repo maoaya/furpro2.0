@@ -118,8 +118,38 @@ export default function LoginRegisterFormClean() {
   const handleLoginSocial = async (provider) => {
     try {
       setLoading(true); setError(null); setSuccess(null);
-      await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: config.oauthCallbackUrl } });
-    } catch (e) { setLoading(false); setError(`${t('errorWith')} ${provider}: ${e.message}`); }
+      
+      // Guardar estado para verificación después del redirect
+      const authState = {
+        timestamp: Date.now(),
+        provider: provider,
+        origin: 'login_form'
+      };
+      localStorage.setItem('oauth_state', JSON.stringify(authState));
+      localStorage.setItem('post_auth_target', '/perfil-card');
+      
+      console.log(`🔐 Iniciando OAuth con ${provider}...`);
+      console.log('📍 Callback URL:', config.oauthCallbackUrl);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({ 
+        provider, 
+        options: { 
+          redirectTo: config.oauthCallbackUrl,
+          skipBrowserRedirect: false
+        } 
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      console.log('✅ OAuth iniciado correctamente', data);
+      // El navegador será redirigido automáticamente a Google
+    } catch (e) { 
+      console.error('❌ Error OAuth:', e);
+      setLoading(false); 
+      setError(`${t('errorWith')} ${provider}: ${e.message}`); 
+    }
   };
 
   const handleSubmitEmail = async (e) => {
