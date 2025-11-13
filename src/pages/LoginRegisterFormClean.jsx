@@ -176,33 +176,9 @@ export default function LoginRegisterFormClean() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'radial-gradient(circle at top,#1a1a1a,#050505)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      {/* Barra de navegación mínima visible incluso antes de login para evitar pantalla "vacía" */}
-      <div style={{ position: 'fixed', top: 8, left: 8, right: 8, display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', zIndex: 50 }}>
-        {[
-          { to: '/home', label: 'Home' },
-          { to: '/marketplace', label: 'Market' },
-          { to: '/feed', label: 'Videos' },
-          { to: '/notificaciones', label: 'Alertas' },
-          { to: '/chat-sql', label: 'Chat' }
-        ].map(btn => (
-          <button
-            key={btn.to}
-            onClick={() => { try { navigate(btn.to); } catch { window.location.href = btn.to; } }}
-            style={{
-              background: 'linear-gradient(135deg,#2d2d2d,#1a1a1a)',
-              color: '#FFD700',
-              border: '1px solid #333',
-              padding: '8px 14px',
-              borderRadius: 8,
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: 'pointer',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
-              transition: 'all .25s'
-            }}
-          >{btn.label}</button>
-        ))}
-      </div>
+      {/* Barra de navegación SOLO visible DESPUÉS del login - NO antes */}
+      {/* La navegación se muestra en homepage-instagram.html después de autenticarse */}
+      
       {/* Contenedor del formulario */}
       <div style={{ width: '100%', maxWidth: 440, background: 'linear-gradient(165deg,#121212,#0b0b0b 60%)', border: `2px solid ${gold}`, borderRadius: 20, padding: 24, boxShadow: '0 12px 38px #000c, inset 0 0 0 1px #333' }}>
         <h1 style={{ color: gold, margin: 0, marginBottom: 8, textAlign: 'center' }}>{t('title')}</h1>
