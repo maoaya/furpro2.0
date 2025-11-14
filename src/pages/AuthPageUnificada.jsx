@@ -43,31 +43,16 @@ const AuthPageUnificada = () => {
     foto: null
   });
 
-  // Si el usuario ya está autenticado, verificar categoría y redirigir
+  // NO redirigir automáticamente - dejar que el usuario use el formulario de login
+  // La redirección ocurrirá después del login exitoso en las funciones handleEmailLogin/handleEmailRegister
   useEffect(() => {
+    // Solo logging, sin redirección automática
     if (user) {
-      // Detectar si el usuario tiene categoría asignada en su perfil
-      // Ajusta el path si tu backend guarda la categoría en otro campo
       const categoria = user?.user_metadata?.categoria || user?.categoria;
-      console.log('✅ Usuario autenticado:', user.email, 'Categoría:', categoria);
-      
-      // Marcar inmediatamente como autenticado
-      localStorage.setItem('authCompleted', 'true');
-      localStorage.setItem('loginSuccess', 'true');
-      
-      if (!categoria) {
-        // Si NO tiene categoría, redirigir a selección
-        setTimeout(() => {
-          navigate('/seleccionar-categoria', { replace: true });
-        }, 100);
-      } else {
-        // Si ya tiene categoría, redirigir a home
-        setTimeout(() => {
-          navigate('/home', { replace: true });
-        }, 100);
-      }
+      console.log('✅ Usuario ya autenticado detectado:', user.email, 'Categoría:', categoria);
+      console.log('ℹ️ Usuario puede estar visitando la página - NO redirigir automáticamente');
     }
-  }, [user, navigate]);
+  }, [user]);
 
   // Efecto adicional para detectar cambios en localStorage que indiquen auth exitosa
   useEffect(() => {
