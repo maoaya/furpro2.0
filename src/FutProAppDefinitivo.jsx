@@ -170,11 +170,9 @@ export default function FutProAppDefinitivo() {
         return; // Dejar que CallbackPage maneje
       }
 
-      // Si ya está autenticado y en la raíz, ir a home
-      if (user && currentPath === '/') {
-        console.log('🏠 Usuario autenticado en raíz, navegando a home');
-        navigate('/home', { replace: true });
-      }
+      // NO redirigir automáticamente - dejar que el usuario vea el login primero
+      // La redirección solo debe ocurrir DESPUÉS de un login exitoso
+      console.log('✅ Usuario en raíz, mostrando login (no auto-redirect)');
     };
 
     handleDeepLink();
