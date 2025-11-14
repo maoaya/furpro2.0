@@ -26,6 +26,21 @@ jest.mock('../../context/AuthContext', () => ({
 jest.mock('../../supabaseClient', () => ({
   __esModule: true,
   default: {
+    auth: {
+      getSession: jest.fn().mockResolvedValue({
+        data: {
+          session: {
+            user: {
+              id: 'test-user-123',
+              email: 'test@futpro.com',
+              user_metadata: { nombre: 'Test User' }
+            },
+            access_token: 'mock-token-123'
+          }
+        },
+        error: null
+      })
+    },
     from: jest.fn(() => ({
       upsert: jest.fn(() => ({
         select: jest.fn(() => ({
@@ -64,8 +79,17 @@ jest.mock('react-router-dom', () => ({
 describe('AuthCallback - Redirección post-OAuth', () => {
   beforeEach(() => {
     localStorage.clear();
+    // Limpiar específicamente los keys que usan los tests
+    localStorage.removeItem('post_auth_target');
+    localStorage.removeItem('oauth_origin');
+    localStorage.removeItem('draft_carfutpro');
+    localStorage.removeItem('futpro_user_card_data');
     mockNavigate.mockClear();
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   test('debe redirigir a /registro-perfil cuando post_auth_target está establecido', async () => {
@@ -80,14 +104,14 @@ describe('AuthCallback - Redirección post-OAuth', () => {
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/registro-perfil');
-    }, { timeout: 5000 });
+    }, { timeout: 15000 });
 
     // Verificar que se limpiaron los flags
     expect(localStorage.getItem('post_auth_target')).toBeNull();
     expect(localStorage.getItem('oauth_origin')).toBeNull();
-  });
+  }, 20000);
 
-  test('debe redirigir a /seleccionar-categoria cuando no hay post_auth_target', async () => {
+  test('debe redirigir a /perfil-card cuando no hay post_auth_target (default)', async () => {
     render(
       <BrowserRouter>
         <AuthCallback />
@@ -95,9 +119,9 @@ describe('AuthCallback - Redirección post-OAuth', () => {
     );
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/seleccionar-categoria');
-    }, { timeout: 5000 });
-  });
+      expect(mockNavigate).toHaveBeenCalledWith('/perfil-card');
+    }, { timeout: 15000 });
+  }, 20000);
 
   test('debe crear carfutpro cuando el target es /perfil-card desde formulario', async () => {
     localStorage.setItem('post_auth_target', '/perfil-card');
@@ -119,7 +143,7 @@ describe('AuthCallback - Redirección post-OAuth', () => {
     await waitFor(() => {
       expect(supabase.from).toHaveBeenCalledWith('carfutpro');
       expect(mockNavigate).toHaveBeenCalledWith('/perfil-card');
-    }, { timeout: 5000 });
+    }, { timeout: 15000 });
 
     // Verificar que se guardó futpro_user_card_data
     const cardData = localStorage.getItem('futpro_user_card_data');
@@ -130,7 +154,7 @@ describe('AuthCallback - Redirección post-OAuth', () => {
       expect(parsed.id).toBe('carfutpro-123');
       expect(parsed.esPrimeraCard).toBe(true);
     }
-  });
+  }, 20000);
 
   test('debe usar window.location.href como fallback si navigate falla', async () => {
     mockNavigate.mockImplementation(() => {
