@@ -46,6 +46,12 @@ const AuthPageUnificada = () => {
   // NO redirigir automáticamente - dejar que el usuario use el formulario de login
   // La redirección ocurrirá después del login exitoso en las funciones handleEmailLogin/handleEmailRegister
   useEffect(() => {
+    // Limpiar flags de localStorage que podrían causar redirecciones no deseadas
+    if (!user) {
+      localStorage.removeItem('authCompleted');
+      localStorage.removeItem('loginSuccess');
+    }
+    
     // Solo logging, sin redirección automática
     if (user) {
       const categoria = user?.user_metadata?.categoria || user?.categoria;
@@ -54,34 +60,8 @@ const AuthPageUnificada = () => {
     }
   }, [user]);
 
-  // Efecto adicional para detectar cambios en localStorage que indiquen auth exitosa
-  useEffect(() => {
-    const checkAuthStatus = () => {
-      const authCompleted = localStorage.getItem('authCompleted') === 'true';
-      const loginSuccess = localStorage.getItem('loginSuccess') === 'true';
-      const userSession = localStorage.getItem('session');
-      
-      if ((authCompleted || loginSuccess || userSession) && !user) {
-        console.log('🔄 Indicadores de auth detectados sin usuario, verificando...');
-        // Dar un poco de tiempo para que el AuthContext se actualice
-        setTimeout(() => {
-          if (!user) {
-            console.log('⚠️ Forzando navegación debido a indicadores de auth');
-            navigate('/seleccionar-categoria', { replace: true });
-          }
-        }, 2000);
-      }
-    };
-
-    // Verificar inmediatamente
-    checkAuthStatus();
-    
-    // Verificar cada 3 segundos durante los primeros 15 segundos
-    const interval = setInterval(checkAuthStatus, 3000);
-    setTimeout(() => clearInterval(interval), 15000);
-    
-    return () => clearInterval(interval);
-  }, [user, navigate]);
+  // Efecto eliminado - causaba redirecciones automáticas no deseadas
+  // La redirección debe ocurrir SOLO después de un login exitoso, no al cargar la página
 
   // Función para navegar a HomePage después del éxito - MEJORADA
   const navigateToHome = async () => {
