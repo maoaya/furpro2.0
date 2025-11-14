@@ -141,11 +141,17 @@ export default function LoginRegisterFormClean() {
         provider, 
         options: { 
           redirectTo: config.oauthCallbackUrl,
-          skipBrowserRedirect: false
+          skipBrowserRedirect: false,
+          // Query params para debugging
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent'
+          }
         } 
       });
       
       if (error) {
+        console.error('❌ Error en signInWithOAuth:', error);
         throw error;
       }
       
@@ -154,7 +160,16 @@ export default function LoginRegisterFormClean() {
     } catch (e) { 
       console.error('❌ Error OAuth:', e);
       setLoading(false); 
-      setError(`${t('errorWith')} ${provider}: ${e.message}`); 
+      
+      // Mostrar mensaje más informativo
+      let errorMsg = `${t('errorWith')} ${provider}`;
+      if (e.message.includes('401') || e.message.includes('Unauthorized')) {
+        errorMsg = '⚠️ Error de configuración OAuth. Verifica que las URLs de redirect estén configuradas en Supabase Dashboard > Authentication > URL Configuration.';
+      } else {
+        errorMsg += `: ${e.message}`;
+      }
+      
+      setError(errorMsg); 
     }
   };
 
