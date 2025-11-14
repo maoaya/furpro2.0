@@ -63,36 +63,8 @@ const AuthPageUnificada = () => {
   // Efecto eliminado - causaba redirecciones automáticas no deseadas
   // La redirección debe ocurrir SOLO después de un login exitoso, no al cargar la página
 
-  // Función para navegar a HomePage después del éxito - MEJORADA
-  const navigateToHome = async () => {
-    console.log('🎉 Autenticación exitosa! Usando AuthFlowManager...');
-    
-    try {
-      // Usar el nuevo manager de flujo
-      const result = await authFlowManager.handlePostLoginFlow(user, navigate);
-      
-      if (result.success) {
-        console.log('✅ Navegación exitosa con AuthFlowManager');
-      } else {
-        console.log('⚠️ Problema con AuthFlowManager, usando fallback');
-        // Fallback al método anterior
-        localStorage.setItem('authCompleted', 'true');
-        localStorage.setItem('loginSuccess', 'true');
-        
-        setTimeout(() => {
-          try {
-            navigate('/seleccionar-categoria', { replace: true });
-          } catch (error) {
-            window.location.href = '/seleccionar-categoria';
-          }
-        }, 500);
-      }
-    } catch (error) {
-      console.error('❌ Error con AuthFlowManager:', error);
-      // Fallback de emergencia
-  window.location.href = '/seleccionar-categoria';
-    }
-  };
+  // Función ELIMINADA - No debe haber navegación automática
+  // La redirección ocurre en handleEmailLogin y handleEmailRegister después del login exitoso
 
   // REGISTRO CON EMAIL Y PASSWORD
   const handleEmailRegister = async (e) => {

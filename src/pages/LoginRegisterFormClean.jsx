@@ -103,14 +103,20 @@ export default function LoginRegisterFormClean() {
   }, []);
 
   const goHome = () => {
-    // Nuevo flujo: siempre pasar por selección de categoría antes del formulario y la card
-    try { navigate('/seleccionar-categoria'); } catch (_) { window.location.href = '/seleccionar-categoria'; }
+    // Redirigir a home después del login exitoso
+    try { navigate('/home'); } catch (_) { window.location.href = '/home'; }
   };
 
+  // NO verificar sesión al cargar - dejar que el usuario vea el login
+  // La redirección solo ocurre después de un login activo
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => { if (data?.session?.user) goHome(); });
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) { setSuccess(t('loginSuccess')); setLoading(false); setTimeout(goHome, 600); }
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      // Solo redirigir en SIGNED_IN (login activo), no en INITIAL_SESSION
+      if (event === 'SIGNED_IN' && session?.user) { 
+        setSuccess(t('loginSuccess')); 
+        setLoading(false); 
+        setTimeout(goHome, 600); 
+      }
     });
     return () => authListener?.subscription?.unsubscribe?.();
   }, [lang]);
