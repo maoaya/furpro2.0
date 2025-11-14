@@ -248,7 +248,15 @@ export default function LoginRegisterFormClean() {
         </form>
 
         <div style={{ marginTop: 14, textAlign: 'center' }}>
-          <button onClick={() => setIsRegister(!isRegister)} style={{ background: 'transparent', color: gold, border: 'none', cursor: 'pointer', textDecoration: 'underline', fontWeight: 600 }}>
+          <button onClick={() => {
+            if (isRegister) {
+              // Si está en registro, volver a login
+              setIsRegister(false);
+            } else {
+              // Si está en login, ir a seleccionar categoría
+              navigate('/seleccionar-categoria');
+            }
+          }} style={{ background: 'transparent', color: gold, border: 'none', cursor: 'pointer', textDecoration: 'underline', fontWeight: 600 }}>
             {isRegister ? t('hasAccount') : t('noAccount')}
           </button>
         </div>
