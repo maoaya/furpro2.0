@@ -25,40 +25,52 @@ if (viteEnv) {
 }
 
 export const getConfig = () => {
-  // Detectar si estamos en Node.js (server-side)
-  const isNode = typeof window === 'undefined';
-  
-  // En Node.js, asumir desarrollo a menos que se especifique lo contrario
-  const isProduction = isNode 
+  // Detectar si estamos en Node.js (server-side). Jest a veces expone un window jsdom
+  // aunque queremos tratar backend tests como entorno Node.
+  const forcedNode = (typeof process !== 'undefined' && process.env && process.env.JEST_WORKER_ID !== undefined);
+  const isNode = forcedNode || typeof window === 'undefined';
+
+  // Hostname robusto: siempre string. Evita TypeError en includes.
+  const rawHostname = (!isNode && typeof window !== 'undefined' && window.location && typeof window.location.hostname === 'string')
+    ? window.location.hostname
+    : '';
+  const safeHostname = String(rawHostname || '');
+  const safeProtocol = (!isNode && typeof window !== 'undefined' && window.location && window.location.protocol) ? window.location.protocol : 'server';
+
+  // Helper para includes seguro
+  const has = (str, frag) => typeof str === 'string' && str.indexOf(frag) !== -1;
+
+  // Producción si:
+  // - Node con variables entorno de build
+  // - Hostname de dominio principal / netlify
+  const isProduction = isNode
     ? (process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true')
-    : (window.location.hostname === 'futpro.vip' || 
-       window.location.hostname.includes('futpro.vip') ||
-       window.location.hostname.includes('netlify.app'));
-  
+    : (safeHostname === 'futpro.vip' || has(safeHostname,'futpro.vip') || has(safeHostname,'netlify.app'));
+
+  // Desarrollo si:
   const isDevelopment = isNode
     ? !isProduction
-    : (window.location.hostname === 'localhost' || 
-       window.location.hostname === '127.0.0.1');
+    : (safeHostname === 'localhost' || safeHostname === '127.0.0.1');
 
-  const isNetlify = isNode 
+  const isNetlify = isNode
     ? (process.env.NETLIFY === 'true')
-    : window.location.hostname.includes('netlify.app');
+    : has(safeHostname,'netlify.app');
 
   console.log('🌍 Entorno detectado:', { 
-    hostname: isNode ? 'server' : window.location.hostname, 
+    hostname: isNode ? 'server' : safeHostname, 
     isProduction, 
     isDevelopment,
     isNetlify,
     isNode,
-    protocol: isNode ? 'server' : window.location.protocol
+    protocol: safeProtocol
   });
 
   // Determinar URL base correcta
   const baseUrl = isNode
     ? (isProduction ? 'https://futpro.vip' : 'http://localhost:5173')
     : (isProduction 
-      ? (window.location.hostname === 'futpro.vip' ? 'https://futpro.vip' : window.location.origin)
-      : window.location.origin);
+      ? (safeHostname === 'futpro.vip' ? 'https://futpro.vip' : (typeof window !== 'undefined' ? window.location.origin : 'https://futpro.vip'))
+      : (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173'));
 
   return {
     // URLs base
