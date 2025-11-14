@@ -1,9 +1,9 @@
 // Netlify Function: signup-bypass
 // Crea usuarios en Supabase sin CAPTCHA usando Service Role
 
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   // Headers CORS mejorados
   const headers = {
     'Access-Control-Allow-Origin': '*',

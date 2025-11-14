@@ -43,19 +43,29 @@ const AuthPageUnificada = () => {
     foto: null
   });
 
-  // Si el usuario ya está autenticado, redirigir a home inmediatamente
+  // Si el usuario ya está autenticado, verificar categoría y redirigir
   useEffect(() => {
     if (user) {
-      console.log('✅ Usuario ya autenticado, redirigiendo al flujo de selección...');
+      // Detectar si el usuario tiene categoría asignada en su perfil
+      // Ajusta el path si tu backend guarda la categoría en otro campo
+      const categoria = user?.user_metadata?.categoria || user?.categoria;
+      console.log('✅ Usuario autenticado:', user.email, 'Categoría:', categoria);
       
       // Marcar inmediatamente como autenticado
       localStorage.setItem('authCompleted', 'true');
       localStorage.setItem('loginSuccess', 'true');
       
-      // Navegación inmediata
-      setTimeout(() => {
-        navigate('/seleccionar-categoria', { replace: true });
-      }, 100);
+      if (!categoria) {
+        // Si NO tiene categoría, redirigir a selección
+        setTimeout(() => {
+          navigate('/seleccionar-categoria', { replace: true });
+        }, 100);
+      } else {
+        // Si ya tiene categoría, redirigir a home
+        setTimeout(() => {
+          navigate('/home', { replace: true });
+        }, 100);
+      }
     }
   }, [user, navigate]);
 

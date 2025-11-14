@@ -1,7 +1,7 @@
 // Netlify Function: auto-confirm user without real email confirmation
 // WARNING: This should be used only for QA/Dev. Protect with Origin checks.
 
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 // Orígenes permitidos: configurable por env, siempre incluye producción
 const envOrigins = (process.env.ALLOWED_ORIGINS || process.env.NETLIFY_ALLOWED_ORIGINS || '')
@@ -22,7 +22,7 @@ function buildCorsHeaders(origin) {
   };
 }
 
-exports.handler = async function (event) {
+export const handler = async function (event) {
   // Detectar origen
   const originHeader = event.headers.origin || '';
   const refererHeader = event.headers.referer || '';

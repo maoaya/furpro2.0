@@ -2,7 +2,7 @@
 // Proxy para evitar errores 502 llamando a Supabase desde el servidor (no desde el navegador)
 // Nota: En Node 18+ en Netlify, fetch es nativo, no se requiere node-fetch
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
