@@ -85,3 +85,6 @@ Desktop.ini
 
 # Local Netlify folder
 .netlify
+
+# Deploy artifacts (no commit)
+deploy-output.json
