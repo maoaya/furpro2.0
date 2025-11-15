@@ -123,40 +123,27 @@ export default function LoginRegisterFormClean() {
 
   const handleLoginSocial = async (provider) => {
     try {
-      setLoading(true); setError(null); setSuccess(null);
+      setLoading(true); 
+      setError(null); 
+      setSuccess(null);
       
-      // Guardar estado para verificación después del redirect
-      const authState = {
-        timestamp: Date.now(),
-        provider: provider,
-        origin: 'login_form'
-      };
-      localStorage.setItem('oauth_state', JSON.stringify(authState));
-      localStorage.setItem('post_auth_target', '/perfil-card');
+      console.log(`🔐 [LOGIN] Iniciando OAuth con ${provider}...`);
       
-      console.log(`🔐 Iniciando OAuth con ${provider}...`);
-      console.log('📍 Callback URL:', config.oauthCallbackUrl);
-      
-      const { data, error } = await supabase.auth.signInWithOAuth({ 
-        provider, 
+      // Método DIRECTO sin configuraciones complicadas
+      const { error } = await supabase.auth.signInWithOAuth({ 
+        provider: 'google',
         options: { 
-          redirectTo: config.oauthCallbackUrl,
-          skipBrowserRedirect: false,
-          // Query params para debugging
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent'
-          }
+          redirectTo: `${window.location.origin}/auth/callback`
         } 
       });
       
       if (error) {
-        console.error('❌ Error en signInWithOAuth:', error);
+        console.error('❌ Error OAuth:', error);
         throw error;
       }
       
-      console.log('✅ OAuth iniciado correctamente', data);
-      // El navegador será redirigido automáticamente a Google
+      // El navegador redirige automáticamente a Google
+      console.log('✅ Redirigiendo a Google...');
     } catch (e) { 
       console.error('❌ Error OAuth:', e);
       setLoading(false); 

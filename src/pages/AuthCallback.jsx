@@ -16,113 +16,59 @@ const AuthCallback = () => {
 
   useEffect(() => {
     const handleAuthCallback = async () => {
+      console.log('🔐 [CALLBACK] Iniciando...');
+      
       try {
-        console.log('🔐 [AuthCallback] Iniciando procesamiento...');
-        
-        // Obtener sesión INMEDIATAMENTE desde Supabase
+        // Paso 1: Obtener sesión
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        if (sessionError) {
-          console.error('❌ Error obteniendo sesión:', sessionError);
-          setError('Error al verificar autenticación');
-          setLoading(false);
-          setTimeout(() => navigate('/'), 3000);
+        if (sessionError || !session?.user) {
+          console.error('❌ Sin sesión:', sessionError);
+          window.location.href = '/?error=auth_failed';
           return;
         }
         
-        if (!session?.user) {
-          console.warn('⚠️ No hay sesión activa en callback');
-          setError('No se pudo establecer la sesión');
-          setLoading(false);
-          setTimeout(() => navigate('/'), 3000);
-          return;
-        }
+        console.log('✅ Sesión OK:', session.user.email);
         
-        console.log('✅ Sesión OAuth verificada:', session.user.email);
-        
-        // Track login exitoso
-        userActivityTracker.trackLogin('oauth_callback', true, {
-          userId: session.user.id,
-          email: session.user.email,
-          provider: 'google'
-        });
-
-        // Obtener datos guardados
-        const draftRaw = localStorage.getItem('draft_carfutpro');
-        let draft = null;
-        try { draft = draftRaw ? JSON.parse(draftRaw) : null; } catch {}
-
-        // Crear/actualizar registro en carfutpro
-        console.log('🛠 Creando perfil de usuario...');
-        const payload = {
-          user_id: session.user.id,
-          categoria: draft?.categoria || 'masculina',
-          nombre: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
-          ciudad: draft?.ciudad || '',
-          pais: draft?.pais || '',
-          posicion_favorita: draft?.posicion_favorita || 'Flexible',
-          nivel_habilidad: draft?.nivel_habilidad || 'Principiante',
-          equipo: draft?.equipo || '—',
-          avatar_url: session.user.user_metadata?.avatar_url || draft?.avatar_url || '',
-          creada_en: new Date().toISOString(),
-          estado: 'activa'
-        };
-        
-        const { data, error: upsertError } = await supabase
+        // Paso 2: Crear perfil básico
+        const { error: profileError } = await supabase
           .from('carfutpro')
-          .upsert(payload, { onConflict: 'user_id' })
-          .select()
-          .single();
+          .upsert({
+            user_id: session.user.id,
+            nombre: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
+            avatar_url: session.user.user_metadata?.avatar_url || '',
+            categoria: 'masculina',
+            posicion_favorita: 'Flexible',
+            nivel_habilidad: 'Principiante',
+            equipo: '—',
+            estado: 'activa',
+            creada_en: new Date().toISOString()
+          }, { onConflict: 'user_id' });
         
-        if (!upsertError && data) {
-          console.log('✅ Perfil creado/actualizado');
-          // Guardar datos para la card
-          const cardData = {
-            id: data.id,
-            categoria: data.categoria,
-            nombre: data.nombre,
-            ciudad: data.ciudad,
-            pais: data.pais,
-            posicion_favorita: data.posicion_favorita,
-            nivel_habilidad: data.nivel_habilidad,
-            puntaje: data.puntaje || 50,
-            equipo: data.equipo || '—',
-            fecha_registro: new Date().toISOString(),
-            esPrimeraCard: true,
-            avatar_url: data.avatar_url || session.user.user_metadata?.avatar_url || ''
-          };
-          localStorage.setItem('futpro_user_card_data', JSON.stringify(cardData));
-          localStorage.setItem('show_first_card', 'true');
+        if (profileError) {
+          console.warn('⚠️ Error perfil:', profileError.message);
         } else {
-          console.warn('⚠️ Error creando perfil:', upsertError?.message);
+          console.log('✅ Perfil guardado');
         }
-
-        // Limpiar flags temporales
-        localStorage.removeItem('post_auth_target');
-        localStorage.removeItem('oauth_origin');
-        localStorage.removeItem('oauth_state');
-
-        setLoading(false);
         
-        // Navegar a perfil-card
+        // Paso 3: Guardar datos para card
+        localStorage.setItem('futpro_user_card_data', JSON.stringify({
+          nombre: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
+          avatar_url: session.user.user_metadata?.avatar_url || '',
+          categoria: 'masculina',
+          posicion_favorita: 'Flexible',
+          nivel_habilidad: 'Principiante',
+          esPrimeraCard: true
+        }));
+        localStorage.setItem('show_first_card', 'true');
+        
+        // Paso 4: Redirigir INMEDIATAMENTE
         console.log('✅ Redirigiendo a /perfil-card');
-        setTimeout(() => {
-          try {
-            navigate('/perfil-card', { replace: true });
-          } catch {
-            window.location.href = '/perfil-card';
-          }
-        }, 500);
+        window.location.href = '/perfil-card';
         
       } catch (error) {
-        console.error('❌ Error en callback:', error);
-        setError('Error procesando autenticación');
-        userActivityTracker.trackAction('oauth_callback_exception', {
-          error: error.message,
-          timestamp: new Date().toISOString()
-        });
-        setLoading(false);
-        setTimeout(() => navigate('/'), 3000);
+        console.error('❌ Error callback:', error);
+        window.location.href = '/?error=callback_failed';
       }
     };
 
