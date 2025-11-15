@@ -11,138 +11,122 @@ import supabase from '../supabaseClient';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        console.log('🔐 Procesando callback de OAuth...');
+        console.log('🔐 [AuthCallback] Iniciando procesamiento...');
         
-        // Verificar estado OAuth guardado
-        const oauthStateRaw = localStorage.getItem('oauth_state');
-        let oauthState = null;
-        try {
-          oauthState = oauthStateRaw ? JSON.parse(oauthStateRaw) : null;
-        } catch {}
-        
-        if (oauthState) {
-          const elapsed = Date.now() - oauthState.timestamp;
-          console.log(`⏱️ Estado OAuth encontrado (${Math.round(elapsed/1000)}s desde inicio)`);
-          console.log(`📍 Provider: ${oauthState.provider}, Origin: ${oauthState.origin}`);
-          
-          // Limpiar estado usado
-          localStorage.removeItem('oauth_state');
-          
-          // Verificar si el estado es muy antiguo (más de 10 minutos)
-          if (elapsed > 10 * 60 * 1000) {
-            console.warn('⚠️ Estado OAuth expirado, continuando de todos modos...');
-          }
-        }
-        
-        // Obtener sesión de Supabase
+        // Obtener sesión INMEDIATAMENTE desde Supabase
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
           console.error('❌ Error obteniendo sesión:', sessionError);
-          setError('Error al verificar autenticación. Por favor, intenta nuevamente.');
+          setError('Error al verificar autenticación');
           setLoading(false);
+          setTimeout(() => navigate('/'), 3000);
           return;
         }
         
-        if (!session) {
+        if (!session?.user) {
           console.warn('⚠️ No hay sesión activa en callback');
-          setError('No se pudo establecer la sesión. Por favor, intenta iniciar sesión nuevamente.');
+          setError('No se pudo establecer la sesión');
           setLoading(false);
-          
-          // Redirigir al login después de 3 segundos
-          setTimeout(() => {
-            navigate('/');
-          }, 3000);
+          setTimeout(() => navigate('/'), 3000);
           return;
         }
         
         console.log('✅ Sesión OAuth verificada:', session.user.email);
         
-        // 🔥 TRACK SUCCESSFUL OAUTH LOGIN
+        // Track login exitoso
         userActivityTracker.trackLogin('oauth_callback', true, {
           userId: session.user.id,
           email: session.user.email,
-          provider: 'oauth_redirect'
+          provider: 'google'
         });
 
-        // Usar sesión directamente sin esperar contexto
-        (async () => {
-          // Cambiar target por defecto a perfil-card para flujo OAuth desde formulario
-          let target = localStorage.getItem('post_auth_target') || '/perfil-card';
-          const origin = localStorage.getItem('oauth_origin');
-          const draftRaw = localStorage.getItem('draft_carfutpro');
-          let draft = null;
-          try { draft = draftRaw ? JSON.parse(draftRaw) : null; } catch {}
+        // Obtener datos guardados
+        const draftRaw = localStorage.getItem('draft_carfutpro');
+        let draft = null;
+        try { draft = draftRaw ? JSON.parse(draftRaw) : null; } catch {}
 
-          // Si va a perfil-card, asegurar que existan datos del usuario
-          if (target === '/perfil-card') {
-            console.log('🛠 Asegurando datos del usuario para Card...');
-            try {
-              const payload = {
-                user_id: session.user.id,
-                categoria: draft?.categoria || 'masculina',
-                nombre: draft?.nombre || session.user.user_metadata?.full_name || session.user.email.split('@')[0],
-                ciudad: draft?.ciudad || '',
-                pais: draft?.pais || '',
-                posicion_favorita: draft?.posicion_favorita || 'Flexible',
-                nivel_habilidad: draft?.nivel_habilidad || 'Principiante',
-                equipo: draft?.equipo || '—',
-                avatar_url: session.user.user_metadata?.avatar_url || draft?.avatar_url || '',
-                creada_en: new Date().toISOString(),
-                estado: 'activa'
-              };
-              const { data, error } = await supabase
-                .from('carfutpro')
-                .upsert(payload, { onConflict: 'user_id' })
-                .select()
-                .single();
-              if (!error && data) {
-                console.log('✅ carfutpro upsert OK para Card');
-                // Guardar datos para Card reales
-                const cardData = {
-                  id: data.id,
-                  categoria: data.categoria,
-                  nombre: data.nombre,
-                  ciudad: data.ciudad,
-                  pais: data.pais,
-                  posicion_favorita: data.posicion_favorita,
-                  nivel_habilidad: data.nivel_habilidad,
-                  puntaje: data.puntaje || 50,
-                  equipo: data.equipo || '—',
-                  fecha_registro: new Date().toISOString(),
-                  esPrimeraCard: true,
-                  avatar_url: data.avatar_url || session.user.user_metadata?.avatar_url || ''
-                };
-                try {
-                  localStorage.setItem('futpro_user_card_data', JSON.stringify(cardData));
-                  localStorage.setItem('show_first_card', 'true');
-                } catch {}
-              }
-            } catch (prepErr) {
-              console.warn('⚠️ Error preparando carfutpro para Card:', prepErr?.message);
-            }
-          }
+        // Crear/actualizar registro en carfutpro
+        console.log('🛠 Creando perfil de usuario...');
+        const payload = {
+          user_id: session.user.id,
+          categoria: draft?.categoria || 'masculina',
+          nombre: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
+          ciudad: draft?.ciudad || '',
+          pais: draft?.pais || '',
+          posicion_favorita: draft?.posicion_favorita || 'Flexible',
+          nivel_habilidad: draft?.nivel_habilidad || 'Principiante',
+          equipo: draft?.equipo || '—',
+          avatar_url: session.user.user_metadata?.avatar_url || draft?.avatar_url || '',
+          creada_en: new Date().toISOString(),
+          estado: 'activa'
+        };
+        
+        const { data, error: upsertError } = await supabase
+          .from('carfutpro')
+          .upsert(payload, { onConflict: 'user_id' })
+          .select()
+          .single();
+        
+        if (!upsertError && data) {
+          console.log('✅ Perfil creado/actualizado');
+          // Guardar datos para la card
+          const cardData = {
+            id: data.id,
+            categoria: data.categoria,
+            nombre: data.nombre,
+            ciudad: data.ciudad,
+            pais: data.pais,
+            posicion_favorita: data.posicion_favorita,
+            nivel_habilidad: data.nivel_habilidad,
+            puntaje: data.puntaje || 50,
+            equipo: data.equipo || '—',
+            fecha_registro: new Date().toISOString(),
+            esPrimeraCard: true,
+            avatar_url: data.avatar_url || session.user.user_metadata?.avatar_url || ''
+          };
+          localStorage.setItem('futpro_user_card_data', JSON.stringify(cardData));
+          localStorage.setItem('show_first_card', 'true');
+        } else {
+          console.warn('⚠️ Error creando perfil:', upsertError?.message);
+        }
 
-          // Limpiar indicadores temporales
-          localStorage.removeItem('post_auth_target');
-          localStorage.removeItem('oauth_origin');
+        // Limpiar flags temporales
+        localStorage.removeItem('post_auth_target');
+        localStorage.removeItem('oauth_origin');
+        localStorage.removeItem('oauth_state');
 
-          setLoading(false);
-          
+        setLoading(false);
+        
+        // Navegar a perfil-card
+        console.log('✅ Redirigiendo a /perfil-card');
+        setTimeout(() => {
           try {
-            navigate(target);
-          } catch (navErr) {
-            console.warn('⚠️ navigate fallo, usando fallback href:', navErr?.message);
-            window.location.href = target;
+            navigate('/perfil-card', { replace: true });
+          } catch {
+            window.location.href = '/perfil-card';
           }
-        })();
+        }, 500);
+        
+      } catch (error) {
+        console.error('❌ Error en callback:', error);
+        setError('Error procesando autenticación');
+        userActivityTracker.trackAction('oauth_callback_exception', {
+          error: error.message,
+          timestamp: new Date().toISOString()
+        });
+        setLoading(false);
+        setTimeout(() => navigate('/'), 3000);
+      }
+    };
+
+    handleAuthCallback();
         
       } catch (error) {
         console.error('Error en callback:', error);
