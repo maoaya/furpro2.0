@@ -81,20 +81,20 @@ const AuthCallback = () => {
           let draft = null;
           try { draft = draftRaw ? JSON.parse(draftRaw) : null; } catch {}
 
-          // Si el origen es formulario_registro, ir directo a /perfil-card
-          if (target === '/perfil-card' && origin === 'formulario_registro') {
-            console.log('🛠 Creando/upsert carfutpro antes de mostrar Card (flujo directo)...');
+          // Si va a perfil-card, asegurar que existan datos del usuario
+          if (target === '/perfil-card') {
+            console.log('🛠 Asegurando datos del usuario para Card...');
             try {
               const payload = {
                 user_id: session.user.id,
-                categoria: draft?.categoria || 'infantil_femenina',
-                nombre: draft?.nombre || session.user.email.split('@')[0],
+                categoria: draft?.categoria || 'masculina',
+                nombre: draft?.nombre || session.user.user_metadata?.full_name || session.user.email.split('@')[0],
                 ciudad: draft?.ciudad || '',
                 pais: draft?.pais || '',
                 posicion_favorita: draft?.posicion_favorita || 'Flexible',
                 nivel_habilidad: draft?.nivel_habilidad || 'Principiante',
                 equipo: draft?.equipo || '—',
-                avatar_url: draft?.avatar_url || '',
+                avatar_url: session.user.user_metadata?.avatar_url || draft?.avatar_url || '',
                 creada_en: new Date().toISOString(),
                 estado: 'activa'
               };
@@ -104,7 +104,7 @@ const AuthCallback = () => {
                 .select()
                 .single();
               if (!error && data) {
-                console.log('✅ carfutpro upsert OK antes de Card');
+                console.log('✅ carfutpro upsert OK para Card');
                 // Guardar datos para Card reales
                 const cardData = {
                   id: data.id,
@@ -118,7 +118,7 @@ const AuthCallback = () => {
                   equipo: data.equipo || '—',
                   fecha_registro: new Date().toISOString(),
                   esPrimeraCard: true,
-                  avatar_url: data.avatar_url || ''
+                  avatar_url: data.avatar_url || session.user.user_metadata?.avatar_url || ''
                 };
                 try {
                   localStorage.setItem('futpro_user_card_data', JSON.stringify(cardData));
@@ -126,7 +126,7 @@ const AuthCallback = () => {
                 } catch {}
               }
             } catch (prepErr) {
-              console.warn('⚠️ Error preparando carfutpro antes de Card:', prepErr?.message);
+              console.warn('⚠️ Error preparando carfutpro para Card:', prepErr?.message);
             }
           }
 
