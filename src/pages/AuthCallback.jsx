@@ -68,31 +68,14 @@ const AuthCallback = () => {
         
       } catch (error) {
         console.error('❌ Error callback:', error);
+        setError('Error procesando autenticación');
+        setLoading(false);
         window.location.href = '/?error=callback_failed';
       }
     };
 
     handleAuthCallback();
-        
-      } catch (error) {
-        console.error('Error en callback:', error);
-        setError('Error procesando autenticación');
-        
-        // 🔥 TRACK OAUTH CALLBACK EXCEPTION
-        userActivityTracker.trackAction('oauth_callback_exception', {
-          error: error.message,
-          timestamp: new Date().toISOString()
-        });
-        
-        setLoading(false);
-        setTimeout(() => {
-          try { navigate('/login'); } catch { window.location.href = '/login'; }
-        }, 3000);
-      }
-    };
-
-    handleAuthCallback();
-  }, [user, navigate]);
+  }, [navigate]);
 
   if (loading) {
     return (
