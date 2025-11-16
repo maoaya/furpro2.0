@@ -5,8 +5,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import userActivityTracker from '../services/UserActivityTracker';
 import supabase from '../supabaseClient';
 
 const AuthCallback = () => {

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutPro - Diagnóstico OAuth</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 24px;
+            font-size: 28px;
+        }
+        .status-box {
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ccc;
+        }
+        .status-box.ok { background: #d4edda; border-color: #28a745; }
+        .status-box.error { background: #f8d7da; border-color: #dc3545; }
+        .status-box.warning { background: #fff3cd; border-color: #ffc107; }
+        .status-box.info { background: #d1ecf1; border-color: #17a2b8; }
+        .status-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-content {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 8px 8px 8px 0;
+            transition: all 0.2s;
+        }
+        button:hover { background: #5568d3; transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+        .icon { font-size: 20px; }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Diagnóstico de Autenticación OAuth</h1>
+        
+        <div id="results"></div>
+        
+        <button onclick="runDiagnostics()">▶️ Ejecutar Diagnóstico</button>
+        <button onclick="testOAuth()">🔐 Probar OAuth Google</button>
+        <button onclick="clearStorage()">🗑️ Limpiar Cache</button>
+        <button onclick="location.href='/'">🏠 Ir a Login</button>
+    </div>
+
+    <script>
+        // Cliente Supabase simplificado sin CDN (CSP compatible)
+        const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8';
+        
+        const supabase = {
+            auth: {
+                getSession: async () => {
+                    const authToken = localStorage.getItem('sb-qqrxetxcglwrejtblwut-auth-token');
+                    return { data: { session: authToken ? { user: { email: 'cached' } } : null }, error: null };
+                },
+                signInWithOAuth: async ({ provider, options }) => {
+                    const redirectTo = options?.redirectTo || `${window.location.origin}/auth/callback`;
+                    const url = `${SUPABASE_URL}/auth/v1/authorize?provider=${provider}&redirect_to=${encodeURIComponent(redirectTo)}`;
+                    window.location.href = url;
+                    return { data: null, error: null };
+                }
+            }
+        };
+        
+        window.runDiagnostics = async function() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="status-box info"><div class="status-title">⏳ Ejecutando diagnóstico...</div></div>';
+            
+            let html = '';
+            
+            // 1. Verificar entorno
+            const currentUrl = window.location.href;
+            const origin = window.location.origin;
+            const callbackUrl = `${origin}/auth/callback`;
+            
+            html += `<div class="status-box ok">
+                <div class="status-title"><span class="icon">✅</span> Entorno Detectado</div>
+                <div class="status-content">
+                    URL actual: <code>${currentUrl}</code><br>
+                    Origin: <code>${origin}</code><br>
+                    Callback URL: <code>${callbackUrl}</code>
+                </div>
+            </div>`;
+            
+            // 2. Verificar conexión con Supabase
+            try {
+                const { data, error } = await supabase.auth.getSession();
+                if (error) throw error;
+                
+                html += `<div class="status-box ok">
+                    <div class="status-title"><span class="icon">✅</span> Conexión Supabase</div>
+                    <div class="status-content">
+                        Estado: Conectado<br>
+                        Sesión: ${data.session ? 'Activa' : 'No activa'}<br>
+                        ${data.session ? `Usuario: ${data.session.user.email}` : ''}
+                    </div>
+                </div>`;
+            } catch (error) {
+                html += `<div class="status-box error">
+                    <div class="status-title"><span class="icon">❌</span> Error Conexión Supabase</div>
+                    <div class="status-content">${error.message}</div>
+                </div>`;
+            }
+            
+            // 3. Verificar configuración OAuth
+            try {
+                const response = await fetch(`${SUPABASE_URL}/auth/v1/settings`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const settings = await response.json();
+                
+                const googleEnabled = settings.external?.google === true || 
+                                     settings.external_google_enabled === true;
+                
+                html += `<div class="status-box ${googleEnabled ? 'ok' : 'error'}">
+                    <div class="status-title"><span class="icon">${googleEnabled ? '✅' : '❌'}</span> Google OAuth</div>
+                    <div class="status-content">
+                        Estado: ${googleEnabled ? 'Habilitado ✅' : 'Deshabilitado ❌'}<br>
+                        ${googleEnabled ? '' : '<strong>⚠️ Habilitar en Supabase Dashboard > Authentication > Providers > Google</strong>'}
+                    </div>
+                </div>`;
+                
+                // Verificar redirect URLs
+                const redirectUrls = settings.external_providers_redirect_urls || [];
+                const hasCallback = redirectUrls.some(url => 
+                    url.includes(origin) || url.includes('futpro.vip')
+                );
+                
+                html += `<div class="status-box ${hasCallback ? 'ok' : 'warning'}">
+                    <div class="status-title"><span class="icon">${hasCallback ? '✅' : '⚠️'}</span> Redirect URLs</div>
+                    <div class="status-content">
+                        ${hasCallback ? 
+                            `✅ Configurado correctamente para: <code>${origin}</code>` :
+                            `⚠️ Agregar en Supabase: <code>${callbackUrl}</code>`
+                        }
+                    </div>
+                </div>`;
+                
+            } catch (error) {
+                html += `<div class="status-box warning">
+                    <div class="status-title"><span class="icon">⚠️</span> Configuración OAuth</div>
+                    <div class="status-content">
+                        No se pudo verificar: ${error.message}<br>
+                        <strong>Acción:</strong> Verificar manualmente en Supabase Dashboard
+                    </div>
+                </div>`;
+            }
+            
+            // 4. Verificar LocalStorage
+            const hasPostLogin = localStorage.getItem('postLoginRedirect');
+            const hasCardData = localStorage.getItem('futpro_user_card_data');
+            
+            html += `<div class="status-box info">
+                <div class="status-title"><span class="icon">💾</span> LocalStorage</div>
+                <div class="status-content">
+                    postLoginRedirect: ${hasPostLogin || '(vacío)'}<br>
+                    futpro_user_card_data: ${hasCardData ? '✅ Presente' : '❌ Vacío'}
+                </div>
+            </div>`;
+            
+            // 5. Resumen de configuración requerida
+            html += `<div class="status-box info">
+                <div class="status-title"><span class="icon">📋</span> Configuración Requerida</div>
+                <div class="status-content">
+                    <strong>En Supabase Dashboard:</strong><br>
+                    1. Authentication > URL Configuration > Redirect URLs:<br>
+                    <pre>${callbackUrl}
+${origin}/*
+http://localhost:5173/auth/callback</pre>
+                    
+                    <strong>En Google Cloud Console:</strong><br>
+                    2. Credentials > OAuth Client > Authorized redirect URIs:<br>
+                    <pre>${SUPABASE_URL}/auth/v1/callback
+${callbackUrl}
+http://localhost:5173/auth/callback</pre>
+                </div>
+            </div>`;
+            
+            results.innerHTML = html;
+        };
+        
+        window.testOAuth = async function() {
+            console.log('🔐 Iniciando test OAuth...');
+            try {
+                const { error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: `${window.location.origin}/auth/callback`
+                    }
+                });
+                
+                if (error) {
+                    console.error('❌ Error OAuth:', error);
+                    alert(`Error: ${error.message}`);
+                } else {
+                    console.log('✅ Redirigiendo a Google...');
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                alert(`Error: ${error.message}`);
+            }
+        };
+        
+        window.clearStorage = function() {
+            localStorage.clear();
+            sessionStorage.clear();
+            alert('✅ Cache limpiado. Recarga la página.');
+        };
+        
+        // Auto-ejecutar al cargar
+        setTimeout(runDiagnostics, 500);
+    </script>
+</body>
+</html>
