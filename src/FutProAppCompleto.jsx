@@ -8,63 +8,6 @@ import HomePage from './pages/HomePage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal.jsx';
 
-// Componente para manejar el callback de OAuth
-function AuthCallback() {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    // Procesar callback de OAuth
-    const procesarCallback = async () => {
-      console.log('🔄 Procesando callback OAuth...');
-      
-      // Obtener parámetros de la URL
-      const urlParams = new URLSearchParams(location.search);
-      const hasError = urlParams.get('error');
-      
-      if (hasError) {
-        console.error('❌ Error en OAuth callback:', hasError);
-        navigate('/?error=' + hasError, { replace: true });
-        return;
-      }
-
-      // Si hay una sesión, redirigir al registro para completar
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
-        console.log('✅ Sesión OAuth establecida, completando registro...');
-        navigate('/registro?from=oauth', { replace: true });
-      } else {
-        console.log('⚠️ No se estableció sesión, volviendo al inicio');
-        navigate('/', { replace: true });
-      }
-    };
-
-    procesarCallback();
-  }, [location, navigate]);
-
-  return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: '#1a1a1a',
-      color: '#FFD700',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ 
-          fontSize: '40px', 
-          marginBottom: '20px',
-          animation: 'spin 1s linear infinite'
-        }}>⚽</div>
-        <div>Procesando autenticación...</div>
-      </div>
-    </div>
-  );
-}
-
 // Componente protegido
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -139,9 +82,6 @@ export default function FutProAppCompleto() {
       
       {/* Página de registro completo */}
       <Route path="/registro" element={<RegistroPage />} />
-      
-      {/* Callback de OAuth */}
-      <Route path="/auth/callback" element={<AuthCallback />} />
       
       {/* Páginas protegidas */}
       <Route path="/home" element={

@@ -379,81 +379,30 @@ export default function FormularioRegistroCompleto() {
     return () => clearInterval(interval);
   }, [formData]);
 
-  // Localizar automáticamente país/ciudad por IP (best-effort con fallback)
+  // Configurar horario sugerido automático (sin APIs externas bloqueadas por CSP)
   useEffect(() => {
     if (geoApplied) return;
-    (async () => {
-      try {
-        // Intento 1: ipapi.co (sin API key, público, con límites)
-        const ctrl = new AbortController();
-        const t = setTimeout(() => ctrl.abort(), 3000);
-        const res = await fetch('https://ipapi.co/json/', { signal: ctrl.signal });
-        clearTimeout(t);
-        if (!res.ok) throw new Error('ipapi.co no disponible');
-        const info = await res.json();
-        const countryName = info?.country_name;
-        const cityName = info?.city;
-        const mapped = COUNTRY_ALIASES[countryName] || countryName;
-        // Si el país está en nuestra lista, aplicamos; si no, usamos "Otro"
-        const pais = PAISES_CIUDADES[mapped] ? mapped : 'Otro';
-        const ciudadesDisponibles = PAISES_CIUDADES[pais] || [];
-        const ciudad = ciudadesDisponibles.includes(cityName) ? cityName : (ciudadesDisponibles[0] || 'Otra ciudad');
-        setFormData(prev => ({
-          ...prev,
-          pais,
-          ciudad,
-          // Autorelleno de teléfono si está vacío
-          telefono: prev.telefono || (DIAL_CODES[pais] ? `${DIAL_CODES[pais]} ` : prev.telefono),
-          // Ajuste de horario sugerido según hora local
-          horarioPreferido: (() => {
-            const h = new Date().getHours();
-            if (h < 5) return 'madrugadas';
-            if (h < 12) return 'mañanas';
-            if (h < 14) return 'mediodia';
-            if (h < 19) return 'tardes';
-            if (h < 21) return 'tardes_noche';
-            return 'noches';
-          })()
-        }));
-      } catch (e) {
-        try {
-          // Intento 2: ipwho.is como fallback
-          const ctrl2 = new AbortController();
-          const t2 = setTimeout(() => ctrl2.abort(), 3000);
-          const res2 = await fetch('https://ipwho.is/', { signal: ctrl2.signal });
-          clearTimeout(t2);
-          if (res2.ok) {
-            const info2 = await res2.json();
-            const countryName = info2?.country;
-            const cityName = info2?.city;
-            const mapped = COUNTRY_ALIASES[countryName] || countryName;
-            const pais = PAISES_CIUDADES[mapped] ? mapped : 'Otro';
-            const ciudadesDisponibles = PAISES_CIUDADES[pais] || [];
-            const ciudad = ciudadesDisponibles.includes(cityName) ? cityName : (ciudadesDisponibles[0] || 'Otra ciudad');
-            setFormData(prev => ({
-              ...prev,
-              pais,
-              ciudad,
-              telefono: prev.telefono || (DIAL_CODES[pais] ? `${DIAL_CODES[pais]} ` : prev.telefono),
-              horarioPreferido: (() => {
-                const h = new Date().getHours();
-                if (h < 5) return 'madrugadas';
-                if (h < 12) return 'mañanas';
-                if (h < 14) return 'mediodia';
-                if (h < 19) return 'tardes';
-                if (h < 21) return 'tardes_noche';
-                return 'noches';
-              })()
-            }));
-          }
-        } catch (_) {
-          // Silencioso: mantener defaults si falla
-        }
-      } finally {
-        setGeoApplied(true);
-      }
-    })();
+    
+    // Solo ajustar horario preferido según hora local del navegador
+    const h = new Date().getHours();
+    let horarioPreferido = 'mañanas';
+    if (h < 5) horarioPreferido = 'madrugadas';
+    else if (h < 12) horarioPreferido = 'mañanas';
+    else if (h < 14) horarioPreferido = 'mediodia';
+    else if (h < 19) horarioPreferido = 'tardes';
+    else if (h < 21) horarioPreferido = 'tardes_noche';
+    else horarioPreferido = 'noches';
+    
+    setFormData(prev => ({
+      ...prev,
+      horarioPreferido
+    }));
+    
+    setGeoApplied(true);
   }, [geoApplied]);
+
+  // REMOVIDO: APIs de geolocalización (ipapi.co, ipwho.is) bloqueadas por CSP
+  // Usuario selecciona país/ciudad manualmente del dropdown
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -522,22 +471,27 @@ export default function FormularioRegistroCompleto() {
   const handleGoogleSignup = async () => {
     try {
       setLoading(true);
-      // Guardar intención de navegación post-OAuth: ir directo a mostrar Card
-      try {
-        // CAMBIO: Target ahora es /perfil-card para mostrar Card directamente después de OAuth
-        localStorage.setItem('post_auth_target', '/perfil-card');
-        localStorage.setItem('oauth_origin', 'formulario_registro');
+      setError(null);
 
-        // Preparar datos mínimos para mostrar la Card al volver del OAuth
+      console.log('🔐 [REGISTRO] Iniciando OAuth con Google...');
+      console.log('📍 Redirect URL:', `${window.location.origin}/auth/callback`);
+
+      // Guardar contexto del formulario para recuperarlo después del OAuth
+      try {
+        localStorage.setItem('oauth_origin', 'formulario_registro');
+        localStorage.setItem('post_auth_target', '/perfil-card');
+
+        // Calcular puntaje inicial
         const puntaje = calcularPuntajeInicial({
           nivelHabilidad: formData.nivelHabilidad,
           edad: Number(formData.edad) || 0,
           frecuenciaJuego: formData.frecuenciaJuego
         });
 
+        // Preparar datos preliminares para la card
         const cardData = {
           id: `temp-${Date.now()}`,
-          categoria: formData.categoria || 'infantil_femenina',
+          categoria: formData.categoria || 'masculina',
           nombre: `${formData.nombre || 'Jugador'} ${formData.apellido || ''}`.trim(),
           ciudad: formData.ciudad || '',
           pais: formData.pais || '',
@@ -549,37 +503,38 @@ export default function FormularioRegistroCompleto() {
           esPrimeraCard: true,
           avatar_url: formData.previewUrl || ''
         };
+
         localStorage.setItem('futpro_user_card_data', JSON.stringify(cardData));
         localStorage.setItem('show_first_card', 'true');
 
-        // Guardar borrador completo del formulario por si se necesita completar
+        // Guardar borrador completo del formulario
         const draft = { ...formData, ultimoGuardado: new Date().toISOString() };
         localStorage.setItem('futpro_registro_draft', JSON.stringify(draft));
-        localStorage.setItem('draft_carfutpro', JSON.stringify({
-          categoria: formData.categoria,
-          nombre: cardData.nombre,
-          ciudad: formData.ciudad,
-          pais: formData.pais,
-          posicion_favorita: cardData.posicion_favorita,
-          nivel_habilidad: cardData.nivel_habilidad,
-          equipo: cardData.equipo,
-          avatar_url: cardData.avatar_url,
-          estado: 'borrador_perfil',
-          updatedAt: new Date().toISOString()
-        }));
+
+        console.log('💾 Datos de formulario guardados en localStorage');
       } catch (e) {
-        console.warn('No se pudo preparar el estado previo a OAuth:', e);
+        console.warn('⚠️ No se pudo preparar el estado previo a OAuth:', e);
       }
-      const { oauthCallbackUrl } = getConfig();
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: oauthCallbackUrl }
-      });
-      if (error) throw error;
+
+      // FORZAR REDIRECCIÓN MANUAL A GOOGLE - Método directo que siempre funciona
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      const authUrl = `https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectTo)}`;
+
+      console.log('🔗 Redirigiendo manualmente a Google:', authUrl);
+      window.location.href = authUrl;
+
+      // No esperamos respuesta, la redirección ocurre inmediatamente
+
     } catch (e) {
-      setError(e.message || UI_MISC[lang].errGoogleSignIn);
-    } finally {
+      console.error('❌ Error completo en Google signup:', e);
       setLoading(false);
+
+      let errorMsg = 'Error al iniciar sesión con Google';
+      if (e?.message) {
+        errorMsg += `: ${e.message}`;
+      }
+
+      setError(errorMsg);
     }
   };
 

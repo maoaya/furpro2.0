@@ -123,42 +123,45 @@ export default function LoginRegisterFormClean() {
 
   const handleLoginSocial = async (provider) => {
     try {
-      setLoading(true); 
-      setError(null); 
+      setLoading(true);
+      setError(null);
       setSuccess(null);
-      
+
       console.log(`🔐 [LOGIN] Iniciando OAuth con ${provider}...`);
-      
-      // Método DIRECTO sin configuraciones complicadas
-      const { error } = await supabase.auth.signInWithOAuth({ 
-        provider: 'google',
-        options: { 
-          redirectTo: `${window.location.origin}/auth/callback`
-        } 
+      console.log('📍 Redirect URL:', `${window.location.origin}/auth/callback`);
+      console.log('🌐 Supabase URL:', config.supabaseUrl);
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          skipBrowserRedirect: false
+        }
       });
-      
+
       if (error) {
         console.error('❌ Error OAuth:', error);
         throw error;
       }
+
+      console.log('✅ OAuth iniciado correctamente:', data);
+      // La navegación a Google ocurre automáticamente
+      // No se necesita código adicional aquí
       
-      // El navegador redirige automáticamente a Google
-      console.log('✅ Redirigiendo a Google...');
-    } catch (e) { 
-      console.error('❌ Error OAuth:', e);
-      setLoading(false); 
+    } catch (e) {
+      console.error('❌ Error completo OAuth:', e);
+      setLoading(false);
       
-      // Mostrar mensaje más informativo
-      let errorMsg = `${t('errorWith')} ${provider}`;
-      if (e.message.includes('401') || e.message.includes('Unauthorized')) {
-        errorMsg = '⚠️ Error de configuración OAuth. Verifica que las URLs de redirect estén configuradas en Supabase Dashboard > Authentication > URL Configuration.';
-      } else {
+      let errorMsg = `Error al iniciar sesión con ${provider}`;
+      if (e?.message) {
         errorMsg += `: ${e.message}`;
       }
       
-      setError(errorMsg); 
+      setError(errorMsg);
     }
   };
+
+
 
   const handleSubmitEmail = async (e) => {
     e.preventDefault();

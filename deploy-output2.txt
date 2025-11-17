@@ -1,0 +1,36 @@
+
+Deploying to Netlify
+────────────────────────────────────────────────────────────────
+
+[32mDeploy path: [39m   C:\Users\lenovo\Desktop\futpro2.0\dist
+[32mFunctions path: [39mC:\Users\lenovo\Desktop\futpro2.0\.functions-empty
+
+[33m⠋[39m Uploading blobs to deploy store...
+
+[32m✔[39m Finished uploading blobs to deploy store
+[33m⠋[39m Hashing files...
+[33m⠋[39m Looking for a functions cache...
+[32m✔[39m Ignored invalid or expired functions cache
+[32m✔[39m Finished hashing 
+[33m⠋[39m CDN diffing files...
+[32m✔[39m CDN requesting 1 files
+[33m⠋[39m Uploading 1 files
+[32m✔[39m Finished uploading 1 assets
+[33m⠋[39m Waiting for deploy to go live...
+[32m✔[39m Deploy is live!
+
+🚀 Deploy complete
+────────────────────────────────────────────────────────────────
+
+╭────────────────────── ⬥  Production deploy is live ⬥  ───────────────────────╮
+│                                                                              │
+│                Deployed to production URL: https://futpro.vip                │
+│                                                                              │
+│                             Unique deploy URL:                               │
+│           https://69194fba72f62ba159f8ad5b--futprovip.netlify.app            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+[32mBuild logs: [39m        https://app.netlify.com/projects/futprovip/deploys/69194fba72f62ba159f8ad5b
+[32mFunction logs: [39m     https://app.netlify.com/projects/futprovip/logs/functions
+[32mEdge function Logs: [39mhttps://app.netlify.com/projects/futprovip/logs/edge-functions

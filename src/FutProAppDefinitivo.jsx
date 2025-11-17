@@ -13,7 +13,6 @@ import HomePage from './pages/HomePage.jsx';
 import HomeSimple from './pages/HomeSimple.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LayoutPrincipal from './components/LayoutPrincipal.jsx';
-import CallbackPage from './pages/CallbackPage.jsx';
 import PageInDevelopment from './components/PageInDevelopment.jsx';
 import OAuthLiveTest from './pages/OAuthLiveTest.jsx';
 import UsuariosPage from './pages/UsuariosPage.jsx';
@@ -163,11 +162,11 @@ export default function FutProAppDefinitivo() {
   useEffect(() => {
     const handleDeepLink = async () => {
       const currentPath = window.location.pathname;
-      const authPaths = ['/auth/callback', '/oauth/callback', '/callback'];
+      const authPaths = ['/auth/callback']; // Solo callback HTML independiente
       
       if (authPaths.some(path => currentPath.includes(path))) {
         console.log('🔗 Deep link de auth detectado:', currentPath);
-        return; // Dejar que CallbackPage maneje
+        return; // Dejar que el callback HTML maneje
       }
 
       // NO redirigir automáticamente - dejar que el usuario vea el login primero
@@ -204,9 +203,6 @@ export default function FutProAppDefinitivo() {
         </ProtectedRoute>
       } />
       
-      {/* Callback para OAuth */}
-      <Route path="/auth/callback" element={<CallbackPage />} />
-
       {/* Live test de OAuth en el dominio actual */}
       <Route path="/auth/test" element={<OAuthLiveTest />} />
 

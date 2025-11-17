@@ -54,6 +54,12 @@
 
 # 🔄 Redirects SPA optimizados
 [[redirects]]
+  from = "/auth/callback"
+  to = "/auth-callback.html"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/auth/*"
   to = "/index.html"
   status = 200
