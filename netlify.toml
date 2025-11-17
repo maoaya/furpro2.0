@@ -4,8 +4,10 @@
 [build]
   base = "."
   publish = "dist"
-  command = "node copy-env.js && npm ci && npm run build"
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':!README.md' ':!*.md'"
+  # Usamos dist preconstruido. Evitamos npm ci (requiere lock) y build redundante.
+  # Si se necesita reconstruir en Netlify, cambiar a: npm install --no-audit --no-fund && npm run build
+  command = "echo Using prebuilt dist - skipping build step"
+  ignore = "true"
 
 [build.environment]
   NODE_VERSION = "20.10.0"
