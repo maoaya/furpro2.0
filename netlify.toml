@@ -4,7 +4,7 @@
 [build]
   base = "."
   publish = "dist"
-  # Usar npm install en lugar de npm ci para resolver dependencias correctamente por plataforma
+  # Instalar dependencias sin package-lock.json para resolver correctamente por plataforma
   command = "npm install --no-audit --no-fund && npm run build"
   ignore = "false"
 
