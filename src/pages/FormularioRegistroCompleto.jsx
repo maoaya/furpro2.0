@@ -552,22 +552,6 @@ export default function FormularioRegistroCompleto() {
       setLoading(false);
     }
   };
-      }
-
-      console.log('✅ OAuth con Google iniciado correctamente desde formulario');
-
-    } catch (e) {
-      console.error('❌ Error completo en Google signup:', e);
-      setLoading(false);
-
-      let errorMsg = 'Error al iniciar sesión con Google';
-      if (e?.message) {
-        errorMsg += `: ${e.message}`;
-      }
-
-      setError(errorMsg);
-    }
-  };
 
   // Función para calcular puntaje inicial basado en datos del usuario
   const calcularPuntajeInicial = (datos) => {
