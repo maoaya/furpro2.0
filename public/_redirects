@@ -5,10 +5,10 @@
 /auth                 /index.html   200
 /auth/*               /index.html   200
 
-# OAuth callbacks optimizados
-/auth/callback        /index.html   200
-/oauth/callback       /index.html   200
-/callback             /index.html   200
+# OAuth callbacks optimizados - REDIRIGIR A auth-callback.html
+/auth/callback        /auth-callback.html   200
+/oauth/callback       /auth-callback.html   200
+/callback             /auth-callback.html   200
 
 # === RUTAS DE AUTENTICACIÓN LEGACY ===
 /login                /index.html   200
@@ -16,10 +16,13 @@
 /registro             /index.html   200
 /registro/*           /index.html   200
 /registro-completo    /index.html   200
+/seleccionar-categoria /index.html   200
+/formulario-registro  /index.html   200
+/perfil-card          /index.html   200
 
 # === RUTAS PRINCIPALES DE LA APLICACIÓN ===
-/home                 /index.html   200
-/home/*               /index.html   200
+/home                 /homepage-instagram.html   200
+/home/*               /homepage-instagram.html   200
 /inicio               /index.html   200
 /inicio/*             /index.html   200
 

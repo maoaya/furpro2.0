@@ -1,0 +1,244 @@
+/* ========== ESTADOS STYLES ========== */
+
+.estados-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.estados-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.estados-header h1 {
+  color: #FFD700;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.estados-header p {
+  color: #ccc;
+  font-size: 1.1rem;
+}
+
+/* Crear estado */
+.crear-estado {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 30px;
+  border: 1px solid #333;
+}
+
+.crear-estado textarea {
+  width: 100%;
+  min-height: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #555;
+  border-radius: 10px;
+  color: #fff;
+  padding: 15px;
+  font-size: 16px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.crear-estado textarea:focus {
+  border-color: #FFD700;
+}
+
+.crear-estado textarea::placeholder {
+  color: #ccc;
+}
+
+.estado-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.caracteres {
+  color: #ccc;
+  font-size: 14px;
+}
+
+.btn-publicar {
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.btn-publicar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.btn-publicar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Lista de estados */
+.estados-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.estado-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid #333;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.estado-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.estado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.usuario-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-placeholder {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.usuario-info h4 {
+  margin: 0 0 5px 0;
+  color: #FFD700;
+}
+
+.usuario-info small {
+  color: #ccc;
+  font-size: 12px;
+}
+
+.categoria-badge {
+  display: inline-block;
+  background: rgba(255, 215, 0, 0.2);
+  color: #FFD700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  margin-left: 8px;
+}
+
+.estado-contenido p {
+  color: #fff;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.estado-actions {
+  display: flex;
+  gap: 20px;
+}
+
+.btn-like, .btn-comment {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.btn-like:hover {
+  color: #ff4444;
+}
+
+.btn-comment:hover {
+  color: #FFD700;
+}
+
+/* Comentarios */
+.comentarios {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #333;
+}
+
+.comentario {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.comentario strong {
+  color: #FFD700;
+}
+
+/* No estados */
+.no-estados {
+  text-align: center;
+  padding: 40px 20px;
+  color: #ccc;
+}
+
+.no-estados p {
+  margin-bottom: 10px;
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 768px) {
+  .estados-container {
+    padding: 15px;
+  }
+
+  .estados-header h1 {
+    font-size: 2rem;
+  }
+
+  .estado-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .estado-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .estado-actions {
+    gap: 15px;
+  }
+}

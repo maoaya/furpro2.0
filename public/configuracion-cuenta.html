@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Cuenta - FutPro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            color: #FFD700;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #111;
+            padding: 20px;
+            border-bottom: 2px solid #FFD700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header button {
+            background: none;
+            border: none;
+            color: #FFD700;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .section h2 {
+            color: #FFD700;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-info h3 {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .setting-info p {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .setting-action {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff4444, #cc0000);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #333;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle.active {
+            background: #FFD700;
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle.active::after {
+            left: 26px;
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: #fff;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #FFD700;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            border: 2px solid #FFD700;
+        }
+
+        .modal h3 {
+            color: #FFD700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal p {
+            color: #ccc;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .location-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .location-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #555;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .location-btn.active {
+            background: #FFD700;
+            color: #000;
+            border-color: #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+        <h1>Configuración de Cuenta</h1>
+    </div>
+
+    <div class="container">
+        <!-- Seguridad -->
+        <div class="section">
+            <h2><i class="fas fa-shield-alt"></i> Seguridad</h2>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3>Cambiar Contraseña</h3>
+                    <p>Actualiza tu contraseña para mayor seguridad</p>
+                </div>
+                <div class="setting-action">
+                    <button class="btn-primary" onclick="showPasswordModal()">Cambiar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ubicación -->
+        <div class="section">
+            <h2><i class="fas fa-map-marker-alt"></i> Ubicación</h2>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3>Ubicación Actual</h3>
+                    <p>Permite que otros usuarios vean tu ubicación</p>
+                </div>
+                <div class="setting-action">
+                    <div class="toggle" onclick="toggleLocation(this)"></div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3>Cambiar Ubicación</h3>
+                    <p>Selecciona tu ciudad o región</p>
+                </div>
+                <div class="setting-action">
+                    <button class="btn-primary" onclick="showLocationModal()">Seleccionar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacidad -->
+        <div class="section">
+            <h2><i class="fas fa-lock"></i> Privacidad</h2>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3>Perfil Privado</h3>
+                    <p>Solo amigos pueden ver tus publicaciones</p>
+                </div>
+                <div class="setting-action">
+                    <div class="toggle" onclick="togglePrivacy(this)"></div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3>Mostrar Estadísticas</h3>
+                    <p>Permite que otros vean tus estadísticas</p>
+                </div>
+                <div class="setting-action">
+                    <div class="toggle active" onclick="toggleStats(this)"></div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3>Mostrar Online</h3>
+                    <p>Indica cuando estás conectado</p>
+                </div>
+                <div class="setting-action">
+                    <div class="toggle active" onclick="toggleOnline(this)"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cuenta -->
+        <div class="section">
+            <h2><i class="fas fa-user-cog"></i> Cuenta</h2>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3>Eliminar Cuenta</h3>
+                    <p>Esta acción no se puede deshacer</p>
+                </div>
+                <div class="setting-action">
+                    <button class="btn-danger" onclick="showDeleteModal()">Eliminar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cerrar Sesión -->
+        <div class="section">
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3>Cerrar Sesión</h3>
+                    <p>Salir de tu cuenta actual</p>
+                </div>
+                <div class="setting-action">
+                    <button class="btn-danger" onclick="logout()">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cambiar Contraseña -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <h3>Cambiar Contraseña</h3>
+            <input type="password" class="input-field" placeholder="Contraseña actual" id="currentPassword">
+            <input type="password" class="input-field" placeholder="Nueva contraseña" id="newPassword">
+            <input type="password" class="input-field" placeholder="Confirmar contraseña" id="confirmPassword">
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="changePassword()">Guardar</button>
+                <button onclick="closeModal('passwordModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cambiar Ubicación -->
+    <div class="modal" id="locationModal">
+        <div class="modal-content">
+            <h3>Cambiar Ubicación</h3>
+            <input type="text" class="input-field" placeholder="Buscar ciudad..." id="locationSearch">
+            <div class="location-selector">
+                <button class="location-btn" onclick="selectLocation('Madrid')">Madrid</button>
+                <button class="location-btn" onclick="selectLocation('Barcelona')">Barcelona</button>
+                <button class="location-btn" onclick="selectLocation('Valencia')">Valencia</button>
+                <button class="location-btn" onclick="selectLocation('Sevilla')">Sevilla</button>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="saveLocation()">Guardar</button>
+                <button onclick="closeModal('locationModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Eliminar Cuenta -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h3>¿Eliminar Cuenta?</h3>
+            <p>Esta acción eliminará permanentemente tu cuenta y todos tus datos. No se puede deshacer.</p>
+            <div class="modal-buttons">
+                <button class="btn-danger" onclick="deleteAccount()">Eliminar Cuenta</button>
+                <button onclick="closeModal('deleteModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funciones de navegación
+        function goBack() {
+            window.location.href = '/homepage-instagram.html';
+        }
+
+        // Funciones de toggles
+        function toggleLocation(element) {
+            element.classList.toggle('active');
+            // Guardar en localStorage
+            localStorage.setItem('location_enabled', element.classList.contains('active'));
+        }
+
+        function togglePrivacy(element) {
+            element.classList.toggle('active');
+            // Guardar en localStorage
+            localStorage.setItem('profile_private', element.classList.contains('active'));
+        }
+
+        function toggleStats(element) {
+            element.classList.toggle('active');
+            // Guardar en localStorage
+            localStorage.setItem('show_stats', element.classList.contains('active'));
+        }
+
+        function toggleOnline(element) {
+            element.classList.toggle('active');
+            // Guardar en localStorage
+            localStorage.setItem('show_online', element.classList.contains('active'));
+        }
+
+        // Funciones de modales
+        function showPasswordModal() {
+            document.getElementById('passwordModal').classList.add('show');
+        }
+
+        function showLocationModal() {
+            document.getElementById('locationModal').classList.add('show');
+        }
+
+        function showDeleteModal() {
+            document.getElementById('deleteModal').classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Funciones de acciones
+        function changePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            if (!current || !newPass || !confirm) {
+                alert('Completa todos los campos');
+                return;
+            }
+
+            if (newPass !== confirm) {
+                alert('Las contraseñas no coinciden');
+                return;
+            }
+
+            // Aquí iría la lógica para cambiar contraseña
+            alert('Contraseña cambiada exitosamente');
+            closeModal('passwordModal');
+        }
+
+        function selectLocation(location) {
+            document.querySelectorAll('.location-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function saveLocation() {
+            const selected = document.querySelector('.location-btn.active');
+            if (selected) {
+                localStorage.setItem('user_location', selected.textContent);
+                alert('Ubicación guardada: ' + selected.textContent);
+                closeModal('locationModal');
+            } else {
+                alert('Selecciona una ubicación');
+            }
+        }
+
+        function deleteAccount() {
+            if (confirm('¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')) {
+                // Aquí iría la lógica para eliminar cuenta
+                alert('Cuenta eliminada. Redirigiendo...');
+                logout();
+            }
+        }
+
+        function logout() {
+            // Limpiar datos de sesión
+            localStorage.clear();
+            sessionStorage.clear();
+
+            // Redirigir al login
+            window.location.href = '/';
+        }
+
+        // Cargar configuraciones al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar toggles desde localStorage
+            const locationEnabled = localStorage.getItem('location_enabled') === 'true';
+            const profilePrivate = localStorage.getItem('profile_private') === 'true';
+            const showStats = localStorage.getItem('show_stats') !== 'false'; // true por defecto
+            const showOnline = localStorage.getItem('show_online') !== 'false'; // true por defecto
+
+            if (locationEnabled) document.querySelector('.toggle').classList.add('active');
+            if (profilePrivate) document.querySelectorAll('.toggle')[1].classList.add('active');
+            if (showStats) document.querySelectorAll('.toggle')[2].classList.add('active');
+            if (showOnline) document.querySelectorAll('.toggle')[3].classList.add('active');
+        });
+    </script>
+</body>
+</html>

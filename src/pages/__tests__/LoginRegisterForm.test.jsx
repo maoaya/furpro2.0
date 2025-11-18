@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor, act, cleanup } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import LoginRegisterForm from '../LoginRegisterForm.jsx';
+import LoginRegisterForm from '../LoginRegisterFormClean.jsx';
 import { AuthContext } from '../../context/AuthContext.jsx';
 
 // Mock del AuthContext con todos los valores necesarios

@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import supabase from '../supabaseClient';
+import { getConfig } from '../config/environment.js';
 
 export default function SeleccionCategoria() {
   const navigate = useNavigate();
   const [lang, setLang] = useState('es');
   const [selected, setSelected] = useState(null);
   const [confirming, setConfirming] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const config = getConfig();
 
   // Traducciones
   const I18N = {
@@ -103,6 +107,37 @@ export default function SeleccionCategoria() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    if (!selected) return;
+    try {
+      setGoogleLoading(true);
+      // Guardar categoría seleccionada para el callback
+      localStorage.setItem('selected_categoria', selected);
+      localStorage.setItem('draft_carfutpro', JSON.stringify({ categoria: selected, ts: Date.now() }));
+      
+      console.log('🔐 [SeleccionCategoria] Iniciando OAuth con Google, categoría:', selected);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          skipBrowserRedirect: false
+        }
+      });
+
+      if (error) {
+        console.error('❌ Error OAuth:', error);
+        throw error;
+      }
+
+      console.log('✅ OAuth con Google iniciado correctamente');
+    } catch (e) {
+      console.error('❌ Error en login con Google:', e);
+      setGoogleLoading(false);
+      alert('Error al iniciar sesión con Google. Inténtalo de nuevo.');
+    }
+  };
+
   return (
     <div style={{ minHeight: '100vh', background: '#0b0b0b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ width: '100%', maxWidth: 520, background: '#121212', border: '2px solid #FFD700', borderRadius: 16, padding: 20 }}>
@@ -153,6 +188,27 @@ export default function SeleccionCategoria() {
             }}
           >
             {selected ? 'Crear usuario con categoría seleccionada' : 'Selecciona una categoría'}
+          </button>
+        </div>
+
+        <div style={{ marginTop: 16, textAlign: 'center' }}>
+          <button
+            onClick={handleGoogleLogin}
+            disabled={!selected || googleLoading}
+            style={{
+              width: '100%',
+              padding: 16,
+              background: selected ? 'linear-gradient(135deg,#4285f4,#34a853)' : '#333',
+              color: '#fff',
+              fontWeight: 800,
+              border: 'none',
+              borderRadius: 12,
+              cursor: selected ? 'pointer' : 'not-allowed',
+              opacity: googleLoading ? .7 : 1,
+              transition: 'background .3s'
+            }}
+          >
+            {googleLoading ? 'Conectando con Google...' : (selected ? 'Continuar con Google' : 'Selecciona categoría primero')}
           </button>
         </div>
 

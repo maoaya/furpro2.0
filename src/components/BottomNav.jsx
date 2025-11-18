@@ -4,9 +4,9 @@ import { Link, useLocation } from 'react-router-dom';
 
 const navItems = [
   { label: 'Inicio', path: '/', icon: '🏠' },
-  { label: 'Partidos', path: '/partidos', icon: '⚽' },
+  { label: 'Estados', path: '/estados', icon: '📱' },
+  { label: 'Amigos', path: '/amigos', icon: '👫' },
   { label: 'Torneos', path: '/torneos', icon: '🏆' },
-  { label: 'Equipos', path: '/equipos', icon: '👥' },
   { label: 'Perfil', path: '/perfil', icon: '👤' }
 ];
 

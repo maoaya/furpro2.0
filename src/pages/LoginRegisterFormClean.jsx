@@ -127,6 +127,7 @@ export default function LoginRegisterFormClean() {
       setError(null);
       setSuccess(null);
 
+      // Iniciar OAuth directamente con Google
       console.log(`🔐 [LOGIN] Iniciando OAuth con ${provider}...`);
       console.log('📍 Redirect URL:', `${window.location.origin}/auth/callback`);
       console.log('🌐 Supabase URL:', config.supabaseUrl);

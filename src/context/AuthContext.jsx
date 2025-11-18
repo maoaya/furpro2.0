@@ -434,7 +434,6 @@ export const AuthProvider = ({ children }) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'facebook',
         options: {
-          redirectTo: callbackUrl,
           queryParams: {
             scope: 'email,public_profile'
           }

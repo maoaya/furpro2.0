@@ -12,7 +12,7 @@ import PoliticasPrivacidad from './pages/PoliticasPrivacidad';
 import JugadoresPatrocinadoresPage from './pages/JugadoresPatrocinadoresPage';
 import QuienesSomosPage from './pages/QuienesSomosPage';
 // import NotFoundPage from './pages/NotFoundPage';
-import PerfilPage from './pages/PerfilPage.jsx';
+import Perfil from './pages/Perfil.jsx';
 import EquiposPage from './pages/EquiposPage.jsx';
 import EquipoDetallePage from './pages/EquipoDetallePage.jsx';
 import UsuariosPage from './pages/UsuariosPage.jsx';
@@ -50,7 +50,7 @@ export default function FutProRoutes() {
     <Router>
       <Routes>
         <Route path="/" element={<AppRouter />} />
-        <Route path="/perfil" element={<PerfilPage usuario="demo" />} />
+        <Route path="/perfil" element={<Perfil usuario="demo" />} />
         <Route path="/equipos" element={<EquiposPage />} />
         <Route path="/equipos/:equipoId" element={<EquipoDetallePage />} />
         <Route path="/equipos/:equipoId/editar" element={<EquipoEditarPage />} />

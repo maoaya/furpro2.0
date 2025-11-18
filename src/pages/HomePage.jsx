@@ -253,6 +253,119 @@ export default function HomePage() {
           </div>
         </div>
       </header>
+
+      {/* Stories Section - Tipo Instagram */}
+      <div style={{
+        background: black,
+        padding: '15px 0',
+        borderBottom: '1px solid #333',
+        marginBottom: 10
+      }}>
+        <div style={{
+          display: 'flex',
+          gap: 15,
+          overflowX: 'auto',
+          padding: '0 15px',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          maxWidth: '1200px',
+          margin: '0 auto'
+        }}>
+          {/* Story del usuario */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            cursor: 'pointer',
+            minWidth: 70
+          }}>
+            <div style={{
+              width: 60,
+              height: 60,
+              borderRadius: '50%',
+              background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: 5,
+              position: 'relative'
+            }}>
+              <div style={{
+                width: 54,
+                height: 54,
+                borderRadius: '50%',
+                background: '#333',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 24
+              }}>
+                👤
+              </div>
+              <div style={{
+                position: 'absolute',
+                bottom: -2,
+                right: -2,
+                width: 20,
+                height: 20,
+                borderRadius: '50%',
+                background: gold,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 12
+              }}>
+                ➕
+              </div>
+            </div>
+            <span style={{ color: '#fff', fontSize: 12, textAlign: 'center' }}>Tu historia</span>
+          </div>
+
+          {/* Stories de ejemplo */}
+          {[
+            { name: 'Messi', avatar: '⚽', hasStory: true },
+            { name: 'Ronaldo', avatar: '💪', hasStory: true },
+            { name: 'Neymar', avatar: '🌟', hasStory: false },
+            { name: 'Mbappé', avatar: '🚀', hasStory: true },
+            { name: 'Benzema', avatar: '👑', hasStory: true }
+          ].map((user, index) => (
+            <div key={index} style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              cursor: 'pointer',
+              minWidth: 70
+            }}>
+              <div style={{
+                width: 60,
+                height: 60,
+                borderRadius: '50%',
+                background: user.hasStory ? `linear-gradient(45deg, ${gold}, #ff6b6b, #4ecdc4, ${lightGold})` : '#333',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 5,
+                padding: user.hasStory ? 2 : 0
+              }}>
+                <div style={{
+                  width: user.hasStory ? 54 : 60,
+                  height: user.hasStory ? 54 : 60,
+                  borderRadius: '50%',
+                  background: '#666',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 24
+                }}>
+                  {user.avatar}
+                </div>
+              </div>
+              <span style={{ color: '#fff', fontSize: 12, textAlign: 'center' }}>{user.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Navegación de secciones */}
       <nav style={{
         background: darkCard,
@@ -1013,23 +1126,75 @@ export default function HomePage() {
         )}
       </main>
       
-      {/* Barra de navegación inferior fija */}
+      {/* Botón flotante para crear post - Tipo Instagram */}
+      <button 
+        onClick={() => navigate('/crear-post')}
+        style={{
+          position: 'fixed',
+          bottom: 90,
+          right: 20,
+          width: 60,
+          height: 60,
+          borderRadius: '50%',
+          background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
+          border: 'none',
+          color: black,
+          fontSize: 24,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 20px rgba(255, 215, 0, 0.4)',
+          zIndex: 40,
+          transition: 'all 0.3s ease'
+        }}
+        onMouseOver={(e) => {
+          e.target.style.transform = 'scale(1.1)';
+          e.target.style.boxShadow = '0 6px 25px rgba(255, 215, 0, 0.6)';
+        }}
+        onMouseOut={(e) => {
+          e.target.style.transform = 'scale(1)';
+          e.target.style.boxShadow = '0 4px 20px rgba(255, 215, 0, 0.4)';
+        }}
+      >
+        ➕
+      </button>
+      
+      {/* Barra de navegación inferior - Tipo Instagram */}
       <nav style={{ position: 'fixed', left: 0, bottom: 0, width: '100vw', background: black, borderTop: `2px solid ${gold}`, display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: 64, zIndex: 30 }}>
-        <button onClick={() => { setFeedbackNav('Navegando a Home...'); setTimeout(()=>{ window.location.href='/'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
+        <button 
+          onClick={() => { setFeedbackNav('Home'); setTimeout(()=>{ setFeedbackNav(''); }, 400); }} 
+          style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}
+        >
           <span role="img" aria-label="home">🏠</span>
           <span style={{ fontSize: 12 }}>Home</span>
         </button>
-        <button onClick={() => { setFeedbackNav('Navegando a Marketplace...'); setTimeout(()=>{ window.location.href='/marketplace'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
-          <span role="img" aria-label="ofertas">💼</span>
-          <span style={{ fontSize: 12 }}>Ofertas</span>
+        
+        <button 
+          onClick={() => { setFeedbackNav('Búsqueda'); setTimeout(()=>{ setFeedbackNav(''); }, 400); }} 
+          style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}
+        >
+          <span role="img" aria-label="search">�</span>
+          <span style={{ fontSize: 12 }}>Buscar</span>
         </button>
-        <button onClick={() => { setFeedbackNav('Navegando a TV...'); setTimeout(()=>{ window.location.href='/streaming'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
-          <span role="img" aria-label="tv">📺</span>
-          <span style={{ fontSize: 12 }}>TV</span>
+        
+        {/* Espacio para el botón flotante */}
+        <div style={{ width: 60 }}></div>
+        
+        <button 
+          onClick={() => { setFeedbackNav('Notificaciones'); setTimeout(()=>{ window.location.href='/notificaciones'; }, 400); }} 
+          style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}
+        >
+          <span role="img" aria-label="likes">❤️</span>
+          <span style={{ fontSize: 12 }}>Likes</span>
         </button>
-        <button onClick={() => { setFeedbackNav('Navegando a Calendario...'); setTimeout(()=>{ window.location.href='/calendario'; }, 400); }} style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}>
-          <span role="img" aria-label="calendario">📅</span>
-          <span style={{ fontSize: 12 }}>Calendario</span>
+        
+        <button 
+          onClick={() => { setFeedbackNav('Perfil'); setTimeout(()=>{ window.location.href='/perfil'; }, 400); }} 
+          style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}
+        >
+          <span role="img" aria-label="profile">�</span>
+          <span style={{ fontSize: 12 }}>Perfil</span>
         </button>
       </nav>
       

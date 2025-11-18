@@ -516,14 +516,21 @@ export default function FormularioRegistroCompleto() {
         console.warn('⚠️ No se pudo preparar el estado previo a OAuth:', e);
       }
 
-      // FORZAR REDIRECCIÓN MANUAL A GOOGLE - Método directo que siempre funciona
-      const redirectTo = `${window.location.origin}/auth/callback`;
-      const authUrl = `https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectTo)}`;
+      // Usar el método correcto de Supabase para OAuth
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          skipBrowserRedirect: false
+        }
+      });
 
-      console.log('🔗 Redirigiendo manualmente a Google:', authUrl);
-      window.location.href = authUrl;
+      if (error) {
+        console.error('❌ Error OAuth:', error);
+        throw error;
+      }
 
-      // No esperamos respuesta, la redirección ocurre inmediatamente
+      console.log('✅ OAuth con Google iniciado correctamente desde formulario');
 
     } catch (e) {
       console.error('❌ Error completo en Google signup:', e);

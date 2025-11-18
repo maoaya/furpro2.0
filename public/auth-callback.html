@@ -113,7 +113,7 @@
                     user_id: session.user.id,
                     nombre: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email.split('@')[0],
                     avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || '',
-                    categoria: 'masculina',
+                    categoria: localStorage.getItem('selected_categoria') || 'masculina',
                     posicion_favorita: 'Flexible',
                     nivel_habilidad: 'Principiante',
                     equipo: '—',
@@ -147,6 +147,7 @@
                 localStorage.removeItem('oauth_origin');
                 localStorage.removeItem('post_auth_target');
                 localStorage.removeItem('futpro_registro_draft');
+                localStorage.removeItem('selected_categoria');
 
                 console.log('✅ Redirigiendo a /perfil-card...');
                 window.location.href = '/perfil-card';

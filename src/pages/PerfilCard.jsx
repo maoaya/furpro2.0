@@ -98,8 +98,8 @@ const PerfilCard = () => {
 
   const continuarAlHome = () => {
     localStorage.removeItem('show_first_card');
-    // Navegar a página estática HTML (no SPA route)
-    window.location.href = '/homepage-instagram.html';
+    // Navegar a la homepage de Instagram (SPA route)
+    navigate('/home');
   };
 
   const getColorByCategory = (categoria) => {

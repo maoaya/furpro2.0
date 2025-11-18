@@ -3,38 +3,34 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import SidebarMenu from './components/SidebarMenu';
 import FeedPage from './pages/FeedPage';
-import PerfilPage from './pages/PerfilPage';
-import NotificationsPage from './pages/NotificationsPage';
-import AdminPanelPage from './pages/AdminPanelPage';
+import Perfil from './pages/Perfil';
+import Notificaciones from './pages/Notificaciones';
+import PageInDevelopment from './components/PageInDevelopment';
 import EquipoDetallePage from './pages/EquipoDetallePage';
 import TorneoDetallePage from './pages/TorneoDetallePage';
 import UsuarioDetallePage from './pages/UsuarioDetallePage';
-import RankingPage from './pages/RankingPage';
-import ProgresoPage from './pages/ProgresoPage';
-import PenaltisPage from './pages/PenaltisPage';
-import HistorialPenaltisPage from './pages/HistorialPenaltisPage';
-import AyudaFAQPage from './pages/AyudaFAQPage';
-import ConfiguracionUsuarioPage from './pages/ConfiguracionUsuarioPage';
-import CompartirContenidoPage from './pages/CompartirContenidoPage';
-import ChatSQLPage from './pages/ChatSQLPage';
-import MarketplacePage from './pages/MarketplacePage';
-import LogrosPage from './pages/LogrosPage';
-import SeleccionCategoria from './pages/SeleccionCategoria';
-import FormularioRegistroCompleto from './pages/FormularioRegistroCompleto';
-import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
-import ComparativasPage from './pages/ComparativasPage';
+import EstadisticasPage from './pages/EstadisticasPage';
+import Progreso from './pages/Progreso';
+import Penaltis from './pages/Penaltis';
+import HistorialPage from './pages/HistorialPage';
 import NotFoundPage from './pages/NotFoundPage';
 import AuthPageUnificada from './pages/AuthPageUnificada';
-import AuthCallback from './pages/AuthCallback';
-import LoginRegisterForm from './pages/LoginRegisterForm';
+import LoginRegisterForm from './pages/LoginRegisterFormClean';
 import RegistroNuevo from './pages/RegistroNuevo';
 import RegistroPerfil from './pages/RegistroPerfil';
+import Estados from './pages/Estados';
+import Amigos from './pages/Amigos';
+import ConfiguracionPage from './pages/ConfiguracionPage';
 
 // import SupportPage from './pages/SupportPage';
 import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
 import HomeRedirect from './pages/HomeRedirect';
 import PerfilCard from './pages/PerfilCard';
+import SeleccionCategoria from './pages/SeleccionCategoria';
+import FormularioRegistroCompleto from './pages/FormularioRegistroCompleto';
+import Logros from './pages/Logros';
+import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
 
 function Layout({ children }) {
   return (
@@ -66,30 +62,31 @@ export default function App() {
           <Route path="/registro-facebook" element={<AuthPageUnificada />} />
           <Route path="/registro-email" element={<AuthPageUnificada />} />
           <Route path="/auth" element={<AuthPageUnificada />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
           
           {/* Rutas principales - CON Layout */}
           {/* Redirigir /home al home definitivo estático */}
           <Route path="/home" element={<HomeRedirect />} />
           <Route path="/feed" element={<Layout><FeedPage /></Layout>} />
-          <Route path="/perfil/:userId" element={<Layout><PerfilPage /></Layout>} />
-          <Route path="/notificaciones" element={<Layout><NotificationsPage /></Layout>} />
-          <Route path="/admin" element={<Layout><AdminPanelPage /></Layout>} />
+          <Route path="/perfil/:userId" element={<Layout><Perfil /></Layout>} />
+          <Route path="/notificaciones" element={<Layout><Notificaciones /></Layout>} />
+          <Route path="/admin" element={<Layout><PageInDevelopment title="⚙️ Panel de Administración" icon="⚙️" /></Layout>} />
         <Route path="/equipo/:id" element={<Layout><EquipoDetallePage /></Layout>} />
         <Route path="/torneo/:id" element={<Layout><TorneoDetallePage /></Layout>} />
         <Route path="/usuario/:id" element={<Layout><UsuarioDetallePage /></Layout>} />
-        <Route path="/ranking" element={<Layout><RankingPage /></Layout>} />
-        <Route path="/progreso" element={<Layout><ProgresoPage /></Layout>} />
-        <Route path="/penaltis" element={<Layout><PenaltisPage /></Layout>} />
-        <Route path="/historial-penaltis" element={<Layout><HistorialPenaltisPage /></Layout>} />
-        <Route path="/ayuda" element={<Layout><AyudaFAQPage /></Layout>} />
-        <Route path="/configuracion" element={<Layout><ConfiguracionUsuarioPage /></Layout>} />
-        <Route path="/compartir" element={<Layout><CompartirContenidoPage /></Layout>} />
-        <Route path="/chat-sql" element={<Layout><ChatSQLPage /></Layout>} />
-        <Route path="/marketplace" element={<Layout><MarketplacePage /></Layout>} />
-        <Route path="/logros" element={<Layout><LogrosPage /></Layout>} />
+        <Route path="/ranking" element={<Layout><EstadisticasPage /></Layout>} />
+        <Route path="/progreso" element={<Layout><Progreso /></Layout>} />
+        <Route path="/penaltis" element={<Layout><Penaltis /></Layout>} />
+        <Route path="/historial-penaltis" element={<Layout><HistorialPage /></Layout>} />
+        <Route path="/ayuda" element={<Layout><PageInDevelopment title="❓ Centro de Ayuda" icon="❓" /></Layout>} />
+        <Route path="/configuracion" element={<Layout><ConfiguracionPage /></Layout>} />
+        <Route path="/compartir" element={<Layout><PageInDevelopment title="📤 Compartir Contenido" icon="📤" /></Layout>} />
+        <Route path="/chat-sql" element={<Layout><PageInDevelopment title="💬 Chat SQL" icon="💬" /></Layout>} />
+        <Route path="/marketplace" element={<Layout><PageInDevelopment title="🛒 Marketplace" icon="🛒" /></Layout>} />
+          <Route path="/logros" element={<Layout><Logros /></Layout>} />
         <Route path="/estadisticas-avanzadas" element={<Layout><EstadisticasAvanzadasPage /></Layout>} />
-          <Route path="/comparativas" element={<Layout><ComparativasPage /></Layout>} />
+          <Route path="/comparativas" element={<Layout><PageInDevelopment title="📊 Comparativas" icon="📊" /></Layout>} />
+          <Route path="/estados" element={<Layout><Estados /></Layout>} />
+          <Route path="/amigos" element={<Layout><Amigos /></Layout>} />
           <Route path="*" element={<Layout><NotFoundPage /></Layout>} />
         </Routes>
       </Router>

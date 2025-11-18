@@ -9,6 +9,8 @@ const menuItems = [
   { to: '/usuarios', label: 'Usuarios', icon: '👥' },
   { to: '/equipos', label: 'Equipos', icon: '⚽' },
   { to: '/torneos', label: 'Torneos', icon: '🏆' },
+  { to: '/estados', label: 'Estados', icon: '📱' },
+  { to: '/amigos', label: 'Amigos', icon: '👫' },
   { to: '/marketplace', label: 'Marketplace', icon: '🛒' },
   { to: '/logros', label: 'Logros', icon: '🥇' },
   { to: '/settings', label: 'Configuración', icon: '⚙️' },

@@ -597,7 +597,7 @@
                     <div class="menu-section-title">Juegos & Cards</div>
                     <a href="#" class="dropdown-item" onclick="jugarPenaltis(); return false;"><i class="fas fa-futbol"></i><span>Juego de Penaltis</span></a>
                     <a href="#" class="dropdown-item" onclick="centroJuegos(); return false;"><i class="fas fa-gamepad"></i><span>Centro de Juegos</span></a>
-                    <a href="#" class="dropdown-item" onclick="verCardFIFA(); return false;"><i class="fas fa-id-card"></i><span>Card FIFA</span></a>
+                    <a href="#" class="dropdown-item" onclick="verCardFutpro(); return false;"><i class="fas fa-id-card"></i><span>Card Futpro</span></a>
                     <a href="#" class="dropdown-item" onclick="sugerenciasCard(); return false;"><i class="fas fa-lightbulb"></i><span>Sugerencias Card</span></a>
                     <div class="menu-separator"></div>
                     <!-- SECCIÓN SOCIAL -->
@@ -613,12 +613,13 @@
                     <!-- SECCIÓN RANKINGS -->
                     <div class="menu-section-title">Rankings</div>
                     <a href="#" class="dropdown-item" onclick="rankingJugadores(); return false;"><i class="fas fa-list-ol"></i><span>Ranking Jugadores</span></a>
-                    <a href="#" class="dropdown-item" onclick="rankingPartidos(); return false;"><i class="fas fa-chart-line"></i><span>Ranking Partidos</span></a>
+                    <a href="#" class="dropdown-item" onclick="rankingEquipos(); return false;"><i class="fas fa-chart-line"></i><span>Ranking Equipos</span></a>
                     <a href="#" class="dropdown-item" onclick="buscarRanking(); return false;"><i class="fas fa-search"></i><span>Buscar Ranking</span></a>
                     <div class="menu-separator"></div>
                     <!-- SECCIÓN ADMIN -->
                     <div class="menu-section-title">Administración</div>
                     <a href="#" class="dropdown-item" onclick="abrirConfiguracion(); return false;"><i class="fas fa-cog"></i><span>Configuración</span><span class="badge-react">React</span></a>
+                    <a href="#" class="dropdown-item" onclick="abrirConfiguracionCuenta(); return false;"><i class="fas fa-user-cog"></i><span>Configuración de Cuenta</span></a>
                     <a href="#" class="dropdown-item" onclick="sugerenciasCard(); return false;"><i class="fas fa-lightbulb"></i><span>Sugerencias Card</span></a>
                     <a href="#" class="dropdown-item" onclick="contactarSoporte(); return false;"><i class="fas fa-life-ring"></i><span>Soporte</span><span class="badge-new">Nuevo</span></a>
                     <a href="#" class="dropdown-item" onclick="verPrivacidad(); return false;"><i class="fas fa-shield-alt"></i><span>Privacidad</span></a>
@@ -2595,6 +2596,11 @@
     function abrirConfiguracion() {
         // Redirigir a la ruta React de Configuración (SPA)
         window.location.href = '/configuracion';
+    }
+
+    function abrirConfiguracionCuenta() {
+        // Redirigir a la página de configuración de cuenta
+        window.location.href = './configuracion-cuenta.html';
     }
 
     function contactarSoporte() {

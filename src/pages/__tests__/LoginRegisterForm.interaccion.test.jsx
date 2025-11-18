@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import LoginRegisterForm from '../LoginRegisterForm.jsx';
+import LoginRegisterForm from '../LoginRegisterFormClean.jsx';
 import { AuthContext } from '../../context/AuthContext.jsx';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../../i18n';

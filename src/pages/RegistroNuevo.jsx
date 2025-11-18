@@ -60,7 +60,7 @@ export default function RegistroNuevo() {
       setLoading(true); setError(null); setSuccess(null);
       // tras OAuth, queremos continuar en el perfil
       try { localStorage.setItem('post_auth_target', '/registro-perfil'); } catch {}
-      await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: config.oauthCallbackUrl } });
+      await supabase.auth.signInWithOAuth({ provider });
     } catch (e) { setLoading(false); setError(`Error con ${provider}: ${e.message}`); }
   };
 
