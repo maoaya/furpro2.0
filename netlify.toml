@@ -4,8 +4,8 @@
 [build]
   base = "."
   publish = "dist"
-  # Instalar dependencias sin package-lock.json para resolver correctamente por plataforma
-  command = "npm install --no-audit --no-fund && npm run build"
+  # Forzar instalación limpia sin cache para resolver dependencias por plataforma
+  command = "rm -rf node_modules package-lock.json && npm install --no-audit --no-fund && npm run build"
   ignore = "false"
 
 [build.environment]
