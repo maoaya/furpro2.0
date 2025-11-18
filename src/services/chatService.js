@@ -9,7 +9,7 @@ const chatService = {
     socket.on('message', onMessage);
   },
   async sendMessage(msg, token) {
-    await fetch('/api/chat/message', {
+    const response = await fetch('/api/chat/message', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -17,6 +17,11 @@ const chatService = {
       },
       body: JSON.stringify(msg)
     });
+    if (response.status === 401) {
+      // Token inválido o expirado, redirigir al login
+      window.location.href = '/login';
+      return;
+    }
   },
   disconnect() {
     if (socket) socket.disconnect();

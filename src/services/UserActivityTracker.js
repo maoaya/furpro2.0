@@ -308,7 +308,7 @@ class UserActivityTracker {
     try {
       // Guardar en Supabase
       const { error } = await supabase
-        .from('user_activities')
+        .from('api.user_activities')
         .insert(actionsToProcess.map(action => ({
           id: action.id,
           user_id: action.userId,

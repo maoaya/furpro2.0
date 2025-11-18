@@ -8,6 +8,13 @@ import { signupBypass } from '../api/signupBypass';
 const gold = '#FFD700';
 
 export default function FormularioRegistroCompleto() {
+    // Autoguardado en tiempo real cada 3 segundos
+    React.useEffect(() => {
+      const interval = setInterval(() => {
+        localStorage.setItem('futpro_registro_draft', JSON.stringify(formData));
+      }, 3000);
+      return () => clearInterval(interval);
+    }, [formData]);
   const navigate = useNavigate();
   const location = useLocation();
   const [pasoActual, setPasoActual] = useState(1);
@@ -469,22 +476,7 @@ export default function FormularioRegistroCompleto() {
   };
 
   const handleGoogleSignup = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      console.log('🔐 [REGISTRO] Iniciando OAuth con Google...');
-      console.log('📍 Paso actual:', pasoActual);
-      console.log('📍 Formulario completado:', formData);
-      console.log('📍 Redirect URL:', `${window.location.origin}/auth/callback`);
-
-      // Verificar que estemos en el paso correcto
-      if (pasoActual !== 5) {
-        console.error('❌ Error: Botón de Google clickeado fuera del paso 5');
-        setError('Completa todos los pasos del formulario primero');
-        return;
-      }
-
+// ...existing code...
       // Guardar contexto del formulario para recuperarlo después del OAuth
       try {
         localStorage.setItem('oauth_origin', 'formulario_registro');

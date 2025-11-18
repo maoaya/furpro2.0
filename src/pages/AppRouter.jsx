@@ -84,75 +84,52 @@ export default function AppRouter() {
         <Router>
           <nav style={{ background: '#222', color: '#FFD700', padding: 16, display: 'flex', gap: 18 }}>
             <Link to="/" style={{ color: '#FFD700', marginRight: 16 }}>Inicio</Link>
-            <Link to="/dashboard" style={{ color: '#FFD700', marginRight: 16, fontWeight: 'bold' }}>Dashboard</Link>
-            <Link to="/perfil-avanzado" style={{ color: '#FFD700', marginRight: 16, fontWeight: 'bold' }}>Perfil Avanzado</Link>
-            <Link to="/usuarios" style={{ color: '#FFD700', marginRight: 16 }}>Usuarios</Link>
-            <Link to="/torneos" style={{ color: '#FFD700', marginRight: 16 }}>Torneos</Link>
-            <Link to="/ranking" style={{ color: '#FFD700', marginRight: 16 }}>Ranking</Link>
-            <Link to="/organizador" style={{ color: '#FFD700', marginRight: 16 }}>Organizador</Link>
-            <Link to="/media" style={{ color: '#FFD700', marginRight: 16 }}>Media</Link>
-            <Link to="/streaming" style={{ color: '#FFD700', marginRight: 16 }}>Transmisión en Vivo</Link>
-            <Link to="/historias" style={{ color: '#FFD700', marginRight: 16 }}>Historias</Link>
-            <Link to="/marketplace" style={{ color: '#FFD700', marginRight: 16 }}>Marketplace</Link>
-            <Link to="/configuracion" style={{ color: '#FFD700', marginRight: 16 }}>Configuración</Link>
-            <Link to="/crear-logo" style={{ color: '#FFD700', marginRight: 16 }}>Crear Logo</Link>
-            <Link to="/equipo-tecnico" style={{ color: '#FFD700', marginRight: 16 }}>Equipo Técnico</Link>
+            <Link to="/seleccionar-categoria" style={{ color: '#FFD700', marginRight: 16 }}>Categoría</Link>
+            <Link to="/formulario-registro" style={{ color: '#FFD700', marginRight: 16 }}>Registro</Link>
+            <Link to="/perfil-card" style={{ color: '#FFD700', marginRight: 16 }}>Perfil Card</Link>
+            <Link to="/home" style={{ color: '#FFD700', marginRight: 16 }}>Home</Link>
             <Link to="/chat" style={{ color: '#FFD700', marginRight: 16 }}>Chat</Link>
-            <Link to="/grupos" style={{ color: '#FFD700', marginRight: 16 }}>Grupos</Link>
+            <Link to="/equipos" style={{ color: '#FFD700', marginRight: 16 }}>Equipos</Link>
+            <Link to="/torneo" style={{ color: '#FFD700', marginRight: 16 }}>Torneo</Link>
+            <Link to="/amistoso" style={{ color: '#FFD700', marginRight: 16 }}>Amistoso</Link>
+            <Link to="/juegos" style={{ color: '#FFD700', marginRight: 16 }}>Juegos</Link>
+            <Link to="/penaltis" style={{ color: '#FFD700', marginRight: 16 }}>Penaltis</Link>
+            <Link to="/sugerencias-card" style={{ color: '#FFD700', marginRight: 16 }}>Sugerencias Card</Link>
+            <Link to="/notificaciones" style={{ color: '#FFD700', marginRight: 16 }}>Notificaciones</Link>
+            <Link to="/videos" style={{ color: '#FFD700', marginRight: 16 }}>Videos</Link>
+            <Link to="/marketplace" style={{ color: '#FFD700', marginRight: 16 }}>Marketplace</Link>
+            <Link to="/estados" style={{ color: '#FFD700', marginRight: 16 }}>Estados</Link>
+            <Link to="/amigos" style={{ color: '#FFD700', marginRight: 16 }}>Amigos</Link>
+            <Link to="/ranking" style={{ color: '#FFD700', marginRight: 16 }}>Ranking</Link>
+            <Link to="/buscar-ranking" style={{ color: '#FFD700', marginRight: 16 }}>Buscar Ranking</Link>
+            <Link to="/configuracion" style={{ color: '#FFD700', marginRight: 16 }}>Configuración</Link>
+            <Link to="/soporte" style={{ color: '#FFD700', marginRight: 16 }}>Soporte</Link>
+            <Link to="/privacidad" style={{ color: '#FFD700', marginRight: 16 }}>Privacidad</Link>
           </nav>
           <Suspense fallback={<div style={{ color: '#FFD700', padding: 32 }}>Cargando...</div>}>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/dashboard" element={React.createElement(lazy(() => import('./Dashboard')))} />
-              <Route path="/perfil-avanzado" element={React.createElement(lazy(() => import('./PerfilAvanzado')))} />
-              <Route path="/usuarios" element={<UsuariosPage />} />
-              <Route path="/torneos" element={<TorneosPage />} />
-              <Route path="/equipo/:id" element={<EquipoDetallePage />} />
-              <Route path="/partido/:id" element={<PartidoDetalle />} />
-              <Route path="/ranking" element={<RankingPage />} />
-              <Route path="/pagos" element={<PaymentsPage />} />
-              <Route path="/moderacion" element={<ModerationPage />} />
-              <Route path="/historial" element={<HistorialPage />} />
-              <Route path="/notificaciones" element={<NotificationsPage />} />
-              <Route path="/integraciones" element={<IntegracionesPage />} />
-              <Route path="/privacidad" element={<PrivacidadPage />} />
-              <Route path="/configuracion" element={<ConfiguracionPage />} />
-              <Route path="/organizador" element={
-                <PrivateRoute roles={["admin", "organizador"]}>
-                  <OrganizerDashboard />
-                </PrivateRoute>
-              } />
-              {/* Panel de administración con subpáginas y paginación */}
-              <Route path="/admin" element={
-                <PrivateRoute roles={["admin"]}>
-                  <AdminDashboard />
-                </PrivateRoute>
-              }>
-                <Route path="usuarios" element={<AdminUsersPage />} />
-                <Route path="pagos" element={<AdminPagosPage />} />
-                <Route path="reportes" element={<AdminReportesPage />} />
-                <Route path="notificaciones" element={<AdminNotificacionesPage />} />
-                <Route path="estadisticas" element={<AdminEstadisticasPage />} />
-                <Route path="auditoria" element={<AdminAuditoriaPage />} />
-                <Route path="configuracion" element={<AdminConfiguracionPage />} />
-              </Route>
-              <Route path="/media" element={<MediaPage />} />
-              <Route path="/streaming" element={<StreamingPage />} />
-              <Route path="/marketplace" element={<MarketplacePage />} />
-              <Route path="/historias" element={<HistoriasPage />} />
-              <Route path="/tutorial" element={<DemoTutorialPage />} />
-              <Route path="/penaltis" element={<PenaltisPage />} />
-              <Route path="/puntos" element={<PuntosUsuarioPage />} />
-              <Route path="/amistosos" element={<PartidosAmistososPage />} />
-              <Route path="/auth" element={React.createElement(lazy(() => import('./auth/AuthPage')))} />
-              <Route path="/arbitro" element={<PerfilArbitroPage />} />
-              <Route path="/arbitro/editar" element={<PerfilArbitroEditarPage />} />
-              <Route path="/crear-logo" element={<CrearLogoPage />} />
-                <Route path="/registro" element={<RegistroPage />} />
-                <Route path="/recuperar-password" element={<RecuperarPassword />} />
-              <Route path="/equipo-tecnico" element={<EquipoTecnicoPage />} />
+              <Route path="/seleccionar-categoria" element={<SeleccionCategoria />} />
+              <Route path="/formulario-registro" element={<FormularioRegistroCompleto />} />
+              <Route path="/perfil-card" element={<PerfilCard />} />
+              <Route path="/home" element={<HomePage />} />
               <Route path="/chat" element={<ChatPage />} />
-              <Route path="/grupos" element={<GruposPage />} />
+              <Route path="/equipos" element={<Equipos />} />
+              <Route path="/torneo" element={<Torneos />} />
+              <Route path="/amistoso" element={<AmistososPanel />} />
+              <Route path="/juegos" element={<Juegos />} />
+              <Route path="/penaltis" element={<PenaltisPage />} />
+              <Route path="/sugerencias-card" element={<SugerenciasCardPage />} />
+              <Route path="/notificaciones" element={<NotificacionesPanel />} />
+              <Route path="/videos" element={<VideosPage />} />
+              <Route path="/marketplace" element={<MarketplacePanel />} />
+              <Route path="/estados" element={<Estados />} />
+              <Route path="/amigos" element={<AmigosPanel />} />
+              <Route path="/ranking" element={<RankingPage />} />
+              <Route path="/buscar-ranking" element={<RankingPage />} />
+              <Route path="/configuracion" element={<ConfiguracionPanel />} />
+              <Route path="/soporte" element={<ContactarSoporte />} />
+              <Route path="/privacidad" element={<PrivacidadPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
