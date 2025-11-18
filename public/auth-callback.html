@@ -143,14 +143,15 @@
                 }));
                 localStorage.setItem('show_first_card', 'true');
 
-                // Limpiar datos temporales
+                // Limpiar datos temporales y redirigir
+                const postAuthTarget = localStorage.getItem('post_auth_target') || '/seleccionar-categoria';
                 localStorage.removeItem('oauth_origin');
                 localStorage.removeItem('post_auth_target');
                 localStorage.removeItem('futpro_registro_draft');
                 localStorage.removeItem('selected_categoria');
 
-                console.log('✅ Redirigiendo a /perfil-card...');
-                window.location.href = '/perfil-card';
+                console.log('✅ Redirigiendo a:', postAuthTarget);
+                window.location.href = postAuthTarget;
 
             } catch (error) {
                 console.error('❌ Error en callback:', error);

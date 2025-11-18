@@ -474,12 +474,21 @@ export default function FormularioRegistroCompleto() {
       setError(null);
 
       console.log('🔐 [REGISTRO] Iniciando OAuth con Google...');
+      console.log('📍 Paso actual:', pasoActual);
+      console.log('📍 Formulario completado:', formData);
       console.log('📍 Redirect URL:', `${window.location.origin}/auth/callback`);
+
+      // Verificar que estemos en el paso correcto
+      if (pasoActual !== 5) {
+        console.error('❌ Error: Botón de Google clickeado fuera del paso 5');
+        setError('Completa todos los pasos del formulario primero');
+        return;
+      }
 
       // Guardar contexto del formulario para recuperarlo después del OAuth
       try {
         localStorage.setItem('oauth_origin', 'formulario_registro');
-        localStorage.setItem('post_auth_target', '/perfil-card');
+        localStorage.setItem('post_auth_target', '/registro-perfil');
 
         // Calcular puntaje inicial
         const puntaje = calcularPuntajeInicial({
@@ -516,6 +525,8 @@ export default function FormularioRegistroCompleto() {
         console.warn('⚠️ No se pudo preparar el estado previo a OAuth:', e);
       }
 
+      console.log('🚀 Llamando a supabase.auth.signInWithOAuth...');
+
       // Usar el método correcto de Supabase para OAuth
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -525,9 +536,22 @@ export default function FormularioRegistroCompleto() {
         }
       });
 
+      console.log('📊 Respuesta OAuth:', { data, error });
+
       if (error) {
         console.error('❌ Error OAuth:', error);
         throw error;
+      }
+
+      console.log('✅ OAuth iniciado exitosamente, esperando redirección...');
+
+    } catch (error) {
+      console.error('❌ Error completo en handleGoogleSignup:', error);
+      setError(`Error al iniciar sesión con Google: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
       }
 
       console.log('✅ OAuth con Google iniciado correctamente desde formulario');
