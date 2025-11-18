@@ -4,8 +4,8 @@
 [build]
   base = "."
   publish = "dist"
-  # Reconstruir cuando haya cambios en el código fuente
-  command = "npm ci --no-audit --no-fund && npm run build"
+  # Usar npm install en lugar de npm ci para resolver dependencias correctamente por plataforma
+  command = "npm install --no-audit --no-fund && npm run build"
   ignore = "false"
 
 [build.environment]
