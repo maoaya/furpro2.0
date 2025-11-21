@@ -517,6 +517,7 @@ export default function FormularioRegistroCompleto() {
         console.warn('⚠️ No se pudo preparar el estado previo a OAuth:', e);
       }
 
+    try {
       console.log('🚀 Llamando a supabase.auth.signInWithOAuth...');
 
       // Usar el método correcto de Supabase para OAuth
@@ -536,7 +537,6 @@ export default function FormularioRegistroCompleto() {
       }
 
       console.log('✅ OAuth iniciado exitosamente, esperando redirección...');
-
     } catch (error) {
       console.error('❌ Error completo en handleGoogleSignup:', error);
       setError(`Error al iniciar sesión con Google: ${error.message}`);

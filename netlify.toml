@@ -4,8 +4,8 @@
 [build]
   base = "."
   publish = "dist"
-  # Forzar instalación completamente limpia para resolver problemas de plataforma
-  command = "rm -rf node_modules package-lock.json .npm && npm cache clean --force && npm install --no-audit --no-fund --force && npm run build"
+  # Comando compatible con Windows
+  command = "rmdir /s /q node_modules && del /f /q package-lock.json && npm cache clean --force && npm install --no-audit --no-fund --force && npm run build"
   ignore = "false"
 
 [build.environment]
@@ -45,6 +45,7 @@
   # VITE_FIREBASE_PROJECT_ID
   # VITE_FIREBASE_APP_ID
   # Puedes usar `.env.local` para pruebas locales (gitignored).
+    CYPRESS_INSTALL_BINARY = "0"
 
 [functions]
   directory = "functions"
@@ -56,32 +57,32 @@
   from = "/auth/callback"
   to = "/auth-callback.html"
   status = 200
-  force = true
+    # force eliminado para evitar conflicto
 
 [[redirects]]
   from = "/auth/*"
   to = "/index.html"
   status = 200
-  force = true
+    # force eliminado para evitar conflicto
 
 [[redirects]]
   from = "/oauth/*"
   to = "/index.html"
   status = 200
-  force = true
+    # force eliminado para evitar conflicto
 
 [[redirects]]
   from = "/registro*"
   to = "/index.html"
   status = 200
-  force = true
+    # force eliminado para evitar conflicto
 
 [[redirects]]
   # Registro multi-step completo (no coincidía con /registro*)
   from = "/formulario-registro*"
   to = "/index.html"
   status = 200
-  force = true
+    # force eliminado para evitar conflicto
 
 [[redirects]]
   from = "/api/*"
