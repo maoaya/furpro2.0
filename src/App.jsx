@@ -21,8 +21,26 @@ import RegistroPerfil from './pages/RegistroPerfil';
 import Estados from './pages/Estados';
 import Amigos from './pages/Amigos';
 import ConfiguracionPage from './pages/ConfiguracionPage';
-
-// import SupportPage from './pages/SupportPage';
+import EditarPerfil from './pages/EditarPerfil';
+import Estadisticas from './pages/Estadisticas';
+import Partidos from './pages/Partidos';
+import Tarjetas from './pages/Tarjetas';
+import Equipos from './pages/Equipos';
+import CrearEquipo from './pages/CrearEquipo';
+import Torneos from './pages/Torneos';
+import CrearTorneo from './pages/CrearTorneo';
+import Amistoso from './pages/Amistoso';
+import CardFIFA from './pages/CardFIFA';
+import SugerenciasCard from './pages/SugerenciasCard';
+import Chat from './pages/Chat';
+import Videos from './pages/Videos';
+import Marketplace from './pages/Marketplace';
+import TransmisionEnVivo from './pages/TransmisionEnVivo';
+import RankingJugadores from './pages/RankingJugadores';
+import RankingEquipos from './pages/RankingEquipos';
+import BuscarRanking from './pages/BuscarRanking';
+import Soporte from './pages/Soporte';
+import Privacidad from './pages/Privacidad';
 import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
 import HomeRedirect from './pages/HomeRedirect';
@@ -85,8 +103,31 @@ export default function App() {
           <Route path="/logros" element={<Layout><Logros /></Layout>} />
         <Route path="/estadisticas-avanzadas" element={<Layout><EstadisticasAvanzadasPage /></Layout>} />
           <Route path="/comparativas" element={<Layout><PageInDevelopment title="📊 Comparativas" icon="📊" /></Layout>} />
-          <Route path="/estados" element={<Layout><Estados /></Layout>} />
-          <Route path="/amigos" element={<Layout><Amigos /></Layout>} />
+          <Route path="/editar-perfil" element={<EditarPerfil />} />
+          <Route path="/estadisticas" element={<Estadisticas />} />
+          <Route path="/partidos" element={<Partidos />} />
+          <Route path="/tarjetas" element={<Tarjetas />} />
+          <Route path="/equipos" element={<Equipos />} />
+          <Route path="/crear-equipo" element={<CrearEquipo />} />
+          <Route path="/torneos" element={<Torneos />} />
+          <Route path="/crear-torneo" element={<CrearTorneo />} />
+          <Route path="/amistoso" element={<Amistoso />} />
+          <Route path="/penaltis" element={<Penaltis />} />
+          <Route path="/card-fifa" element={<CardFIFA />} />
+          <Route path="/sugerencias-card" element={<SugerenciasCard />} />
+          <Route path="/notificaciones" element={<Notificaciones />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/videos" element={<Videos />} />
+          <Route path="/marketplace" element={<Marketplace />} />
+          <Route path="/estados" element={<Estados />} />
+          <Route path="/amigos" element={<Amigos />} />
+          <Route path="/transmision-en-vivo" element={<TransmisionEnVivo />} />
+          <Route path="/ranking-jugadores" element={<RankingJugadores />} />
+          <Route path="/ranking-equipos" element={<RankingEquipos />} />
+          <Route path="/buscar-ranking" element={<BuscarRanking />} />
+          <Route path="/configuracion" element={<Configuracion />} />
+          <Route path="/soporte" element={<Soporte />} />
+          <Route path="/privacidad" element={<Privacidad />} />
           <Route path="*" element={<Layout><NotFoundPage /></Layout>} />
         </Routes>
       </Router>

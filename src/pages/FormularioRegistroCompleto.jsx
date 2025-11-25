@@ -2,164 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment';
-import { signUpWithAutoConfirm } from '../utils/autoConfirmSignup';
-import { signupBypass } from '../api/signupBypass';
-
-const gold = '#FFD700';
-
-export default function FormularioRegistroCompleto() {
-    // Autoguardado en tiempo real cada 3 segundos
-    React.useEffect(() => {
-      const interval = setInterval(() => {
-        localStorage.setItem('futpro_registro_draft', JSON.stringify(formData));
-      }, 3000);
-      return () => clearInterval(interval);
-    }, [formData]);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [pasoActual, setPasoActual] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [geoApplied, setGeoApplied] = useState(false);
-  const [lang, setLang] = useState('es');
-
-  // Diccionario mínimo de traducciones (ES por defecto)
-  const I18N = {
-    es: {
-      step1Title: 'Paso 1: Credenciales',
-      step2Title: 'Paso 2: Datos Personales',
-      step3Title: 'Paso 3: Info Futbolística',
-      step4Title: 'Paso 4: Disponibilidad',
-      step5Title: 'Paso 5: Foto de Perfil',
-      email: 'Correo electrónico',
-      password: 'Contraseña',
-      confirmPassword: 'Confirmar contraseña',
-      categoria: 'Categoría',
-      nombre: 'Nombre',
-      apellido: 'Apellido',
-      edad: 'Edad',
-      telefono: 'Teléfono (opcional)',
-      pais: 'País',
-      ciudad: 'Ciudad',
-      equipoFavorito: 'Equipo favorito',
-      peso: 'Peso (kg)',
-      altura: 'Altura (cm)',
-      pieHabil_Derecho: 'Pie Derecho',
-      pieHabil_Izquierdo: 'Pie Izquierdo',
-      pieHabil_Ambidiestro: 'Ambidiestro',
-      frecuencia_ocasional: 'Ocasional (1-2 veces/mes)',
-      frecuencia_regular: 'Regular (1 vez/semana)',
-      frecuencia_frecuente: 'Frecuente (2-3 veces/semana)',
-      frecuencia_intensivo: 'Intensivo (4+ veces/semana)',
-      horario_madrugadas: 'Madrugadas',
-      horario_mañanas: 'Mañanas',
-      horario_mediodia: 'Mediodía',
-      horario_tardes: 'Tardes',
-      horario_tardes_noche: 'Tardes – Noche',
-      horario_noches: 'Noches',
-      horario_fines_semana: 'Fines de semana',
-      objetivos: '¿Qué buscas en FutPro? (opcional)',
-      infantil_femenina: 'Infantil Femenina',
-      infantil_masculina: 'Infantil Masculina',
-      femenina: 'Femenina',
-      masculina: 'Masculina',
-      pos_Portero: '🥅 Portero',
-      pos_DefensaCentral: '🛡️ Defensa Central',
-      pos_LateralDerecho: '➡️ Lateral Derecho',
-      pos_LateralIzquierdo: '⬅️ Lateral Izquierdo',
-      pos_CarrileroDerecho: '➡️ Carrilero Derecho',
-      pos_CarrileroIzquierdo: '⬅️ Carrilero Izquierdo',
-      pos_MediocampistaDefensivo: '🔒 Mediocampista Defensivo',
-      pos_MediocampistaCentral: '⚖️ Mediocampista Central',
-      pos_MediocampistaOfensivo: '🎯 Mediocampista Ofensivo',
-      pos_Pivote: '🧭 Pivote',
-      pos_InteriorDerecho: '➡️ Interior Derecho',
-      pos_InteriorIzquierdo: '⬅️ Interior Izquierdo',
-      pos_Enganche: '🎩 Enganche / Media Punta',
-      pos_ExtremoDerecho: '🏃‍♂️ Extremo Derecho',
-      pos_ExtremoIzquierdo: '🏃‍♂️ Extremo Izquierdo',
-      pos_DelanteroCentro: '⚽ Delantero Centro',
-      pos_SegundoDelantero: '🎯 Segundo Delantero',
-      pos_Flexible: '🔄 Flexible',
-      anterior: '← Anterior',
-      siguiente: 'Siguiente →',
-      completar: '✓ Completar',
-      creando: 'Creando cuenta...',
-      continuarGoogle: 'Continuar con Google',
-      errEmailPassReq: 'Email y contraseña son requeridos',
-      errPasswordMismatch: 'Las contraseñas no coinciden',
-      errPasswordShort: 'La contraseña debe tener al menos 6 caracteres',
-      errNombreApellidoEdadReq: 'Nombre, apellido y edad son requeridos',
-      errSeleccionaPosicion: 'Selecciona una posición'
-    },
-    en: {
-      step1Title: 'Step 1: Credentials',
-      step2Title: 'Step 2: Personal Info',
-      step3Title: 'Step 3: Football Info',
-      step4Title: 'Step 4: Availability',
-      step5Title: 'Step 5: Profile Photo',
-      email: 'Email address',
-      password: 'Password',
-      confirmPassword: 'Confirm password',
-      categoria: 'Category',
-      nombre: 'First name',
-      apellido: 'Last name',
-      edad: 'Age',
-      telefono: 'Phone (optional)',
-      pais: 'Country',
-      ciudad: 'City',
-      equipoFavorito: 'Favorite team',
-      peso: 'Weight (kg)',
-      altura: 'Height (cm)',
-      pieHabil_Derecho: 'Right foot',
-      pieHabil_Izquierdo: 'Left foot',
-      pieHabil_Ambidiestro: 'Both feet',
-      frecuencia_ocasional: 'Occasional (1-2/month)',
-      frecuencia_regular: 'Regular (1/week)',
-      frecuencia_frecuente: 'Frequent (2-3/week)',
-      frecuencia_intensivo: 'Intensive (4+/week)',
-      horario_madrugadas: 'Early morning',
-      horario_mañanas: 'Mornings',
-      horario_mediodia: 'Midday',
-      horario_tardes: 'Afternoons',
-      horario_tardes_noche: 'Evening',
-      horario_noches: 'Nights',
-      horario_fines_semana: 'Weekends',
-      objetivos: 'What are your goals in FutPro? (optional)',
-      infantil_femenina: 'Girls U',
-      infantil_masculina: 'Boys U',
-      femenina: 'Women',
-      masculina: 'Men',
-      pos_Portero: '🥅 Goalkeeper',
-      pos_DefensaCentral: '🛡️ Center Back',
-      pos_LateralDerecho: '➡️ Right Back',
-      pos_LateralIzquierdo: '⬅️ Left Back',
-      pos_CarrileroDerecho: '➡️ Right Wing-back',
-      pos_CarrileroIzquierdo: '⬅️ Left Wing-back',
-      pos_MediocampistaDefensivo: '🔒 Defensive Midfielder',
-      pos_MediocampistaCentral: '⚖️ Central Midfielder',
-      pos_MediocampistaOfensivo: '🎯 Attacking Midfielder',
-      pos_Pivote: '🧭 Pivot',
-      pos_InteriorDerecho: '➡️ Right Interior',
-      pos_InteriorIzquierdo: '⬅️ Left Interior',
-      pos_Enganche: '🎩 Playmaker / AM',
-      pos_ExtremoDerecho: '🏃‍♂️ Right Winger',
-      pos_ExtremoIzquierdo: '🏃‍♂️ Left Winger',
-      pos_DelanteroCentro: '⚽ Striker',
-      pos_SegundoDelantero: '🎯 Second Striker',
-      pos_Flexible: '🔄 Versatile',
-      anterior: '← Back',
-      siguiente: 'Next →',
-      completar: '✓ Finish',
-      creando: 'Creating account...',
-      continuarGoogle: 'Continue with Google',
-      errEmailPassReq: 'Email and password are required',
-      errPasswordMismatch: 'Passwords do not match',
-      errPasswordShort: 'Password must be at least 6 characters',
-      errNombreApellidoEdadReq: 'First name, last name and age are required',
-      errSeleccionaPosicion: 'Select a position'
-    },
-    pt: {
+function FormularioRegistroCompleto() {
+// ...existing code...
+const I18N = {
+  en: {
+    errNombreApellidoEdadReq: 'First name, last name and age are required',
+    errSeleccionaPosicion: 'Select a position'
+  },
+  pt: {
       step1Title: 'Passo 1: Credenciais',
       step2Title: 'Passo 2: Dados Pessoais',
       step3Title: 'Passo 3: Info de Futebol',
@@ -955,3 +805,6 @@ export default function FormularioRegistroCompleto() {
     </div>
   );
 }
+
+export default FormularioRegistroCompleto;
+

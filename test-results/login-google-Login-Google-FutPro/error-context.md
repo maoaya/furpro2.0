@@ -1,0 +1,131 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - generic [ref=e8]:
+      - img "Google" [ref=e10]
+      - generic [ref=e11]: Sign in with Google
+    - generic [ref=e12]:
+      - generic [ref=e14]:
+        - heading "Sign in" [level=1] [ref=e15]
+        - paragraph [ref=e16]:
+          - text: to continue to
+          - button "qqrxetxcglwrejtblwut.supabase.co" [ref=e17] [cursor=pointer]
+      - generic [ref=e18]:
+        - generic [ref=e21]:
+          - generic [ref=e26]:
+            - textbox "Email or phone" [active] [ref=e27]
+            - generic:
+              - generic: Email or phone
+          - paragraph [ref=e28]:
+            - link "Forgot email?" [ref=e29] [cursor=pointer]:
+              - /url: /signin/v2/usernamerecovery?app_domain=https://qqrxetxcglwrejtblwut.supabase.co&client_id=760210878835-beg6ir3v4m9d7oss3koda80td4j8mifk.apps.googleusercontent.com&continue=https://accounts.google.com/signin/oauth/legacy/consent?authuser%3Dunknown%26part%3DAJi8hANg5mtJZ_9irlB1PmX9m-IBh7gosKrUXQx64BGWpxtKH5_GlpV4c572jM4qTuZ0ZOaRyNz2TdWgt8a7_fk-SXKpnFDY7roKiChxhEk-CMDCkHbazHHKiD4fioUYO75M-vocc35vJfYkMDyPLydX398hl1ombhoSJpJgRYogEfgiiH_WdhjtFOw-QlWFNa_tuHxlcImBM8lvSESM9zSrKp_3kr1jjbK5F_q2bdvixtmlZhFGyeDXcd-D8ZyGk950jqvNUBFVtfosgn5zGf5yHlrf3syIfYxr8kvSNF5igKAOQMJadEtJY6nEHExFI5uHVZ74-vRRkSqmyiH3Qcdgzl5QBDXsZ7mhxxZCwGH2g1amS2PbNx8EjvqojUVM2Qlx4o3ZHqTIDRHahjTWz8OfpCGXky71Nm0HycPmlLSj1kovQtWIH1Win1EC6iDw8LkhD8990QO3lTqG5Xxi4faQ48Lb_MzjleM0ZfmA2YxZfh73cos9A5k%26flowName%3DGeneralOAuthFlow%26as%3DS-567206493%253A1763822890842356%26client_id%3D760210878835-beg6ir3v4m9d7oss3koda80td4j8mifk.apps.googleusercontent.com%23&dsh=S-567206493:1763822890842356&flowName=GeneralOAuthLite&o2v=2&opparams=%253Fredirect_to%253Dhttps%25253A%25252F%25252Ffutpro.vip%25252Fauth%25252Fcallback&rart=ANgoxccC6GVHtZko0HOFsFH_zK2NAK9jmggwgQltJ23AsA2NR-UpbY7AUHEgCQkAw6yplsELwAd3aM_wyrdEpUp-KfFpcqWyCBT6a6w3ZxoDhb4Ofg-3j5I&redirect_uri=https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback&response_type=code&scope=email+profile&service=lso&state=eyJhbGciOiJIUzI1NiIsImtpZCI6IkpQL2MySnVtRFdveWJxZ2kiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NjM4MjMxOTAsInNpdGVfdXJsIjoiaHR0cHM6Ly9mdXRwcm8udmlwIiwiaWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJmdW5jdGlvbl9ob29rcyI6bnVsbCwicHJvdmlkZXIiOiJnb29nbGUiLCJyZWZlcnJlciI6Imh0dHBzOi8vZnV0cHJvLnZpcC9hdXRoL2NhbGxiYWNrIiwiZmxvd19zdGF0ZV9pZCI6IjdiMGUzNWVlLWQxODMtNDI1OC1hNzk4LTIyZmY1Mzk5ZjhlZCJ9.9TyPNBSmX6EkexhyqGO_PA7VJbZoOeJbqxYwBRHELuY
+        - paragraph [ref=e32]:
+          - text: Before using this app, you can review qqrxetxcglwrejtblwut.supabase.co’s
+          - link "privacy policy" [ref=e33] [cursor=pointer]:
+            - /url: https://app.termly.io/dashboard/website/b175d369-77f6-4527-98ad-4b1b44d1c0f0/privacy-policy
+          - text: and
+          - link "terms of service" [ref=e34] [cursor=pointer]:
+            - /url: https://app.termly.io/dashboard/website/b175d369-77f6-4527-98ad-4b1b44d1c0f0/privacy-policy
+          - text: .
+        - generic [ref=e36]:
+          - button "Next" [ref=e38]
+          - link "Create account" [ref=e40] [cursor=pointer]:
+            - /url: /lifecycle/flows/signup?app_domain=https://qqrxetxcglwrejtblwut.supabase.co&client_id=760210878835-beg6ir3v4m9d7oss3koda80td4j8mifk.apps.googleusercontent.com&continue=https://accounts.google.com/signin/oauth/legacy/consent?authuser%3Dunknown%26part%3DAJi8hANg5mtJZ_9irlB1PmX9m-IBh7gosKrUXQx64BGWpxtKH5_GlpV4c572jM4qTuZ0ZOaRyNz2TdWgt8a7_fk-SXKpnFDY7roKiChxhEk-CMDCkHbazHHKiD4fioUYO75M-vocc35vJfYkMDyPLydX398hl1ombhoSJpJgRYogEfgiiH_WdhjtFOw-QlWFNa_tuHxlcImBM8lvSESM9zSrKp_3kr1jjbK5F_q2bdvixtmlZhFGyeDXcd-D8ZyGk950jqvNUBFVtfosgn5zGf5yHlrf3syIfYxr8kvSNF5igKAOQMJadEtJY6nEHExFI5uHVZ74-vRRkSqmyiH3Qcdgzl5QBDXsZ7mhxxZCwGH2g1amS2PbNx8EjvqojUVM2Qlx4o3ZHqTIDRHahjTWz8OfpCGXky71Nm0HycPmlLSj1kovQtWIH1Win1EC6iDw8LkhD8990QO3lTqG5Xxi4faQ48Lb_MzjleM0ZfmA2YxZfh73cos9A5k%26flowName%3DGeneralOAuthFlow%26as%3DS-567206493%253A1763822890842356%26client_id%3D760210878835-beg6ir3v4m9d7oss3koda80td4j8mifk.apps.googleusercontent.com%23&dsh=S-567206493:1763822890842356&flowEntry=SignUp&flowName=GlifWebSignIn&o2v=2&opparams=%253Fredirect_to%253Dhttps%25253A%25252F%25252Ffutpro.vip%25252Fauth%25252Fcallback&rart=ANgoxccC6GVHtZko0HOFsFH_zK2NAK9jmggwgQltJ23AsA2NR-UpbY7AUHEgCQkAw6yplsELwAd3aM_wyrdEpUp-KfFpcqWyCBT6a6w3ZxoDhb4Ofg-3j5I&redirect_uri=https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback&response_type=code&scope=email+profile&service=lso&signInUrl=https://accounts.google.com/signin/oauth?app_domain%3Dhttps://qqrxetxcglwrejtblwut.supabase.co%26client_id%3D760210878835-beg6ir3v4m9d7oss3koda80td4j8mifk.apps.googleusercontent.com%26continue%3Dhttps://accounts.google.com/signin/oauth/legacy/consent?authuser%253Dunknown%2526part%253DAJi8hANg5mtJZ_9irlB1PmX9m-IBh7gosKrUXQx64BGWpxtKH5_GlpV4c572jM4qTuZ0ZOaRyNz2TdWgt8a7_fk-SXKpnFDY7roKiChxhEk-CMDCkHbazHHKiD4fioUYO75M-vocc35vJfYkMDyPLydX398hl1ombhoSJpJgRYogEfgiiH_WdhjtFOw-QlWFNa_tuHxlcImBM8lvSESM9zSrKp_3kr1jjbK5F_q2bdvixtmlZhFGyeDXcd-D8ZyGk950jqvNUBFVtfosgn5zGf5yHlrf3syIfYxr8kvSNF5igKAOQMJadEtJY6nEHExFI5uHVZ74-vRRkSqmyiH3Qcdgzl5QBDXsZ7mhxxZCwGH2g1amS2PbNx8EjvqojUVM2Qlx4o3ZHqTIDRHahjTWz8OfpCGXky71Nm0HycPmlLSj1kovQtWIH1Win1EC6iDw8LkhD8990QO3lTqG5Xxi4faQ48Lb_MzjleM0ZfmA2YxZfh73cos9A5k%2526flowName%253DGeneralOAuthFlow%2526as%253DS-567206493%25253A1763822890842356%2526client_id%253D760210878835-beg6ir3v4m9d7oss3koda80td4j8mifk.apps.googleusercontent.com%2523%26dsh%3DS-567206493:1763822890842356%26flowName%3DGeneralOAuthLite%26o2v%3D2%26opparams%3D%25253Fredirect_to%25253Dhttps%2525253A%2525252F%2525252Ffutpro.vip%2525252Fauth%2525252Fcallback%26rart%3DANgoxccC6GVHtZko0HOFsFH_zK2NAK9jmggwgQltJ23AsA2NR-UpbY7AUHEgCQkAw6yplsELwAd3aM_wyrdEpUp-KfFpcqWyCBT6a6w3ZxoDhb4Ofg-3j5I%26redirect_uri%3Dhttps://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback%26response_type%3Dcode%26scope%3Demail%2Bprofile%26service%3Dlso%26state%3DeyJhbGciOiJIUzI1NiIsImtpZCI6IkpQL2MySnVtRFdveWJxZ2kiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NjM4MjMxOTAsInNpdGVfdXJsIjoiaHR0cHM6Ly9mdXRwcm8udmlwIiwiaWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJmdW5jdGlvbl9ob29rcyI6bnVsbCwicHJvdmlkZXIiOiJnb29nbGUiLCJyZWZlcnJlciI6Imh0dHBzOi8vZnV0cHJvLnZpcC9hdXRoL2NhbGxiYWNrIiwiZmxvd19zdGF0ZV9pZCI6IjdiMGUzNWVlLWQxODMtNDI1OC1hNzk4LTIyZmY1Mzk5ZjhlZCJ9.9TyPNBSmX6EkexhyqGO_PA7VJbZoOeJbqxYwBRHELuY&state=eyJhbGciOiJIUzI1NiIsImtpZCI6IkpQL2MySnVtRFdveWJxZ2kiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NjM4MjMxOTAsInNpdGVfdXJsIjoiaHR0cHM6Ly9mdXRwcm8udmlwIiwiaWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJmdW5jdGlvbl9ob29rcyI6bnVsbCwicHJvdmlkZXIiOiJnb29nbGUiLCJyZWZlcnJlciI6Imh0dHBzOi8vZnV0cHJvLnZpcC9hdXRoL2NhbGxiYWNrIiwiZmxvd19zdGF0ZV9pZCI6IjdiMGUzNWVlLWQxODMtNDI1OC1hNzk4LTIyZmY1Mzk5ZjhlZCJ9.9TyPNBSmX6EkexhyqGO_PA7VJbZoOeJbqxYwBRHELuY
+  - contentinfo [ref=e41]:
+    - combobox [ref=e44] [cursor=pointer]:
+      - option "Afrikaans"
+      - option "azərbaycan"
+      - option "bosanski"
+      - option "català"
+      - option "Čeština"
+      - option "Cymraeg"
+      - option "Dansk"
+      - option "Deutsch"
+      - option "eesti"
+      - option "English (United Kingdom)"
+      - option "English (United States)" [selected]
+      - option "Español (España)"
+      - option "Español (Latinoamérica)"
+      - option "euskara"
+      - option "Filipino"
+      - option "Français (Canada)"
+      - option "Français (France)"
+      - option "Gaeilge"
+      - option "galego"
+      - option "Hrvatski"
+      - option "Indonesia"
+      - option "isiZulu"
+      - option "íslenska"
+      - option "Italiano"
+      - option "Kiswahili"
+      - option "latviešu"
+      - option "lietuvių"
+      - option "magyar"
+      - option "Melayu"
+      - option "Nederlands"
+      - option "norsk"
+      - option "o‘zbek"
+      - option "polski"
+      - option "Português (Brasil)"
+      - option "Português (Portugal)"
+      - option "română"
+      - option "shqip"
+      - option "Slovenčina"
+      - option "slovenščina"
+      - option "srpski (latinica)"
+      - option "Suomi"
+      - option "Svenska"
+      - option "Tiếng Việt"
+      - option "Türkçe"
+      - option "Ελληνικά"
+      - option "беларуская"
+      - option "български"
+      - option "кыргызча"
+      - option "қазақ тілі"
+      - option "македонски"
+      - option "монгол"
+      - option "Русский"
+      - option "српски (ћирилица)"
+      - option "Українська"
+      - option "ქართული"
+      - option "հայերեն"
+      - option "‫עברית‬‎"
+      - option "‫اردو‬‎"
+      - option "‫العربية‬‎"
+      - option "‫فارسی‬‎"
+      - option "አማርኛ"
+      - option "नेपाली"
+      - option "मराठी"
+      - option "हिन्दी"
+      - option "অসমীয়া"
+      - option "বাংলা"
+      - option "ਪੰਜਾਬੀ"
+      - option "ગુજરાતી"
+      - option "ଓଡ଼ିଆ"
+      - option "தமிழ்"
+      - option "తెలుగు"
+      - option "ಕನ್ನಡ"
+      - option "മലയാളം"
+      - option "සිංහල"
+      - option "ไทย"
+      - option "ລາວ"
+      - option "မြန်မာ"
+      - option "ខ្មែរ"
+      - option "한국어"
+      - option "中文（香港）"
+      - option "日本語"
+      - option "简体中文"
+      - option "繁體中文"
+    - list [ref=e45]:
+      - listitem [ref=e46]:
+        - link "Help" [ref=e47] [cursor=pointer]:
+          - /url: https://support.google.com/accounts?hl=en-US&p=account_iph
+      - listitem [ref=e48]:
+        - link "Privacy" [ref=e49] [cursor=pointer]:
+          - /url: https://accounts.google.com/TOS?loc=CO&hl=en-US&privacy=true
+      - listitem [ref=e50]:
+        - link "Terms" [ref=e51] [cursor=pointer]:
+          - /url: https://accounts.google.com/TOS?loc=CO&hl=en-US
+```

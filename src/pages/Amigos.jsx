@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
+import { AmigosService } from '../services/AmigosService';
+import { supabase } from '../config/supabase';
 import './Amigos.css';
 
 const Amigos = () => {

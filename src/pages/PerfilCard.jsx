@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import { UserService } from '../services/UserService';
+import { supabase } from '../config/supabase';
 
 const PerfilCard = () => {
   const navigate = useNavigate();
@@ -70,16 +72,13 @@ const PerfilCard = () => {
 
   useEffect(() => {
     // Cargar datos de la card
-    const loadCardData = () => {
+    const loadCardData = async () => {
       try {
-        // Datos desde localStorage o estado de navegación
-        const storedData = localStorage.getItem('futpro_user_card_data');
-        const stateData = location.state?.cardData;
-        
-        const data = stateData || (storedData ? JSON.parse(storedData) : null);
-        
-        if (data) {
-          setCardData(data);
+        const { data: session } = await supabase.auth.getSession();
+        const userId = session?.session?.user?.id;
+        if (userId) {
+          const perfil = await UserService.getUserProfile(userId);
+          setCardData(perfil);
           setShowAnimation(true);
         } else {
           // Si no hay datos, ir al home
@@ -189,7 +188,7 @@ const PerfilCard = () => {
 
           {/* Información Principal */}
           <div className="absolute top-44 left-0 right-0 text-center text-white">
-            <h2 className="text-xl font-bold mb-1">{cardData.nombre}</h2>
+            <h2 className="text-xl font-bold mb-1">{cardData.nombre} {cardData.apellido}</h2>
             <p className="text-sm opacity-90 mb-2">{cardData.ciudad}, {cardData.pais}</p>
             
             {/* Posición y Experiencia */}

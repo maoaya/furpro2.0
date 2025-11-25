@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../config/supabase';
+import { UserService } from '../services/UserService';
 import mediaService from '../services/mediaService';
 import commentService from '../services/commentService';
 import { useWebSocketNotifications } from '../hooks/useWebSocketNotifications';
@@ -7,6 +9,7 @@ import { useWebSocketComments } from '../hooks/useWebSocketComments';
 import { useWebSocketLikes } from '../hooks/useWebSocketLikes';
 import CopilotAyuda from '../components/CopilotAyuda';
 import FutproLogo from '../components/FutproLogo.jsx';
+import MenuHamburguesa from '../components/MenuHamburguesa';
 
 const gold = '#FFD700';
 const black = '#0a0a0a';
@@ -35,6 +38,7 @@ function addComment(id, text) {
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const [usuario, setUsuario] = useState(null);
   const [publicaciones, setPublicaciones] = useState([]);
   const [likesState, setLikesState] = useState({});
   const [commentsState, setCommentsState] = useState({});
@@ -92,6 +96,22 @@ export default function HomePage() {
     fetchGalleryAndComments();
   }, []);
 
+  useEffect(() => {
+    async function fetchUsuario() {
+      const { data: session } = await supabase.auth.getSession();
+      const userId = session?.session?.user?.id;
+      if (userId) {
+        const perfil = await UserService.getUserProfile(userId);
+        setUsuario(perfil);
+      }
+    }
+    fetchUsuario();
+    // Ejemplo: cargar publicaciones recientes
+    supabase.from('publicaciones').select('*').then(({ data }) => {
+      setPublicaciones(data || []);
+    });
+  }, []);
+
   // Like real
   const handleLike = async (mediaId) => {
     const token = localStorage.getItem('token') || '';
@@ -144,6 +164,36 @@ export default function HomePage() {
     pub.nombre?.toLowerCase().includes(search.toLowerCase()) ||
     pub.descripcion?.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Manejo de acciones del menú hamburguesa
+  const handleAccion = (accion) => {
+    switch (accion) {
+      case 'irAInicio':
+        navigate('/home');
+        break;
+      case 'irAPerfil':
+        navigate('/perfil');
+        break;
+      case 'editarPerfil':
+        navigate('/editar-perfil');
+        break;
+      case 'verEstadisticas':
+        navigate('/estadisticas');
+        break;
+      case 'verPartidos':
+        navigate('/partidos');
+        break;
+      case 'verLogros':
+        navigate('/logros');
+        break;
+      case 'verTarjetas':
+        navigate('/tarjetas');
+        break;
+      // ...agrega más rutas según tu estructura...
+      default:
+        alert(`Acción seleccionada: ${accion}`);
+    }
+  };
 
   return (
     <div style={{ 
@@ -1199,6 +1249,9 @@ export default function HomePage() {
       </nav>
       
       {feedbackNav && <div style={{position:'fixed',bottom:70,left:0,width:'100vw',textAlign:'center',color:gold,fontWeight:'bold',fontSize:18,zIndex:99,background:'#232323cc',padding:'8px 0',borderRadius:8}}>{feedbackNav}</div>}
+
+      {/* Componente del menú hamburguesa */}
+      <MenuHamburguesa onAccion={handleAccion} />
     </div>
   );
 }
