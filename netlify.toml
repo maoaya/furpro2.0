@@ -5,7 +5,7 @@
   base = "."
   publish = "dist"
   # Comando compatible con Linux y Netlify
-  command = "npm ci --no-audit --no-fund --include=optional && npm run build"
+  command = "npm ci --no-audit --no-fund && npm run build"
   ignore = "false"
 
 [build.environment]
