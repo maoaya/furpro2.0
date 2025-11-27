@@ -333,6 +333,7 @@ const location = useLocation();
     };
 
     const handleGoogleSignup = async () => {
+        console.log('[OAuth] Botón Google pulsado, iniciando flujo...');
       setLoading(true);
       setError(null);
 
