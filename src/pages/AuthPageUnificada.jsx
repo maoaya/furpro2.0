@@ -190,6 +190,7 @@ const AuthPageUnificada = () => {
 
   // LOGIN CON GOOGLE
   const handleGoogleAuth = async () => {
+    console.log('[OAuth] handleGoogleAuth llamado');
     setLoading(true);
     setError('');
     setSuccess('Google auth...');
@@ -200,6 +201,7 @@ const AuthPageUnificada = () => {
       // Si estamos en la ruta específica de Google, ir directo al OAuth
       if (registroTipo === 'google') {
         const config = getConfig();
+        console.log('[OAuth] redirectTo:', `${window.location.origin}/auth/callback`);
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
@@ -217,6 +219,8 @@ const AuthPageUnificada = () => {
         } else {
           console.log('🔄 Redirigiendo a Google...');
           setSuccess('Redirigiendo a Google...');
+          // Log extra para depuración
+          console.log('[OAuth] Redirección iniciada correctamente');
         }
       } else {
         // Si no, navegar a la ruta específica
