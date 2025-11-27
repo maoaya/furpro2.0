@@ -69,42 +69,20 @@ export default function SeleccionCategoria() {
 
   const handleConfirm = () => {
     if (!selected) return;
+    setConfirming(true);
+    // Guardar la categoría seleccionada en localStorage para el formulario
     try {
-      setConfirming(true);
-      // Pre-semilla en localStorage para el formulario (compatibilidad con lector draft_carfutpro)
       localStorage.setItem('draft_carfutpro', JSON.stringify({ categoria: selected, ts: Date.now() }));
       console.log('✅ Draft categoría guardado:', selected);
     } catch (e) {
       console.warn('No se pudo guardar draft categoria', e);
     }
-    const target = `/formulario-registro?categoria=${encodeURIComponent(selected)}`;
-    console.log('➡️ [SeleccionCategoria] Navegando a formulario de registro:', target, 'categoría:', selected);
-    
-    try {
-      navigate(target, { state: { categoria: selected }, replace: true });
-      console.log('🔄 React Router navigate() llamado');
-      
-      // Verificar navegación efectiva y aplicar fallback si no cambió pathname
-      setTimeout(() => {
-        if (window.location.pathname.indexOf('/formulario-registro') !== 0) {
-          console.warn('⚠️ React Router no aplicó la navegación (pathname no cambió), usando window.location');
-          try {
-            window.location.assign(target);
-          } catch (_) {
-            window.location.href = target;
-          }
-        } else {
-          console.log('✅ Navegación confirmada a:', window.location.pathname);
-        }
-      }, 500);
-    } catch (navErr) {
-      console.warn('❌ Error en navigate(), usando fallback window.location:', navErr);
-      try {
-        window.location.assign(target);
-      } catch (_) {
-        window.location.href = target;
-      }
-    }
+    // Navegación directa con estado y query param
+    navigate(`/formulario-registro?categoria=${encodeURIComponent(selected)}`, {
+      state: { categoria: selected },
+      replace: true
+    });
+    console.log('🔄 Navegación a /formulario-registro con categoría:', selected);
   };
 
   const handleGoogleLogin = async () => {
@@ -191,26 +169,7 @@ export default function SeleccionCategoria() {
           </button>
         </div>
 
-        <div style={{ marginTop: 16, textAlign: 'center' }}>
-          <button
-            onClick={handleGoogleLogin}
-            disabled={!selected || googleLoading}
-            style={{
-              width: '100%',
-              padding: 16,
-              background: selected ? 'linear-gradient(135deg,#4285f4,#34a853)' : '#333',
-              color: '#fff',
-              fontWeight: 800,
-              border: 'none',
-              borderRadius: 12,
-              cursor: selected ? 'pointer' : 'not-allowed',
-              opacity: googleLoading ? .7 : 1,
-              transition: 'background .3s'
-            }}
-          >
-            {googleLoading ? 'Conectando con Google...' : (selected ? 'Continuar con Google' : 'Selecciona categoría primero')}
-          </button>
-        </div>
+        {/* Botón Google eliminado. El flujo OAuth solo va al final del formulario de registro. */}
 
         <div style={{ marginTop: 16, textAlign: 'center' }}>
           <button onClick={() => navigate(-1)} style={{ background: 'transparent', color: '#FFD700', border: 'none', textDecoration: 'underline', cursor: 'pointer' }}>

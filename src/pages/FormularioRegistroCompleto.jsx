@@ -4,6 +4,7 @@ import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment';
 function FormularioRegistroCompleto() {
 const location = useLocation();
+const gold = '#FFD700';
   const navigate = useNavigate();
   const [lang, setLang] = useState('es');
   const [pasoActual, setPasoActual] = useState(1);
@@ -333,55 +334,55 @@ const location = useLocation();
     };
 
     const handleGoogleSignup = async () => {
-        console.log('[OAuth] Botón Google pulsado, iniciando flujo...');
-      setLoading(true);
-      setError(null);
+    console.log('[OAuth] Botón Google pulsado, iniciando flujo...');
+    setLoading(true);
+    setError(null);
 
-      // Guardar contexto del formulario para recuperarlo después del OAuth
-      try {
-        localStorage.setItem('oauth_origin', 'formulario_registro');
-        localStorage.setItem('post_auth_target', '/registro-perfil');
+    // Guardar contexto del formulario para recuperarlo después del OAuth
+    try {
+      localStorage.setItem('oauth_origin', 'formulario_registro');
+      // El destino post-auth será perfil-card
+      localStorage.setItem('post_auth_target', '/perfil-card');
 
-        // Calcular puntaje inicial
-        const puntaje = calcularPuntajeInicial({
-          nivelHabilidad: formData.nivelHabilidad,
-          edad: Number(formData.edad) || 0,
-          frecuenciaJuego: formData.frecuenciaJuego
-        });
+      // Calcular puntaje inicial
+      const puntaje = calcularPuntajeInicial({
+        nivelHabilidad: formData.nivelHabilidad,
+        edad: Number(formData.edad) || 0,
+        frecuenciaJuego: formData.frecuenciaJuego
+      });
 
-        // Preparar datos preliminares para la card
-        const cardData = {
-          id: `temp-${Date.now()}`,
-          categoria: formData.categoria || 'masculina',
-          nombre: `${formData.nombre || 'Jugador'} ${formData.apellido || ''}`.trim(),
-          ciudad: formData.ciudad || '',
-          pais: formData.pais || '',
-          posicion_favorita: formData.posicion || 'Flexible',
-          nivel_habilidad: formData.nivelHabilidad || 'Principiante',
-          puntaje: puntaje,
-          equipo: formData.equipoFavorito || '—',
-          fecha_registro: new Date().toISOString(),
-          esPrimeraCard: true,
-          avatar_url: formData.previewUrl || ''
-        };
+      // Preparar datos preliminares para la card
+      const cardData = {
+        id: `temp-${Date.now()}`,
+        categoria: formData.categoria || 'masculina',
+        nombre: `${formData.nombre || 'Jugador'} ${formData.apellido || ''}`.trim(),
+        ciudad: formData.ciudad || '',
+        pais: formData.pais || '',
+        posicion_favorita: formData.posicion || 'Flexible',
+        nivel_habilidad: formData.nivelHabilidad || 'Principiante',
+        puntaje: puntaje,
+        equipo: formData.equipoFavorito || '—',
+        fecha_registro: new Date().toISOString(),
+        esPrimeraCard: true,
+        avatar_url: formData.previewUrl || ''
+      };
 
-        localStorage.setItem('futpro_user_card_data', JSON.stringify(cardData));
-        localStorage.setItem('show_first_card', 'true');
+      localStorage.setItem('futpro_user_card_data', JSON.stringify(cardData));
+      localStorage.setItem('show_first_card', 'true');
 
-        // Guardar borrador completo del formulario
-        const draft = { ...formData, ultimoGuardado: new Date().toISOString() };
-        localStorage.setItem('futpro_registro_draft', JSON.stringify(draft));
+      // Guardar borrador completo del formulario
+      const draft = { ...formData, ultimoGuardado: new Date().toISOString() };
+      localStorage.setItem('futpro_registro_draft', JSON.stringify(draft));
 
-        console.log('💾 Datos de formulario guardados en localStorage');
-      } catch (e) {
-        console.warn('⚠️ No se pudo preparar el estado previo a OAuth:', e);
-      }
+      console.log('💾 Datos de formulario guardados en localStorage');
+    } catch (e) {
+      console.warn('⚠️ No se pudo preparar el estado previo a OAuth:', e);
+    }
 
     try {
       console.log('🚀 Llamando a supabase.auth.signInWithOAuth...');
-
       // Usar el método correcto de Supabase para OAuth
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
@@ -389,13 +390,10 @@ const location = useLocation();
         }
       });
 
-      console.log('📊 Respuesta OAuth:', { data, error });
-
       if (error) {
         console.error('❌ Error OAuth:', error);
         throw error;
       }
-
       console.log('✅ OAuth iniciado exitosamente, esperando redirección...');
     } catch (error) {
       console.error('❌ Error completo en handleGoogleSignup:', error);
@@ -800,9 +798,30 @@ const location = useLocation();
           {pasoActual === 5 && (
             <>
               <div style={{ textAlign: 'center', color: '#aaa', margin: '10px 0' }}>— o —</div>
-              <button type="button" onClick={handleGoogleSignup} disabled={loading} style={{ width: '100%', padding: 12, background: '#fff', color: '#000', border: '1px solid #ddd', borderRadius: 10, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                <span style={{ fontSize: 18 }}>🔵</span>
-                {t('continuarGoogle')}
+              <button
+                type="button"
+                onClick={handleGoogleSignup}
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  padding: 16,
+                  background: 'linear-gradient(135deg,#4285f4,#34a853)',
+                  color: '#fff',
+                  fontWeight: 800,
+                  border: 'none',
+                  borderRadius: 12,
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? .7 : 1,
+                  fontSize: 18,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 10,
+                  marginTop: 10
+                }}
+              >
+                <span style={{ fontSize: 22 }}>🔵</span>
+                {loading ? 'Conectando con Google...' : t('continuarGoogle')}
               </button>
             </>
           )}

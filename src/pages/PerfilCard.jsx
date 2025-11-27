@@ -74,6 +74,19 @@ const PerfilCard = () => {
     // Cargar datos de la card
     const loadCardData = async () => {
       try {
+        // Prioridad: datos por estado, luego localStorage, luego Supabase
+        let card = location.state?.cardData || null;
+        if (!card) {
+          const localCardRaw = localStorage.getItem('futpro_user_card_data');
+          if (localCardRaw) card = JSON.parse(localCardRaw);
+        }
+        if (card) {
+          setCardData(card);
+          setShowAnimation(true);
+          setLoading(false);
+          return;
+        }
+        // Si no hay datos locales, intentar cargar desde Supabase
         const { data: session } = await supabase.auth.getSession();
         const userId = session?.session?.user?.id;
         if (userId) {
@@ -81,18 +94,29 @@ const PerfilCard = () => {
           setCardData(perfil);
           setShowAnimation(true);
         } else {
-          // Si no hay datos, ir al home
-          navigate('/home');
+          // Si no hay datos, mostrar error en vez de redirigir
+          setCardData(null);
         }
       } catch (error) {
         console.error('Error cargando datos de card:', error);
-        navigate('/home');
+        setCardData(null);
       } finally {
         setLoading(false);
       }
     };
 
     loadCardData();
+    // Activar listener de autenticación de Supabase
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        console.log('✅ Usuario autenticado por Google/Supabase:', session.user.email);
+      }
+    });
+    return () => {
+      if (authListener && typeof authListener.unsubscribe === 'function') {
+        authListener.unsubscribe();
+      }
+    };
   }, [navigate, location.state]);
 
   const continuarAlHome = () => {
@@ -140,6 +164,7 @@ const PerfilCard = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
         <div className="text-red-400 text-xl">{t('error')}</div>
+        <div className="text-white mt-4">No se encontraron datos de la card.<br/>Por favor completa el registro o inicia sesión con Google.</div>
       </div>
     );
   }
@@ -250,9 +275,27 @@ const PerfilCard = () => {
           
           <button
             onClick={continuarAlHome}
-            className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            style={{
+              width: '100%',
+              padding: '18px',
+              background: 'linear-gradient(135deg,#FFD700,#ff8c00)',
+              color: '#232323',
+              fontWeight: 900,
+              border: 'none',
+              borderRadius: 18,
+              fontSize: 22,
+              boxShadow: '0 2px 16px #FFD70044',
+              cursor: 'pointer',
+              marginTop: 18,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 16
+            }}
           >
+            <span style={{fontSize:28}}>🏠</span>
             {t('irAlHomepage')}
+            <span style={{fontSize:28}}>☰</span>
           </button>
           
           <button

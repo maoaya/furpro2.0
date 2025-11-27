@@ -14,8 +14,19 @@ export default function AuthCallback() {
         if (session && session.data && session.data.session) {
           // Usuario autenticado correctamente
           console.log('[OAuth] Usuario autenticado:', session.data.session.user);
-          // Redirigir al home o perfil
-          navigate('/home');
+          // Recuperar datos de la card si existen
+          const cardDataRaw = localStorage.getItem('futpro_user_card_data');
+          if (cardDataRaw) {
+            const cardData = JSON.parse(cardDataRaw);
+            navigate('/perfil-card', { state: { cardData } });
+            setTimeout(() => navigate('/home'), 2500);
+          } else {
+            navigate('/home');
+          }
+          // Limpiar borradores y flags
+          localStorage.removeItem('draft_registro_completo');
+          localStorage.removeItem('oauth_origin');
+          localStorage.removeItem('post_auth_target');
         } else {
           console.warn('[OAuth] No se encontró sesión, redirigiendo a login');
           navigate('/login');
