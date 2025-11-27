@@ -21,6 +21,7 @@ import RegistroPerfil from './pages/RegistroPerfil';
 import Estados from './pages/Estados';
 import Amigos from './pages/Amigos';
 import ConfiguracionPage from './pages/ConfiguracionPage';
+import Configuracion from './pages/Configuracion';
 import EditarPerfil from './pages/EditarPerfil';
 import Estadisticas from './pages/Estadisticas';
 import Partidos from './pages/Partidos';
