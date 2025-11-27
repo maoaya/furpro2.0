@@ -3,330 +3,339 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment';
 function FormularioRegistroCompleto() {
-// ...existing code...
-const I18N = {
-  en: {
-    errNombreApellidoEdadReq: 'First name, last name and age are required',
-    errSeleccionaPosicion: 'Select a position'
-  },
-  pt: {
-      step1Title: 'Passo 1: Credenciais',
-      step2Title: 'Passo 2: Dados Pessoais',
-      step3Title: 'Passo 3: Info de Futebol',
-      step4Title: 'Passo 4: Disponibilidade',
-      step5Title: 'Passo 5: Foto de Perfil',
-      email: 'E-mail',
-      password: 'Senha',
-      confirmPassword: 'Confirmar senha',
-      categoria: 'Categoria',
-      nombre: 'Nome',
-      apellido: 'Sobrenome',
-      edad: 'Idade',
-      telefono: 'Telefone (opcional)',
-      pais: 'País',
-      ciudad: 'Cidade',
-      equipoFavorito: 'Time favorito',
-      peso: 'Peso (kg)',
-      altura: 'Altura (cm)',
-      pieHabil_Derecho: 'Destro',
-      pieHabil_Izquierdo: 'Canhoto',
-      pieHabil_Ambidiestro: 'Ambidestro',
-      frecuencia_ocasional: 'Ocasional (1-2/mês)',
-      frecuencia_regular: 'Regular (1/semana)',
-      frecuencia_frecuente: 'Frequente (2-3/semana)',
-      frecuencia_intensivo: 'Intensivo (4+/semana)',
-      horario_madrugadas: 'Madrugada',
-      horario_mañanas: 'Manhãs',
-      horario_mediodia: 'Meio-dia',
-      horario_tardes: 'Tardes',
-      horario_tardes_noche: 'Fim de tarde',
-      horario_noches: 'Noites',
-      horario_fines_semana: 'Fins de semana',
-      objetivos: 'Quais seus objetivos no FutPro? (opcional)',
-      infantil_femenina: 'Infantil Feminino',
-      infantil_masculina: 'Infantil Masculino',
-      femenina: 'Feminino',
-      masculina: 'Masculino',
-      pos_Portero: '🥅 Goleiro',
-      pos_DefensaCentral: '🛡️ Zagueiro',
-      pos_LateralDerecho: '➡️ Lateral Direito',
-      pos_LateralIzquierdo: '⬅️ Lateral Esquerdo',
-      pos_CarrileroDerecho: '➡️ Ala Direito',
-      pos_CarrileroIzquierdo: '⬅️ Ala Esquerdo',
-      pos_MediocampistaDefensivo: '🔒 Volante',
-      pos_MediocampistaCentral: '⚖️ Meio-campista Central',
-      pos_MediocampistaOfensivo: '🎯 Meia Ofensivo',
-      pos_Pivote: '🧭 Pivô',
-      pos_InteriorDerecho: '➡️ Interior Direito',
-      pos_InteriorIzquierdo: '⬅️ Interior Esquerdo',
-      pos_Enganche: '🎩 Armador / Meia',
-      pos_ExtremoDerecho: '🏃‍♂️ Ponta Direita',
-      pos_ExtremoIzquierdo: '🏃‍♂️ Ponta Esquerda',
-      pos_DelanteroCentro: '⚽ Centroavante',
-      pos_SegundoDelantero: '🎯 Segundo Atacante',
-      pos_Flexible: '🔄 Versátil',
-      anterior: '← Voltar',
-      siguiente: 'Avançar →',
-      completar: '✓ Concluir',
-      creando: 'Criando conta...',
-      continuarGoogle: 'Continuar com Google',
-      errEmailPassReq: 'E-mail e senha são obrigatórios',
-      errPasswordMismatch: 'As senhas não coincidem',
-      errPasswordShort: 'A senha deve ter pelo menos 6 caracteres',
-      errNombreApellidoEdadReq: 'Nome, sobrenome e idade são obrigatórios',
-      errSeleccionaPosicion: 'Selecione uma posição'
-    }
-  };
+const location = useLocation();
+  const navigate = useNavigate();
+  const [lang, setLang] = useState('es');
+  const [pasoActual, setPasoActual] = useState(1);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [geoApplied, setGeoApplied] = useState(false);
 
-  const UI_MISC = {
-    es: {
-      regTitle: 'Registro Completo',
-      photoOptionalNote: 'Foto opcional. Puedes agregarla después desde tu perfil.',
-      stepWord: 'Paso',
-      ofWord: 'de',
-      autosaveActive: 'Autoguardado activo',
-      niveles: { principiante: 'Principiante', intermedio: 'Intermedio', avanzado: 'Avanzado', elite: 'Élite' },
-      errGoogleSignIn: 'No se pudo iniciar sesión con Google',
-      errCompleteRegistration: 'Error al completar registro'
-    },
+  const I18N = {
     en: {
-      regTitle: 'Complete Registration',
-      photoOptionalNote: 'Optional photo. You can add it later from your profile.',
-      stepWord: 'Step',
-      ofWord: 'of',
-      autosaveActive: 'Auto-save enabled',
-      niveles: { principiante: 'Beginner', intermedio: 'Intermediate', avanzado: 'Advanced', elite: 'Elite' },
-      errGoogleSignIn: 'Could not sign in with Google',
-      errCompleteRegistration: 'Error completing registration'
+      errNombreApellidoEdadReq: 'First name, last name and age are required',
+      errSeleccionaPosicion: 'Select a position'
     },
     pt: {
-      regTitle: 'Cadastro Completo',
-      photoOptionalNote: 'Foto opcional. Você pode adicioná-la depois no seu perfil.',
-      stepWord: 'Passo',
-      ofWord: 'de',
-      autosaveActive: 'Salvamento automático ativo',
-      niveles: { principiante: 'Iniciante', intermedio: 'Intermediário', avanzado: 'Avançado', elite: 'Elite' },
-      errGoogleSignIn: 'Não foi possível entrar com o Google',
-      errCompleteRegistration: 'Erro ao concluir o cadastro'
-    }
-  };
-
-  const t = (key) => (I18N[lang] && I18N[lang][key]) || I18N.es[key] || key;
-
-  // Auto-detectar idioma por navegador (fallback EN/ES)
-  useEffect(() => {
-    try {
-      const nav = (navigator.language || 'es').toLowerCase();
-      if (nav.startsWith('es')) setLang('es');
-      else if (nav.startsWith('pt')) setLang('pt');
-      else setLang('en');
-    } catch (_) {
-      setLang('es');
-    }
-  }, []);
-  
-  // Estado del formulario completo
-  const [formData, setFormData] = useState({
-    // Paso 1: Credenciales
-    email: '',
-    password: '',
-    confirmPassword: '',
-    categoria: 'infantil_femenina',
-    
-    // Paso 2: Datos Personales
-    nombre: '',
-    apellido: '',
-    edad: '',
-    telefono: '',
-  pais: 'Colombia',
-  ciudad: 'Bogotá',
-    
-    // Paso 3: Info Futbolística
-    posicion: 'Flexible',
-    nivelHabilidad: 'Principiante',
-    equipoFavorito: '',
-    peso: '',
-    altura: '',
-    pieHabil: 'Derecho',
-    
-    // Paso 4: Disponibilidad
-    frecuenciaJuego: 'ocasional',
-  horarioPreferido: 'tardes',
-    objetivos: '',
-    
-    // Paso 5: Foto
-    imagenPerfil: null,
-    previewUrl: null
-  });
-
-  // Mapa dinámico de países y ciudades comunes (extensible)
-  const PAISES_CIUDADES = {
-    Colombia: ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Bucaramanga'],
-    México: ['Ciudad de México', 'Guadalajara', 'Monterrey', 'Puebla', 'Tijuana'],
-    Argentina: ['Buenos Aires', 'Córdoba', 'Rosario', 'Mendoza', 'La Plata'],
-    Chile: ['Santiago', 'Valparaíso', 'Concepción', 'La Serena', 'Antofagasta'],
-    Perú: ['Lima', 'Arequipa', 'Trujillo', 'Cusco', 'Piura'],
-    Ecuador: ['Quito', 'Guayaquil', 'Cuenca', 'Manta', 'Ambato'],
-    España: ['Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'Bilbao'],
-    USA: ['Miami', 'New York', 'Los Angeles', 'Houston', 'Chicago'],
-    Otro: ['Otra ciudad']
-  };
-
-  // Alias para normalizar países que devuelven APIs de geolocalización
-  const COUNTRY_ALIASES = {
-    'United States': 'USA',
-    'United States of America': 'USA',
-    'US': 'USA',
-    'Mexico': 'México',
-    'Spain': 'España',
-    'Peru': 'Perú',
-    'Colombia': 'Colombia',
-    'Argentina': 'Argentina',
-    'Chile': 'Chile',
-    'Ecuador': 'Ecuador'
-  };
-
-  // Prefijos telefónicos por país (para autocompletar teléfono)
-  const DIAL_CODES = {
-    Colombia: '+57',
-    México: '+52',
-    Argentina: '+54',
-    Chile: '+56',
-    Perú: '+51',
-    Ecuador: '+593',
-    España: '+34',
-    USA: '+1',
-    Otro: ''
-  };
-
-  // Si cambia el país, asegurar que la ciudad sea válida
-  useEffect(() => {
-    const ciudades = PAISES_CIUDADES[formData.pais] || [];
-    if (ciudades.length && !ciudades.includes(formData.ciudad)) {
-      setFormData(prev => ({ ...prev, ciudad: ciudades[0] }));
-    }
-  }, [formData.pais]);
-
-  // Leer categoría desde navegación
-  useEffect(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const qs = params.get('categoria');
-      const fromState = location.state?.categoria;
-      const draftRaw = localStorage.getItem('draft_carfutpro');
-      const draft = draftRaw ? JSON.parse(draftRaw) : null;
-      const initial = fromState || qs || draft?.categoria;
-      if (initial) setFormData(prev => ({ ...prev, categoria: initial }));
-    } catch (e) {
-      console.warn('No se pudo inicializar categoría:', e);
-    }
-  }, [location.state]);
-
-  // Autoguardado cada 30 segundos
-  useEffect(() => {
-    const interval = setInterval(() => {
-      try {
-        const draft = { ...formData, ultimoGuardado: new Date().toISOString() };
-        localStorage.setItem('draft_registro_completo', JSON.stringify(draft));
-        console.log('📝 Autoguardado realizado');
-      } catch (e) {
-        console.warn('Error en autoguardado:', e);
+        step1Title: 'Passo 1: Credenciais',
+        step2Title: 'Passo 2: Dados Pessoais',
+        step3Title: 'Passo 3: Info de Futebol',
+        step4Title: 'Passo 4: Disponibilidade',
+        step5Title: 'Passo 5: Foto de Perfil',
+        email: 'E-mail',
+        password: 'Senha',
+        confirmPassword: 'Confirmar senha',
+        categoria: 'Categoria',
+        nombre: 'Nome',
+        apellido: 'Sobrenome',
+        edad: 'Idade',
+        telefono: 'Telefone (opcional)',
+        pais: 'País',
+        ciudad: 'Cidade',
+        equipoFavorito: 'Time favorito',
+        peso: 'Peso (kg)',
+        altura: 'Altura (cm)',
+        pieHabil_Derecho: 'Destro',
+        pieHabil_Izquierdo: 'Canhoto',
+        pieHabil_Ambidiestro: 'Ambidestro',
+        frecuencia_ocasional: 'Ocasional (1-2/mês)',
+        frecuencia_regular: 'Regular (1/semana)',
+        frecuencia_frecuente: 'Frequente (2-3/semana)',
+        frecuencia_intensivo: 'Intensivo (4+/semana)',
+        horario_madrugadas: 'Madrugada',
+        horario_mañanas: 'Manhãs',
+        horario_mediodia: 'Meio-dia',
+        horario_tardes: 'Tardes',
+        horario_tardes_noche: 'Fim de tarde',
+        horario_noches: 'Noites',
+        horario_fines_semana: 'Fins de semana',
+        objetivos: 'Quais seus objetivos no FutPro? (opcional)',
+        infantil_femenina: 'Infantil Feminino',
+        infantil_masculina: 'Infantil Masculino',
+        femenina: 'Feminino',
+        masculina: 'Masculino',
+        pos_Portero: '🥅 Goleiro',
+        pos_DefensaCentral: '🛡️ Zagueiro',
+        pos_LateralDerecho: '➡️ Lateral Direito',
+        pos_LateralIzquierdo: '⬅️ Lateral Esquerdo',
+        pos_CarrileroDerecho: '➡️ Ala Direito',
+        pos_CarrileroIzquierdo: '⬅️ Ala Esquerda',
+        pos_MediocampistaDefensivo: '🔒 Volante',
+        pos_MediocampistaCentral: '⚖️ Meio-campista Central',
+        pos_MediocampistaOfensivo: '🎯 Meia Ofensivo',
+        pos_Pivote: '🧭 Pivô',
+        pos_InteriorDerecho: '➡️ Interior Direito',
+        pos_InteriorIzquierdo: '⬅️ Interior Esquerdo',
+        pos_Enganche: '🎩 Armador / Meia',
+        pos_ExtremoDerecho: '🏃‍♂️ Ponta Direita',
+        pos_ExtremoIzquierdo: '🏃‍♂️ Ponta Esquerda',
+        pos_DelanteroCentro: '⚽ Centroavante',
+        pos_SegundoDelantero: '🎯 Segundo Atacante',
+        pos_Flexible: '🔄 Versátil',
+        anterior: '← Voltar',
+        siguiente: 'Avançar →',
+        completar: '✓ Concluir',
+        creando: 'Criando conta...',
+        continuarGoogle: 'Continuar com Google',
+        errEmailPassReq: 'E-mail e senha são obrigatórios',
+        errPasswordMismatch: 'As senhas não coincidem',
+        errPasswordShort: 'A senha deve ter pelo menos 6 caracteres',
+        errNombreApellidoEdadReq: 'Nome, sobrenome e idade são obrigatórios',
+        errSeleccionaPosicion: 'Selecione uma posição'
       }
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [formData]);
+    };
 
-  // Configurar horario sugerido automático (sin APIs externas bloqueadas por CSP)
-  useEffect(() => {
-    if (geoApplied) return;
+    const UI_MISC = {
+      es: {
+        regTitle: 'Registro Completo',
+        photoOptionalNote: 'Foto opcional. Puedes agregarla después desde tu perfil.',
+        stepWord: 'Paso',
+        ofWord: 'de',
+        autosaveActive: 'Autoguardado activo',
+        niveles: { principiante: 'Principiante', intermedio: 'Intermedio', avanzado: 'Avanzado', elite: 'Élite' },
+        errGoogleSignIn: 'No se pudo iniciar sesión con Google',
+        errCompleteRegistration: 'Error al completar registro'
+      },
+      en: {
+        regTitle: 'Complete Registration',
+        photoOptionalNote: 'Optional photo. You can add it later from your profile.',
+        stepWord: 'Step',
+        ofWord: 'of',
+        autosaveActive: 'Auto-save enabled',
+        niveles: { principiante: 'Beginner', intermedio: 'Intermediate', avanzado: 'Advanced', elite: 'Elite' },
+        errGoogleSignIn: 'Could not sign in with Google',
+        errCompleteRegistration: 'Error completing registration'
+      },
+      pt: {
+        regTitle: 'Cadastro Completo',
+        photoOptionalNote: 'Foto opcional. Você pode adicioná-la depois no seu perfil.',
+        stepWord: 'Passo',
+        ofWord: 'de',
+        autosaveActive: 'Salvamento automático ativo',
+        niveles: { principiante: 'Iniciante', intermedio: 'Intermediário', avanzado: 'Avançado', elite: 'Elite' },
+        errGoogleSignIn: 'Não foi possível entrar com o Google',
+        errCompleteRegistration: 'Erro ao concluir o cadastro'
+      }
+    };
+
+    const t = (key) => (I18N[lang] && I18N[lang][key]) || I18N.es[key] || key;
+
+    // Auto-detectar idioma por navegador (fallback EN/ES)
+    useEffect(() => {
+      try {
+        const nav = (navigator.language || 'es').toLowerCase();
+        if (nav.startsWith('es')) setLang('es');
+        else if (nav.startsWith('pt')) setLang('pt');
+        else setLang('en');
+      } catch (_) {
+        setLang('es');
+      }
+    }, []);
     
-    // Solo ajustar horario preferido según hora local del navegador
-    const h = new Date().getHours();
-    let horarioPreferido = 'mañanas';
-    if (h < 5) horarioPreferido = 'madrugadas';
-    else if (h < 12) horarioPreferido = 'mañanas';
-    else if (h < 14) horarioPreferido = 'mediodia';
-    else if (h < 19) horarioPreferido = 'tardes';
-    else if (h < 21) horarioPreferido = 'tardes_noche';
-    else horarioPreferido = 'noches';
-    
-    setFormData(prev => ({
-      ...prev,
-      horarioPreferido
-    }));
-    
-    setGeoApplied(true);
-  }, [geoApplied]);
+    // Estado del formulario completo
+    const [formData, setFormData] = useState({
+      // Paso 1: Credenciales
+      email: '',
+      password: '',
+      confirmPassword: '',
+      categoria: 'infantil_femenina',
+      
+      // Paso 2: Datos Personales
+      nombre: '',
+      apellido: '',
+      edad: '',
+      telefono: '',
+    pais: 'Colombia',
+    ciudad: 'Bogotá',
+      
+      // Paso 3: Info Futbolística
+      posicion: 'Flexible',
+      nivelHabilidad: 'Principiante',
+      equipoFavorito: '',
+      peso: '',
+      altura: '',
+      pieHabil: 'Derecho',
+      
+      // Paso 4: Disponibilidad
+      frecuenciaJuego: 'ocasional',
+    horarioPreferido: 'tardes',
+      objetivos: '',
+      
+      // Paso 5: Foto
+      imagenPerfil: null,
+      previewUrl: null
+    });
 
-  // REMOVIDO: APIs de geolocalización (ipapi.co, ipwho.is) bloqueadas por CSP
-  // Usuario selecciona país/ciudad manualmente del dropdown
+    // Mapa dinámico de países y ciudades comunes (extensible)
+    const PAISES_CIUDADES = {
+      Colombia: ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Bucaramanga'],
+      México: ['Ciudad de México', 'Guadalajara', 'Monterrey', 'Puebla', 'Tijuana'],
+      Argentina: ['Buenos Aires', 'Córdoba', 'Rosario', 'Mendoza', 'La Plata'],
+      Chile: ['Santiago', 'Valparaíso', 'Concepción', 'La Serena', 'Antofagasta'],
+      Perú: ['Lima', 'Arequipa', 'Trujillo', 'Cusco', 'Piura'],
+      Ecuador: ['Quito', 'Guayaquil', 'Cuenca', 'Manta', 'Ambato'],
+      España: ['Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'Bilbao'],
+      USA: ['Miami', 'New York', 'Los Angeles', 'Houston', 'Chicago'],
+      Otro: ['Otra ciudad']
+    };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+    // Alias para normalizar países que devuelven APIs de geolocalización
+    const COUNTRY_ALIASES = {
+      'United States': 'USA',
+      'United States of America': 'USA',
+      'US': 'USA',
+      'Mexico': 'México',
+      'Spain': 'España',
+      'Peru': 'Perú',
+      'Colombia': 'Colombia',
+      'Argentina': 'Argentina',
+      'Chile': 'Chile',
+      'Ecuador': 'Ecuador'
+    };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
+    // Prefijos telefónicos por país (para autocompletar teléfono)
+    const DIAL_CODES = {
+      Colombia: '+57',
+      México: '+52',
+      Argentina: '+54',
+      Chile: '+56',
+      Perú: '+51',
+      Ecuador: '+593',
+      España: '+34',
+      USA: '+1',
+      Otro: ''
+    };
+
+    // Si cambia el país, asegurar que la ciudad sea válida
+    useEffect(() => {
+      const ciudades = PAISES_CIUDADES[formData.pais] || [];
+      if (ciudades.length && !ciudades.includes(formData.ciudad)) {
+        setFormData(prev => ({ ...prev, ciudad: ciudades[0] }));
+      }
+    }, [formData.pais]);
+
+    // Leer categoría desde navegación
+    useEffect(() => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const qs = params.get('categoria');
+        const fromState = location.state?.categoria;
+        const draftRaw = localStorage.getItem('draft_carfutpro');
+        const draft = draftRaw ? JSON.parse(draftRaw) : null;
+        const initial = fromState || qs || draft?.categoria;
+        if (initial) setFormData(prev => ({ ...prev, categoria: initial }));
+      } catch (e) {
+        console.warn('No se pudo inicializar categoría:', e);
+      }
+    }, [location.state]);
+
+    // Autoguardado cada 30 segundos
+    useEffect(() => {
+      const interval = setInterval(() => {
+        try {
+          const draft = { ...formData, ultimoGuardado: new Date().toISOString() };
+          localStorage.setItem('draft_registro_completo', JSON.stringify(draft));
+          console.log('📝 Autoguardado realizado');
+        } catch (e) {
+          console.warn('Error en autoguardado:', e);
+        }
+      }, 30000);
+      return () => clearInterval(interval);
+    }, [formData]);
+
+    // Configurar horario sugerido automático (sin APIs externas bloqueadas por CSP)
+    useEffect(() => {
+      if (geoApplied) return;
+      
+      // Solo ajustar horario preferido según hora local del navegador
+      const h = new Date().getHours();
+      let horarioPreferido = 'mañanas';
+      if (h < 5) horarioPreferido = 'madrugadas';
+      else if (h < 12) horarioPreferido = 'mañanas';
+      else if (h < 14) horarioPreferido = 'mediodia';
+      else if (h < 19) horarioPreferido = 'tardes';
+      else if (h < 21) horarioPreferido = 'tardes_noche';
+      else horarioPreferido = 'noches';
+      
       setFormData(prev => ({
         ...prev,
-        imagenPerfil: file,
-        previewUrl: URL.createObjectURL(file)
+        horarioPreferido
       }));
-    }
-  };
+      
+      setGeoApplied(true);
+    }, [geoApplied]);
 
-  const validarPaso = (paso) => {
-    setError(null);
-    switch (paso) {
-      case 1:
-        if (!formData.email || !formData.password) {
-          setError(t('errEmailPassReq'));
-          return false;
-        }
-        if (formData.password !== formData.confirmPassword) {
-          setError(t('errPasswordMismatch'));
-          return false;
-        }
-        if (formData.password.length < 6) {
-          setError(t('errPasswordShort'));
-          return false;
-        }
-        return true;
-      case 2:
-        if (!formData.nombre || !formData.apellido || !formData.edad) {
-          setError(t('errNombreApellidoEdadReq'));
-          return false;
-        }
-        return true;
-      case 3:
-        if (!formData.posicion) {
-          setError(t('errSeleccionaPosicion'));
-          return false;
-        }
-        return true;
-      case 4:
-        return true; // Opcional
-      case 5:
-        return true; // Foto es opcional
-      default:
-        return true;
-    }
-  };
+    // REMOVIDO: APIs de geolocalización (ipapi.co, ipwho.is) bloqueadas por CSP
+    // Usuario selecciona país/ciudad manualmente del dropdown
 
-  const siguientePaso = () => {
-    if (validarPaso(pasoActual)) {
-      setPasoActual(prev => Math.min(prev + 1, 5));
-    }
-  };
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
-  const pasoAnterior = () => {
-    setPasoActual(prev => Math.max(prev - 1, 1));
-  };
+    const handleImageChange = (e) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setFormData(prev => ({
+          ...prev,
+          imagenPerfil: file,
+          previewUrl: URL.createObjectURL(file)
+        }));
+      }
+    };
 
-  const handleGoogleSignup = async () => {
-// ...existing code...
+    const validarPaso = (paso) => {
+      setError(null);
+      switch (paso) {
+        case 1:
+          if (!formData.email || !formData.password) {
+            setError(t('errEmailPassReq'));
+            return false;
+          }
+          if (formData.password !== formData.confirmPassword) {
+            setError(t('errPasswordMismatch'));
+            return false;
+          }
+          if (formData.password.length < 6) {
+            setError(t('errPasswordShort'));
+            return false;
+          }
+          return true;
+        case 2:
+          if (!formData.nombre || !formData.apellido || !formData.edad) {
+            setError(t('errNombreApellidoEdadReq'));
+            return false;
+          }
+          return true;
+        case 3:
+          if (!formData.posicion) {
+            setError(t('errSeleccionaPosicion'));
+            return false;
+          }
+          return true;
+        case 4:
+          return true; // Opcional
+        case 5:
+          return true; // Foto es opcional
+        default:
+          return true;
+      }
+    };
+
+    const siguientePaso = () => {
+      if (validarPaso(pasoActual)) {
+        setPasoActual(prev => Math.min(prev + 1, 5));
+      }
+    };
+
+    const pasoAnterior = () => {
+      setPasoActual(prev => Math.max(prev - 1, 1));
+    };
+
+    const handleGoogleSignup = async () => {
+      setLoading(true);
+      setError(null);
+
       // Guardar contexto del formulario para recuperarlo después del OAuth
       try {
         localStorage.setItem('oauth_origin', 'formulario_registro');
@@ -565,7 +574,7 @@ const I18N = {
           ciudad: data.ciudad,
           pais: data.pais,
           posicion_favorita: data.posicion_favorita,
-          nivel_habilidad: data.nivel_habilidad,
+          nivel_habilidad: data.nivel_habilidade,
           puntaje: data.puntaje,
           equipo: data.equipo,
           fecha_registro: data.creada_en,
