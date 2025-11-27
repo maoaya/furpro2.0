@@ -22,6 +22,7 @@ import Estados from './pages/Estados';
 import Amigos from './pages/Amigos';
 import ConfiguracionPage from './pages/ConfiguracionPage';
 import Configuracion from './pages/Configuracion';
+import AuthCallback from './pages/auth/AuthCallback';
 import EditarPerfil from './pages/EditarPerfil';
 import Estadisticas from './pages/Estadisticas';
 import Partidos from './pages/Partidos';
@@ -75,6 +76,7 @@ export default function App() {
           <Route path="/registro-nuevo" element={<RegistroNuevo />} />
           <Route path="/seleccionar-categoria" element={<SeleccionCategoria />} />
           <Route path="/formulario-registro" element={<FormularioRegistroCompleto />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/perfil-card" element={<PerfilCard />} />
             <Route path="/registro-perfil" element={<RegistroPerfil />} />
           <Route path="/registro-google" element={<AuthPageUnificada />} />
