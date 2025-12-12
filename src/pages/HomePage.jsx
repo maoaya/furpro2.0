@@ -1,1187 +1,436 @@
-import React, { useEffect, useState } from 'react';
-import {
-  fetchGalleryAndComments as stubFetchGalleryAndComments,
-  fetchUsuario as stubFetchUsuario,
-  handleLike as stubHandleLike,
-  handleShare as stubHandleShare,
-  handleComment as stubHandleComment,
-  handleAccion as stubHandleAccion
-} from '../stubs/homePageFunctions';
+import React, { useMemo, useState, useEffect } from 'react';
+import FutproLogo from '../components/FutproLogo.jsx';
+import CommentsModal from '../components/CommentsModal.jsx';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
-import { UserService } from '../services/UserService';
-import mediaService from '../services/mediaService';
-import commentService from '../services/commentService';
-import { useWebSocketNotifications } from '../hooks/useWebSocketNotifications';
-import { useWebSocketComments } from '../hooks/useWebSocketComments';
-import { useWebSocketLikes } from '../hooks/useWebSocketLikes';
-import CopilotAyuda from '../components/CopilotAyuda';
-import FutproLogo from '../components/FutproLogo.jsx';
-import MenuHamburguesa from '../components/MenuHamburguesa';
+import { useAuth } from '../context/AuthContext';
 
 const gold = '#FFD700';
 const black = '#0a0a0a';
 const darkCard = '#1a1a1a';
 const lightGold = '#FFA500';
 
-function getLikes(id) {
-  const likes = JSON.parse(localStorage.getItem('likes') || '{}');
-  return likes[id] || 0;
-}
-function setLike(id) {
-  const likes = JSON.parse(localStorage.getItem('likes') || '{}');
-  likes[id] = (likes[id] || 0) + 1;
-  localStorage.setItem('likes', JSON.stringify(likes));
-}
-function getComments(id) {
-  const comments = JSON.parse(localStorage.getItem('comments') || '{}');
-  return comments[id] || [];
-}
-function addComment(id, text) {
-  const comments = JSON.parse(localStorage.getItem('comments') || '{}');
-  if (!comments[id]) comments[id] = [];
-  comments[id].push({ text, date: new Date().toISOString() });
-  localStorage.setItem('comments', JSON.stringify(comments));
-}
+// Funciones de acción del menú - se actualizan con navigate
+const createMenuActions = (navigate) => ({
+  irAPerfil: () => navigate('/perfil/me'),
+  verEstadisticas: () => navigate('/estadisticas'),
+  verPartidos: () => navigate('/partidos'),
+  verLogros: () => navigate('/logros'),
+  verTarjetas: () => navigate('/tarjetas'),
+  verEquipos: () => navigate('/equipos'),
+  crearEquipo: () => navigate('/crear-equipo'),
+  verTorneos: () => navigate('/torneos'),
+  crearTorneo: () => navigate('/crear-torneo'),
+  crearAmistoso: () => navigate('/amistoso'),
+  jugarPenaltis: () => navigate('/penaltis'),
+  verCardFIFA: () => navigate('/card-fifa'),
+  sugerenciasCard: () => navigate('/sugerencias-card'),
+  verNotificaciones: () => navigate('/notificaciones'),
+  abrirChat: () => navigate('/chat'),
+  verVideos: () => navigate('/videos'),
+  abrirMarketplace: () => navigate('/marketplace'),
+  verEstados: () => navigate('/estados'),
+  verAmigos: () => navigate('/amigos'),
+  abrirTransmisionEnVivo: () => navigate('/transmision-en-vivo'),
+  rankingJugadores: () => navigate('/ranking-jugadores'),
+  rankingEquipos: () => navigate('/ranking-equipos'),
+  buscarRanking: () => navigate('/buscar-ranking'),
+  abrirConfiguracion: () => navigate('/configuracion'),
+  contactarSoporte: () => navigate('/soporte'),
+  verPrivacidad: () => navigate('/privacidad'),
+  logout: () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate('/login');
+  }
+});
+
+const seedStories = [
+  { id: 1, name: 'Lucia', avatar: 'https://placekitten.com/80/80' },
+  { id: 2, name: 'Mateo', avatar: 'https://placekitten.com/81/81' },
+  { id: 3, name: 'Sofia', avatar: 'https://placekitten.com/82/82' },
+  { id: 4, name: 'Leo FC', avatar: 'https://placekitten.com/83/83' }
+];
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [usuario, setUsuario] = useState(null);
-  const [publicaciones, setPublicaciones] = useState([]);
-  const [likesState, setLikesState] = useState({});
-  const [commentsState, setCommentsState] = useState({});
-  const [commentInputs, setCommentInputs] = useState({});
-  const [shareFeedback, setShareFeedback] = useState({});
+  const { user } = useAuth();
+  const menuActions = createMenuActions(navigate);
   const [search, setSearch] = useState('');
-  const [activeSection, setActiveSection] = useState('feed');
-  const [userStats] = useState({
-    partidos: 12,
-    goles: 8,
-    asistencias: 5,
-    cards: 2,
-    nivel: 15
-  });
-  const [feedbackNav, setFeedbackNav] = useState('');
+  const [posts, setPosts] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [commentText, setCommentText] = useState({});
+  const [showComments, setShowComments] = useState({});
+  const [followedUsers, setFollowedUsers] = useState([]);
+  const [suggestedPosts, setSuggestedPosts] = useState([]);
+  const [selectedPostForComments, setSelectedPostForComments] = useState(null);
 
-
-  // Notificaciones en tiempo real
-  const notification = useWebSocketNotifications();
-
-  // Comentarios en tiempo real
-  useWebSocketComments((mediaId, comentario) => {
-    setCommentsState(prev => ({
-      ...prev,
-      [mediaId]: [...(prev[mediaId] || []), comentario]
-    }));
-  });
-
-  // Likes en tiempo real
-  useWebSocketLikes((mediaId, likes) => {
-    setLikesState(prev => ({
-      ...prev,
-      [mediaId]: likes
-    }));
-  });
-
-  // Cargar galería real al montar
-
+  // Cargar posts y followers al montar
   useEffect(() => {
-    (async () => {
-      const gallery = await stubFetchGalleryAndComments();
-      setPublicaciones(gallery);
-      console.log('[INTEGRACIÓN STUB] fetchGalleryAndComments ejecutado (HomePage.jsx)');
-    })();
-  }, []);
+    if (user) {
+      cargarFollowers();
+      cargarPosts();
+    }
+    
+    // Suscribirse a cambios en realtime
+    const channelPosts = supabase
+      .channel('posts:all')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
+        cargarPosts();
+      })
+      .subscribe();
 
+    const channelLikes = supabase
+      .channel('likes:all')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'likes' }, () => {
+        cargarPosts();
+      })
+      .subscribe();
 
-  useEffect(() => {
-    (async () => {
-      const usuario = await stubFetchUsuario();
-      setUsuario(usuario);
-      console.log('[INTEGRACIÓN STUB] fetchUsuario ejecutado (HomePage.jsx)');
-    })();
-  }, []);
+    const channelComments = supabase
+      .channel('comments:all')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, () => {
+        cargarPosts();
+      })
+      .subscribe();
 
-  // Like real
+    return () => {
+      channelPosts.unsubscribe();
+      channelLikes.unsubscribe();
+      channelComments.unsubscribe();
+    };
+  }, [user]);
 
-  // Usar stub para likes
+  async function cargarFollowers() {
+    try {
+      if (!user) return;
 
-  // Compartir publicación
+      // Obtener usuarios que el usuario actual sigue
+      const { data: followedData, error: followError } = await supabase
+        .from('friends')
+        .select('friend_email')
+        .eq('user_email', user.email);
 
-  // Usar stub para compartir
+      if (followError) throw followError;
 
+      // Convertir emails a IDs
+      const followedEmails = followedData?.map(f => f.friend_email) || [];
+      if (followedEmails.length > 0) {
+        const { data: followedIds } = await supabase
+          .from('users')
+          .select('id')
+          .in('email', followedEmails);
+        setFollowedUsers(followedIds?.map(u => u.id) || []);
+      } else {
+        setFollowedUsers([]);
+      }
+    } catch (err) {
+      console.error('Error cargando followers:', err);
+    }
+  }
 
-  // Enviar comentario real
+  async function cargarPosts() {
+    try {
+      setLoading(true);
+      // Cargar posts con joins para usuario, conteo de likes y comentarios
+      const { data: postsData, error } = await supabase
+        .from('posts')
+        .select(`
+          *,
+          user:users!posts_user_id_fkey(id, email, full_name, avatar_url),
+          likes_count:likes(count),
+          comments_count:comments(count)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(100);
 
-  // Usar stub para comentar
+      if (error) throw error;
 
-  // Filtrar publicaciones por búsqueda
-  const publicacionesFiltradas = publicaciones.filter(pub =>
-    pub.nombre?.toLowerCase().includes(search.toLowerCase()) ||
-    pub.descripcion?.toLowerCase().includes(search.toLowerCase())
-  );
+      // Formatear posts
+      const formatted = postsData.map(p => ({
+        id: p.id,
+        user: p.user?.full_name || p.user?.email || 'Usuario',
+        avatar: p.user?.avatar_url || 'https://via.placeholder.com/90',
+        image: p.image_url,
+        title: p.tags?.[0] || 'Post',
+        description: p.content,
+        likes: p.likes_count?.[0]?.count || 0,
+        comments: p.comments_count?.[0]?.count || 0,
+        tags: p.tags || [],
+        user_id: p.user_id,
+        created_at: p.created_at
+      }));
 
-  // Manejo de acciones del menú hamburguesa
+      // Separar posts de usuarios seguidos y sugerencias
+      const followed = formatted.filter(p => followedUsers.includes(p.user_id));
+      const suggested = formatted.filter(p => !followedUsers.includes(p.user_id) && p.user_id !== user?.id);
 
-  // Usar stub para acciones del menú
+      setPosts(followed);
+      setSuggestedPosts(suggested);
+    } catch (err) {
+      console.error('Error cargando posts:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const filteredPosts = useMemo(() => {
+    if (!search) return posts;
+    const term = search.toLowerCase();
+    return posts.filter(p =>
+      p.user.toLowerCase().includes(term) ||
+      p.title.toLowerCase().includes(term) ||
+      p.description.toLowerCase().includes(term)
+    );
+  }, [posts, search]);
+
+  const onLike = async (postId) => {
+    if (!user) {
+      alert('Debes iniciar sesión para dar like');
+      return;
+    }
+    try {
+      // Verificar si ya dio like
+      const { data: existingLike } = await supabase
+        .from('likes')
+        .select('id')
+        .eq('post_id', postId)
+        .eq('user_id', user.id)
+        .single();
+
+      if (existingLike) {
+        // Quitar like
+        await supabase.from('likes').delete().eq('id', existingLike.id);
+      } else {
+        // Dar like
+        await supabase.from('likes').insert([{ post_id: postId, user_id: user.id }]);
+      }
+    } catch (err) {
+      console.error('Error al dar like:', err);
+    }
+  };
+
+  const onComment = async (postId) => {
+    const text = commentText[postId];
+    if (!user) {
+      alert('Debes iniciar sesión para comentar');
+      return;
+    }
+    if (!text || !text.trim()) {
+      alert('Escribe un comentario');
+      return;
+    }
+    try {
+      await supabase.from('comments').insert([{
+        post_id: postId,
+        user_id: user.id,
+        content: text.trim()
+      }]);
+      setCommentText(prev => ({ ...prev, [postId]: '' }));
+      setShowComments(prev => ({ ...prev, [postId]: false }));
+    } catch (err) {
+      console.error('Error al comentar:', err);
+    }
+  };
+
+  const onShare = (id) => {
+    console.log('Compartir post', id);
+  };
+
+  const goHome = () => navigate('/');
+  const goMarket = () => menuActions.abrirMarketplace();
+  const goVideos = () => menuActions.verVideos();
+  const goAlerts = () => menuActions.verNotificaciones();
+  const goChat = () => menuActions.abrirChat();
 
   return (
-    <div style={{ 
-      background: `linear-gradient(135deg, ${black} 0%, #1a1a1a 50%, ${black} 100%)`, 
-      minHeight: '100vh', 
-      color: gold,
-      fontFamily: 'Arial, sans-serif'
-    }}>
+    <div style={{ background: black, color: gold, minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
       <header style={{
-        background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
+        background: darkCard,
         borderBottom: `2px solid ${gold}`,
-        padding: '20px 32px',
+        padding: '16px 24px',
         position: 'sticky',
         top: 0,
-        zIndex: 50,
-        backdropFilter: 'blur(10px)',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+        zIndex: 20
       }}>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between',
-          maxWidth: '1200px',
-          margin: '0 auto'
-        }}>
-          {/* Logo y título */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <FutproLogo size={48} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <FutproLogo size={42} />
             <div>
-              <h1 style={{ 
-                fontSize: 28, 
-                fontWeight: 'bold', 
-                margin: 0,
-                background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
-              }}>
-                FutPro
-              </h1>
-              <p style={{ 
-                fontSize: 14, 
-                color: '#ccc', 
-                margin: 0 
-              }}>
-                ¡Bienvenido de vuelta!
-              </p>
+              <div style={{ fontWeight: 800, fontSize: 20 }}>FutPro</div>
+              <div style={{ color: '#ccc', fontSize: 12 }}>Bienvenido de vuelta</div>
             </div>
           </div>
-
-          {/* Barra de búsqueda y acciones */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ position: 'relative' }}>
-              <input 
-                value={search} 
-                onChange={e => setSearch(e.target.value)} 
-                placeholder="Buscar jugadores, equipos..." 
-                style={{ 
-                  padding: '12px 40px 12px 16px',
-                  borderRadius: 25,
-                  border: `2px solid ${gold}`,
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  color: gold,
-                  fontSize: 16,
-                  width: 280,
-                  outline: 'none',
-                  transition: 'all 0.3s ease'
-                }}
-                onFocus={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.15)'}
-                onBlur={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.1)'}
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar jugadores, equipos..."
+                style={{ padding: '10px 38px 10px 12px', borderRadius: 20, border: `1px solid ${gold}`,
+                  background: '#111', color: gold, width: 240 }}
               />
-              <span style={{
-                position: 'absolute',
-                right: 12,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                fontSize: 18,
-                color: gold
-              }}>🔍</span>
+              <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)' }}>🔍</span>
             </div>
-            
-            <button style={{
-              background: 'transparent',
-              border: `2px solid ${gold}`,
-              borderRadius: '50%',
-              width: 48,
-              height: 48,
-              color: gold,
-              fontSize: 20,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => {
-              e.target.style.background = gold;
-              e.target.style.color = black;
-            }}
-            onMouseOut={(e) => {
-              e.target.style.background = 'transparent';
-              e.target.style.color = gold;
-            }}
-            >
-              🔔
-            </button>
+            <button aria-label="Notificaciones" onClick={goAlerts} style={{ borderRadius: '50%', width: 40, height: 40, border: `1px solid ${gold}`, background: 'transparent', color: gold }}>🔔</button>
+            <button aria-label="Menu" onClick={() => setMenuOpen(!menuOpen)} style={{ borderRadius: '50%', width: 40, height: 40, border: `1px solid ${gold}`, background: 'transparent', color: gold }}>☰</button>
           </div>
         </div>
       </header>
 
-      {/* Stories Section - Tipo Instagram */}
-      <div style={{
-        background: black,
-        padding: '15px 0',
-        borderBottom: '1px solid #333',
-        marginBottom: 10
-      }}>
-        <div style={{
-          display: 'flex',
-          gap: 15,
-          overflowX: 'auto',
-          padding: '0 15px',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          maxWidth: '1200px',
-          margin: '0 auto'
-        }}>
-          {/* Story del usuario */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            cursor: 'pointer',
-            minWidth: 70
-          }}>
+      {menuOpen && (
+        <div style={{ background: '#111', borderBottom: `1px solid ${gold}`, padding: 16 }}>
+          <div style={{ display: 'grid', gap: 8, gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))' }}>
+            <button onClick={menuActions.irAPerfil}>👤 Mi Perfil</button>
+            <button onClick={menuActions.verEstadisticas}>📊 Mis Estadisticas</button>
+            <button onClick={menuActions.verPartidos}>📅 Mis Partidos</button>
+            <button onClick={menuActions.verLogros}>🏆 Mis Logros</button>
+            <button onClick={menuActions.verTarjetas}>🆔 Mis Tarjetas</button>
+            <button onClick={menuActions.verEquipos}>👥 Ver Equipos</button>
+            <button onClick={menuActions.crearEquipo}>➕ Crear Equipo</button>
+            <button onClick={menuActions.verTorneos}>🏆 Ver Torneos</button>
+            <button onClick={menuActions.crearTorneo}>➕ Crear Torneo</button>
+            <button onClick={menuActions.crearAmistoso}>🤝 Crear Amistoso</button>
+            <button onClick={menuActions.jugarPenaltis}>⚽ Juego de Penaltis</button>
+            <button onClick={menuActions.verCardFIFA}>🆔 Card Futpro</button>
+            <button onClick={menuActions.sugerenciasCard}>💡 Sugerencias Card</button>
+            <button onClick={menuActions.verNotificaciones}>🔔 Notificaciones</button>
+            <button onClick={menuActions.abrirChat}>💬 Chat</button>
+            <button onClick={menuActions.verVideos}>🎥 Videos</button>
+            <button onClick={menuActions.abrirMarketplace}>🏪 Marketplace</button>
+            <button onClick={menuActions.verEstados}>📋 Estados</button>
+            <button onClick={menuActions.verAmigos}>👫 Seguidores</button>
+            <button onClick={menuActions.abrirTransmisionEnVivo}>📡 Transmitir en Vivo</button>
+            <button onClick={menuActions.rankingJugadores}>📊 Ranking Jugadores</button>
+            <button onClick={menuActions.rankingEquipos}>📈 Ranking Equipos</button>
+            <button onClick={menuActions.buscarRanking}>🔍 Buscar Ranking</button>
+            <button onClick={menuActions.abrirConfiguracion}>🔧 Configuracion</button>
+            <button onClick={menuActions.contactarSoporte}>🆘 Soporte</button>
+            <button onClick={menuActions.verPrivacidad}>🛡️ Privacidad</button>
+            <button onClick={menuActions.logout}>🚪 Cerrar sesion</button>
+          </div>
+        </div>
+      )}
+
+      <section style={{ padding: '12px 16px', overflowX: 'auto', display: 'flex', gap: 12 }}>
+        {seedStories.map(story => (
+          <div key={story.id} style={{ textAlign: 'center' }}>
             <div style={{
-              width: 60,
-              height: 60,
-              borderRadius: '50%',
-              background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 5,
-              position: 'relative'
-            }}>
-              <div style={{
-                width: 54,
-                height: 54,
-                borderRadius: '50%',
-                background: '#333',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 24
-              }}>
-                👤
-              </div>
-              <div style={{
-                position: 'absolute',
-                bottom: -2,
-                right: -2,
-                width: 20,
-                height: 20,
-                borderRadius: '50%',
-                background: gold,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 12
-              }}>
-                ➕
-              </div>
-            </div>
-            <span style={{ color: '#fff', fontSize: 12, textAlign: 'center' }}>Tu historia</span>
-          </div>
-
-          {/* Stories de ejemplo */}
-          {[
-            { name: 'Messi', avatar: '⚽', hasStory: true },
-            { name: 'Ronaldo', avatar: '💪', hasStory: true },
-            { name: 'Neymar', avatar: '🌟', hasStory: false },
-            { name: 'Mbappé', avatar: '🚀', hasStory: true },
-            { name: 'Benzema', avatar: '👑', hasStory: true }
-          ].map((user, index) => (
-            <div key={index} style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              cursor: 'pointer',
-              minWidth: 70
-            }}>
-              <div style={{
-                width: 60,
-                height: 60,
-                borderRadius: '50%',
-                background: user.hasStory ? `linear-gradient(45deg, ${gold}, #ff6b6b, #4ecdc4, ${lightGold})` : '#333',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 5,
-                padding: user.hasStory ? 2 : 0
-              }}>
-                <div style={{
-                  width: user.hasStory ? 54 : 60,
-                  height: user.hasStory ? 54 : 60,
-                  borderRadius: '50%',
-                  background: '#666',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 24
-                }}>
-                  {user.avatar}
-                </div>
-              </div>
-              <span style={{ color: '#fff', fontSize: 12, textAlign: 'center' }}>{user.name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Navegación de secciones */}
-      <nav style={{
-        background: darkCard,
-        padding: '20px 0',
-        borderBottom: `1px solid #333`,
-        position: 'sticky',
-        top: 88,
-        zIndex: 40
-      }}>
-        <div style={{ 
-          maxWidth: '1200px', 
-          margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 40
-        }}>
-          {[
-            { id: 'feed', label: 'Feed', icon: '📰' },
-            { id: 'stats', label: 'Estadísticas', icon: '📊' },
-            { id: 'matches', label: 'Partidos', icon: '⚽' },
-            { id: 'friends', label: 'Amigos', icon: '👥' },
-            { id: 'live', label: 'En Vivo', icon: '📺' }
-          ].map(section => (
-            <button
-              key={section.id}
-              onClick={() => setActiveSection(section.id)}
-              style={{
-                background: activeSection === section.id 
-                  ? `linear-gradient(135deg, ${gold} 0%, ${lightGold} 100%)` 
-                  : 'transparent',
-                color: activeSection === section.id ? black : gold,
-                border: activeSection === section.id ? 'none' : `2px solid #444`,
-                borderRadius: 25,
-                padding: '12px 24px',
-                fontSize: 16,
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                transition: 'all 0.3s ease',
-                minWidth: 140
-              }}
-              onMouseOver={(e) => {
-                if (activeSection !== section.id) {
-                  e.target.style.borderColor = gold;
-                  e.target.style.background = 'rgba(255, 215, 0, 0.1)';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (activeSection !== section.id) {
-                  e.target.style.borderColor = '#444';
-                  e.target.style.background = 'transparent';
-                }
-              }}
+              width: 64, height: 64, borderRadius: '50%',
+              background: 'linear-gradient(135deg, #ff0080, #ff8c00)',
+              padding: 3, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer'
+            }}
+              onClick={() => console.log('Ver historia', story.name)}
             >
-              <span style={{ fontSize: 18 }}>{section.icon}</span>
-              <span>{section.label}</span>
-            </button>
-          ))}
-        </div>
-      </nav>
-
-      {/* Contenido principal */}
-      <main style={{ 
-        maxWidth: '1200px', 
-        margin: '0 auto', 
-        padding: '32px 20px 100px 20px',
-        width: '100%'
-      }}>
-        {/* Panel de estadísticas personales */}
-        {activeSection === 'stats' && (
-          <div style={{ animation: 'fadeIn 0.5s ease' }}>
-            <h2 style={{ 
-              fontSize: 32, 
-              fontWeight: 'bold', 
-              marginBottom: 30,
-              textAlign: 'center',
-              background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>
-              Mis Estadísticas
-            </h2>
-            
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-              gap: 25,
-              marginBottom: 40
-            }}>
-              {[
-                { label: 'Partidos Jugados', value: userStats.partidos, icon: '⚽', color: gold },
-                { label: 'Goles', value: userStats.goles, icon: '🥅', color: '#ff6b6b' },
-                { label: 'Asistencias', value: userStats.asistencias, icon: '🅰️', color: '#4ecdc4' },
-                { label: 'Cards Generadas', value: userStats.cards, icon: '🎴', color: lightGold },
-                { label: 'Nivel', value: userStats.nivel, icon: '⭐', color: '#a8e6cf' }
-              ].map((stat, index) => (
-                <div key={index} style={{
-                  background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
-                  borderRadius: 20,
-                  padding: 25,
-                  border: `2px solid ${stat.color}`,
-                  textAlign: 'center',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-                  transition: 'transform 0.3s ease',
-                  cursor: 'pointer'
-                }}
-                onMouseOver={(e) => e.target.style.transform = 'translateY(-5px)'}
-                onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
-                >
-                  <div style={{ fontSize: 48, marginBottom: 15 }}>{stat.icon}</div>
-                  <div style={{ 
-                    fontSize: 36, 
-                    fontWeight: 'bold', 
-                    color: stat.color,
-                    marginBottom: 8
-                  }}>
-                    {stat.value}
-                  </div>
-                  <div style={{ 
-                    fontSize: 16, 
-                    color: '#ccc',
-                    fontWeight: '500'
-                  }}>
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
+              <img src={story.avatar} alt={story.name} style={{ width: 58, height: 58, borderRadius: '50%' }} />
             </div>
+            <div style={{ fontSize: 12, marginTop: 4 }}>{story.name}</div>
           </div>
-        )}
-        {/* Feed de publicaciones */}
-        {activeSection === 'feed' && (
-          <div style={{ animation: 'fadeIn 0.5s ease' }}>
-            <h2 style={{ 
-              fontSize: 32, 
-              fontWeight: 'bold', 
-              marginBottom: 30,
-              textAlign: 'center',
-              background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>
-              Feed de Publicaciones
-            </h2>
-            
-            {publicacionesFiltradas.length === 0 && (
-              <div style={{
-                textAlign: 'center',
-                padding: 60,
-                background: darkCard,
-                borderRadius: 20,
-                border: `2px solid #333`,
-                marginBottom: 30
-              }}>
-                <div style={{ fontSize: 64, marginBottom: 20 }}>📰</div>
-                <h3 style={{ color: gold, fontSize: 24, marginBottom: 10 }}>No hay publicaciones aún</h3>
-                <p style={{ color: '#ccc', fontSize: 16 }}>¡Sé el primero en compartir algo increíble!</p>
-              </div>
-            )}
+        ))}
+      </section>
 
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', 
-              gap: 30,
-              marginBottom: 40
-            }}>
-              {publicacionesFiltradas.map(pub => (
-                <div key={pub.id} style={{ 
-                  background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
-                  borderRadius: 20, 
-                  padding: 20, 
-                  border: `2px solid #333`,
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)', 
-                  position: 'relative',
-                  transition: 'all 0.3s ease',
-                  overflow: 'hidden'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.borderColor = gold;
-                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(255, 215, 0, 0.2)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.borderColor = '#333';
-                  e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
-                }}
-                >
-                  {/* Contenido multimedia */}
-                  {pub.tipo === 'imagen' && (
-                    <div style={{ position: 'relative', marginBottom: 15 }}>
-                      <img 
-                        src={pub.url} 
-                        alt={pub.nombre} 
-                        style={{ 
-                          width: '100%', 
-                          height: 200,
-                          objectFit: 'cover',
-                          borderRadius: 15
-                        }} 
-                      />
-                      <div style={{
-                        position: 'absolute',
-                        top: 10,
-                        right: 10,
-                        background: 'rgba(0, 0, 0, 0.7)',
-                        borderRadius: 20,
-                        padding: '5px 12px',
-                        fontSize: 12,
-                        color: gold,
-                        fontWeight: 'bold'
-                      }}>
-                        📸 IMAGEN
-                      </div>
-                    </div>
-                  )}
-                  
-                  {pub.tipo === 'video' && (
-                    <div style={{ position: 'relative', marginBottom: 15 }}>
-                      <video 
-                        src={pub.url} 
-                        controls 
-                        style={{ 
-                          width: '100%', 
-                          height: 200,
-                          borderRadius: 15,
-                          objectFit: 'cover'
-                        }} 
-                      />
-                      <div style={{
-                        position: 'absolute',
-                        top: 10,
-                        right: 10,
-                        background: 'rgba(0, 0, 0, 0.7)',
-                        borderRadius: 20,
-                        padding: '5px 12px',
-                        fontSize: 12,
-                        color: gold,
-                        fontWeight: 'bold'
-                      }}>
-                        🎥 VIDEO
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Información del post */}
-                  <div style={{ marginBottom: 15 }}>
-                    <h3 style={{ 
-                      fontWeight: 'bold', 
-                      fontSize: 18,
-                      color: gold,
-                      marginBottom: 8,
-                      lineHeight: 1.4
-                    }}>
-                      {pub.nombre}
-                    </h3>
-                    
-                    <div style={{ 
-                      fontSize: 14, 
-                      color: '#888', 
-                      marginBottom: 10,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8
-                    }}>
-                      <span>🕒</span>
-                      <span>{pub.fecha ? new Date(pub.fecha).toLocaleString() : 'Hace un momento'}</span>
-                    </div>
-                    
-                    <p style={{ 
-                      fontSize: 15, 
-                      color: '#ccc', 
-                      lineHeight: 1.5,
-                      margin: 0
-                    }}>
-                      {pub.descripcion || 'Sin descripción'}
-                    </p>
-                  </div>
-
-                  {/* Acciones del post */}
-                  <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'space-between',
-                    marginBottom: 15,
-                    padding: '12px 0',
-                    borderTop: '1px solid #333',
-                    borderBottom: '1px solid #333'
-                  }}>
-                    <button 
-                      onClick={() => handleLike(pub.id)} 
-                      style={{ 
-                        background: 'none', 
-                        border: 'none', 
-                        cursor: 'pointer', 
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        color: gold,
-                        fontSize: 16,
-                        fontWeight: 'bold',
-                        transition: 'all 0.3s ease'
-                      }}
-                      onMouseOver={(e) => {
-                        e.target.style.transform = 'scale(1.1)';
-                        e.target.style.color = lightGold;
-                      }}
-                      onMouseOut={(e) => {
-                        e.target.style.transform = 'scale(1)';
-                        e.target.style.color = gold;
-                      }}
-                    >
-                      <span style={{ fontSize: 20 }}>⚽</span>
-                      <span>{likesState[pub.id] || 0}</span>
-                      <span style={{ fontSize: 14 }}>Me gusta</span>
-                    </button>
-
-                    <button 
-                      onClick={() => handleShare(pub.id)} 
-                      style={{ 
-                        background: `linear-gradient(135deg, ${gold} 0%, ${lightGold} 100%)`,
-                        color: black, 
-                        border: 'none', 
-                        borderRadius: 20, 
-                        padding: '8px 16px', 
-                        fontWeight: 'bold', 
-                        cursor: 'pointer', 
-                        fontSize: 14,
-                        transition: 'all 0.3s ease'
-                      }}
-                      onMouseOver={(e) => {
-                        e.target.style.transform = 'translateY(-2px)';
-                        e.target.style.boxShadow = '0 4px 15px rgba(255, 215, 0, 0.3)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.target.style.transform = 'translateY(0)';
-                        e.target.style.boxShadow = 'none';
-                      }}
-                    >
-                      📤 Compartir
-                    </button>
-                  </div>
-
-                  {/* Sección de comentarios */}
+      <main style={{ padding: '0 16px 80px' }}>
+        {/* Posts de usuarios seguidos */}
+        <div style={{ marginBottom: '32px' }}>
+          {filteredPosts.length > 0 && (
+            <div style={{ color: gold, fontSize: 14, fontWeight: 'bold', marginBottom: 16, borderBottom: `1px solid ${gold}`, paddingBottom: 8 }}>
+              📰 Posts de usuarios seguidos ({filteredPosts.length})
+            </div>
+          )}
+          {filteredPosts.length === 0 && followedUsers.length > 0 && (
+            <div style={{ color: '#888', textAlign: 'center', padding: '40px 0' }}>
+              Sin posts aún de los usuarios que sigues
+            </div>
+          )}
+          <div style={{ display: 'grid', gap: 16 }}>
+            {filteredPosts.map(post => (
+              <article key={post.id} style={{ background: darkCard, borderRadius: 16, overflow: 'hidden', border: `1px solid ${gold}` }}>
+                <header style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12 }}>
+                  <img src={post.avatar} alt={post.user} style={{ width: 40, height: 40, borderRadius: '50%' }} />
                   <div>
-                    <div style={{ 
-                      display: 'flex', 
-                      gap: 10, 
-                      marginBottom: 15 
-                    }}>
-                      <input
-                        type="text"
-                        placeholder="Agregar comentario..."
-                        value={commentInputs[pub.id] || ''}
-                        onChange={e => setCommentInputs(prev => ({ ...prev, [pub.id]: e.target.value }))}
-                        style={{ 
-                          flex: 1,
-                          padding: '10px 15px',
-                          borderRadius: 20,
-                          border: `2px solid #444`,
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          color: '#fff',
-                          fontSize: 14,
-                          outline: 'none',
-                          transition: 'border-color 0.3s ease'
-                        }}
-                        onFocus={(e) => e.target.style.borderColor = gold}
-                        onBlur={(e) => e.target.style.borderColor = '#444'}
-                      />
-                      <button 
-                        onClick={() => handleComment(pub.id)} 
-                        style={{ 
-                          background: gold,
-                          color: black, 
-                          border: 'none', 
-                          borderRadius: 20, 
-                          padding: '10px 20px', 
-                          fontWeight: 'bold', 
-                          cursor: 'pointer',
-                          fontSize: 14,
-                          transition: 'all 0.3s ease'
-                        }}
-                        onMouseOver={(e) => {
-                          e.target.style.background = lightGold;
-                          e.target.style.transform = 'scale(1.05)';
-                        }}
-                        onMouseOut={(e) => {
-                          e.target.style.background = gold;
-                          e.target.style.transform = 'scale(1)';
-                        }}
-                      >
-                        💬
-                      </button>
-                    </div>
-
-                    {/* Lista de comentarios */}
-                    <div style={{ 
-                      maxHeight: 120, 
-                      overflowY: 'auto', 
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      borderRadius: 15,
-                      padding: 12
-                    }}>
-                      {(commentsState[pub.id] || []).length === 0 ? (
-                        <p style={{ 
-                          color: '#666', 
-                          fontSize: 14, 
-                          textAlign: 'center',
-                          margin: 0
-                        }}>
-                          Sin comentarios aún
-                        </p>
-                      ) : (
-                        (commentsState[pub.id] || []).map((c, i) => (
-                          <div key={i} style={{ 
-                            marginBottom: 8,
-                            padding: '8px 12px',
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            borderRadius: 10,
-                            borderLeft: `3px solid ${gold}`
-                          }}>
-                            <div style={{ 
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              marginBottom: 4
-                            }}>
-                              <span style={{ 
-                                color: gold, 
-                                fontWeight: 'bold',
-                                fontSize: 14
-                              }}>
-                                Usuario
-                              </span>
-                              <span style={{ 
-                                color: '#888', 
-                                fontSize: 12 
-                              }}>
-                                {c.date ? new Date(c.date).toLocaleTimeString() : 'Ahora'}
-                              </span>
-                            </div>
-                            <p style={{ 
-                              color: '#fff',
-                              fontSize: 14,
-                              margin: 0,
-                              lineHeight: 1.4
-                            }}>
-                              {c.text}
-                            </p>
-                          </div>
-                        ))
-                      )}
-                    </div>
+                    <div style={{ fontWeight: 700 }}>{post.user}</div>
+                    <div style={{ fontSize: 12, color: '#ccc' }}>{post.title}</div>
                   </div>
-
-                  {/* Feedback de compartir */}
-                  {shareFeedback[pub.id] && (
-                    <div style={{
-                      position: 'absolute',
-                      top: 10,
-                      left: 10,
-                      background: 'rgba(0, 200, 0, 0.9)',
-                      color: '#fff',
-                      padding: '5px 12px',
-                      borderRadius: 15,
-                      fontSize: 12,
-                      fontWeight: 'bold',
-                      animation: 'pulse 0.5s ease'
-                    }}>
-                      ✅ {shareFeedback[pub.id]}
-                    </div>
-                  )}
+                  <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, fontSize: 12 }}>
+                    {post.tags.map(tag => (<span key={tag} style={{ background: '#222', padding: '4px 8px', borderRadius: 12 }}>{tag}</span>))}
+                  </div>
+                </header>
+                <div>
+                  <img src={post.image} alt={post.title} style={{ width: '100%', display: 'block' }} />
                 </div>
-              ))}
-            </div>
+                <div style={{ padding: 12, color: '#ddd' }}>{post.description}</div>
+                <footer style={{ padding: '0 12px 12px' }}>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <button onClick={() => onLike(post.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'transparent', border: `1px solid ${gold}`, color: gold, padding: 8, borderRadius: 8, cursor: 'pointer' }}>⚽ {post.likes}</button>
+                    <button onClick={() => setSelectedPostForComments(post.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'transparent', border: `1px solid ${gold}`, color: gold, padding: 8, borderRadius: 8, cursor: 'pointer' }}>💬 {post.comments}</button>
+                    <button onClick={() => onShare(post.id)} style={{ flex: 1, background: 'transparent', border: `1px solid ${gold}`, color: gold, padding: 8, borderRadius: 8, cursor: 'pointer' }}>📤</button>
+                  </div>
+                </footer>
+              </article>
+            ))}
           </div>
-        )}
-        {/* Sección de Partidos */}
-        {activeSection === 'matches' && (
-          <div style={{ animation: 'fadeIn 0.5s ease' }}>
-            <h2 style={{ 
-              fontSize: 32, 
-              fontWeight: 'bold', 
-              marginBottom: 30,
-              textAlign: 'center',
-              background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>
-              Mis Partidos
-            </h2>
+        </div>
 
-            {/* Próximos partidos */}
-            <div style={{ marginBottom: 40 }}>
-              <h3 style={{ 
-                fontSize: 24, 
-                fontWeight: 'bold', 
-                marginBottom: 20,
-                color: gold,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10
-              }}>
-                <span>🔜</span> Próximos Partidos
-              </h3>
-              
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
-                gap: 20
-              }}>
-                {[
-                  {
-                    id: 1,
-                    equipoLocal: 'FC Barcelona',
-                    equipoVisitante: 'Real Madrid',
-                    fecha: '2025-09-25',
-                    hora: '20:00',
-                    estadio: 'Camp Nou',
-                    competicion: 'La Liga'
-                  },
-                  {
-                    id: 2,
-                    equipoLocal: 'Manchester City',
-                    equipoVisitante: 'Liverpool',
-                    fecha: '2025-09-28',
-                    hora: '18:30',
-                    estadio: 'Etihad Stadium',
-                    competicion: 'Premier League'
-                  }
-                ].map(partido => (
-                  <div key={partido.id} style={{
-                    background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
-                    borderRadius: 20,
-                    padding: 25,
-                    border: `2px solid ${gold}`,
-                    boxShadow: '0 8px 32px rgba(255, 215, 0, 0.1)',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-5px)';
-                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(255, 215, 0, 0.2)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 8px 32px rgba(255, 215, 0, 0.1)';
-                  }}
-                  >
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: 20
-                    }}>
-                      <div style={{
-                        background: lightGold,
-                        color: black,
-                        padding: '5px 15px',
-                        borderRadius: 15,
-                        fontSize: 12,
-                        fontWeight: 'bold'
-                      }}>
-                        {partido.competicion}
-                      </div>
-                      <div style={{ color: '#ccc', fontSize: 14 }}>
-                        📅 {new Date(partido.fecha).toLocaleDateString()}
-                      </div>
-                    </div>
-
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between',
-                      marginBottom: 20
-                    }}>
-                      <div style={{ textAlign: 'center', flex: 1 }}>
-                        <div style={{ fontSize: 18, fontWeight: 'bold', color: '#fff' }}>
-                          {partido.equipoLocal}
-                        </div>
-                        <div style={{ fontSize: 14, color: '#ccc', marginTop: 5 }}>
-                          Local
-                        </div>
-                      </div>
-
-                      <div style={{ 
-                        textAlign: 'center',
-                        padding: '0 20px'
-                      }}>
-                        <div style={{ 
-                          fontSize: 24, 
-                          fontWeight: 'bold', 
-                          color: gold,
-                          marginBottom: 5
-                        }}>
-                          VS
-                        </div>
-                        <div style={{ 
-                          fontSize: 16, 
-                          color: lightGold,
-                          fontWeight: 'bold'
-                        }}>
-                          {partido.hora}
-                        </div>
-                      </div>
-
-                      <div style={{ textAlign: 'center', flex: 1 }}>
-                        <div style={{ fontSize: 18, fontWeight: 'bold', color: '#fff' }}>
-                          {partido.equipoVisitante}
-                        </div>
-                        <div style={{ fontSize: 14, color: '#ccc', marginTop: 5 }}>
-                          Visitante
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={{ 
-                      textAlign: 'center',
-                      padding: '15px',
-                      background: 'rgba(255, 215, 0, 0.1)',
-                      borderRadius: 15,
-                      border: `1px solid ${gold}`
-                    }}>
-                      <div style={{ fontSize: 14, color: gold, fontWeight: 'bold' }}>
-                        📍 {partido.estadio}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+        {/* Sugerencias de posts */}
+        {suggestedPosts.length > 0 && (
+          <div>
+            <div style={{ color: '#FFB347', fontSize: 14, fontWeight: 'bold', marginBottom: 16, borderBottom: `1px solid #FFB347`, paddingBottom: 8 }}>
+              ✨ Descubre nuevos contenidos ({suggestedPosts.length})
             </div>
-
-            {/* Resultados recientes */}
-            <div>
-              <h3 style={{ 
-                fontSize: 24, 
-                fontWeight: 'bold', 
-                marginBottom: 20,
-                color: gold,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10
-              }}>
-                <span>📊</span> Resultados Recientes
-              </h3>
-              
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
-                gap: 20
-              }}>
-                {[
-                  {
-                    id: 1,
-                    equipoLocal: 'Real Madrid',
-                    equipoVisitante: 'Atletico Madrid',
-                    resultadoLocal: 2,
-                    resultadoVisitante: 1,
-                    fecha: '2025-09-20',
-                    estado: 'Finalizado'
-                  },
-                  {
-                    id: 2,
-                    equipoLocal: 'Barcelona',
-                    equipoVisitante: 'Sevilla',
-                    resultadoLocal: 3,
-                    resultadoVisitante: 0,
-                    fecha: '2025-09-18',
-                    estado: 'Finalizado'
-                  },
-                  {
-                    id: 3,
-                    equipoLocal: 'Valencia',
-                    equipoVisitante: 'Villarreal',
-                    resultadoLocal: 1,
-                    resultadoVisitante: 1,
-                    fecha: '2025-09-15',
-                    estado: 'Finalizado'
-                  }
-                ].map(resultado => (
-                  <div key={resultado.id} style={{
-                    background: `linear-gradient(135deg, ${darkCard} 0%, #2a2a2a 100%)`,
-                    borderRadius: 15,
-                    padding: 20,
-                    border: `1px solid #333`,
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.borderColor = gold;
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.borderColor = '#333';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
-                  >
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: 15
-                    }}>
-                      <div style={{
-                        background: '#4CAF50',
-                        color: '#fff',
-                        padding: '3px 10px',
-                        borderRadius: 10,
-                        fontSize: 12,
-                        fontWeight: 'bold'
-                      }}>
-                        {resultado.estado}
-                      </div>
-                      <div style={{ color: '#ccc', fontSize: 12 }}>
-                        📅 {new Date(resultado.fecha).toLocaleDateString()}
-                      </div>
+            <div style={{ display: 'grid', gap: 16 }}>
+              {suggestedPosts.slice(0, 5).map(post => (
+                <article key={post.id} style={{ background: darkCard, borderRadius: 16, overflow: 'hidden', border: `1px solid #FFB347`, opacity: 0.8 }}>
+                  <header style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12 }}>
+                    <img src={post.avatar} alt={post.user} style={{ width: 40, height: 40, borderRadius: '50%' }} />
+                    <div>
+                      <div style={{ fontWeight: 700 }}>{post.user}</div>
+                      <div style={{ fontSize: 12, color: '#ccc' }}>{post.title}</div>
                     </div>
-
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between'
-                    }}>
-                      <div style={{ textAlign: 'left', flex: 1 }}>
-                        <div style={{ fontSize: 16, fontWeight: 'bold', color: '#fff' }}>
-                          {resultado.equipoLocal}
-                        </div>
-                      </div>
-
-                      <div style={{ 
-                        textAlign: 'center',
-                        padding: '0 20px'
-                      }}>
-                        <div style={{ 
-                          fontSize: 24, 
-                          fontWeight: 'bold', 
-                          color: gold
-                        }}>
-                          {resultado.resultadoLocal} - {resultado.resultadoVisitante}
-                        </div>
-                      </div>
-
-                      <div style={{ textAlign: 'right', flex: 1 }}>
-                        <div style={{ fontSize: 16, fontWeight: 'bold', color: '#fff' }}>
-                          {resultado.equipoVisitante}
-                        </div>
-                      </div>
+                    <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, fontSize: 12 }}>
+                      {post.tags.map(tag => (<span key={tag} style={{ background: '#222', padding: '4px 8px', borderRadius: 12 }}>{tag}</span>))}
                     </div>
+                  </header>
+                  <div>
+                    <img src={post.image} alt={post.title} style={{ width: '100%', display: 'block' }} />
                   </div>
-                ))}
-              </div>
+                  <div style={{ padding: 12, color: '#ddd' }}>{post.description}</div>
+                  <footer style={{ padding: '0 12px 12px' }}>
+                    <div style={{ display: 'flex', gap: 12 }}>
+                      <button onClick={() => onLike(post.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'transparent', border: `1px solid #FFB347`, color: '#FFB347', padding: 8, borderRadius: 8, cursor: 'pointer' }}>⚽ {post.likes}</button>
+                      <button onClick={() => setSelectedPostForComments(post.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'transparent', border: `1px solid #FFB347`, color: '#FFB347', padding: 8, borderRadius: 8, cursor: 'pointer' }}>💬 {post.comments}</button>
+                      <button onClick={() => onShare(post.id)} style={{ flex: 1, background: 'transparent', border: `1px solid #FFB347`, color: '#FFB347', padding: 8, borderRadius: 8, cursor: 'pointer' }}>📤</button>
+                    </div>
+                  </footer>
+                </article>
+              ))}
             </div>
           </div>
         )}
       </main>
-      
-      {/* Botón flotante para crear post - Tipo Instagram */}
-      <button 
-        onClick={() => navigate('/crear-post')}
-        style={{
-          position: 'fixed',
-          bottom: 90,
-          right: 20,
-          width: 60,
-          height: 60,
-          borderRadius: '50%',
-          background: `linear-gradient(45deg, ${gold}, ${lightGold})`,
-          border: 'none',
-          color: black,
-          fontSize: 24,
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 4px 20px rgba(255, 215, 0, 0.4)',
-          zIndex: 40,
-          transition: 'all 0.3s ease'
-        }}
-        onMouseOver={(e) => {
-          e.target.style.transform = 'scale(1.1)';
-          e.target.style.boxShadow = '0 6px 25px rgba(255, 215, 0, 0.6)';
-        }}
-        onMouseOut={(e) => {
-          e.target.style.transform = 'scale(1)';
-          e.target.style.boxShadow = '0 4px 20px rgba(255, 215, 0, 0.4)';
-        }}
-      >
-        ➕
-      </button>
-      
-      {/* Barra de navegación inferior - Tipo Instagram */}
-      <nav style={{ position: 'fixed', left: 0, bottom: 0, width: '100vw', background: black, borderTop: `2px solid ${gold}`, display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: 64, zIndex: 30 }}>
-        <button 
-          onClick={() => { setFeedbackNav('Home'); setTimeout(()=>{ setFeedbackNav(''); }, 400); }} 
-          style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}
-        >
-          <span role="img" aria-label="home">🏠</span>
-          <span style={{ fontSize: 12 }}>Home</span>
-        </button>
-        
-        <button 
-          onClick={() => { setFeedbackNav('Búsqueda'); setTimeout(()=>{ setFeedbackNav(''); }, 400); }} 
-          style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}
-        >
-          <span role="img" aria-label="search">�</span>
-          <span style={{ fontSize: 12 }}>Buscar</span>
-        </button>
-        
-        {/* Espacio para el botón flotante */}
-        <div style={{ width: 60 }}></div>
-        
-        <button 
-          onClick={() => { setFeedbackNav('Notificaciones'); setTimeout(()=>{ window.location.href='/notificaciones'; }, 400); }} 
-          style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}
-        >
-          <span role="img" aria-label="likes">❤️</span>
-          <span style={{ fontSize: 12 }}>Likes</span>
-        </button>
-        
-        <button 
-          onClick={() => { setFeedbackNav('Perfil'); setTimeout(()=>{ window.location.href='/perfil'; }, 400); }} 
-          style={{ background: 'none', border: 'none', color: gold, fontSize: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor:'pointer' }}
-        >
-          <span role="img" aria-label="profile">�</span>
-          <span style={{ fontSize: 12 }}>Perfil</span>
-        </button>
-      </nav>
-      
-      {feedbackNav && <div style={{position:'fixed',bottom:70,left:0,width:'100vw',textAlign:'center',color:gold,fontWeight:'bold',fontSize:18,zIndex:99,background:'#232323cc',padding:'8px 0',borderRadius:8}}>{feedbackNav}</div>}
 
-      {/* Componente del menú hamburguesa */}
-      <MenuHamburguesa onAccion={handleAccion} />
+      {/* Modal de comentarios */}
+      <CommentsModal 
+        postId={selectedPostForComments}
+        isOpen={!!selectedPostForComments}
+        onClose={() => setSelectedPostForComments(null)}
+      />
+
+      <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#111', borderTop: `1px solid ${gold}`, display: 'flex', justifyContent: 'space-around', padding: '10px 0' }}>
+        <button onClick={goHome}>🏠 Home</button>
+        <button onClick={goMarket}>🛒 Market</button>
+        <button onClick={goVideos}>🎥 Videos</button>
+        <button onClick={goAlerts}>🔔 Alertas</button>
+        <button onClick={goChat}>💬 Chat</button>
+      </nav>
+
+      <button
+        onClick={() => navigate('/feed')}
+        style={{ position: 'fixed', right: 20, bottom: 70, width: 56, height: 56, borderRadius: '50%', background: gold, color: black, fontWeight: 800, border: 'none', boxShadow: '0 6px 18px rgba(0,0,0,0.4)' }}
+        title="Crear publicación"
+      >+
+      </button>
     </div>
   );
 }

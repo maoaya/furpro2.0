@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext.jsx';
-import { AmigosService } from '../services/AmigosService';
+import { useAuth } from '../context/AuthContext';
 import { supabase } from '../config/supabase';
 import './Amigos.css';
 
@@ -12,93 +11,153 @@ const Amigos = () => {
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
 
   useEffect(() => {
+    if (!user) return;
     cargarAmigos();
     cargarSolicitudes();
+    
+    // Suscribirse a cambios en friend_requests en realtime
+    const channel = supabase
+      .channel(`friend_requests:${user.email}`)
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'friend_requests', filter: `to_email=eq.${user.email}` },
+        () => { cargarSolicitudes(); }
+      )
+      .subscribe();
+
+    // Suscribirse a cambios en friends
+    const channelFriends = supabase
+      .channel(`friends:${user.email}`)
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'friends', filter: `user_email=eq.${user.email}` },
+        () => { cargarAmigos(); }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+      channelFriends.unsubscribe();
+    };
   }, [user]);
 
-  const cargarAmigos = () => {
-    const amigosGuardados = JSON.parse(localStorage.getItem('futpro_amigos') || '[]');
-    setAmigos(amigosGuardados);
+  const cargarAmigos = async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('friends')
+      .select('id, friend_id, friend_email, friend_name, created_at')
+      .eq('user_email', user.email);
+    if (!error && data) {
+      const mapped = data.map(row => ({
+        id: row.friend_id || row.id,
+        nombre: row.friend_name || row.friend_email || 'Amigo',
+        email: row.friend_email,
+        fechaAmistad: row.created_at
+      }));
+      setAmigos(mapped);
+    }
   };
 
-  const cargarSolicitudes = () => {
-    const solicitudesGuardadas = JSON.parse(localStorage.getItem('futpro_solicitudes_amistad') || '[]');
-    setSolicitudes(solicitudesGuardadas);
+  const cargarSolicitudes = async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('friend_requests')
+      .select('id, from_email, from_name, to_email, status, created_at')
+      .eq('to_email', user.email)
+      .eq('status', 'pending');
+    if (!error && data) {
+      const mapped = data.map(r => ({
+        id: r.id,
+        de: r.from_email,
+        para: r.to_email,
+        nombrePara: r.from_name || r.from_email,
+        fecha: r.created_at,
+        estado: r.status
+      }));
+      setSolicitudes(mapped);
+    }
   };
 
-  const buscarUsuarios = () => {
+  const buscarUsuarios = async () => {
     if (!busqueda.trim()) return;
 
-    // Simular búsqueda de usuarios (en producción sería una API call)
-    const usuariosSimulados = [
-      { id: 1, nombre: 'Carlos Rodríguez', email: 'carlos@email.com', categoria: 'masculina' },
-      { id: 2, nombre: 'María García', email: 'maria@email.com', categoria: 'femenina' },
-      { id: 3, nombre: 'Juan Pérez', email: 'juan@email.com', categoria: 'infantil_masculina' },
-      { id: 4, nombre: 'Ana López', email: 'ana@email.com', categoria: 'infantil_femenina' }
-    ];
+    // Buscar en tabla profiles de Supabase
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('email, full_name, category')
+      .or(`full_name.ilike.%${busqueda}%,email.ilike.%${busqueda}%`)
+      .limit(10);
 
-    const resultados = usuariosSimulados.filter(usuario =>
-      usuario.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      usuario.email.toLowerCase().includes(busqueda.toLowerCase())
-    );
-
-    setUsuariosEncontrados(resultados);
+    if (!error && data) {
+      const filtrados = data.filter(p => p.email !== user?.email); // Excluir al mismo usuario
+      const mapped = filtrados.map(p => ({
+        email: p.email,
+        nombre: p.full_name || p.email,
+        categoria: p.category || 'general'
+      }));
+      setUsuariosEncontrados(mapped);
+    }
   };
 
-  const enviarSolicitud = (usuarioId, nombreUsuario) => {
-    const nuevaSolicitud = {
-      id: Date.now(),
-      de: user?.email || 'Usuario',
-      para: usuarioId,
-      nombrePara: nombreUsuario,
-      fecha: new Date().toISOString(),
-      estado: 'pendiente'
-    };
-
-    const solicitudesActualizadas = [...solicitudes, nuevaSolicitud];
-    setSolicitudes(solicitudesActualizadas);
-    localStorage.setItem('futpro_solicitudes_amistad', JSON.stringify(solicitudesActualizadas));
-
-    // Remover de usuarios encontrados
-    setUsuariosEncontrados(usuariosEncontrados.filter(u => u.id !== usuarioId));
-
-    alert(`Solicitud de amistad enviada a ${nombreUsuario}`);
+  const enviarSolicitud = async (usuarioEmail, nombreUsuario) => {
+    if (!user) return;
+    const { error } = await supabase
+      .from('friend_requests')
+      .insert([{
+        from_email: user.email,
+        from_name: user.email,
+        to_email: usuarioEmail,
+        status: 'pending'
+      }]);
+    if (!error) {
+      await cargarSolicitudes();
+      setUsuariosEncontrados(usuariosEncontrados.filter(u => u.email !== usuarioEmail));
+      alert(`Solicitud de amistad enviada a ${nombreUsuario}`);
+    }
   };
 
-  const aceptarSolicitud = (solicitudId) => {
+  const aceptarSolicitud = async (solicitudId) => {
     const solicitud = solicitudes.find(s => s.id === solicitudId);
-    if (!solicitud) return;
+    if (!solicitud || !user) return;
 
-    // Agregar a amigos
-    const nuevoAmigo = {
-      id: solicitud.para,
-      nombre: solicitud.nombrePara,
-      email: solicitud.para,
-      fechaAmistad: new Date().toISOString()
-    };
+    const { error: errUpdate } = await supabase
+      .from('friend_requests')
+      .update({ status: 'accepted' })
+      .eq('id', solicitudId);
 
-    const amigosActualizados = [...amigos, nuevoAmigo];
-    setAmigos(amigosActualizados);
-    localStorage.setItem('futpro_amigos', JSON.stringify(amigosActualizados));
+    const { error: errInsert } = await supabase
+      .from('friends')
+      .insert([
+        { user_email: user.email, friend_email: solicitud.de, friend_name: solicitud.nombrePara },
+        { user_email: solicitud.de, friend_email: user.email, friend_name: user.email }
+      ]);
 
-    // Remover solicitud
-    const solicitudesActualizadas = solicitudes.filter(s => s.id !== solicitudId);
-    setSolicitudes(solicitudesActualizadas);
-    localStorage.setItem('futpro_solicitudes_amistad', JSON.stringify(solicitudesActualizadas));
-
-    alert(`Ahora eres amigo de ${solicitud.nombrePara}`);
+    if (!errUpdate && !errInsert) {
+      await cargarAmigos();
+      await cargarSolicitudes();
+      alert(`Ahora eres amigo de ${solicitud.nombrePara}`);
+    }
   };
 
-  const rechazarSolicitud = (solicitudId) => {
-    const solicitudesActualizadas = solicitudes.filter(s => s.id !== solicitudId);
-    setSolicitudes(solicitudesActualizadas);
-    localStorage.setItem('futpro_solicitudes_amistad', JSON.stringify(solicitudesActualizadas));
+  const rechazarSolicitud = async (solicitudId) => {
+    await supabase
+      .from('friend_requests')
+      .update({ status: 'rejected' })
+      .eq('id', solicitudId);
+    await cargarSolicitudes();
   };
 
-  const removerAmigo = (amigoId) => {
-    const amigosActualizados = amigos.filter(a => a.id !== amigoId);
-    setAmigos(amigosActualizados);
-    localStorage.setItem('futpro_amigos', JSON.stringify(amigosActualizados));
+  const removerAmigo = async (amigoEmail) => {
+    if (!user) return;
+    await supabase
+      .from('friends')
+      .delete()
+      .eq('user_email', user.email)
+      .eq('friend_email', amigoEmail);
+    await supabase
+      .from('friends')
+      .delete()
+      .eq('user_email', amigoEmail)
+      .eq('friend_email', user.email);
+    await cargarAmigos();
   };
 
   return (
@@ -171,7 +230,7 @@ const Amigos = () => {
                 </div>
               </div>
               <button
-                onClick={() => enviarSolicitud(usuario.id, usuario.nombre)}
+                onClick={() => enviarSolicitud(usuario.email, usuario.nombre)}
                 className="btn-enviar-solicitud"
               >
                 Enviar Solicitud

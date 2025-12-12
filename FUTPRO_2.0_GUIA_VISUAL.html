@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutPro 2.0 - Guía Completa de Flujos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #fff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #FFD700;
+            margin-bottom: 20px;
+        }
+        
+        section {
+            margin-bottom: 40px;
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 4px solid #FFD700;
+        }
+        
+        h2 {
+            color: #FFD700;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h3 {
+            color: #FFA500;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #2a2a2a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: #FFD700;
+            color: #000;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        
+        tr:hover {
+            background: #3a3a3a;
+        }
+        
+        .flow-box {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px dashed #FFD700;
+        }
+        
+        .button-example {
+            display: inline-block;
+            background: #FFD700;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .button-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+        
+        .button-logout {
+            background: #ff6b35;
+            color: #fff;
+        }
+        
+        .section-title {
+            color: #FFD700;
+            font-weight: bold;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #2a2a2a;
+            margin: 8px 0;
+            border-radius: 5px;
+            border-left: 3px solid #FFD700;
+        }
+        
+        .menu-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+        
+        .menu-text {
+            flex: 1;
+        }
+        
+        .menu-route {
+            color: #FFD700;
+            font-weight: bold;
+        }
+        
+        .check {
+            color: #28a745;
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+        
+        .warning {
+            color: #ff6b6b;
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+        
+        .diagram {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #FFD700;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            color: #FFD700;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            color: #ccc;
+            margin-top: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid #FFD700;
+            color: #ccc;
+        }
+        
+        .highlight {
+            background: #3a3a3a;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 3px solid #FFA500;
+        }
+        
+        code {
+            background: #2a2a2a;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #FFD700;
+            font-family: monospace;
+        }
+        
+        .grid-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚽ FUTPRO 2.0</h1>
+            <div class="subtitle">Guía Completa de Flujos, Rutas y Funciones</div>
+        </header>
+
+        <!-- ESTADÍSTICAS RÁPIDAS -->
+        <section>
+            <h2>📊 Estadísticas Generales</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">26</div>
+                    <div class="stat-label">Rutas Principales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">27</div>
+                    <div class="stat-label">Opciones Menú</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Config. Cuenta</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Secciones Principales</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FLUJO DE USUARIO -->
+        <section>
+            <h2>🎯 Flujo Principal del Usuario</h2>
+            <p>Desde el primer acceso hasta la página principal de la aplicación:</p>
+            
+            <div class="flow-box">
+                <h3>Paso 1: Login 🔐</h3>
+                <p><strong>Ruta:</strong> <code>/</code></p>
+                <p><strong>Archivo:</strong> <code>LoginRegisterForm.jsx</code></p>
+                <p><strong>Acciones disponibles:</strong></p>
+                <div class="grid-buttons">
+                    <button class="button-example">📧 Registrarse</button>
+                    <button class="button-example">🔐 Iniciar Sesión</button>
+                    <button class="button-example">🔍 Recuperar Password</button>
+                    <button class="button-example">🔵 Google OAuth</button>
+                </div>
+            </div>
+
+            <div class="flow-box">
+                <h3>Paso 2: Seleccionar Categoría 🎯</h3>
+                <p><strong>Ruta:</strong> <code>/seleccionar-categoria</code></p>
+                <p><strong>Archivo:</strong> <code>SeleccionCategoria.jsx</code></p>
+                <p><strong>Opciones:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>⚽ Fútbol Masculino</li>
+                    <li>⚽ Fútbol Femenino</li>
+                    <li>⚽ Fútbol Mixto</li>
+                </ul>
+            </div>
+
+            <div class="flow-box">
+                <h3>Paso 3: Registro Completo 📝</h3>
+                <p><strong>Ruta:</strong> <code>/formulario-registro</code></p>
+                <p><strong>Archivo:</strong> <code>FormularioRegistroCompleto.jsx</code></p>
+                <p><strong>Datos solicitados:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Nombre y email</li>
+                    <li>Posición en el campo</li>
+                    <li>Nivel de juego</li>
+                    <li>Ubicación geográfica</li>
+                    <li>Foto de perfil</li>
+                    <li>Datos opcionales</li>
+                </ul>
+            </div>
+
+            <div class="flow-box">
+                <h3>Paso 4: Autenticación Google 🔵</h3>
+                <p><strong>Ruta:</strong> <code>/auth/callback</code></p>
+                <p><strong>Archivo:</strong> <code>auth/AuthCallback.jsx</code></p>
+                <p><strong>Proceso:</strong></p>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Usuario autoriza en Google</li>
+                    <li>Google redirige con código</li>
+                    <li>Netlify procesa callback</li>
+                    <li>Se crea perfil en BD</li>
+                    <li>Redirige a tarjeta de perfil</li>
+                </ol>
+            </div>
+
+            <div class="flow-box">
+                <h3>Paso 5: Tarjeta de Perfil 🎴</h3>
+                <p><strong>Ruta:</strong> <code>/perfil-card</code></p>
+                <p><strong>Archivo:</strong> <code>PerfilCard.jsx</code></p>
+                <p><strong>Muestra:</strong> Tarjeta de jugador estilo Instagram con estadísticas</p>
+                <p style="margin-top: 15px;">
+                    <button class="button-example">✏️ Editar Perfil</button>
+                    <button class="button-example">➡️ Continuar al Home</button>
+                </p>
+            </div>
+
+            <div class="flow-box">
+                <h3>Paso 6: Homepage Instagram 🏠</h3>
+                <p><strong>Ruta:</strong> <code>/home</code></p>
+                <p><strong>Archivo:</strong> <code>homepage-instagram.html</code></p>
+                <p><strong>Punto central de la aplicación</strong></p>
+                <p style="margin-top: 15px; color: #FFD700;">✅ Desde aquí accede a todas las 27 funciones del menú</p>
+            </div>
+        </section>
+
+        <!-- MENÚ HAMBURGUESA -->
+        <section>
+            <h2>🍔 Menú Hamburguesa - 27 Opciones</h2>
+            
+            <h3>📱 Sección 1: Perfil & Estadísticas (7)</h3>
+            <div class="menu-item">
+                <div class="menu-icon">🏠</div>
+                <div class="menu-text">
+                    <strong>Inicio</strong><br>
+                    Recarga el feed principal
+                </div>
+                <div class="menu-route">/home</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">👤</div>
+                <div class="menu-text">
+                    <strong>Mi Perfil</strong><br>
+                    Ver perfil completo del usuario
+                </div>
+                <div class="menu-route">/perfil</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">✏️</div>
+                <div class="menu-text">
+                    <strong>Editar Perfil</strong><br>
+                    Modificar datos personales
+                </div>
+                <div class="menu-route">/editar-perfil</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">📊</div>
+                <div class="menu-text">
+                    <strong>Mis Estadísticas</strong><br>
+                    Gráficos: goles, asistencias, partidos
+                </div>
+                <div class="menu-route">/estadisticas</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">📅</div>
+                <div class="menu-text">
+                    <strong>Mis Partidos</strong><br>
+                    Histórico de partidos jugados
+                </div>
+                <div class="menu-route">/partidos</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">🏆</div>
+                <div class="menu-text">
+                    <strong>Mis Logros</strong><br>
+                    Badges y logros desbloqueados
+                </div>
+                <div class="menu-route">/logros</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">🆔</div>
+                <div class="menu-text">
+                    <strong>Mis Tarjetas</strong><br>
+                    Galería de tarjetas FIFA
+                </div>
+                <div class="menu-route">/tarjetas</div>
+            </div>
+
+            <h3>👥 Sección 2: Equipos & Torneos (5)</h3>
+            <div class="menu-item">
+                <div class="menu-icon">👥</div>
+                <div class="menu-text">
+                    <strong>Ver Equipos</strong><br>
+                    Lista todos los equipos registrados
+                </div>
+                <div class="menu-route">/equipos</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">➕</div>
+                <div class="menu-text">
+                    <strong>Crear Equipo</strong><br>
+                    Formulario para nuevo equipo
+                </div>
+                <div class="menu-route">/crear-equipo</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">🏆</div>
+                <div class="menu-text">
+                    <strong>Ver Torneos</strong><br>
+                    Torneos activos y próximos
+                </div>
+                <div class="menu-route">/torneos</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">➕</div>
+                <div class="menu-text">
+                    <strong>Crear Torneo</strong><br>
+                    Formulario para organizar torneo
+                </div>
+                <div class="menu-route">/crear-torneo</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">🤝</div>
+                <div class="menu-text">
+                    <strong>Crear Amistoso</strong><br>
+                    Crear partido amistoso rápido
+                </div>
+                <div class="menu-route">/amistoso</div>
+            </div>
+
+            <h3>🎮 Sección 3: Juegos & Tarjetas (2)</h3>
+            <div class="menu-item">
+                <div class="menu-icon">⚽</div>
+                <div class="menu-text">
+                    <strong>Penaltis</strong><br>
+                    Minijuego de penaltis interactivo
+                </div>
+                <div class="menu-route">/penaltis</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">🆔</div>
+                <div class="menu-text">
+                    <strong>Card Futpro</strong><br>
+                    Tarjeta de jugador estilo FIFA
+                </div>
+                <div class="menu-route">/card-fifa</div>
+            </div>
+
+            <h3>💬 Sección 4: Social (7)</h3>
+            <div class="menu-item">
+                <div class="menu-icon">🔔</div>
+                <div class="menu-text">
+                    <strong>Notificaciones</strong><br>
+                    Centro de notificaciones (likes, comentarios)
+                </div>
+                <div class="menu-route">/notificaciones</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">💬</div>
+                <div class="menu-text">
+                    <strong>Chat</strong><br>
+                    Mensajería privada y grupos
+                </div>
+                <div class="menu-route">/chat</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">🎥</div>
+                <div class="menu-text">
+                    <strong>Videos</strong><br>
+                    Galería de videos tipo TikTok
+                </div>
+                <div class="menu-route">/videos</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">🏪</div>
+                <div class="menu-text">
+                    <strong>Marketplace</strong><br>
+                    Tienda de equipamiento y servicios
+                </div>
+                <div class="menu-route">/marketplace</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">📋</div>
+                <div class="menu-text">
+                    <strong>Estados</strong><br>
+                    Ver estados de otros usuarios
+                </div>
+                <div class="menu-route">/estados</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">👫</div>
+                <div class="menu-text">
+                    <strong>Amigos</strong><br>
+                    Lista de amigos y solicitudes
+                </div>
+                <div class="menu-route">/amigos</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">📡</div>
+                <div class="menu-text">
+                    <strong>Transmitir en Vivo</strong><br>
+                    Streaming en directo de partidos
+                </div>
+                <div class="menu-route">/transmision-vivo</div>
+            </div>
+
+            <h3>🏅 Sección 5: Rankings (3)</h3>
+            <div class="menu-item">
+                <div class="menu-icon">📊</div>
+                <div class="menu-text">
+                    <strong>Ranking Jugadores</strong><br>
+                    Clasificación mundial de jugadores
+                </div>
+                <div class="menu-route">/ranking</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">📈</div>
+                <div class="menu-text">
+                    <strong>Ranking Equipos</strong><br>
+                    Clasificación de equipos por partidos
+                </div>
+                <div class="menu-route">/ranking-equipos</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">🔍</div>
+                <div class="menu-text">
+                    <strong>Buscar Ranking</strong><br>
+                    Búsqueda avanzada de rankings
+                </div>
+                <div class="menu-route">/buscar-ranking</div>
+            </div>
+
+            <h3>⚙️ Sección 6: Administración (3)</h3>
+            <div class="menu-item">
+                <div class="menu-icon">🔧</div>
+                <div class="menu-text">
+                    <strong>Configuración</strong><br>
+                    Panel de configuración de cuenta
+                </div>
+                <div class="menu-route">/configuracion-cuenta</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">🆘</div>
+                <div class="menu-text">
+                    <strong>Soporte</strong><br>
+                    Centro de ayuda y contacto
+                </div>
+                <div class="menu-route">/soporte</div>
+            </div>
+            
+            <div class="menu-item">
+                <div class="menu-icon">🛡️</div>
+                <div class="menu-text">
+                    <strong>Privacidad</strong><br>
+                    Políticas de privacidad y términos
+                </div>
+                <div class="menu-route">/privacidad</div>
+            </div>
+        </section>
+
+        <!-- CONFIGURACIÓN DE CUENTA -->
+        <section>
+            <h2>⚙️ Configuración de Cuenta - 5 Opciones</h2>
+            <p><strong>Ruta:</strong> <code>/configuracion-cuenta</code></p>
+            <p><strong>Archivo:</strong> <code>ConfiguracionCuenta.jsx</code></p>
+
+            <div class="menu-item">
+                <div class="menu-icon">🔐</div>
+                <div class="menu-text">
+                    <strong>Cambiar Contraseña</strong><br>
+                    Introduce contraseña actual, nueva y confirmación
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-icon">📍</div>
+                <div class="menu-text">
+                    <strong>Cambiar Ubicación</strong><br>
+                    Actualiza tu ubicación geográfica
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-icon">🔒</div>
+                <div class="menu-text">
+                    <strong>Cambiar Privacidad</strong><br>
+                    Elige entre pública o privada
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-icon warning">🗑️</div>
+                <div class="menu-text">
+                    <strong>Eliminar Cuenta</strong><br>
+                    Elimina permanentemente toda tu información
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-icon">🚪</div>
+                <div class="menu-text">
+                    <strong>Cerrar Sesión</strong><br>
+                    Logout y regresa a la pantalla de login
+                </div>
+            </div>
+        </section>
+
+        <!-- CAMBIOS REALIZADOS -->
+        <section>
+            <h2>✅ Cambios Realizados</h2>
+            <div class="flow-box">
+                <div style="margin: 10px 0;">
+                    <span class="check">✅</span>
+                    <strong>Eliminado duplicado:</strong> "Sugerencias Card" estaba 2 veces en el menú
+                </div>
+                <div style="margin: 10px 0;">
+                    <span class="check">✅</span>
+                    <strong>Creado componente:</strong> ConfiguracionCuenta.jsx con 5 funciones completas
+                </div>
+                <div style="margin: 10px 0;">
+                    <span class="check">✅</span>
+                    <strong>Actualizado menú:</strong> MenuHamburguesa.jsx sin duplicados
+                </div>
+                <div style="margin: 10px 0;">
+                    <span class="check">✅</span>
+                    <strong>Agregada ruta:</strong> /configuracion-cuenta en AppRouter.jsx
+                </div>
+                <div style="margin: 10px 0;">
+                    <span class="check">✅</span>
+                    <strong>Documentado:</strong> Flujo completo y 27 funciones del menú
+                </div>
+            </div>
+        </section>
+
+        <!-- INFORMACIÓN TÉCNICA -->
+        <section>
+            <h2>🔧 Información Técnica</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Rutas principales</td>
+                        <td>26 rutas mapeadas en AppRouter.jsx</td>
+                    </tr>
+                    <tr>
+                        <td>Opciones menú</td>
+                        <td>27 funciones en MenuHamburguesa.jsx</td>
+                    </tr>
+                    <tr>
+                        <td>Configuración cuenta</td>
+                        <td>5 opciones en ConfiguracionCuenta.jsx</td>
+                    </tr>
+                    <tr>
+                        <td>Autenticación</td>
+                        <td>Supabase Auth + Google OAuth</td>
+                    </tr>
+                    <tr>
+                        <td>Base de datos</td>
+                        <td>Supabase PostgreSQL</td>
+                    </tr>
+                    <tr>
+                        <td>Página principal</td>
+                        <td>homepage-instagram.html (HTML + JS puro)</td>
+                    </tr>
+                    <tr>
+                        <td>Framework frontend</td>
+                        <td>React + React Router</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <footer>
+            <p><strong>FutPro 2.0</strong> - Guía Completa de Flujos, Rutas y Funciones</p>
+            <p>Última actualización: 12 de diciembre de 2025</p>
+            <p>Versión: Build Completo</p>
+        </footer>
+    </div>
+</body>
+</html>

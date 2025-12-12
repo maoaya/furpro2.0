@@ -4,8 +4,10 @@ import { Link, useLocation } from 'react-router-dom';
 
 const menuItems = [
   { to: '/', label: 'Inicio', icon: '🏠' },
-  { to: '/dashboard', label: 'Dashboard', icon: '📊' },
-  { to: '/perfil-avanzado', label: 'Perfil', icon: '👤' },
+  { to: '/videos', label: 'Videos', icon: '🎬' },
+  { to: '/perfil/me', label: 'Perfil', icon: '👤' },
+  { to: '/ranking-jugadores', label: 'Ranking Jug.', icon: '📈' },
+  { to: '/ranking-equipos', label: 'Ranking Eq.', icon: '📊' },
   { to: '/usuarios', label: 'Usuarios', icon: '👥' },
   { to: '/equipos', label: 'Equipos', icon: '⚽' },
   { to: '/torneos', label: 'Torneos', icon: '🏆' },

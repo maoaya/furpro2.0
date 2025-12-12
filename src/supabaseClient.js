@@ -58,7 +58,49 @@ if (!isJest) {
     console.log('[supabase:test] init');
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, supabaseOptions);
+// Evitar múltiples instancias de GoTrueClient (warning en tests) y sesiones persistentes en Node/Jest
+// Reutilizamos un singleton en globalThis y ajustamos opciones de auth cuando es entorno de test/Node.
+let supabase;
+try {
+    const isTestEnv = typeof process !== 'undefined' && (
+        process.env.JEST_WORKER_ID || process.env.NODE_ENV === 'test'
+    );
+
+    const isNodeRuntime = typeof window === 'undefined';
+
+    const globalKey = '__futpro_supabase_client__';
+    const existing = typeof globalThis !== 'undefined' ? globalThis[globalKey] : null;
+
+    if (existing) {
+        supabase = existing;
+    } else {
+        const options = { ...supabaseOptions };
+        // En Node/Jest evitamos persistencia y autorefresh para no crear múltiples clientes de auth
+        if (isNodeRuntime || isTestEnv) {
+            options.auth = {
+                ...options.auth,
+                persistSession: false,
+                autoRefreshToken: false,
+                // Storage mínimo no persistente para suprimir advertencias de almacenamiento
+                storage: {
+                    getItem: () => null,
+                    setItem: () => {},
+                    removeItem: () => {}
+                },
+                // Usar storageKey único por proceso para evitar colisiones
+                storageKey: `sb-${Math.random().toString(36).slice(2)}`
+            };
+        }
+
+        supabase = createClient(SUPABASE_URL, SUPABASE_KEY, options);
+        if (typeof globalThis !== 'undefined') {
+            globalThis[globalKey] = supabase;
+        }
+    }
+} catch (e) {
+    // Fallback simple si algo falla durante la inicialización
+    supabase = createClient(SUPABASE_URL, SUPABASE_KEY, supabaseOptions);
+}
 
 // Listener de auth sólo en entorno real (no Jest backend)
 if (!isJest && !isNode) {

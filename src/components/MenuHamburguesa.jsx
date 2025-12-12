@@ -16,7 +16,6 @@ const SECCIONES = [
   { nombre: 'Crear Amistoso', icono: '🤝', accion: 'crearAmistoso' },
   { nombre: 'Juego de Penaltis', icono: '⚽', accion: 'jugarPenaltis' },
   { nombre: 'Card Futpro', icono: '🆔', accion: 'verCardFIFA' },
-  { nombre: 'Sugerencias Card', icono: '💡', accion: 'sugerenciasCard' },
   { nombre: 'Notificaciones', icono: '🔔', accion: 'verNotificaciones' },
   { nombre: 'Chat', icono: '💬', accion: 'abrirChat' },
   { nombre: 'Videos', icono: '🎥', accion: 'verVideos' },

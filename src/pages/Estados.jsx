@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../config/supabase';
 import './Estados.css';
 
 const Estados = () => {
@@ -10,60 +11,69 @@ const Estados = () => {
 
   useEffect(() => {
     cargarEstados();
+
+    // Suscribirse a cambios en statuses en realtime
+    const channel = supabase
+      .channel('statuses:all')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'statuses' },
+        () => { cargarEstados(); }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
   }, [user]);
 
-  const cargarEstados = () => {
-    const estadosGuardados = JSON.parse(localStorage.getItem('futpro_estados') || '[]');
-    setEstados(estadosGuardados);
+  const cargarEstados = async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('statuses')
+      .select('id, text, user_email, category, created_at, likes_count, comments_count')
+      .order('created_at', { ascending: false });
+    if (!error && data) {
+      const mapped = data.map(row => ({
+        id: row.id,
+        texto: row.text,
+        usuario: row.user_email,
+        categoria: row.category,
+        fecha: row.created_at,
+        likes: row.likes_count || 0,
+        comentariosCount: row.comments_count || 0,
+        comentarios: []
+      }));
+      setEstados(mapped);
+    }
   };
 
-  const agregarEstado = () => {
-    if (!nuevoEstado.trim()) return;
-
+  const agregarEstado = async () => {
+    if (!nuevoEstado.trim() || !user) return;
     setLoading(true);
-    const nuevoEstadoObj = {
-      id: Date.now(),
-      texto: nuevoEstado.trim(),
-      usuario: user?.email || 'Usuario',
-      categoria: categoria,
-      fecha: new Date().toISOString(),
-      likes: 0,
-      comentarios: []
-    };
-
-    const estadosActualizados = [nuevoEstadoObj, ...estados];
-    setEstados(estadosActualizados);
-    localStorage.setItem('futpro_estados', JSON.stringify(estadosActualizados));
-    setNuevoEstado('');
+    const { error } = await supabase
+      .from('statuses')
+      .insert([{ text: nuevoEstado.trim(), user_email: user.email, category: categoria }]);
+    if (!error) {
+      setNuevoEstado('');
+      await cargarEstados();
+    }
     setLoading(false);
   };
 
-  const darLike = (estadoId) => {
-    const estadosActualizados = estados.map(estado =>
-      estado.id === estadoId
-        ? { ...estado, likes: estado.likes + 1 }
-        : estado
-    );
-    setEstados(estadosActualizados);
-    localStorage.setItem('futpro_estados', JSON.stringify(estadosActualizados));
+  const darLike = async (estadoId) => {
+    await supabase
+      .from('statuses')
+      .update({ likes_count: (estados.find(e => e.id === estadoId)?.likes || 0) + 1 })
+      .eq('id', estadoId);
+    await cargarEstados();
   };
 
-  const agregarComentario = (estadoId, comentario) => {
-    const estadosActualizados = estados.map(estado =>
-      estado.id === estadoId
-        ? {
-            ...estado,
-            comentarios: [...estado.comentarios, {
-              id: Date.now(),
-              texto: comentario,
-              usuario: user?.email || 'Usuario',
-              fecha: new Date().toISOString()
-            }]
-          }
-        : estado
-    );
-    setEstados(estadosActualizados);
-    localStorage.setItem('futpro_estados', JSON.stringify(estadosActualizados));
+  const agregarComentario = async (estadoId, comentario) => {
+    if (!user) return;
+    await supabase
+      .from('status_comments')
+      .insert([{ status_id: estadoId, text: comentario, user_email: user.email }]);
+    await cargarEstados();
   };
 
   return (
@@ -130,7 +140,7 @@ const Estados = () => {
                 </button>
                 <button className="btn-comment">
                   <i className="fas fa-comment"></i>
-                  <span>{estado.comentarios.length}</span>
+                  <span>{estado.comentariosCount}</span>
                 </button>
               </div>
 

@@ -22,8 +22,10 @@ class UserActivityTracker {
     this.autoSaveInterval = null;
     this.debounceTimers = new Map();
     
-    // Si estamos en entorno no navegador, deshabilitar el tracker pero permitir import seguro
-    if (!hasWindow || !hasLocalStorage || !hasNavigator) {
+    // Si estamos en entorno no navegador o en Jest/Node tests, deshabilitar el tracker
+    const isJest = typeof process !== 'undefined' && (process.env.JEST_WORKER_ID || process.env.NODE_ENV === 'test');
+    const isNodeRuntime = typeof window === 'undefined';
+    if (!hasWindow || !hasLocalStorage || !hasNavigator || isJest || isNodeRuntime) {
       this.disabled = true;
       return;
     }
@@ -293,6 +295,9 @@ class UserActivityTracker {
    * 💾 PROCESAMIENTO Y GUARDADO
    */
   async processPendingActions(force = false) {
+    if (this.disabled) {
+      return;
+    }
     if (!this.isOnline && !force) {
       console.log('📴 Sin conexión - Acciones en cola:', this.pendingActions.length);
       return;
@@ -326,6 +331,7 @@ class UserActivityTracker {
           localStorage.setItem('futpro_tracking_disabled', 'true');
           this.pendingActions = []; // Limpiar cola
           clearInterval(this.autoSaveInterval); // Detener auto-save
+          this.disabled = true;
           return;
         }
         

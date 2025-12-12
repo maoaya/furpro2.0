@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import SidebarMenu from './components/SidebarMenu';
 import FeedPage from './pages/FeedPage';
-import Perfil from './pages/Perfil';
+import PerfilInstagram from './pages/PerfilInstagram';
 import Notificaciones from './pages/Notificaciones';
 import PageInDevelopment from './components/PageInDevelopment';
 import EquipoDetallePage from './pages/EquipoDetallePage';
@@ -35,11 +35,11 @@ import Amistoso from './pages/Amistoso';
 import CardFIFA from './pages/CardFIFA';
 import SugerenciasCard from './pages/SugerenciasCard';
 import Chat from './pages/Chat';
-import Videos from './pages/Videos';
-import Marketplace from './pages/Marketplace';
+import VideosFeed from './pages/VideosFeed';
+import MarketplaceCompleto from './pages/MarketplaceCompleto';
 import TransmisionEnVivo from './pages/TransmisionEnVivo';
-import RankingJugadores from './pages/RankingJugadores';
-import RankingEquipos from './pages/RankingEquipos';
+import RankingJugadoresCompleto from './pages/RankingJugadoresCompleto';
+import RankingEquiposCompleto from './pages/RankingEquiposCompleto';
 import BuscarRanking from './pages/BuscarRanking';
 import Soporte from './pages/Soporte';
 import Privacidad from './pages/Privacidad';
@@ -70,8 +70,10 @@ export default function App() {
     <AuthProvider>
       <Router>
         <Routes>
+        {/* HomePage es la ruta raíz SIN Layout */}
+        <Route path="/" element={<HomePage />} />
+        
         {/* Rutas de autenticación - SIN Layout */}
-        <Route path="/" element={<LoginRegisterForm />} />
         <Route path="/login" element={<AuthPageUnificada />} />
         <Route path="/registro" element={<AuthPageUnificada />} />
         <Route path="/registro-nuevo" element={<RegistroNuevo />} />
@@ -88,9 +90,10 @@ export default function App() {
         
         {/* Rutas principales - CON Layout */}
         {/* Redirigir /home al home definitivo estático */}
-        <Route path="/home" element={<HomeRedirect />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/feed" element={<Layout><FeedPage /></Layout>} />
-        <Route path="/perfil/:userId" element={<Layout><Perfil /></Layout>} />
+        <Route path="/perfil/me" element={<Layout><PerfilInstagram /></Layout>} />
+        <Route path="/perfil/:userId" element={<Layout><PerfilInstagram /></Layout>} />
         <Route path="/notificaciones" element={<Layout><Notificaciones /></Layout>} />
         <Route path="/admin" element={<Layout><PageInDevelopment title="⚙️ Panel de Administración" icon="⚙️" /></Layout>} />
       <Route path="/equipo/:id" element={<Layout><EquipoDetallePage /></Layout>} />
@@ -104,7 +107,8 @@ export default function App() {
       <Route path="/configuracion" element={<Layout><ConfiguracionPage /></Layout>} />
       <Route path="/compartir" element={<Layout><PageInDevelopment title="📤 Compartir Contenido" icon="📤" /></Layout>} />
       <Route path="/chat-sql" element={<Layout><PageInDevelopment title="💬 Chat SQL" icon="💬" /></Layout>} />
-      <Route path="/marketplace" element={<Layout><PageInDevelopment title="🛒 Marketplace" icon="🛒" /></Layout>} />
+      {/* Marketplace completo */}
+      <Route path="/marketplace" element={<Layout><MarketplaceCompleto /></Layout>} />
         <Route path="/logros" element={<Layout><Logros /></Layout>} />
       <Route path="/estadisticas-avanzadas" element={<Layout><EstadisticasAvanzadasPage /></Layout>} />
         <Route path="/comparativas" element={<Layout><PageInDevelopment title="📊 Comparativas" icon="📊" /></Layout>} />
@@ -122,13 +126,13 @@ export default function App() {
         <Route path="/sugerencias-card" element={<SugerenciasCard />} />
         <Route path="/notificaciones" element={<Notificaciones />} />
         <Route path="/chat" element={<Chat />} />
-        <Route path="/videos" element={<Videos />} />
-        <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/videos" element={<VideosFeed />} />
+        <Route path="/marketplace" element={<MarketplaceCompleto />} />
         <Route path="/estados" element={<Estados />} />
         <Route path="/amigos" element={<Amigos />} />
         <Route path="/transmision-en-vivo" element={<TransmisionEnVivo />} />
-        <Route path="/ranking-jugadores" element={<RankingJugadores />} />
-        <Route path="/ranking-equipos" element={<RankingEquipos />} />
+        <Route path="/ranking-jugadores" element={<RankingJugadoresCompleto />} />
+        <Route path="/ranking-equipos" element={<RankingEquiposCompleto />} />
         <Route path="/buscar-ranking" element={<BuscarRanking />} />
         <Route path="/configuracion" element={<Configuracion />} />
         <Route path="/soporte" element={<Soporte />} />

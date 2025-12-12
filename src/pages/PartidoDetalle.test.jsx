@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext.jsx';
+import { AuthContext } from '../context/AuthContext';
 import PartidoDetalle from './PartidoDetalle.jsx';
 
 // Mock de supabaseClient con channel()

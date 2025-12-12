@@ -4,7 +4,6 @@ import {
   goHome
 } from '../stubs/loginRegisterFormFunctions';
 import { useAuth } from '../context/AuthContext';
-  const { loginWithGoogle } = useAuth();
 import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment.js';
@@ -12,6 +11,7 @@ import { getConfig } from '../config/environment.js';
 const gold = '#FFD700';
 
 export default function LoginRegisterFormClean() {
+  const { loginWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

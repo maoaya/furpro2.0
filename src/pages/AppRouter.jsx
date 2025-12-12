@@ -42,6 +42,7 @@ const NotificationsPage = lazy(() => import('./NotificationsPage'));
 const IntegracionesPage = lazy(() => import('./IntegracionesPage'));
 const PrivacidadPage = lazy(() => import('./PrivacidadPage'));
 const ConfiguracionPage = lazy(() => import('./ConfiguracionPage'));
+const ConfiguracionCuenta = lazy(() => import('./ConfiguracionCuenta'));
 const OrganizerDashboard = lazy(() => import('./OrganizerDashboard'));
 const MediaPage = lazy(() => import('./MediaPage'));
 const StreamingPage = lazy(() => import('./LiveStreamPage'));
@@ -132,6 +133,7 @@ export default function AppRouter() {
                 <Route path="/ranking" element={<RankingPage />} />
                 <Route path="/buscar-ranking" element={<RankingPage />} />
                 <Route path="/configuracion" element={<ConfiguracionPanel />} />
+                <Route path="/configuracion-cuenta" element={<ConfiguracionCuenta />} />
                 <Route path="/soporte" element={<ContactarSoporte />} />
                 <Route path="/privacidad" element={<PrivacidadPage />} />
                 <Route path="*" element={<NotFoundPage />} />

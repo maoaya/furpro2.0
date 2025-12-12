@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { loadCardData as stubLoadCardData, continuarAlHome as stubContinuarAlHome } from '../stubs/perfilCardFunctions';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext';
 import { UserService } from '../services/UserService';
 import { supabase } from '../config/supabase';
 
