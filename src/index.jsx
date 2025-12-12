@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import FutProApp from './FutProApp.jsx';
+import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext';
 
 console.log('🚀 Inicializando FutPro 2.0...');
@@ -9,7 +9,7 @@ if (container) {
   const root = createRoot(container);
   root.render(
     <AuthProvider>
-      <FutProApp />
+      <App />
     </AuthProvider>
   );
   console.log('✅ FutPro App montado exitosamente');

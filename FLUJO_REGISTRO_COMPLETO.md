@@ -77,10 +77,10 @@
 - Estadísticas iniciales (0 partidos, 0 goles, 0 asistencias)
 
 **Botón de acción:**
-- 🏠 **"Ir al Homepage"** → `/homepage-instagram.html`
+- 🏠 **"Ir al Homepage"** → `/home-instagram`
 
 ### **PASO 5: Homepage**
-**Ruta:** `/homepage-instagram.html`
+**Ruta:** `/home-instagram`
 - Usuario ingresa a la aplicación principal
 - Puede ver su perfil, buscar partidos, etc.
 
@@ -104,7 +104,7 @@
    - Lee datos desde Supabase o localStorage
    - Calcula y muestra puntaje
    - Muestra foto subida
-   - Botón a homepage-instagram.html
+  - Botón a home-instagram
    ↓
    
 4. Homepage
@@ -222,7 +222,7 @@ function calcularPuntajeInicial(datos) {
 <Route path="/perfil-card" element={<PerfilCard />} />
 
 // App principal
-<Route path="/home" element={<HomeRedirect />} /> // Redirige a homepage-instagram.html
+<Route path="/home" element={<HomeRedirect />} /> // Redirige a home-instagram
 ```
 
 ---

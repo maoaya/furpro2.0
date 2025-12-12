@@ -1,4 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import {
+  fetchGalleryAndComments as stubFetchGalleryAndComments,
+  fetchUsuario as stubFetchUsuario,
+  handleLike as stubHandleLike,
+  handleShare as stubHandleShare,
+  handleComment as stubHandleComment,
+  handleAccion as stubHandleAccion
+} from '../stubs/homePageFunctions';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
 import { UserService } from '../services/UserService';
@@ -76,88 +84,36 @@ export default function HomePage() {
   });
 
   // Cargar galería real al montar
-  useEffect(() => {
-    async function fetchGalleryAndComments() {
-      try {
-        const token = localStorage.getItem('token') || '';
-        const res = await mediaService.getGallery(token);
-        if (res.gallery) {
-          setPublicaciones(res.gallery);
-          // Cargar comentarios para cada publicación
-          const commentsObj = {};
-          for (const pub of res.gallery) {
-            const cres = await commentService.getComments(pub.id, token);
-            commentsObj[pub.id] = cres.comentarios || [];
-          }
-          setCommentsState(commentsObj);
-        }
-      } catch (e) {}
-    }
-    fetchGalleryAndComments();
-  }, []);
 
   useEffect(() => {
-    async function fetchUsuario() {
-      const { data: session } = await supabase.auth.getSession();
-      const userId = session?.session?.user?.id;
-      if (userId) {
-        const perfil = await UserService.getUserProfile(userId);
-        setUsuario(perfil);
-      }
-    }
-    fetchUsuario();
-    // Ejemplo: cargar publicaciones recientes
-    supabase.from('publicaciones').select('*').then(({ data }) => {
-      setPublicaciones(data || []);
-    });
+    (async () => {
+      const gallery = await stubFetchGalleryAndComments();
+      setPublicaciones(gallery);
+      console.log('[INTEGRACIÓN STUB] fetchGalleryAndComments ejecutado (HomePage.jsx)');
+    })();
+  }, []);
+
+
+  useEffect(() => {
+    (async () => {
+      const usuario = await stubFetchUsuario();
+      setUsuario(usuario);
+      console.log('[INTEGRACIÓN STUB] fetchUsuario ejecutado (HomePage.jsx)');
+    })();
   }, []);
 
   // Like real
-  const handleLike = async (mediaId) => {
-    const token = localStorage.getItem('token') || '';
-    await fetch('/api/media/like', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ mediaId })
-    });
-  };
+
+  // Usar stub para likes
 
   // Compartir publicación
-  const handleShare = async (id) => {
-    const url = window.location.origin + '/publicacion/' + id;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: 'Mira esta publicación en FutPro', url });
-        setShareFeedback(prev => ({ ...prev, [id]: '¡Compartido!' }));
-        setTimeout(() => setShareFeedback(prev => ({ ...prev, [id]: '' })), 1500);
-      } catch {}
-    } else {
-      try {
-        await navigator.clipboard.writeText(url);
-        setShareFeedback(prev => ({ ...prev, [id]: '¡Copiado!' }));
-        setTimeout(() => setShareFeedback(prev => ({ ...prev, [id]: '' })), 1500);
-      } catch {}
-    }
-  };
+
+  // Usar stub para compartir
 
 
   // Enviar comentario real
-  const handleComment = async (pubId) => {
-    const text = commentInputs[pubId];
-    if (!text) return;
-    const token = localStorage.getItem('token') || '';
-    const res = await commentService.addComment(pubId, text, token);
-    if (res.comentario) {
-      setCommentsState(prev => ({
-        ...prev,
-        [pubId]: [...(prev[pubId] || []), res.comentario]
-      }));
-      setCommentInputs(prev => ({ ...prev, [pubId]: '' }));
-    }
-  };
+
+  // Usar stub para comentar
 
   // Filtrar publicaciones por búsqueda
   const publicacionesFiltradas = publicaciones.filter(pub =>
@@ -166,34 +122,8 @@ export default function HomePage() {
   );
 
   // Manejo de acciones del menú hamburguesa
-  const handleAccion = (accion) => {
-    switch (accion) {
-      case 'irAInicio':
-        navigate('/home');
-        break;
-      case 'irAPerfil':
-        navigate('/perfil');
-        break;
-      case 'editarPerfil':
-        navigate('/editar-perfil');
-        break;
-      case 'verEstadisticas':
-        navigate('/estadisticas');
-        break;
-      case 'verPartidos':
-        navigate('/partidos');
-        break;
-      case 'verLogros':
-        navigate('/logros');
-        break;
-      case 'verTarjetas':
-        navigate('/tarjetas');
-        break;
-      // ...agrega más rutas según tu estructura...
-      default:
-        alert(`Acción seleccionada: ${accion}`);
-    }
-  };
+
+  // Usar stub para acciones del menú
 
   return (
     <div style={{ 

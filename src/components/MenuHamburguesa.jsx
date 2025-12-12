@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { onAccion as stubOnAccion } from '../stubs/menuHamburguesaFunctions';
 
 const SECCIONES = [
   { nombre: 'Inicio', icono: '🏠', accion: 'irAInicio' },
@@ -31,7 +32,7 @@ const SECCIONES = [
   { nombre: 'Privacidad', icono: '🛡️', accion: 'verPrivacidad' }
 ];
 
-export default function MenuHamburguesa({ onAccion }) {
+export default function MenuHamburguesa({ navigate }) {
   const [abierto, setAbierto] = useState(false);
 
   return (
@@ -43,7 +44,10 @@ export default function MenuHamburguesa({ onAccion }) {
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {SECCIONES.map(sec => (
               <li key={sec.accion} style={{ margin: '8px 0' }}>
-                <button onClick={() => onAccion(sec.accion)} style={{ fontSize: 20 }}>
+                <button onClick={() => {
+                  stubOnAccion(sec.accion, navigate);
+                  console.log('[INTEGRACIÓN STUB] onAccion ejecutado (MenuHamburguesa.jsx):', sec.accion);
+                }} style={{ fontSize: 20 }}>
                   {sec.icono} {sec.nombre}
                 </button>
               </li>

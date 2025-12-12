@@ -16,7 +16,7 @@
 #### 🏠 SECCIÓN PRINCIPAL (6 opciones)
 | Función | Archivo Destino | Ruta | Estado |
 |---------|----------------|------|--------|
-| `irAInicio()` | homepage-instagram.html | `/homepage-instagram.html` | ✅ |
+| `irAInicio()` | home-instagram | `/home-instagram` | ✅ |
 | `irAPerfil()` | perfil-instagram.html | `/perfil-instagram.html` | ✅ |
 | `editarPerfil()` | editar-perfil.html | `/editar-perfil.html` | ✅ |
 | `verEstadisticas()` | estadisticas.html | `/estadisticas.html` | ✅ |
@@ -89,7 +89,7 @@
 | `/logros` | LogrosPage (React) | ✅ |
 | `/estadisticas-avanzadas` | EstadisticasAvanzadasPage | ✅ |
 | `/comparativas` | ComparativasPage | ✅ |
-| `/home` | HomeRedirect → homepage-instagram.html | ✅ |
+| `/home` | HomeRedirect → home-instagram | ✅ |
 | `/*` | NotFoundPage | ✅ |
 
 ---
@@ -97,7 +97,7 @@
 ## 🔧 CORRECCIONES NECESARIAS
 
 ### ⚠️ PROBLEMA 1: fifa-card-demo.html ELIMINADO
-**Ubicación:** `homepage-instagram.html` línea 2495  
+**Ubicación:** `src/pages/HomeInstagram.jsx`  
 **Función afectada:** `verCardFIFA()`
 
 **Solución:**
@@ -167,7 +167,7 @@ Asegurar que todos los HTML estáticos sean accesibles:
 ### 4️⃣ Test end-to-end
 1. Login → `/`
 2. OAuth → `/auth/callback`
-3. Homepage → `/homepage-instagram.html`
+3. Homepage → `/home-instagram`
 4. Click cada opción del menú (31 opciones)
 5. Verificar todas cargan sin 404
 
@@ -200,12 +200,12 @@ Asegurar que todos los HTML estáticos sean accesibles:
 1. Ir a https://futpro.vip/
 2. Click "Iniciar con Google"
 3. Autorizar → Verificar callback funciona
-4. Verificar redirección a /homepage-instagram.html
+4. Verificar redirección a /home-instagram
 ```
 
 ### Test 2: Navegación Menú (31 opciones)
 ```
-1. En homepage-instagram.html → Click menú hamburguesa
+1. En home-instagram → Click menú hamburguesa
 2. Probar cada opción en orden:
    - Inicio ✅
    - Mi Perfil ✅

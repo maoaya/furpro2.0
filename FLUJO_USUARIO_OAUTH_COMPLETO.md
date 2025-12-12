@@ -93,7 +93,7 @@
   - Badge "NUEVA CARD" (si es primera vez)
 - Al hacer clic en el botón **"Continuar"**:
   - El sistema limpia `show_first_card` de `localStorage`.
-  - Redirige a **`/homepage-instagram.html`** (página estática tipo Instagram).
+  - Redirige a **`/home-instagram`** (SPA tipo Instagram).
 
 **Componente**: `src/pages/PerfilCard.jsx`
 
@@ -101,7 +101,7 @@
 
 ### 6️⃣ **Llegar a Homepage Instagram**
 
-**URL**: `https://futpro.vip/homepage-instagram.html`
+**URL**: `https://futpro.vip/home-instagram`
 
 **Acción**:
 - El usuario llega al **homepage tipo Instagram** de FutPro con:
@@ -109,7 +109,7 @@
   - Navegación inferior (Home, Ofertas, TV, Calendario)
   - Funcionalidad completa de red social futbolística
 
-**Archivo**: `public/homepage-instagram.html`
+**Archivo**: `src/pages/HomeInstagram.jsx`
 
 ---
 
@@ -192,7 +192,7 @@ npm run deploy
    - Establece `post_auth_target='/registro-perfil'` si no autenticado.
 
 4. ✅ `src/pages/PerfilCard.jsx`
-   - Botón "Continuar" navega a `/homepage-instagram.html`.
+  - Botón "Continuar" navega a `/home-instagram`.
    - Limpia `show_first_card`.
 
 5. ✅ `src/services/UserActivityTracker.js`
@@ -219,7 +219,7 @@ El flujo de autenticación OAuth con Google desde el formulario de registro est�
 
 - ✅ OAuth → `/registro-perfil` (pantalla intermedia)
 - ✅ Completar perfil → `/perfil-card` (ver card)
-- ✅ Continuar → `/homepage-instagram.html` (homepage tipo Instagram)
+- ✅ Continuar → `/home-instagram` (homepage tipo Instagram)
 - ✅ Tests backend: 23/23 ✅
 - ✅ Tests frontend: 135/135 ✅
 - ✅ Tests E2E Cypress creados

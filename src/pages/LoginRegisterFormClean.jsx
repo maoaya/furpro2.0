@@ -1,4 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import {
+  handleSubmitEmail,
+  goHome
+} from '../stubs/loginRegisterFormFunctions';
+import { useAuth } from '../context/AuthContext';
+  const { loginWithGoogle } = useAuth();
 import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment.js';
@@ -102,124 +108,13 @@ export default function LoginRegisterFormClean() {
     }
   }, []);
 
-  const goHome = () => {
-    // Redirigir a home después del login exitoso
-    try { navigate('/home'); } catch (_) { window.location.href = '/home'; }
-  };
 
-  // NO verificar sesión al cargar - dejar que el usuario vea el login
-  // La redirección solo ocurre después de un login activo
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      // Solo redirigir en SIGNED_IN (login activo), no en INITIAL_SESSION
-      if (event === 'SIGNED_IN' && session?.user) { 
-        setSuccess(t('loginSuccess')); 
-        setLoading(false); 
-        setTimeout(goHome, 600); 
-      }
-    });
-    return () => authListener?.subscription?.unsubscribe?.();
-  }, [lang]);
-
-  const handleLoginSocial = async (provider) => {
-    try {
-      setLoading(true);
-      setError(null);
-      setSuccess(null);
-
-      // Iniciar OAuth directamente con Google
-      console.log(`🔐 [LOGIN] Iniciando OAuth con ${provider}...`);
-      console.log('📍 Redirect URL:', `${window.location.origin}/auth/callback`);
-      console.log('🌐 Supabase URL:', config.supabaseUrl);
-
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: provider,
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          skipBrowserRedirect: false
-        }
-      });
-
-      if (error) {
-        console.error('❌ Error OAuth:', error);
-        throw error;
-      }
-
-      console.log('✅ OAuth iniciado correctamente:', data);
-      // La navegación a Google ocurre automáticamente
-      // No se necesita código adicional aquí
-      
-    } catch (e) {
-      console.error('❌ Error completo OAuth:', e);
-      setLoading(false);
-      
-      let errorMsg = `Error al iniciar sesión con ${provider}`;
-      if (e?.message) {
-        errorMsg += `: ${e.message}`;
-      }
-      
-      setError(errorMsg);
-    }
-  };
-
-
-
-  const handleSubmitEmail = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true); setError(null); setSuccess(null);
-      if (isRegister) {
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
-        if (signUpError) throw signUpError;
-        try {
-          const draft = { email, categoria, creadaEn: new Date().toISOString(), estado: 'pendiente_confirmacion' };
-          localStorage.setItem('draft_carfutpro', JSON.stringify(draft));
-          try {
-            const { database } = await import('../config/firebase.js');
-            const { ref, set } = await import('firebase/database');
-            const uid = signUpData?.user?.id || 'pending';
-            await set(ref(database, `autosave/carfutpro/${uid}`), draft);
-          } catch (_) {}
-        } catch (aux) { console.warn('Autosave inicial falló (no crítico):', aux); }
-        setSuccess(t('signupSuccess'));
-      } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInError) throw signInError;
-        try {
-          const { data: sessionRes } = await supabase.auth.getSession();
-          const userId = sessionRes?.session?.user?.id;
-          if (userId) {
-            const draftRaw = localStorage.getItem('draft_carfutpro');
-            const draft = draftRaw ? JSON.parse(draftRaw) : null;
-            const categoriaFinal = draft?.categoria || categoria;
-            try {
-              const { supabase: sb } = await import('../supabaseClient.js');
-              const { data, error } = await sb
-                .from('carfutpro')
-                .insert([{ user_id: userId, categoria: categoriaFinal, creada_en: new Date().toISOString(), estado: 'activa' }])
-                .select()
-                .single();
-              if (error) throw error;
-              try {
-                const { database } = await import('../config/firebase.js');
-                const { ref, set } = await import('firebase/database');
-                await set(ref(database, `carfutpro/${userId}`), data);
-                await set(ref(database, `autosave/carfutpro/${userId}`), null);
-              } catch (_) {}
-            } catch (eCreate) { console.warn('Creación de CarFutPro en Supabase falló (continuando):', eCreate.message); }
-          }
-        } catch (aux) { console.warn('No se pudo completar creación inicial de CarFutPro:', aux); }
-        setSuccess(t('signupSuccess2'));
-        setTimeout(goHome, 600);
-      }
-    } catch (e) { setError(e.message || 'Ocurrió un error'); }
-    finally { setLoading(false); }
-  };
+  // Las funciones ahora se importan desde el stub y se usan en los handlers
 
   return (
     <div style={{ minHeight: '100vh', background: 'radial-gradient(circle at top,#1a1a1a,#050505)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       {/* Barra de navegación SOLO visible DESPUÉS del login - NO antes */}
-      {/* La navegación se muestra en homepage-instagram.html después de autenticarse */}
+      {/* La navegación se muestra en /home-instagram después de autenticarse (SPA) */}
       
       {/* Contenedor del formulario */}
       <div style={{ width: '100%', maxWidth: 440, background: 'linear-gradient(165deg,#121212,#0b0b0b 60%)', border: `2px solid ${gold}`, borderRadius: 20, padding: 24, boxShadow: '0 12px 38px #000c, inset 0 0 0 1px #333' }}>
@@ -230,7 +125,19 @@ export default function LoginRegisterFormClean() {
         {success && (<div style={{ background: '#0e3323', color: '#9ff2c3', border: '1px solid #27d17c', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>{success}</div>)}
 
         <div style={{ display: 'grid', gap: 10 }}>
-          <button onClick={() => handleLoginSocial('google')} disabled={loading} style={{ width: '100%', padding: 12, background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>{t('continueGoogle')}</button>
+          <button
+            onClick={async () => {
+              setLoading(true);
+              setError(null);
+              const result = await loginWithGoogle();
+              if (result?.error) setError(result.error);
+              setLoading(false);
+            }}
+            disabled={loading}
+            style={{ width: '100%', padding: 12, background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}
+          >
+            {t('continueGoogle')}
+          </button>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '14px 0' }}>

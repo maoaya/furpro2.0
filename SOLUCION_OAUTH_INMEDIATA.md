@@ -118,7 +118,7 @@ Click "Continuar con Google"
 → Popup Google (seleccionar cuenta)
 → https://futpro.vip/auth/callback (automático)
 → https://futpro.vip/perfil-card (con datos usuario)
-→ Botón "Ir a Home" → homepage-instagram.html
+→ Botón "Ir a Home" → home-instagram
 ```
 
 ---

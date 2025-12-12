@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { loadCardData as stubLoadCardData, continuarAlHome as stubContinuarAlHome } from '../stubs/perfilCardFunctions';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { UserService } from '../services/UserService';
@@ -70,60 +71,20 @@ const PerfilCard = () => {
     }
   }, []);
 
-  useEffect(() => {
-    // Cargar datos de la card
-    const loadCardData = async () => {
-      try {
-        // Prioridad: datos por estado, luego localStorage, luego Supabase
-        let card = location.state?.cardData || null;
-        if (!card) {
-          const localCardRaw = localStorage.getItem('futpro_user_card_data');
-          if (localCardRaw) card = JSON.parse(localCardRaw);
-        }
-        if (card) {
-          setCardData(card);
-          setShowAnimation(true);
-          setLoading(false);
-          return;
-        }
-        // Si no hay datos locales, intentar cargar desde Supabase
-        const { data: session } = await supabase.auth.getSession();
-        const userId = session?.session?.user?.id;
-        if (userId) {
-          const perfil = await UserService.getUserProfile(userId);
-          setCardData(perfil);
-          setShowAnimation(true);
-        } else {
-          // Si no hay datos, mostrar error en vez de redirigir
-          setCardData(null);
-        }
-      } catch (error) {
-        console.error('Error cargando datos de card:', error);
-        setCardData(null);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    loadCardData();
-    // Activar listener de autenticación de Supabase
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        console.log('✅ Usuario autenticado por Google/Supabase:', session.user.email);
-      }
-    });
-    return () => {
-      if (authListener && typeof authListener.unsubscribe === 'function') {
-        authListener.unsubscribe();
-      }
-    };
+  useEffect(() => {
+    // Usar stub para cargar datos de la card
+    (async () => {
+      const card = await stubLoadCardData();
+      setCardData(card);
+      setShowAnimation(true);
+      setLoading(false);
+      console.log('[INTEGRACIÓN STUB] loadCardData ejecutado (PerfilCard.jsx)');
+    })();
   }, [navigate, location.state]);
 
-  const continuarAlHome = () => {
-    localStorage.removeItem('show_first_card');
-    // Navegar a la homepage de Instagram (SPA route)
-    navigate('/home');
-  };
+
+  // Usar stub para continuar al home
 
   const getColorByCategory = (categoria) => {
     switch(categoria) {
@@ -274,7 +235,10 @@ const PerfilCard = () => {
           </div>
           
           <button
-            onClick={continuarAlHome}
+            onClick={() => {
+              stubContinuarAlHome(navigate);
+              console.log('[INTEGRACIÓN STUB] continuarAlHome ejecutado (PerfilCard.jsx)');
+            }}
             style={{
               width: '100%',
               padding: '18px',

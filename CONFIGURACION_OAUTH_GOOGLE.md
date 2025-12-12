@@ -13,7 +13,7 @@ Google OAuth Login
 /perfil-card (Muestra Card del jugador)
     ↓ (Click "Continuar")
     ↓
-/homepage-instagram.html (Página principal)
+/home-instagram (Página principal SPA)
 ```
 
 ## 🔧 Configuración Actual
@@ -72,7 +72,7 @@ if (target === '/perfil-card' && origin === 'formulario_registro') {
 // Línea 99-103: Navegación a homepage estática
 const continuarAlHome = () => {
   localStorage.removeItem('show_first_card');
-  window.location.href = '/homepage-instagram.html'; // ✅ Usar .href para HTML estático
+  window.location.href = '/home-instagram'; // ✅ Usar .href para SPA
 };
 ```
 
@@ -180,7 +180,7 @@ npm run dev
    - ✅ Procesa autenticación
    - ✅ Redirige a `/perfil-card`
    - ✅ Muestra Card del jugador
-   - ✅ Botón "Continuar" lleva a `/homepage-instagram.html`
+  - ✅ Botón "Continuar" lleva a `/home-instagram`
 
 ### 4. Verificar en Consola del Navegador
 ```javascript
@@ -257,7 +257,7 @@ npm run deploy
 3. Reintentar flujo OAuth
 
 ### Error: navigate() no funciona para homepage
-**Causa**: `homepage-instagram.html` es página estática, no ruta SPA
+**Causa**: `homepage-instagram.html` era página estática, ahora es SPA
 
 **Solución**: Usar `window.location.href` en lugar de `navigate()` ✅ (YA IMPLEMENTADO)
 
@@ -279,7 +279,7 @@ npm run deploy
 - [ ] Variables de entorno en Netlify configuradas
 - [ ] Deploy exitoso en producción
 - [ ] Test en producción funcionando
-- [ ] Página `/homepage-instagram.html` existe y carga correctamente
+- [ ] Página `/home-instagram` existe y carga correctamente
 
 ## 🔗 Enlaces Útiles
 

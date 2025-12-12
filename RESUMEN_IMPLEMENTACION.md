@@ -10,7 +10,7 @@
    - Implementado en `FormularioRegistroCompleto.jsx`
 
 2. **Navegación Correcta al Homepage** 🏠
-   - Botón "Ir al Homepage" ahora va a `/homepage-instagram.html`
+   - Botón "Ir al Homepage" ahora va a `/home-instagram`
    - Cambiado en `PerfilCard.jsx`
 
 3. **Documentación Completa** 📚
@@ -44,7 +44,7 @@
    📸 Muestra foto subida
    📊 Muestra puntaje calculado
    ⚽ Muestra todos los datos del formulario
-   🏠 Botón "Ir al Homepage" → /homepage-instagram.html
+   🏠 Botón "Ir al Homepage" → /home-instagram
 ```
 
 ---
@@ -95,7 +95,7 @@ puntaje: puntajeInicial  // Era: puntaje: 50
 // ✅ MODIFICADO: Navegación a homepage estático
 const continuarAlHome = () => {
   localStorage.removeItem('show_first_card');
-  window.location.href = '/homepage-instagram.html';  // Cambiado desde navigate('/home')
+   window.location.href = '/home-instagram';  // Cambiado desde navigate('/home')
 };
 ```
 
@@ -108,7 +108,7 @@ const continuarAlHome = () => {
 - [x] Cálculo de puntaje implementado
 - [x] Subida de foto a Supabase Storage
 - [x] Inserción en tabla `carfutpro` con puntaje calculado
-- [x] Navegación a `homepage-instagram.html` desde card
+- [x] Navegación a `home-instagram` desde card
 - [x] Animaciones de card funcionales
 - [x] Autoguardado cada 30 segundos
 - [x] Validación por pasos
@@ -141,7 +141,7 @@ const continuarAlHome = () => {
 
 ```bash
 git add .
-git commit -m "feat(registro): implementar calculo de puntaje inicial y navegacion a homepage-instagram.html"
+git commit -m "feat(registro): implementar calculo de puntaje inicial y navegacion a home-instagram"
 git push origin master
 ```
 

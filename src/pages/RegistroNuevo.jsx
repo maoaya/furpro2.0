@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment.js';
+import { useAuth } from '../context/AuthContext';
 
 const gold = '#FFD700';
 
 export default function RegistroNuevo() {
+  const { loginWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +21,7 @@ export default function RegistroNuevo() {
   const config = getConfig();
 
   const goHome = () => {
-    try { navigate('/homepage-instagram.html'); } catch (_) { window.location.href = '/homepage-instagram.html'; }
+    try { navigate('/home-instagram'); } catch (_) { window.location.href = '/home-instagram'; }
   };
 
   // Lee categoría inicial desde estado de navegación, querystring o draft
@@ -56,12 +58,15 @@ export default function RegistroNuevo() {
   }, []);
 
   const handleLoginSocial = async (provider) => {
-    try {
+    if (provider === 'google') {
       setLoading(true); setError(null); setSuccess(null);
-      // tras OAuth, queremos continuar en el perfil
       try { localStorage.setItem('post_auth_target', '/registro-perfil'); } catch {}
-      await supabase.auth.signInWithOAuth({ provider });
-    } catch (e) { setLoading(false); setError(`Error con ${provider}: ${e.message}`); }
+      const result = await loginWithGoogle();
+      if (result?.error) setError(`Error con Google: ${result.error}`);
+      setLoading(false);
+    } else {
+      setError('Solo Google OAuth está soportado en este flujo.');
+    }
   };
 
   const handleSubmitEmail = async (e) => {

@@ -15,7 +15,7 @@
 #### **A) Páginas HTML Principales** (15 archivos)
 | Archivo | Ruta Netlify | Función | Estado |
 |---------|--------------|---------|--------|
-| `public/homepage-instagram.html` | `/homepage-instagram.html` | Homepage principal post-login (Instagram-style feed) | ✅ ACTIVO |
+| `src/pages/HomeInstagram.jsx` | `/home-instagram` | Homepage principal post-login (Instagram-style feed SPA) | ✅ ACTIVO |
 | `public/videos.html` | `/videos.html` | Página de videos TikTok-style + transmisiones en vivo | ✅ NUEVO |
 | `public/chat.html` | `/chat.html` | Chat en tiempo real con Firebase | ✅ ACTIVO |
 | `public/marketplace.html` | `/marketplace.html` | Marketplace de productos y servicios | ✅ ACTIVO |
@@ -66,7 +66,7 @@
 ##### **🏠 Rutas Principales (CON Layout - Sidebar + BottomNav)**
 | Ruta | Componente | Archivo | Función |
 |------|-----------|---------|---------|
-| `/home` | `HomeRedirect` | `src/pages/HomeRedirect.jsx` | Redirect a homepage-instagram.html |
+| `/home` | `HomeRedirect` | `src/pages/HomeRedirect.jsx` | Redirect a home-instagram |
 | `/feed` | `FeedPage` | `src/pages/FeedPage.jsx` | Feed de posts |
 | `/perfil/:userId` | `PerfilPage` | `src/pages/PerfilPage.jsx` | Perfil dinámico usuario |
 | `/notificaciones` | `NotificationsPage` | `src/pages/NotificationsPage.jsx` | Centro de notificaciones |
@@ -168,7 +168,7 @@
    → authFlowManager.handlePostLoginFlow()
 
 5. Redirección final:
-   → https://futpro.vip/homepage-instagram.html
+   → https://futpro.vip/home-instagram
    (HTML estático con menu hamburguesa)
 ```
 
@@ -184,12 +184,12 @@
    → Carga perfil desde `usuarios` tabla
 
 4. Redirección:
-   → https://futpro.vip/homepage-instagram.html
+   → https://futpro.vip/home-instagram
 ```
 
 ### **Escenario 3: Navegación Post-Login**
 ```
-Usuario en homepage-instagram.html:
+Usuario en home-instagram:
 
 1. Click menú hamburguesa → "Videos"
    → window.location.href = '/videos.html'
@@ -276,7 +276,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ... (SECRETO)
 
 ### **✅ Rutas HTML Estáticas**
 - [ ] `/` → LoginRegisterForm
-- [ ] `/homepage-instagram.html` → Homepage principal
+- [ ] `/home-instagram` → Homepage principal
 - [ ] `/videos.html` → Videos TikTok + Live
 - [ ] `/chat.html` → Chat Firebase
 - [ ] `/marketplace.html` → Marketplace

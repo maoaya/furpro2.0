@@ -45,7 +45,7 @@
 - **Rutas clave**:
   - `/` → `LoginRegisterFormClean.jsx` (o `AuthPageUnificada.jsx`)
   - `/auth/callback` → `CallbackPageOptimized.jsx`
-  - `/home` → `HomeRedirect.jsx` → `homepage-instagram.html`
+  - `/home` → `HomeRedirect.jsx` → `home-instagram`
   - `/perfil` → Componente React de perfil
   - `/marketplace`, `/ranking`, `/penaltis`, etc.
 
@@ -130,11 +130,11 @@ VITE_APP_BASE_URL=https://futpro.vip
 ### 12. Redirect a Home
 **Archivo**: `src/pages/HomeRedirect.jsx`
 - **Función**: Redirige a página estática optimizada
-- **Destino**: `/homepage-instagram.html`
+- **Destino**: `/home-instagram`
 - **Razón**: Render instantáneo sin React (performance)
 
 ### 13. Homepage Definitiva
-**Archivo**: `public/homepage-instagram.html` (⭐ ÚNICA VERSIÓN)
+**Archivo**: `src/pages/HomeInstagram.jsx` (SPA principal)
 - **Función**: Experiencia principal tipo Instagram
 - **Features**:
   - Stories (crear, ver, interactuar)
@@ -151,14 +151,14 @@ VITE_APP_BASE_URL=https://futpro.vip
 
 ## 🍔 MENÚ HAMBURGUESA: OPCIONES Y ARCHIVOS
 
-El menú hamburguesa en `homepage-instagram.html` despliega **6 secciones**:
+El menú hamburguesa en `home-instagram` despliega **6 secciones**:
 
 ### SECCIÓN 1: PRINCIPAL
 
 #### 1. 🏠 Inicio
 - **Función JS**: `irAInicio()`
-- **Destino**: `./homepage-instagram.html`
-- **Archivo**: `public/homepage-instagram.html`
+- **Destino**: `/home-instagram`
+- **Archivo**: `src/pages/HomeInstagram.jsx`
 
 #### 2. 👤 Mi Perfil
 - **Función JS**: `irAPerfil()`
@@ -210,7 +210,7 @@ El menú hamburguesa en `homepage-instagram.html` despliega **6 secciones**:
 
 #### 9. ➕ Crear Equipo
 - **Función JS**: `crearEquipo()`
-- **Modal**: Formulario inline en `homepage-instagram.html`
+- **Modal**: Formulario inline en `src/pages/HomeInstagram.jsx`
 - **Servicio**: `src/services/TeamManager.js`
 - **Guarda**: localStorage + Supabase tabla `teams`
 
@@ -223,7 +223,7 @@ El menú hamburguesa en `homepage-instagram.html` despliega **6 secciones**:
 
 #### 11. ➕ Crear Torneo
 - **Función JS**: `crearTorneo()`
-- **Modal**: Formulario en `homepage-instagram.html`
+- **Modal**: Formulario en `src/pages/HomeInstagram.jsx`
 - **Servicio**: `src/services/TournamentManager.js`
 - **Guarda**: Supabase tabla `tournaments`
 
@@ -258,7 +258,7 @@ El menú hamburguesa en `homepage-instagram.html` despliega **6 secciones**:
 
 #### 16. 💡 Sugerencias Card
 - **Función JS**: `sugerenciasCard()`
-- **Modal**: Formulario en `homepage-instagram.html`
+- **Modal**: Formulario en `src/pages/HomeInstagram.jsx`
 - **Servicio**: `src/services/sugerenciasService.js`
 
 ---
@@ -303,7 +303,7 @@ El menú hamburguesa en `homepage-instagram.html` despliega **6 secciones**:
 
 #### 23. 📡 Transmitir en Vivo
 - **Función JS**: `abrirTransmisionEnVivo()`
-- **Modal**: Inline en `homepage-instagram.html`
+- **Modal**: Inline en `src/pages/HomeInstagram.jsx`
 - **Servicio**: `src/services/StreamManager.js`
 - **Alimenta**: Streaming en vivo con WebRTC
 
@@ -319,7 +319,7 @@ El menú hamburguesa en `homepage-instagram.html` despliega **6 secciones**:
 
 #### 25. 📈 Ranking Partidos
 - **Función JS**: `rankingPartidos()`
-- **Modal**: Inline en `homepage-instagram.html`
+- **Modal**: Inline en `src/pages/HomeInstagram.jsx`
 - **Servicio**: `src/services/rankingService.js`
 
 #### 26. 🔍 Buscar Ranking

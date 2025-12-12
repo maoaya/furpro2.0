@@ -162,7 +162,7 @@ Guarda datos en localStorage
 ↓
 https://futpro.vip/perfil-card (usuario logueado)
 ↓
-Botón "Ir a Home" → homepage-instagram.html
+Botón "Ir a Home" → home-instagram
 ```
 
 ---

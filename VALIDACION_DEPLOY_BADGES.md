@@ -12,7 +12,7 @@
 ### 1️⃣ Login y Autenticación
 - [ ] Login con email/password → redirige a `/home`
 - [ ] OAuth Google → callback `/auth/callback` → redirige a `/home`
-- [ ] `/home` (React) → redirige automáticamente a `/homepage-instagram.html`
+- [ ] `/home` (React) → redirige automáticamente a `/home-instagram`
 - [ ] Homepage estática se carga correctamente con header negro y logo dorado
 
 ### 2️⃣ Menú Hamburguesa
@@ -63,7 +63,7 @@ Verificar que estas opciones muestran badge celeste "React":
 # 1. Abrir navegador en modo incógnito
 # 2. Ir a https://futpro.vip
 # 3. Login con cuenta de prueba
-# 4. Esperar redirección a homepage-instagram.html
+# 4. Esperar redirección a home-instagram
 # 5. Click en menú hamburguesa (esquina superior derecha)
 # 6. Verificar badges verdes y celestes
 # 7. Click en "Configuración" → debe ir a /configuracion (React SPA)
@@ -98,20 +98,20 @@ npm run dev
 ## 📊 Métricas de Deploy
 
 - **Build time esperado**: ~2-3 minutos
-- **Archivos modificados**: 1 (public/homepage-instagram.html)
+- **Archivos modificados**: 1 (src/pages/HomeInstagram.jsx)
 - **Líneas agregadas**: ~30 (estilos + badges)
 - **Rutas afectadas**: 
   - `/` (login)
   - `/auth/callback` (OAuth)
   - `/home` (redirect)
-  - `/homepage-instagram.html` (destino final)
+  - `/home-instagram` (destino final)
   - `/configuracion` (nueva ruta React desde menú)
 
 ---
 
 ## ✅ Criterios de Éxito
 
-1. **Login exitoso** → Usuario llega a homepage-instagram.html
+1. **Login exitoso** → Usuario llega a home-instagram
 2. **Menú visible** → Se despliega al hacer click en hamburguesa
 3. **Badges visibles** → 6 "Nuevo" verdes + 2 "React" celestes
 4. **Navegación funcional** → Todos los links llevan a destino correcto

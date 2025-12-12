@@ -1,4 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import {
+  handleSelect as stubHandleSelect,
+  handleConfirm as stubHandleConfirm,
+  handleGoogleLogin as stubHandleGoogleLogin
+} from '../stubs/seleccionCategoriaFunctions';
+import {
+  handleSelect,
+  handleConfirm,
+  handleGoogleLogin
+} from '../stubs/seleccionCategoriaFunctions';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import { getConfig } from '../config/environment.js';
@@ -63,66 +73,29 @@ export default function SeleccionCategoria() {
     }
   }, []);
 
+  // --- STUB: Selección de categoría ---
   const handleSelect = (value) => {
     setSelected(value);
+    stubHandleSelect(value);
+    console.log('[INTEGRACIÓN STUB] handleSelect ejecutado', value);
   };
 
+  // --- STUB: Confirmar selección ---
   const handleConfirm = () => {
     if (!selected) return;
     setConfirming(true);
-    // Guardar la categoría seleccionada en localStorage para el formulario
-    try {
-      localStorage.setItem('draft_carfutpro', JSON.stringify({ categoria: selected, ts: Date.now() }));
-      console.log('✅ Draft categoría guardado:', selected);
-    } catch (e) {
-      console.warn('No se pudo guardar draft categoria', e);
-    }
-    // Navegación directa con estado y query param
-    navigate(`/formulario-registro?categoria=${encodeURIComponent(selected)}`, {
-      state: { categoria: selected },
-      replace: true
-    });
-    console.log('🔄 Navegación a /formulario-registro con categoría:', selected);
-  };
-
-  const handleGoogleLogin = async () => {
-    if (!selected) return;
-    try {
-      setGoogleLoading(true);
-      // Guardar categoría seleccionada para el callback
-      localStorage.setItem('selected_categoria', selected);
-      localStorage.setItem('draft_carfutpro', JSON.stringify({ categoria: selected, ts: Date.now() }));
-      
-      console.log('🔐 [SeleccionCategoria] Iniciando OAuth con Google, categoría:', selected);
-      
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          skipBrowserRedirect: false
-        }
-      });
-
-      if (error) {
-        console.error('❌ Error OAuth:', error);
-        throw error;
-      }
-
-      console.log('✅ OAuth con Google iniciado correctamente');
-    } catch (e) {
-      console.error('❌ Error en login con Google:', e);
-      setGoogleLoading(false);
-      alert('Error al iniciar sesión con Google. Inténtalo de nuevo.');
-    }
+    stubHandleConfirm(selected, navigate);
+    console.log('[INTEGRACIÓN STUB] handleConfirm ejecutado', selected);
+    setTimeout(() => setConfirming(false), 500); // Simula feedback visual
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0b0b0b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <div style={{ width: '100%', maxWidth: 520, background: '#121212', border: '2px solid #FFD700', borderRadius: 16, padding: 20 }}>
-        <h1 style={{ color: '#FFD700', margin: 0, marginBottom: 8, textAlign: 'center' }}>{t('title')}</h1>
-        <p style={{ color: '#bbb', marginTop: 0, textAlign: 'center' }}>{t('subtitle')}</p>
+    <div style={{ padding: 24, maxWidth: 500, margin: 'auto', fontFamily: 'Arial, sans-serif', color: '#fff' }}>
+      <div>
+        <h1 style={{ marginBottom: 8, fontSize: 28, fontWeight: 800 }}>{t('title')}</h1>
+        <p style={{ color: '#aaa', marginBottom: 24 }}>{t('subtitle')}</p>
 
-        <div style={{ display: 'grid', gap: 12, marginTop: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {categorias.map((c) => {
             const isActive = selected === c.value;
             return (
@@ -130,9 +103,8 @@ export default function SeleccionCategoria() {
                 key={c.value}
                 onClick={() => handleSelect(c.value)}
                 style={{
-                  width: '100%',
-                  padding: 14,
-                  background: isActive ? 'linear-gradient(135deg,#FFD700,#c49c00)' : 'linear-gradient(135deg,#2a2a2a,#1a1a1a)',
+                  padding: 16,
+                  background: isActive ? '#FFD700' : '#222',
                   color: isActive ? '#000' : '#eee',
                   border: isActive ? '2px solid #FFD700' : '1px solid #333',
                   borderRadius: 10,

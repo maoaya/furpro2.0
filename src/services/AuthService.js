@@ -1,6 +1,5 @@
 // 🔐 FutPro - Servicio de Autenticación
 import supabase from '../supabaseClient';
-import { updateUserRole } from '../config/supabase.js';
 import { getConfig } from '../config/environment.js';
 
 export class AuthService {
@@ -110,26 +109,13 @@ export class AuthService {
         provider: 'google',
         options: {
           redirectTo: oauthCallbackUrl,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent'
-          },
           scopes: 'email profile'
         }
       };
       // Marcar redirect objetivo
       try { localStorage.setItem('postLoginRedirect', '/home'); } catch {}
 
-      // Configuración específica para móviles
-      if (isMobile) {
-        config.options.queryParams.mobile = 'true';
-        
-        if (isIOS) {
-          config.options.queryParams.device = 'ios';
-          // Para iOS, usar configuración específica
-          config.options.queryParams.display = 'touch';
-        }
-      }
+      // Eliminado: parámetros extra para móviles y iOS
 
   // ...existing code...
   const { error } = await supabase.auth.signInWithOAuth(config);

@@ -409,7 +409,14 @@ export const AuthProvider = ({ children }) => {
         return { error: error.message };
       }
 
-      console.log('✅ Redirección a Google iniciada');
+      // Si Supabase devuelve una URL de redirección, forzarla manualmente
+      if (data?.url) {
+        console.log('🌐 Forzando redirección manual a Google:', data.url);
+        window.location.href = data.url;
+        return { redirecting: true };
+      }
+
+      console.log('✅ Redirección a Google iniciada (sin URL explícita)');
       // Para OAuth, el flujo continúa en la página de callback
       return { redirecting: true };
     } catch (err) {

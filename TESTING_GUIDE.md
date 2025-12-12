@@ -16,7 +16,7 @@
    - Fallback a `window.location.href` si `navigate` falla
 
 3. **PerfilCard actualizado**
-   - Botón "Continuar" redirige a `/homepage-instagram.html`
+   - Botón "Continuar" redirige a `/home-instagram`
    - Muestra datos reales o temporales de `futpro_user_card_data`
    - Badge "NUEVA" para primera card
 
@@ -149,11 +149,11 @@ node scripts/validate-all.js
 - Degradado de color según categoría
 
 **Botones**:
-- **"Continuar"**: Redirige a `/homepage-instagram.html` (limpia `show_first_card`)
+- **"Continuar"**: Redirige a `/home-instagram` (limpia `show_first_card`)
 - **"Ver Perfil Completo"**: Redirige a `/perfil` (React)
 
 ### 8. Homepage Feed
-**Archivo**: `public/homepage-instagram.html`  
+**Archivo**: `src/pages/HomeInstagram.jsx`
 **Tipo**: Página estática (HTML + CSS + JS inline)  
 **Features**:
 - Feed estilo Instagram

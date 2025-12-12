@@ -56,16 +56,26 @@
     </div>
 
     <script type="module">
-        // Callback OAuth completamente independiente
+        // Callback OAuth usando bundle local de Supabase (evita esm.sh)
         const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8';
 
+        // Cargar Supabase desde el bundle generado por Vite (dist/assets/supabaseClient.js)
+        // O bien, exponer createClient en window.supaClient desde tu app principal
+        // Aquí se asume que window.createClient está disponible (ajusta según tu build)
         async function handleCallback() {
             try {
                 console.log('🔐 [CALLBACK HTML] Iniciando procesamiento OAuth...');
 
-                // Crear cliente Supabase mínimo
-                const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+                // Esperar a que window.createClient esté disponible
+                let createClient = window.createClient;
+                if (!createClient) {
+                  // Intentar cargar el bundle si no está expuesto
+                  await import('/src/supabaseClient.js');
+                  createClient = window.createClient;
+                }
+                if (!createClient) throw new Error('No se pudo cargar Supabase local.');
+
                 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
                     auth: {
                         autoRefreshToken: true,

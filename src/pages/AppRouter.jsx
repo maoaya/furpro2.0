@@ -18,6 +18,7 @@ const AdminEstadisticasPage = lazy(() => import('./admin/AdminEstadisticasPage')
 const AdminAuditoriaPage = lazy(() => import('./admin/AdminAuditoriaPage'));
 const AdminConfiguracionPage = lazy(() => import('./admin/AdminConfiguracionPage'));
 import React, { Suspense, lazy, useContext } from 'react';
+import AuthCallback from './auth/AuthCallback';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider, AuthContext } from '../context/AuthContext';
 import { RoleProvider } from '../context/RoleContext';
@@ -78,64 +79,68 @@ export default function AppRouter() {
       navigate('/home');
     }
   }, [user, location, navigate]);
+  const ErrorBoundary = require('../components/ErrorBoundary').default;
   return (
     <AuthProvider>
       <RoleProvider>
-        <Router>
-          <nav style={{ background: '#222', color: '#FFD700', padding: 16, display: 'flex', gap: 18 }}>
-            <Link to="/" style={{ color: '#FFD700', marginRight: 16 }}>Inicio</Link>
-            <Link to="/seleccionar-categoria" style={{ color: '#FFD700', marginRight: 16 }}>Categoría</Link>
-            <Link to="/formulario-registro" style={{ color: '#FFD700', marginRight: 16 }}>Registro</Link>
-            <Link to="/perfil-card" style={{ color: '#FFD700', marginRight: 16 }}>Perfil Card</Link>
-            <Link to="/home" style={{ color: '#FFD700', marginRight: 16 }}>Home</Link>
-            <Link to="/chat" style={{ color: '#FFD700', marginRight: 16 }}>Chat</Link>
-            <Link to="/equipos" style={{ color: '#FFD700', marginRight: 16 }}>Equipos</Link>
-            <Link to="/torneo" style={{ color: '#FFD700', marginRight: 16 }}>Torneo</Link>
-            <Link to="/amistoso" style={{ color: '#FFD700', marginRight: 16 }}>Amistoso</Link>
-            <Link to="/juegos" style={{ color: '#FFD700', marginRight: 16 }}>Juegos</Link>
-            <Link to="/penaltis" style={{ color: '#FFD700', marginRight: 16 }}>Penaltis</Link>
-            <Link to="/sugerencias-card" style={{ color: '#FFD700', marginRight: 16 }}>Sugerencias Card</Link>
-            <Link to="/notificaciones" style={{ color: '#FFD700', marginRight: 16 }}>Notificaciones</Link>
-            <Link to="/videos" style={{ color: '#FFD700', marginRight: 16 }}>Videos</Link>
-            <Link to="/marketplace" style={{ color: '#FFD700', marginRight: 16 }}>Marketplace</Link>
-            <Link to="/estados" style={{ color: '#FFD700', marginRight: 16 }}>Estados</Link>
-            <Link to="/amigos" style={{ color: '#FFD700', marginRight: 16 }}>Amigos</Link>
-            <Link to="/ranking" style={{ color: '#FFD700', marginRight: 16 }}>Ranking</Link>
-            <Link to="/buscar-ranking" style={{ color: '#FFD700', marginRight: 16 }}>Buscar Ranking</Link>
-            <Link to="/configuracion" style={{ color: '#FFD700', marginRight: 16 }}>Configuración</Link>
-            <Link to="/soporte" style={{ color: '#FFD700', marginRight: 16 }}>Soporte</Link>
-            <Link to="/privacidad" style={{ color: '#FFD700', marginRight: 16 }}>Privacidad</Link>
-          </nav>
-          <Suspense fallback={<div style={{ color: '#FFD700', padding: 32 }}>Cargando...</div>}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/seleccionar-categoria" element={<SeleccionCategoria />} />
-              <Route path="/formulario-registro" element={<FormularioRegistroCompleto />} />
-              <Route path="/perfil-card" element={<PerfilCard />} />
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/chat" element={<ChatPage />} />
-              <Route path="/equipos" element={<Equipos />} />
-              <Route path="/torneo" element={<Torneos />} />
-              <Route path="/amistoso" element={<AmistososPanel />} />
-              <Route path="/juegos" element={<Juegos />} />
-              <Route path="/penaltis" element={<PenaltisPage />} />
-              <Route path="/sugerencias-card" element={<SugerenciasCardPage />} />
-              <Route path="/notificaciones" element={<NotificacionesPanel />} />
-              <Route path="/videos" element={<VideosPage />} />
-              <Route path="/marketplace" element={<MarketplacePanel />} />
-              <Route path="/estados" element={<Estados />} />
-              <Route path="/amigos" element={<AmigosPanel />} />
-              <Route path="/ranking" element={<RankingPage />} />
-              <Route path="/buscar-ranking" element={<RankingPage />} />
-              <Route path="/configuracion" element={<ConfiguracionPanel />} />
-              <Route path="/soporte" element={<ContactarSoporte />} />
-              <Route path="/privacidad" element={<PrivacidadPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Suspense>
-          {/* Monitor de navegación para debugging */}
-          <NavigationMonitor />
-        </Router>
+        <ErrorBoundary>
+          <Router>
+            <nav style={{ background: '#222', color: '#FFD700', padding: 16, display: 'flex', gap: 18 }}>
+              <Link to="/" style={{ color: '#FFD700', marginRight: 16 }}>Inicio</Link>
+              <Link to="/seleccionar-categoria" style={{ color: '#FFD700', marginRight: 16 }}>Categoría</Link>
+              <Link to="/formulario-registro" style={{ color: '#FFD700', marginRight: 16 }}>Registro</Link>
+              <Link to="/perfil-card" style={{ color: '#FFD700', marginRight: 16 }}>Perfil Card</Link>
+              <Link to="/home" style={{ color: '#FFD700', marginRight: 16 }}>Home</Link>
+              <Link to="/chat" style={{ color: '#FFD700', marginRight: 16 }}>Chat</Link>
+              <Link to="/equipos" style={{ color: '#FFD700', marginRight: 16 }}>Equipos</Link>
+              <Link to="/torneo" style={{ color: '#FFD700', marginRight: 16 }}>Torneo</Link>
+              <Link to="/amistoso" style={{ color: '#FFD700', marginRight: 16 }}>Amistoso</Link>
+              <Link to="/juegos" style={{ color: '#FFD700', marginRight: 16 }}>Juegos</Link>
+              <Link to="/penaltis" style={{ color: '#FFD700', marginRight: 16 }}>Penaltis</Link>
+              <Link to="/sugerencias-card" style={{ color: '#FFD700', marginRight: 16 }}>Sugerencias Card</Link>
+              <Link to="/notificaciones" style={{ color: '#FFD700', marginRight: 16 }}>Notificaciones</Link>
+              <Link to="/videos" style={{ color: '#FFD700', marginRight: 16 }}>Videos</Link>
+              <Link to="/marketplace" style={{ color: '#FFD700', marginRight: 16 }}>Marketplace</Link>
+              <Link to="/estados" style={{ color: '#FFD700', marginRight: 16 }}>Estados</Link>
+              <Link to="/amigos" style={{ color: '#FFD700', marginRight: 16 }}>Amigos</Link>
+              <Link to="/ranking" style={{ color: '#FFD700', marginRight: 16 }}>Ranking</Link>
+              <Link to="/buscar-ranking" style={{ color: '#FFD700', marginRight: 16 }}>Buscar Ranking</Link>
+              <Link to="/configuracion" style={{ color: '#FFD700', marginRight: 16 }}>Configuración</Link>
+              <Link to="/soporte" style={{ color: '#FFD700', marginRight: 16 }}>Soporte</Link>
+              <Link to="/privacidad" style={{ color: '#FFD700', marginRight: 16 }}>Privacidad</Link>
+            </nav>
+            <Suspense fallback={<div style={{ color: '#FFD700', padding: 32 }}>Cargando...</div>}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/seleccionar-categoria" element={<SeleccionCategoria />} />
+                <Route path="/formulario-registro" element={<FormularioRegistroCompleto />} />
+                <Route path="/perfil-card" element={<PerfilCard />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/chat" element={<ChatPage />} />
+                <Route path="/equipos" element={<Equipos />} />
+                <Route path="/torneo" element={<Torneos />} />
+                <Route path="/amistoso" element={<AmistososPanel />} />
+                <Route path="/juegos" element={<Juegos />} />
+                <Route path="/penaltis" element={<PenaltisPage />} />
+                <Route path="/sugerencias-card" element={<SugerenciasCardPage />} />
+                <Route path="/notificaciones" element={<NotificacionesPanel />} />
+                <Route path="/videos" element={<VideosPage />} />
+                <Route path="/marketplace" element={<MarketplacePanel />} />
+                <Route path="/estados" element={<Estados />} />
+                <Route path="/amigos" element={<AmigosPanel />} />
+                <Route path="/ranking" element={<RankingPage />} />
+                <Route path="/buscar-ranking" element={<RankingPage />} />
+                <Route path="/configuracion" element={<ConfiguracionPanel />} />
+                <Route path="/soporte" element={<ContactarSoporte />} />
+                <Route path="/privacidad" element={<PrivacidadPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </Suspense>
+            {/* Monitor de navegación para debugging */}
+            <NavigationMonitor />
+          </Router>
+        </ErrorBoundary>
       </RoleProvider>
     </AuthProvider>
   );
