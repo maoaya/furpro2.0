@@ -8,131 +8,648 @@ export default function FormularioRegistroCompleto() {
   const location = useLocation();
   const [pasoActual, setPasoActual] = useState(1);
   const [formData, setFormData] = useState({
+    // Paso 1: Credenciales
     email: '',
     password: '',
     confirmPassword: '',
-    categoria: 'masculina',
+    // Paso 2: Datos Personales
     nombre: '',
     apellido: '',
     edad: '',
+    telefono: '',
+    ciudad: '',
+    pais: '',
+    peso: '',
+    altura: '',
+    // Paso 3: Info Futbolística
+    categoria: 'masculina',
     posicion: 'Flexible',
-    nivelHabilidad: 'Principiante'
+    nivelHabilidad: 'Principiante',
+    equipoFavorito: '',
+    piernaDominante: 'Derecha',
+    disponibilidadJuego: 'Fines de semana',
+    objetivoDeportivo: '',
+    redesSociales: '',
+    // Paso 4: Foto
+    avatarUrl: '',
+    fotoFile: null
   });
+
+  const calcularPuntaje = (nivel) => {
+    switch (nivel) {
+      case 'Elite': return 90;
+      case 'Profesional': return 85;
+      case 'Avanzado': return 78;
+      case 'Intermedio': return 70;
+      case 'Principiante':
+      default:
+        return 60;
+    }
+  };
 
   // Cargar categoría desde navegación
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const cat = params.get('categoria');
+    const cat = params.get('categoria') || localStorage.getItem('selectedCategoria');
     if (cat) {
       setFormData(prev => ({ ...prev, categoria: cat }));
     }
   }, [location]);
 
+  const persistProfileDraft = () => {
+    const draft = {
+      nombre: formData.nombre,
+      apellido: formData.apellido,
+      email: formData.email,
+      telefono: formData.telefono,
+      ciudad: formData.ciudad,
+      pais: formData.pais,
+      edad: formData.edad,
+      peso: formData.peso,
+      altura: formData.altura,
+      categoria: formData.categoria,
+      posicion_favorita: formData.posicion,
+      nivel_habilidad: formData.nivelHabilidad,
+      equipo_favorito: formData.equipoFavorito,
+      pierna_dominante: formData.piernaDominante,
+      disponibilidad_juego: formData.disponibilidadJuego,
+      objetivo_deportivo: formData.objetivoDeportivo,
+      redes_sociales: formData.redesSociales,
+      puntaje: calcularPuntaje(formData.nivelHabilidad),
+      avatar_url: formData.avatarUrl
+    };
+    localStorage.setItem('pendingProfileData', JSON.stringify(draft));
+    localStorage.setItem('card_preview', JSON.stringify(draft));
+  };
+
   const handleGoogleSignup = async () => {
     try {
+      // Guardar contexto de origen/objetivo para el callback
+      localStorage.setItem('post_auth_origin', 'formulario_registro');
+      localStorage.setItem('post_auth_target', '/perfil-card');
+      persistProfileDraft();
       await loginWithGoogle();
     } catch (error) {
       console.error('Error OAuth:', error);
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, fotoFile: file });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, avatarUrl: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const siguientePaso = () => {
-    if (pasoActual < 3) setPasoActual(pasoActual + 1);
+    if (pasoActual < 4) setPasoActual(pasoActual + 1);
   };
 
   const pasoAnterior = () => {
     if (pasoActual > 1) setPasoActual(pasoActual - 1);
   };
 
+  const validarPaso1 = () => {
+    if (!formData.email || !formData.password) {
+      alert('Por favor completa email y contraseña');
+      return false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      alert('Las contraseñas no coinciden');
+      return false;
+    }
+    if (formData.password.length < 6) {
+      alert('La contraseña debe tener al menos 6 caracteres');
+      return false;
+    }
+    return true;
+  };
+
+  const validarPaso2 = () => {
+    if (!formData.nombre || !formData.apellido) {
+      alert('Por favor completa nombre y apellido');
+      return false;
+    }
+    return true;
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '14px',
+    marginBottom: '16px',
+    borderRadius: '10px',
+    border: '2px solid #444',
+    background: '#1a1a1a',
+    color: '#FFD700',
+    fontSize: '16px',
+    fontFamily: 'Arial, sans-serif',
+    outline: 'none',
+    transition: 'border-color 0.3s'
+  };
+
+  const selectStyle = {
+    ...inputStyle,
+    cursor: 'pointer'
+  };
+
+  const buttonPrimaryStyle = {
+    width: '100%',
+    padding: '16px',
+    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+    color: '#000',
+    border: 'none',
+    borderRadius: '12px',
+    fontWeight: 'bold',
+    fontSize: '18px',
+    cursor: 'pointer',
+    boxShadow: '0 4px 12px rgba(255, 215, 0, 0.3)',
+    transition: 'transform 0.2s, box-shadow 0.2s'
+  };
+
+  const buttonSecondaryStyle = {
+    padding: '12px 24px',
+    background: '#444',
+    color: '#FFD700',
+    border: '2px solid #666',
+    borderRadius: '10px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'all 0.2s'
+  };
+
   return (
-    <div style={{ padding: 24, maxWidth: 600, margin: 'auto', color: '#FFD700', background: '#222', borderRadius: 16 }}>
-      <h1>Registro Completo - Paso {pasoActual}/3</h1>
-      
-      {pasoActual === 1 && (
-        <div>
-          <h2>Credenciales</h2>
-          <input
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            style={{ width: '100%', padding: 12, marginBottom: 12, borderRadius: 8 }}
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            style={{ width: '100%', padding: 12, marginBottom: 12, borderRadius: 8 }}
-          />
-          <button onClick={handleGoogleSignup} style={{ width: '100%', padding: 12, background: '#4285F4', color: '#fff', border: 'none', borderRadius: 8 }}>
-            Continuar con Google
-          </button>
+    <div style={{ 
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)',
+      padding: '40px 20px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}>
+      <div style={{ 
+        maxWidth: '600px',
+        width: '100%',
+        background: '#222',
+        borderRadius: '20px',
+        padding: '40px',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+        border: '2px solid #333'
+      }}>
+        {/* Header con progreso */}
+        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+          <h1 style={{ 
+            color: '#FFD700',
+            fontSize: '32px',
+            fontWeight: 'bold',
+            marginBottom: '8px',
+            textShadow: '0 2px 8px rgba(255, 215, 0, 0.3)'
+          }}>
+            ⚽ Registro FutPro
+          </h1>
+          <p style={{ color: '#999', fontSize: '16px', marginBottom: '24px' }}>
+            Paso {pasoActual} de 4
+          </p>
+          
+          {/* Barra de progreso */}
+          <div style={{ 
+            width: '100%',
+            height: '6px',
+            background: '#333',
+            borderRadius: '10px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              width: `${(pasoActual / 4) * 100}%`,
+              height: '100%',
+              background: 'linear-gradient(90deg, #FFD700, #FFA500)',
+              transition: 'width 0.3s ease',
+              borderRadius: '10px'
+            }} />
+          </div>
         </div>
-      )}
 
-      {pasoActual === 2 && (
-        <div>
-          <h2>Datos Personales</h2>
-          <input
-            placeholder="Nombre"
-            value={formData.nombre}
-            onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-            style={{ width: '100%', padding: 12, marginBottom: 12, borderRadius: 8 }}
-          />
-          <input
-            placeholder="Apellido"
-            value={formData.apellido}
-            onChange={(e) => setFormData({ ...formData, apellido: e.target.value })}
-            style={{ width: '100%', padding: 12, marginBottom: 12, borderRadius: 8 }}
-          />
-          <input
-            type="number"
-            placeholder="Edad"
-            value={formData.edad}
-            onChange={(e) => setFormData({ ...formData, edad: e.target.value })}
-            style={{ width: '100%', padding: 12, marginBottom: 12, borderRadius: 8 }}
-          />
-        </div>
-      )}
-
-      {pasoActual === 3 && (
-        <div>
-          <h2>Info Futbolística</h2>
-          <select
-            value={formData.posicion}
-            onChange={(e) => setFormData({ ...formData, posicion: e.target.value })}
-            style={{ width: '100%', padding: 12, marginBottom: 12, borderRadius: 8 }}
-          >
-            <option value="Flexible">Flexible</option>
-            <option value="Portero">Portero</option>
-            <option value="Defensa">Defensa</option>
-            <option value="Mediocampista">Mediocampista</option>
-            <option value="Delantero">Delantero</option>
-          </select>
-          <button
-            onClick={() => {
-              console.log('Registro completo:', formData);
-              navigate('/perfil-card');
-            }}
-            style={{ width: '100%', padding: 12, background: '#FFD700', color: '#000', border: 'none', borderRadius: 8, fontWeight: 'bold' }}
-          >
-            Completar Registro
-          </button>
-        </div>
-      )}
-
-      <div style={{ marginTop: 16, display: 'flex', justifyContent: 'space-between' }}>
-        {pasoActual > 1 && (
-          <button onClick={pasoAnterior} style={{ padding: 10, background: '#444', color: '#fff', border: 'none', borderRadius: 8 }}>
-            ← Anterior
-          </button>
+        {/* PASO 1: Credenciales */}
+        {pasoActual === 1 && (
+          <div>
+            <h2 style={{ color: '#FFD700', fontSize: '24px', marginBottom: '24px', fontWeight: 'bold' }}>
+              🔐 Credenciales de Acceso
+            </h2>
+            <input
+              type="email"
+              placeholder="✉️ Correo electrónico"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+            <input
+              type="password"
+              placeholder="🔒 Contraseña (mínimo 6 caracteres)"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+            <input
+              type="password"
+              placeholder="🔒 Confirmar contraseña"
+              value={formData.confirmPassword}
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+            {formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword && (
+              <p style={{ color: '#ff4444', fontSize: '14px', marginTop: '-12px', marginBottom: '12px' }}>
+                ⚠️ Las contraseñas no coinciden
+              </p>
+            )}
+          </div>
         )}
-        {pasoActual < 3 && (
-          <button onClick={siguientePaso} style={{ padding: 10, background: '#FFD700', color: '#000', border: 'none', borderRadius: 8, fontWeight: 'bold', marginLeft: 'auto' }}>
-            Siguiente →
-          </button>
+
+        {/* PASO 2: Datos Personales */}
+        {pasoActual === 2 && (
+          <div>
+            <h2 style={{ color: '#FFD700', fontSize: '24px', marginBottom: '24px', fontWeight: 'bold' }}>
+              👤 Datos Personales
+            </h2>
+            <input
+              placeholder="📝 Nombre"
+              value={formData.nombre}
+              onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+            <input
+              placeholder="📝 Apellido"
+              value={formData.apellido}
+              onChange={(e) => setFormData({ ...formData, apellido: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+            <input
+              type="number"
+              placeholder="🎂 Edad"
+              value={formData.edad}
+              onChange={(e) => setFormData({ ...formData, edad: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+            <input
+              type="number"
+              placeholder="⚖️ Peso (kg)"
+              value={formData.peso}
+              onChange={(e) => setFormData({ ...formData, peso: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+            <input
+              type="number"
+              placeholder="📏 Altura (cm)"
+              value={formData.altura}
+              onChange={(e) => setFormData({ ...formData, altura: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+            <input
+              type="tel"
+              placeholder="📱 Teléfono (opcional)"
+              value={formData.telefono}
+              onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+            <input
+              placeholder="🏙️ Ciudad"
+              value={formData.ciudad}
+              onChange={(e) => setFormData({ ...formData, ciudad: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+            <input
+              placeholder="🌍 País"
+              value={formData.pais}
+              onChange={(e) => setFormData({ ...formData, pais: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+          </div>
         )}
+
+        {/* PASO 3: Info Futbolística */}
+        {pasoActual === 3 && (
+          <div>
+            <h2 style={{ color: '#FFD700', fontSize: '24px', marginBottom: '24px', fontWeight: 'bold' }}>
+              ⚽ Información Futbolística
+            </h2>
+            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>
+              Posición Favorita
+            </label>
+            <select
+              value={formData.posicion}
+              onChange={(e) => setFormData({ ...formData, posicion: e.target.value })}
+              style={selectStyle}
+            >
+              <option value="Flexible">🔄 Flexible / Polivalente</option>
+              <option value="Portero">🥅 Portero</option>
+              <option value="Defensa Central">🛡️ Defensa Central</option>
+              <option value="Lateral Derecho">➡️ Lateral Derecho</option>
+              <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
+              <option value="Mediocampista Defensivo">🔒 Mediocampista Defensivo</option>
+              <option value="Mediocampista Central">⚖️ Mediocampista Central</option>
+              <option value="Mediocampista Ofensivo">🎯 Mediocampista Ofensivo</option>
+              <option value="Extremo Derecho">🏃‍♂️ Extremo Derecho</option>
+              <option value="Extremo Izquierdo">🏃‍♂️ Extremo Izquierdo</option>
+              <option value="Delantero Centro">⚽ Delantero Centro</option>
+            </select>
+
+            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
+              Nivel de Habilidad
+            </label>
+            <select
+              value={formData.nivelHabilidad}
+              onChange={(e) => setFormData({ ...formData, nivelHabilidad: e.target.value })}
+              style={selectStyle}
+            >
+              <option value="Principiante">🌱 Principiante</option>
+              <option value="Intermedio">⚡ Intermedio</option>
+              <option value="Avanzado">🔥 Avanzado</option>
+              <option value="Profesional">⭐ Profesional</option>
+              <option value="Elite">👑 Elite</option>
+            </select>
+
+            <input
+              placeholder="🏆 Equipo Favorito"
+              value={formData.equipoFavorito}
+              onChange={(e) => setFormData({ ...formData, equipoFavorito: e.target.value })}
+              style={{...inputStyle, marginTop: '16px'}}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+
+            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
+              Pierna dominante
+            </label>
+            <select
+              value={formData.piernaDominante}
+              onChange={(e) => setFormData({ ...formData, piernaDominante: e.target.value })}
+              style={selectStyle}
+            >
+              <option value="Derecha">🦵 Derecha</option>
+              <option value="Izquierda">🦶 Izquierda</option>
+              <option value="Ambidiestra">🔁 Ambidiestra</option>
+            </select>
+
+            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
+              Disponibilidad de juego
+            </label>
+            <select
+              value={formData.disponibilidadJuego}
+              onChange={(e) => setFormData({ ...formData, disponibilidadJuego: e.target.value })}
+              style={selectStyle}
+            >
+              <option value="Fines de semana">🗓️ Fines de semana</option>
+              <option value="Entre semana">📅 Entre semana</option>
+              <option value="Cualquier día">✅ Cualquier día</option>
+              <option value="Por coordinar">⏱️ Por coordinar</option>
+            </select>
+
+            <textarea
+              placeholder="🎯 Objetivo deportivo (p.ej., mejorar resistencia, fichar en equipo, jugar torneos)"
+              value={formData.objetivoDeportivo}
+              onChange={(e) => setFormData({ ...formData, objetivoDeportivo: e.target.value })}
+              style={{
+                ...inputStyle,
+                minHeight: '90px',
+                resize: 'vertical',
+                lineHeight: '1.4'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+
+            <input
+              placeholder="🌐 Redes sociales (Instagram/TikTok/YouTube)"
+              value={formData.redesSociales}
+              onChange={(e) => setFormData({ ...formData, redesSociales: e.target.value })}
+              style={{...inputStyle, marginTop: '8px'}}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+          </div>
+        )}
+
+        {/* PASO 4: Foto de Perfil */}
+        {pasoActual === 4 && (
+          <div>
+            <h2 style={{ color: '#FFD700', fontSize: '24px', marginBottom: '24px', fontWeight: 'bold' }}>
+              📸 Foto de Perfil
+            </h2>
+            
+            {formData.avatarUrl && (
+              <div style={{ 
+                textAlign: 'center',
+                marginBottom: '24px'
+              }}>
+                <img 
+                  src={formData.avatarUrl} 
+                  alt="Preview" 
+                  style={{
+                    width: '150px',
+                    height: '150px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '4px solid #FFD700',
+                    boxShadow: '0 4px 16px rgba(255, 215, 0, 0.3)'
+                  }}
+                />
+              </div>
+            )}
+
+            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>
+              Subir foto desde tu dispositivo
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              style={{
+                width: '100%',
+                padding: '12px',
+                marginBottom: '16px',
+                borderRadius: '10px',
+                border: '2px dashed #444',
+                background: '#1a1a1a',
+                color: '#FFD700',
+                cursor: 'pointer'
+              }}
+            />
+
+            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>
+              O ingresa una URL de imagen
+            </label>
+            <input
+              type="url"
+              placeholder="🔗 https://ejemplo.com/foto.jpg"
+              value={formData.avatarUrl}
+              onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+
+            <div style={{ 
+              marginTop: '32px',
+              padding: '20px',
+              background: '#1a1a1a',
+              borderRadius: '12px',
+              border: '2px solid #333'
+            }}>
+              <p style={{ color: '#999', fontSize: '14px', marginBottom: '16px', textAlign: 'center' }}>
+                También puedes continuar con tu cuenta de Google para usar tu foto de perfil automáticamente
+              </p>
+              <button 
+                onClick={handleGoogleSignup}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  background: '#4285F4',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontWeight: 'bold',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '12px',
+                  boxShadow: '0 4px 12px rgba(66, 133, 244, 0.3)',
+                  transition: 'transform 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.transform = 'scale(1.02)'}
+                onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Continuar con Google
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Botones de navegación */}
+        <div style={{ 
+          marginTop: '32px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '16px'
+        }}>
+          {pasoActual > 1 && (
+            <button 
+              onClick={pasoAnterior}
+              style={buttonSecondaryStyle}
+              onMouseOver={(e) => {
+                e.target.style.background = '#555';
+                e.target.style.borderColor = '#FFD700';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = '#444';
+                e.target.style.borderColor = '#666';
+              }}
+            >
+              ← Anterior
+            </button>
+          )}
+          
+          {pasoActual < 4 && (
+            <button 
+              onClick={() => {
+                if (pasoActual === 1 && !validarPaso1()) return;
+                if (pasoActual === 2 && !validarPaso2()) return;
+                siguientePaso();
+              }}
+              style={{
+                ...buttonPrimaryStyle,
+                marginLeft: pasoActual === 1 ? 0 : 'auto'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'scale(1.02)';
+                e.target.style.boxShadow = '0 6px 16px rgba(255, 215, 0, 0.5)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'scale(1)';
+                e.target.style.boxShadow = '0 4px 12px rgba(255, 215, 0, 0.3)';
+              }}
+            >
+              Siguiente →
+            </button>
+          )}
+
+          {pasoActual === 4 && (
+            <button
+              onClick={() => {
+                persistProfileDraft();
+                navigate('/perfil-card');
+              }}
+              style={{
+                ...buttonPrimaryStyle,
+                marginLeft: 'auto'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'scale(1.02)';
+                e.target.style.boxShadow = '0 6px 16px rgba(255, 215, 0, 0.5)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'scale(1)';
+                e.target.style.boxShadow = '0 4px 12px rgba(255, 215, 0, 0.3)';
+              }}
+            >
+              ✨ Completar Registro
+            </button>
+          )}
+        </div>
+
+        {/* Indicador de pasos */}
+        <div style={{ 
+          marginTop: '32px',
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '8px'
+        }}>
+          {[1, 2, 3, 4].map((paso) => (
+            <div
+              key={paso}
+              style={{
+                width: '12px',
+                height: '12px',
+                borderRadius: '50%',
+                background: paso === pasoActual ? '#FFD700' : '#444',
+                transition: 'all 0.3s',
+                boxShadow: paso === pasoActual ? '0 0 12px rgba(255, 215, 0, 0.5)' : 'none'
+              }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

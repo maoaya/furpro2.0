@@ -1,14 +1,50 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import FutproLogo from '../components/FutproLogo.jsx';
+import TournamentInviteBanner from '../components/TournamentInviteBanner.jsx';
+import NotificationsBell from '../components/NotificationsBell.jsx';
+import { NotificationsProvider } from '../context/NotificationsContext.jsx';
+import NotificationsEnableButton from '../components/NotificationsEnableButton.jsx';
 import CommentsModal from '../components/CommentsModal.jsx';
+import MenuHamburguesa from '../components/MenuHamburguesa.jsx';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
+import { NotificationManager } from '../services/NotificationManager';
 import { useAuth } from '../context/AuthContext';
 
 const gold = '#FFD700';
 const black = '#0a0a0a';
 const darkCard = '#1a1a1a';
 const lightGold = '#FFA500';
+
+const menuItemsList = (actions) => ([
+  { key: 'perfil', label: '👤 Mi Perfil', action: actions.irAPerfil },
+  { key: 'estadisticas', label: '📊 Mis Estadisticas', action: actions.verEstadisticas },
+  { key: 'partidos', label: '📅 Mis Partidos', action: actions.verPartidos },
+  { key: 'logros', label: '🏆 Mis Logros', action: actions.verLogros },
+  { key: 'tarjetas', label: '🆔 Mis Tarjetas', action: actions.verTarjetas },
+  { key: 'equipos', label: '👥 Ver Equipos', action: actions.verEquipos },
+  { key: 'crear-equipo', label: '➕ Crear Equipo', action: actions.crearEquipo },
+  { key: 'torneos', label: '🏆 Ver Torneos', action: actions.verTorneos },
+  { key: 'crear-torneo', label: '➕ Crear Torneo', action: actions.crearTorneo },
+  { key: 'amistoso', label: '🤝 Crear Amistoso', action: actions.crearAmistoso },
+  { key: 'penaltis', label: '⚽ Juego de Penaltis', action: actions.jugarPenaltis },
+  { key: 'card-fifa', label: '🆔 Card Futpro', action: actions.verCardFIFA },
+  { key: 'sugerencias-card', label: '💡 Sugerencias Card', action: actions.sugerenciasCard },
+  { key: 'notificaciones', label: '🔔 Notificaciones', action: actions.verNotificaciones },
+  { key: 'chat', label: '💬 Chat', action: actions.abrirChat },
+  { key: 'videos', label: '🎥 Videos', action: actions.verVideos },
+  { key: 'marketplace', label: '🏪 Marketplace', action: actions.abrirMarketplace },
+  { key: 'estados', label: '📋 Estados', action: actions.verEstados },
+  { key: 'seguidores', label: '👫 Seguidores', action: actions.verAmigos },
+  { key: 'vivo', label: '📡 Transmitir en Vivo', action: actions.abrirTransmisionEnVivo },
+  { key: 'ranking-jug', label: '📊 Ranking Jugadores', action: actions.rankingJugadores },
+  { key: 'ranking-eq', label: '📈 Ranking Equipos', action: actions.rankingEquipos },
+  { key: 'buscar-ranking', label: '🔍 Buscar Ranking', action: actions.buscarRanking },
+  { key: 'config', label: '🔧 Configuracion', action: actions.abrirConfiguracion },
+  { key: 'soporte', label: '🆘 Soporte', action: actions.contactarSoporte },
+  { key: 'privacidad', label: '🛡️ Privacidad', action: actions.verPrivacidad },
+  { key: 'logout', label: '🚪 Cerrar sesion', action: actions.logout }
+]);
 
 // Funciones de acción del menú - se actualizan con navigate
 const createMenuActions = (navigate) => ({
@@ -54,25 +90,31 @@ const seedStories = [
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const menuActions = createMenuActions(navigate);
+  const { user, loginWithGoogle } = useAuth();
+  const menuActions = useMemo(() => createMenuActions(navigate), [navigate]);
+  const menuItems = useMemo(() => menuItemsList(menuActions), [menuActions]);
   const [search, setSearch] = useState('');
   const [posts, setPosts] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState({});
   const [showComments, setShowComments] = useState({});
   const [followedUsers, setFollowedUsers] = useState([]);
   const [suggestedPosts, setSuggestedPosts] = useState([]);
   const [selectedPostForComments, setSelectedPostForComments] = useState(null);
+  // Realtime y notificaciones consolidadas en NotificationsProvider
 
   // Cargar posts y followers al montar
   useEffect(() => {
-    if (user) {
-      cargarFollowers();
-      cargarPosts();
+    if (!user) {
+      navigate('/login');
+      return;
     }
-    
+
+    cargarFollowers();
+    cargarPosts();
+
     // Suscribirse a cambios en realtime
     const channelPosts = supabase
       .channel('posts:all')
@@ -95,12 +137,14 @@ export default function HomePage() {
       })
       .subscribe();
 
+    // Suscripciones específicas de posts/likes/comments permanecen; notificaciones se manejan en Provider
+
     return () => {
       channelPosts.unsubscribe();
       channelLikes.unsubscribe();
       channelComments.unsubscribe();
     };
-  }, [user]);
+  }, [user, navigate]);
 
   async function cargarFollowers() {
     try {
@@ -244,15 +288,31 @@ export default function HomePage() {
   const goAlerts = () => menuActions.verNotificaciones();
   const goChat = () => menuActions.abrirChat();
 
+  const menuButtonStyle = (isHover) => ({
+    width: '100%',
+    textAlign: 'left',
+    padding: '14px 16px',
+    borderRadius: 14,
+    border: `1px solid ${gold}`,
+    background: isHover ? 'linear-gradient(135deg,#FFD700,#FFB347)' : '#121212',
+    color: isHover ? '#0a0a0a' : gold,
+    fontWeight: 800,
+    letterSpacing: 0.3,
+    boxShadow: isHover ? '0 6px 18px rgba(255,215,0,0.35)' : '0 2px 10px rgba(0,0,0,0.35)',
+    transition: 'all 0.15s ease'
+  });
+
   return (
-    <div style={{ background: black, color: gold, minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
+    <NotificationsProvider>
+    <div style={{ background: 'radial-gradient(circle at 20% 20%, rgba(255,215,0,0.08), transparent 30%), radial-gradient(circle at 80% 10%, rgba(255,215,0,0.06), transparent 30%), #0a0a0a', color: gold, minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
       <header style={{
-        background: darkCard,
+        background: 'linear-gradient(120deg,#0b0b0b 0%, #151515 60%, #0b0b0b 100%)',
         borderBottom: `2px solid ${gold}`,
-        padding: '16px 24px',
+        padding: '18px 24px',
         position: 'sticky',
         top: 0,
-        zIndex: 20
+        zIndex: 20,
+        boxShadow: '0 10px 30px rgba(0,0,0,0.4)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -268,50 +328,56 @@ export default function HomePage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar jugadores, equipos..."
-                style={{ padding: '10px 38px 10px 12px', borderRadius: 20, border: `1px solid ${gold}`,
-                  background: '#111', color: gold, width: 240 }}
+                style={{
+                  padding: '12px 44px 12px 14px',
+                  borderRadius: 24,
+                  border: `2px solid ${gold}`,
+                  background: '#0f0f0f',
+                  color: gold,
+                  width: 260,
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.45)'
+                }}
               />
-              <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)' }}>🔍</span>
+              <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: gold, fontWeight: 700 }}>🔍</span>
             </div>
-            <button aria-label="Notificaciones" onClick={goAlerts} style={{ borderRadius: '50%', width: 40, height: 40, border: `1px solid ${gold}`, background: 'transparent', color: gold }}>🔔</button>
-            <button aria-label="Menu" onClick={() => setMenuOpen(!menuOpen)} style={{ borderRadius: '50%', width: 40, height: 40, border: `1px solid ${gold}`, background: 'transparent', color: gold }}>☰</button>
+            {!user && (
+              <button
+                onClick={async () => {
+                  localStorage.setItem('post_auth_origin', 'homepage');
+                  localStorage.setItem('post_auth_target', '/');
+                  await loginWithGoogle();
+                }}
+                style={{
+                  background: 'linear-gradient(135deg,#FFD700,#FF9F0D)',
+                  color: '#0a0a0a',
+                  border: 'none',
+                  borderRadius: 22,
+                  padding: '11px 16px',
+                  fontWeight: 900,
+                  boxShadow: '0 6px 20px rgba(255,215,0,0.35)',
+                  letterSpacing: 0.3
+                }}
+                title="Iniciar sesión con Google"
+              >
+                Iniciar sesión
+              </button>
+            )}
+            <button 
+              aria-label="Nueva publicación" 
+              onClick={() => navigate('/crear-publicacion')}
+              style={{ borderRadius: '50%', width: 42, height: 42, border: `2px solid ${gold}`, background: 'linear-gradient(135deg, #FFD700, #FFA500)', color: '#000', boxShadow: '0 3px 12px rgba(255,215,0,0.4)', fontSize: '24px', fontWeight: 'bold' }}
+            >
+              📸
+            </button>
+            <NotificationsEnableButton />
+            <NotificationsBell />
+            <button aria-label="Menu" onClick={() => setMenuOpen(!menuOpen)} style={{ borderRadius: '50%', width: 42, height: 42, border: `2px solid ${gold}`, background: '#0f0f0f', color: gold, boxShadow: '0 3px 12px rgba(0,0,0,0.4)' }}>☰</button>
           </div>
         </div>
       </header>
 
-      {menuOpen && (
-        <div style={{ background: '#111', borderBottom: `1px solid ${gold}`, padding: 16 }}>
-          <div style={{ display: 'grid', gap: 8, gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))' }}>
-            <button onClick={menuActions.irAPerfil}>👤 Mi Perfil</button>
-            <button onClick={menuActions.verEstadisticas}>📊 Mis Estadisticas</button>
-            <button onClick={menuActions.verPartidos}>📅 Mis Partidos</button>
-            <button onClick={menuActions.verLogros}>🏆 Mis Logros</button>
-            <button onClick={menuActions.verTarjetas}>🆔 Mis Tarjetas</button>
-            <button onClick={menuActions.verEquipos}>👥 Ver Equipos</button>
-            <button onClick={menuActions.crearEquipo}>➕ Crear Equipo</button>
-            <button onClick={menuActions.verTorneos}>🏆 Ver Torneos</button>
-            <button onClick={menuActions.crearTorneo}>➕ Crear Torneo</button>
-            <button onClick={menuActions.crearAmistoso}>🤝 Crear Amistoso</button>
-            <button onClick={menuActions.jugarPenaltis}>⚽ Juego de Penaltis</button>
-            <button onClick={menuActions.verCardFIFA}>🆔 Card Futpro</button>
-            <button onClick={menuActions.sugerenciasCard}>💡 Sugerencias Card</button>
-            <button onClick={menuActions.verNotificaciones}>🔔 Notificaciones</button>
-            <button onClick={menuActions.abrirChat}>💬 Chat</button>
-            <button onClick={menuActions.verVideos}>🎥 Videos</button>
-            <button onClick={menuActions.abrirMarketplace}>🏪 Marketplace</button>
-            <button onClick={menuActions.verEstados}>📋 Estados</button>
-            <button onClick={menuActions.verAmigos}>👫 Seguidores</button>
-            <button onClick={menuActions.abrirTransmisionEnVivo}>📡 Transmitir en Vivo</button>
-            <button onClick={menuActions.rankingJugadores}>📊 Ranking Jugadores</button>
-            <button onClick={menuActions.rankingEquipos}>📈 Ranking Equipos</button>
-            <button onClick={menuActions.buscarRanking}>🔍 Buscar Ranking</button>
-            <button onClick={menuActions.abrirConfiguracion}>🔧 Configuracion</button>
-            <button onClick={menuActions.contactarSoporte}>🆘 Soporte</button>
-            <button onClick={menuActions.verPrivacidad}>🛡️ Privacidad</button>
-            <button onClick={menuActions.logout}>🚪 Cerrar sesion</button>
-          </div>
-        </div>
-      )}
+      {/* Menu Hamburguesa Mejorado */}
+      <MenuHamburguesa isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
 
       <section style={{ padding: '12px 16px', overflowX: 'auto', display: 'flex', gap: 12 }}>
         {seedStories.map(story => (
@@ -332,6 +398,8 @@ export default function HomePage() {
       </section>
 
       <main style={{ padding: '0 16px 80px' }}>
+        {/* Invitaciones a torneos */}
+        <TournamentInviteBanner />
         {/* Posts de usuarios seguidos */}
         <div style={{ marginBottom: '32px' }}>
           {filteredPosts.length > 0 && (
@@ -411,7 +479,7 @@ export default function HomePage() {
       </main>
 
       {/* Modal de comentarios */}
-      <CommentsModal 
+      <CommentsModal
         postId={selectedPostForComments}
         isOpen={!!selectedPostForComments}
         onClose={() => setSelectedPostForComments(null)}
@@ -426,11 +494,13 @@ export default function HomePage() {
       </nav>
 
       <button
-        onClick={() => navigate('/feed')}
-        style={{ position: 'fixed', right: 20, bottom: 70, width: 56, height: 56, borderRadius: '50%', background: gold, color: black, fontWeight: 800, border: 'none', boxShadow: '0 6px 18px rgba(0,0,0,0.4)' }}
+        onClick={() => navigate('/crear-publicacion')}
+        style={{ position: 'fixed', right: 20, bottom: 70, width: 56, height: 56, borderRadius: '50%', background: gold, color: black, fontWeight: 800, border: 'none', boxShadow: '0 6px 18px rgba(0,0,0,0.4)', fontSize: '32px' }}
         title="Crear publicación"
-      >+
+      >
+        📸
       </button>
     </div>
+    </NotificationsProvider>
   );
 }

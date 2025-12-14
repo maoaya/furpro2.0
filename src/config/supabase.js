@@ -280,6 +280,43 @@ export const dbOperations = {
     return data
   },
 
+  // 📩 Invitaciones de Torneo
+  async listTournamentInvitationsForEmail(userEmail) {
+    const { data, error } = await supabase
+      .from('tournament_invitations')
+      .select(`*, tournament:tournaments(*), team:teams(*)`)
+      .eq('status', 'pending')
+      .eq('invited_email', userEmail)
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    return data || []
+  },
+
+  async acceptTournamentInvitation(inviteId, tournamentId, teamId, userEmail) {
+    // 1) Registrar equipo en torneo
+    const { error: regErr } = await supabase
+      .from('tournament_teams')
+      .insert([{ tournament_id: tournamentId, team_id: teamId, status: 'confirmed' }])
+    if (regErr && regErr.code !== '23505') throw regErr // ignore unique violation
+
+    // 2) Marcar invitación como aceptada
+    const { error } = await supabase
+      .from('tournament_invitations')
+      .update({ status: 'accepted', responded_at: new Date().toISOString() })
+      .eq('id', inviteId)
+    if (error) throw error
+    return { ok: true }
+  },
+
+  async declineTournamentInvitation(inviteId) {
+    const { error } = await supabase
+      .from('tournament_invitations')
+      .update({ status: 'declined', responded_at: new Date().toISOString() })
+      .eq('id', inviteId)
+    if (error) throw error
+    return { ok: true }
+  },
+
   // ⚽ Partidos
   async createMatch(matchData) {
     const { data, error } = await supabase

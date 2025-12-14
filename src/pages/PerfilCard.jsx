@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { loadCardData as stubLoadCardData, continuarAlHome as stubContinuarAlHome } from '../stubs/perfilCardFunctions';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { UserService } from '../services/UserService';
 import { supabase } from '../config/supabase';
 
 const PerfilCard = () => {
@@ -73,18 +71,87 @@ const PerfilCard = () => {
 
 
   useEffect(() => {
-    // Usar stub para cargar datos de la card
     (async () => {
-      const card = await stubLoadCardData();
-      setCardData(card);
-      setShowAnimation(true);
-      setLoading(false);
-      console.log('[INTEGRACIÓN STUB] loadCardData ejecutado (PerfilCard.jsx)');
+      try {
+        // 1) Intentar cargar datos guardados localmente (draft del registro)
+        const localDraft = localStorage.getItem('card_preview') || localStorage.getItem('pendingProfileData');
+        if (localDraft) {
+          const parsed = JSON.parse(localDraft);
+          setCardData({
+            id: 'LOCAL-DRAFT',
+            nombre: parsed.nombre || 'Jugador',
+            apellido: parsed.apellido || '',
+            categoria: parsed.categoria || 'Sin categoría',
+            posicion_favorita: parsed.posicion_favorita || parsed.posicion || 'Flexible',
+            nivel_habilidad: parsed.nivel_habilidad || parsed.nivelHabilidad || 'Principiante',
+            avatar_url: parsed.avatar_url || '',
+            equipo: parsed.equipo || 'Libre',
+             peso: parsed.peso || '',
+             edad: parsed.edad || '',
+             pierna_dominante: parsed.pierna_dominante || 'Derecha',
+             disponibilidad_juego: parsed.disponibilidad_juego || 'Por coordinar',
+            ciudad: parsed.ciudad || '',
+            pais: parsed.pais || '',
+            puntaje: parsed.puntaje || 75,
+            partidos_jugados: parsed.partidos_jugados || 0,
+            goles: parsed.goles || 0,
+            asistencias: parsed.asistencias || 0,
+            fecha_registro: parsed.fecha_registro || new Date().toISOString(),
+            esPrimeraCard: true,
+          });
+          setShowAnimation(true);
+          setLoading(false);
+          return;
+        }
+
+        // 2) Si hay usuario logueado, buscar en Supabase
+        if (user) {
+          const { data, error } = await supabase
+            .from('usuarios')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+          if (error) console.warn('⚠️ No se pudo cargar perfil supabase:', error.message);
+
+          if (data) {
+            setCardData({
+              id: data.id,
+              nombre: data.nombre || 'Jugador',
+              apellido: data.apellido || '',
+              categoria: data.categoria || 'Sin categoría',
+              posicion_favorita: data.posicion_favorita || 'Flexible',
+              nivel_habilidad: data.nivel_habilidad || 'Principiante',
+              avatar_url: data.avatar_url || '',
+              equipo: data.equipo || 'Libre',
+               peso: data.peso || '',
+               edad: data.edad || '',
+               pierna_dominante: data.pierna_dominante || 'Derecha',
+               disponibilidad_juego: data.disponibilidad_juego || 'Por coordinar',
+              ciudad: data.ciudad || '',
+              pais: data.pais || '',
+              puntaje: data.puntaje || 80,
+              partidos_jugados: data.partidos_jugados || 0,
+              goles: data.goles || 0,
+              asistencias: data.asistencias || 0,
+              fecha_registro: data.created_at || new Date().toISOString(),
+              esPrimeraCard: true,
+            });
+            setShowAnimation(true);
+            setLoading(false);
+            return;
+          }
+        }
+
+        setCardData(null);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error cargando card:', err);
+        setCardData(null);
+        setLoading(false);
+      }
     })();
-  }, [navigate, location.state]);
-
-
-  // Usar stub para continuar al home
+  }, [navigate, location.state, user]);
 
   const getColorByCategory = (categoria) => {
     switch(categoria) {
@@ -174,17 +241,30 @@ const PerfilCard = () => {
 
           {/* Información Principal */}
           <div className="absolute top-44 left-0 right-0 text-center text-white">
-            <h2 className="text-xl font-bold mb-1">{cardData.nombre} {cardData.apellido}</h2>
-            <p className="text-sm opacity-90 mb-2">{cardData.ciudad}, {cardData.pais}</p>
+            <h2 className="text-xl font-bold mb-2">{cardData.nombre} {cardData.apellido}</h2>
+
+            <p className="text-sm opacity-90 mb-2">{cardData.ciudad || '-'}, {cardData.pais || '-'}</p>
+
+            <div className="flex justify-center items-center space-x-3 text-xs opacity-90 mb-2">
+              <span>Edad: {cardData.edad || '-'}</span>
+              <span className="opacity-70">•</span>
+              <span>Peso: {cardData.peso ? `${cardData.peso} kg` : '-'}</span>
+            </div>
+
+            <div className="flex justify-center items-center space-x-3 text-xs opacity-90 mb-3">
+              <span>Pierna hábil: {cardData.pierna_dominante || '-'}</span>
+              <span className="opacity-70">•</span>
+              <span>Disponibilidad: {cardData.disponibilidad_juego || '-'}</span>
+            </div>
             
-            {/* Posición y Experiencia */}
+            {/* Posición y Habilidad */}
             <div className="flex justify-center items-center space-x-4 mb-3">
               <div className="flex items-center space-x-1">
                 <span className="text-lg">{getIconByPosition(cardData.posicion_favorita)}</span>
                 <span className="text-xs">{cardData.posicion_favorita}</span>
               </div>
               <div className="text-xs opacity-80">•</div>
-              <div className="text-xs">{cardData.nivel_habilidad}</div>
+              <div className="text-xs">Habilidad: {cardData.nivel_habilidad}</div>
             </div>
 
             {/* Puntaje Principal */}
@@ -193,7 +273,12 @@ const PerfilCard = () => {
               <div className="text-xs opacity-90">{cardData.categoria}</div>
             </div>
 
-            {/* Estadísticas */}
+            {/* Extra: Equipo favorito */}
+            <div className="text-xs opacity-90 mb-3">
+              Equipo favorito: {cardData.equipo || 'Libre'}
+            </div>
+
+            {/* Estadísticas visibles */}
             <div className="flex justify-around text-center text-xs px-4">
               <div>
                 <div className="font-bold">{cardData.partidos_jugados || 0}</div>
@@ -236,8 +321,7 @@ const PerfilCard = () => {
           
           <button
             onClick={() => {
-              stubContinuarAlHome(navigate);
-              console.log('[INTEGRACIÓN STUB] continuarAlHome ejecutado (PerfilCard.jsx)');
+              navigate('/');
             }}
             style={{
               width: '100%',

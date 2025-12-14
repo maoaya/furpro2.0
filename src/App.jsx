@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationsProvider } from './context/NotificationsContext.jsx';
+import { useAuth } from './context/AuthContext';
 import SidebarMenu from './components/SidebarMenu';
 import FeedPage from './pages/FeedPage';
 import PerfilInstagram from './pages/PerfilInstagram';
@@ -46,6 +48,7 @@ import SeleccionCategoria from './pages/SeleccionCategoria';
 import FormularioRegistroCompleto from './pages/FormularioRegistroCompleto';
 import Logros from './pages/Logros';
 import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
+import SeccionPlaceholder from './pages/SeccionPlaceholder';
 
 
 function Layout({ children }) {
@@ -59,13 +62,20 @@ function Layout({ children }) {
     </div>
   );
 }
+function RootRoute() {
+  // Decide qué mostrar en la raíz: login si no hay usuario, homepage si ya está autenticado
+  const { user } = useAuth();
+  return user ? <HomePage /> : <AuthPageUnificada />;
+}
+
 export default function App() {
   return (
     <AuthProvider>
+      <NotificationsProvider>
       <Router>
         <Routes>
-        {/* HomePage es la ruta raíz SIN Layout */}
-        <Route path="/" element={<HomePage />} />
+        {/* Raíz: muestra Login si no hay sesión, Home si autenticado */}
+        <Route path="/" element={<RootRoute />} />
         
         {/* 🔐 FLUJO DE AUTENTICACIÓN LIMPIO */}
         <Route path="/login" element={<AuthPageUnificada />} />
@@ -75,6 +85,7 @@ export default function App() {
         <Route path="/formulario-registro" element={<FormularioRegistroCompleto />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/perfil-card" element={<PerfilCard />} />
+        <Route path="/seccion/:slug" element={<SeccionPlaceholder />} />
         
         {/* 🏠 RUTAS PRINCIPALES - CON LAYOUT */}
         <Route path="/home" element={<HomePage />} />
@@ -97,6 +108,7 @@ export default function App() {
         <Route path="/crear-torneo" element={<CrearTorneo />} />
         <Route path="/torneo/:id" element={<Layout><TorneoDetallePage /></Layout>} />
         <Route path="/amistoso" element={<Amistoso />} />
+        <Route path="/tarjetas" element={<Tarjetas />} />
         
         {/* 📊 ESTADÍSTICAS Y RANKING */}
         <Route path="/ranking" element={<Layout><EstadisticasPage /></Layout>} />
@@ -138,6 +150,7 @@ export default function App() {
         <Route path="*" element={<Layout><NotFoundPage /></Layout>} />
       </Routes>
       </Router>
+      </NotificationsProvider>
     </AuthProvider>
   );
 }

@@ -521,6 +521,17 @@ class FutProApp {
       container.innerHTML = '<div class="error-message">No se pudo cargar el perfil</div>';
     }
   }
+
+    // Registrar Service Worker para fallback de entrada main.js
+    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+      try {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('🔔 SW registrado (main.js)', reg.scope))
+          .catch(err => console.warn('SW no registrado (main.js):', err && err.message ? err.message : err))
+      } catch (e) {
+        console.warn('SW fallback error:', e)
+      }
+    }
 }
 
 

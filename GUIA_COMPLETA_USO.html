@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutPro 2.0 - Gu\u00eda Completa de Uso</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #fff;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 48px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+        
+        .section {
+            background: #181818;
+            border: 2px solid #FFD700;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+        
+        .section-title {
+            font-size: 32px;
+            color: #FFD700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .tutorial {
+            background: #0a0a0a;
+            border-left: 4px solid #FFD700;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        
+        .step {
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .step-content {
+            display: inline-block;
+            vertical-align: top;
+            width: calc(100% - 50px);
+        }
+        
+        .step-title {
+            color: #FFD700;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .step-desc {
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        .tip {
+            background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,204,255,0.1));
+            border: 1px solid #00ff88;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, rgba(255,165,0,0.1), rgba(255,99,71,0.1));
+            border: 1px solid #ff9500;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        
+        .feature-card {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            border-color: #FFD700;
+            transform: translateY(-4px);
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #FFD700;
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .badge-new {
+            background: #00ff88;
+        }
+        
+        code {
+            background: #0a0a0a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #00ccff;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>\ud83c\udfae FutPro 2.0 - Gu\u00eda Completa de Uso</h1>
+        <p class="subtitle">Todo lo que necesitas saber para dominar FutPro</p>
+
+        <!-- C\u00f3mo Crear un Equipo -->
+        <div class="section">
+            <div class="section-title">\u2795 C\u00f3mo Crear un Equipo (Paso a Paso)</div>
+            
+            <div class="tutorial">
+                <p style="color: #FFD700; font-size: 18px; margin-bottom: 16px;">
+                    <strong>\ud83d\udc49 Acceso:</strong> Men\u00fa Hamburguesa > Equipos & Torneos > Crear Equipo
+                </p>
+                <p style="color: #aaa;">
+                    O directamente desde la ruta: <code>/crear-equipo</code>
+                </p>
+            </div>
+
+            <h3 style="color: #00ff88; margin: 24px 0 16px;">Proceso Guiado en 3 Pasos:</h3>
+
+            <div class="step">
+                <span class="step-number">1</span>
+                <div class="step-content">
+                    <div class="step-title">\ud83d\udcdd Paso 1: Informaci\u00f3n B\u00e1sica</div>
+                    <div class="step-desc">
+                        <strong style="color: #FFD700;">Nombre del Equipo:</strong><br/>
+                        \u2022 Elige un nombre \u00fanico de hasta 50 caracteres<br/>
+                        \u2022 Evita n\u00fameros y s\u00edmbolos especiales<br/>
+                        \u2022 Ejemplos: "Los Invencibles", "\u00c1guilas FC", "Warriors United"<br/><br/>
+                        
+                        <strong style="color: #FFD700;">Categor\u00eda:</strong><br/>
+                        Selecciona entre 5 opciones con botones visuales:<br/>
+                        \ud83d\udc68 <strong>Masculina</strong> - Equipo varonil<br/>
+                        \ud83d\udc69 <strong>Femenina</strong> - Equipo femenil<br/>
+                        \ud83d\udc65 <strong>Mixta</strong> - Hombres y mujeres<br/>
+                        \ud83e\uddd2 <strong>Infantil Masculina</strong> - Ni\u00f1os<br/>
+                        \ud83d\udc67 <strong>Infantil Femenina</strong> - Ni\u00f1as
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <div class="step-content">
+                    <div class="step-title">\u2699\ufe0f Paso 2: Configuraci\u00f3n del Equipo</div>
+                    <div class="step-desc">
+                        <strong style="color: #FFD700;">\ud83d\udccd Ubicaci\u00f3n:</strong><br/>
+                        \u2022 Especifica ciudad y pa\u00eds<br/>
+                        \u2022 Ayuda a otros jugadores de tu zona a encontrarte<br/>
+                        \u2022 Ejemplo: "Madrid, Espa\u00f1a"<br/><br/>
+                        
+                        <strong style="color: #FFD700;">\ud83d\udc65 M\u00e1ximo de Jugadores:</strong><br/>
+                        \u2022 F\u00fatbol 11: 18-22 jugadores (recomendado)<br/>
+                        \u2022 F\u00fatbol 7: 12-15 jugadores<br/>
+                        \u2022 F\u00fatbol 5: 8-10 jugadores<br/>
+                        \u2022 Botones r\u00e1pidos: 7, 11, 15, 22<br/><br/>
+                        
+                        <strong style="color: #FFD700;">\u2b50 Nivel Requerido:</strong><br/>
+                        \ud83c\udf31 <strong>Principiante:</strong> Juego recreativo, para divertirse<br/>
+                        \u26a1 <strong>Intermedio:</strong> Competitivo local, partidos regulares<br/>
+                        \ud83d\udd25 <strong>Avanzado:</strong> Competiciones serias, entrenamientos<br/>
+                        \ud83d\udc51 <strong>Profesional:</strong> Nivel semipro/profesional
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <div class="step-content">
+                    <div class="step-title">\u2705 Paso 3: Descripci\u00f3n y Confirmaci\u00f3n</div>
+                    <div class="step-desc">
+                        <strong style="color: #FFD700;">\ud83d\udcdd Descripci\u00f3n (Opcional):</strong><br/>
+                        \u2022 Hasta 500 caracteres<br/>
+                        \u2022 Describe tu equipo, filosof\u00eda de juego, horarios<br/>
+                        \u2022 Qu\u00e9 buscas en nuevos jugadores<br/>
+                        \u2022 Una buena descripci\u00f3n atrae m\u00e1s solicitudes<br/><br/>
+                        
+                        <strong style="color: #FFD700;">\ud83d\udccb Resumen Final:</strong><br/>
+                        \u2022 Revisa toda la informaci\u00f3n en un panel visual<br/>
+                        \u2022 Verifica nombre, categor\u00eda, ubicaci\u00f3n, jugadores, nivel<br/>
+                        \u2022 Haz clic en "\u2713 Crear Equipo" para finalizar
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip">
+                <strong style="color: #00ff88;">\ud83d\udca1 CONSEJO PRO:</strong> Una descripci\u00f3n completa con horarios de entrenamiento, objetivos del equipo y requisitos espec\u00edficos aumenta hasta 300% las probabilidades de atraer jugadores comprometidos.
+            </div>
+
+            <div class="warning">
+                <strong style="color: #ff9500;">\u26a0\ufe0f IMPORTANTE:</strong> No puedes cambiar el nombre del equipo despu\u00e9s de crearlo. Aseg\u00farate de elegir bien desde el principio.
+            </div>
+        </div>
+
+        <!-- C\u00f3mo Crear un Torneo -->
+        <div class="section">
+            <div class="section-title">\ud83c\udfc6 C\u00f3mo Crear un Torneo (Paso a Paso)</div>
+            
+            <div class="tutorial">
+                <p style="color: #FFD700; font-size: 18px; margin-bottom: 16px;">
+                    <strong>\ud83d\udc49 Acceso:</strong> Men\u00fa Hamburguesa > Equipos & Torneos > Crear Torneo
+                </p>
+                <p style="color: #aaa;">
+                    O directamente desde la ruta: <code>/crear-torneo</code>
+                </p>
+            </div>
+
+            <h3 style="color: #00ff88; margin: 24px 0 16px;">Pasos para Organizar tu Torneo:</h3>
+
+            <div class="step">
+                <span class="step-number">1</span>
+                <div class="step-content">
+                    <div class="step-title">\ud83d\udcdd Informaci\u00f3n del Torneo</div>
+                    <div class="step-desc">
+                        <strong style="color: #FFD700;">Nombre del Torneo:</strong><br/>
+                        \u2022 Nombre \u00fanico y memorable<br/>
+                        \u2022 Ejemplos: "Copa FutPro 2025", "Liga de Verano", "Torneo Navide\u00f1o"<br/><br/>
+                        
+                        <strong style="color: #FFD700;">Descripci\u00f3n:</strong><br/>
+                        \u2022 Explica reglas, formato, premios<br/>
+                        \u2022 Requisitos de participaci\u00f3n<br/>
+                        \u2022 Informaci\u00f3n de contacto
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <div class="step-content">
+                    <div class="step-title">\ud83c\udff7\ufe0f Tipo y Categor\u00eda</div>
+                    <div class="step-desc">
+                        <strong style="color: #FFD700;">Tipo de Torneo:</strong><br/>
+                        \ud83c\udfc6 <strong>Liga:</strong> Todos contra todos, sistema de puntos<br/>
+                        \ud83c\udfaf <strong>Copa (Eliminaci\u00f3n Directa):</strong> Pierdes y quedas fuera<br/>
+                        \ud83d\udc65 <strong>Fase de Grupos:</strong> Grupos clasificatorios<br/>
+                        \ud83c\udd95 <strong>Mixto:</strong> Grupos + Eliminaci\u00f3n (estilo Mundial)<br/><br/>
+                        
+                        <strong style="color: #FFD700;">Categor\u00eda:</strong><br/>
+                        \u2022 Mismas opciones que crear equipo<br/>
+                        \u2022 Define qui\u00e9n puede participar
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <div class="step-content">
+                    <div class="step-title">\ud83d\udcc5 Fechas y Ubicaci\u00f3n</div>
+                    <div class="step-desc">
+                        <strong style="color: #FFD700;">Fecha de Inicio:</strong> (Requerido)<br/>
+                        \u2022 Cu\u00e1ndo comienza el torneo<br/><br/>
+                        
+                        <strong style="color: #FFD700;">Fecha de Fin:</strong> (Opcional)<br/>
+                        \u2022 Cu\u00e1ndo termina<br/>
+                        \u2022 \u00datil para planificaci\u00f3n<br/><br/>
+                        
+                        <strong style="color: #FFD700;">Ubicaci\u00f3n:</strong> (Requerido)<br/>
+                        \u2022 Ciudad, pa\u00eds<br/>
+                        \u2022 Nombre del estadio/complejo
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">4</span>
+                <div class="step-content">
+                    <div class="step-title">\u2699\ufe0f Configuraci\u00f3n Final</div>
+                    <div class="step-desc">
+                        <strong style="color: #FFD700;">M\u00e1ximo de Equipos:</strong><br/>
+                        \u2022 Entre 4 y 32 equipos<br/>
+                        \u2022 Predeterminado: 8 equipos<br/><br/>
+                        
+                        <strong style="color: #FFD700;">Premio (Opcional):</strong><br/>
+                        \u2022 Describe el premio para el ganador<br/>
+                        \u2022 Puede ser dinero, trofeos, equipamiento<br/>
+                        \u2022 Ejemplos: "$5000 USD", "Trofeo de Oro", "Viaje a torneo internacional"
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip">
+                <strong style="color: #00ff88;">\ud83d\udca1 MEJORES PR\u00c1CTICAS:</strong><br/>
+                \u2022 <strong>Fechas:</strong> Anuncia con al menos 2 semanas de anticipaci\u00f3n<br/>
+                \u2022 <strong>Premios:</strong> Equipos compiten m\u00e1s si hay buenos premios<br/>
+                \u2022 <strong>Formato:</strong> Liga para torneos largos, Copa para r\u00e1pidos<br/>
+                \u2022 <strong>Comunicaci\u00f3n:</strong> Mant\u00e9n actualizados a los participantes
+            </div>
+        </div>
+
+        <!-- C\u00f3mo Jugar Penaltis -->
+        <div class="section">
+            <div class="section-title">\u26bd C\u00f3mo Jugar el Minijuego de Penaltis</div>
+            
+            <div class="tutorial">
+                <p style="color: #FFD700; font-size: 18px; margin-bottom: 16px;">
+                    <strong>\ud83d\udc49 Acceso:</strong> Men\u00fa Hamburguesa > Juegos & Cards > Juego de Penaltis
+                </p>
+                <p style="color: #aaa;">
+                    O directamente desde la ruta: <code>/penaltis</code>
+                </p>
+            </div>
+
+            <h3 style="color: #00ff88; margin: 24px 0 16px;">Reglas del Juego:</h3>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div style="font-size: 48px; margin-bottom: 12px;">\ud83c\udfaf</div>
+                    <div style="color: #FFD700; font-weight: bold; margin-bottom: 8px;">Objetivo</div>
+                    <div style="color: #aaa; font-size: 14px;">
+                        Anotar el m\u00e1ximo de goles en 5 tiros
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div style="font-size: 48px; margin-bottom: 12px;">\ud83e\uddd1\u200d\ud83e\udd1d\u200d\ud83e\uddd1</div>
+                    <div style="color: #FFD700; font-weight: bold; margin-bottom: 8px;">9 Zonas</div>
+                    <div style="color: #aaa; font-size: 14px;">
+                        Elige estrat\u00e9gicamente d\u00f3nde patear
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div style="font-size: 48px; margin-bottom: 12px;">\ud83e\udde4</div>
+                    <div style="color: #FFD700; font-weight: bold; margin-bottom: 8px;">Portero IA</div>
+                    <div style="color: #aaa; font-size: 14px;">
+                        Intenta adivinar tu tiro
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div style="font-size: 48px; margin-bottom: 12px;">\ud83c\udfc6</div>
+                    <div style="color: #FFD700; font-weight: bold; margin-bottom: 8px;">Puntuaci\u00f3n</div>
+                    <div style="color: #aaa; font-size: 14px;">
+                        Cada gol suma 1 punto. Busca el 5/5 perfecto
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="color: #00ff88; margin: 24px 0 16px;">Estrategia y T\u00e1cticas:</h3>
+
+            <div class="step">
+                <span class="step-number">\u2705</span>
+                <div class="step-content">
+                    <div class="step-title">VAR\u00cdA TUS TIROS</div>
+                    <div class="step-desc">
+                        No apuntes siempre al mismo lugar. El portero puede detectar patrones.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">\u2705</span>
+                <div class="step-content">
+                    <div class="step-title">ESQUINAS SUPERIORES</div>
+                    <div class="step-desc">
+                        M\u00e1s dif\u00edciles de atajar. Mayor recompensa, mayor riesgo si el portero adivina.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">\u26a0\ufe0f</span>
+                <div class="step-content">
+                    <div class="step-title">EVITA EL CENTRO</div>
+                    <div class="step-desc">
+                        El portero puede quedarse en el centro. Es la opci\u00f3n m\u00e1s arriesgada.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">\u2705</span>
+                <div class="step-content">
+                    <div class="step-title">LATERALES BAJOS</div>
+                    <div class="step-desc">
+                        Opci\u00f3n segura y efectiva. Buen equilibrio entre riesgo y recompensa.
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="color: #00ff88; margin: 24px 0 16px;">Gu\u00eda de Zonas:</h3>
+
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <tr style="background: #0a0a0a;">
+                    <td style="padding: 12px; border: 1px solid #333; text-align: center;">
+                        <div style="font-size: 32px;">\u2196\ufe0f</div>
+                        <div style="color: #FFD700; font-size: 12px;">Superior Izq</div>
+                        <div style="color: #00ff88; font-size: 11px;">\u2b50\u2b50\u2b50</div>
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #333; text-align: center;">
+                        <div style="font-size: 32px;">\u2b06\ufe0f</div>
+                        <div style="color: #FFD700; font-size: 12px;">Superior Centro</div>
+                        <div style="color: #00ff88; font-size: 11px;">\u2b50\u2b50\u2b50</div>
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #333; text-align: center;">
+                        <div style="font-size: 32px;">\u2197\ufe0f</div>
+                        <div style="color: #FFD700; font-size: 12px;">Superior Der</div>
+                        <div style="color: #00ff88; font-size: 11px;">\u2b50\u2b50\u2b50</div>
+                    </td>
+                </tr>
+                <tr style="background: #0a0a0a;">
+                    <td style="padding: 12px; border: 1px solid #333; text-align: center;">
+                        <div style="font-size: 32px;">\u2b05\ufe0f</div>
+                        <div style="color: #FFD700; font-size: 12px;">Medio Izq</div>
+                        <div style="color: #00ff88; font-size: 11px;">\u2b50\u2b50</div>
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #333; text-align: center;">
+                        <div style="font-size: 32px;">\u26ab</div>
+                        <div style="color: #FFD700; font-size: 12px;">Centro</div>
+                        <div style="color: #ff3366; font-size: 11px;">\u26a0\ufe0f Arriesgado</div>
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #333; text-align: center;">
+                        <div style="font-size: 32px;">\u27a1\ufe0f</div>
+                        <div style="color: #FFD700; font-size: 12px;">Medio Der</div>
+                        <div style="color: #00ff88; font-size: 11px;">\u2b50\u2b50</div>
+                    </td>
+                </tr>
+                <tr style="background: #0a0a0a;">
+                    <td style="padding: 12px; border: 1px solid #333; text-align: center;">
+                        <div style="font-size: 32px;">\u2199\ufe0f</div>
+                        <div style="color: #FFD700; font-size: 12px;">Inferior Izq</div>
+                        <div style="color: #00ff88; font-size: 11px;">\u2b50\u2b50</div>
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #333; text-align: center;">
+                        <div style="font-size: 32px;">\u2b07\ufe0f</div>
+                        <div style="color: #FFD700; font-size: 12px;">Inferior Centro</div>
+                        <div style="color: #00ccff; font-size: 11px;">\u2b50</div>
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #333; text-align: center;">
+                        <div style="font-size: 32px;">\u2198\ufe0f</div>
+                        <div style="color: #FFD700; font-size: 12px;">Inferior Der</div>
+                        <div style="color: #00ff88; font-size: 11px;">\u2b50\u2b50</div>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="tip">
+                <strong style="color: #00ff88;">\ud83d\udc8e CONSEJO PRO:</strong> Observa los patrones del portero. Si se mueve mucho hacia un lado, dispara al lado contrario. La clave es la variaci\u00f3n y la psicolog\u00eda.
+            </div>
+
+            <h3 style="color: #00ff88; margin: 24px 0 16px;">Sistema de Puntuaci\u00f3n:</h3>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+                <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 36px; color: #FFD700;">\ud83c\udfc6</div>
+                    <div style="color: #FFD700; font-weight: bold; margin: 8px 0;">5/5</div>
+                    <div style="color: #aaa; font-size: 12px;">\u00a1PERFECTO!</div>
+                </div>
+                <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 36px; color: #00ff88;">\u2b50</div>
+                    <div style="color: #00ff88; font-weight: bold; margin: 8px 0;">4/5</div>
+                    <div style="color: #aaa; font-size: 12px;">Excelente</div>
+                </div>
+                <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 36px; color: #00ccff;">\ud83d\udc4d</div>
+                    <div style="color: #00ccff; font-weight: bold; margin: 8px 0;">3/5</div>
+                    <div style="color: #aaa; font-size: 12px;">Buen trabajo</div>
+                </div>
+                <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 36px; color: #ff9500;">\ud83d\udcaa</div>
+                    <div style="color: #ff9500; font-weight: bold; margin: 8px 0;">\u2264 2/5</div>
+                    <div style="color: #aaa; font-size: 12px;">Sigue practicando</div>
+                </div>
+            </div>
+
+            <div class="warning">
+                <strong style="color: #ff9500;">\ud83c\udfae DESAF\u00cdO:</strong> \u00a1Logra el 5/5 perfecto para obtener reconocimiento especial! Tu efectividad se guarda para mostrar tu progreso a lo largo del tiempo.
+            </div>
+        </div>
+
+        <!-- Otras Funciones -->}
+        <div class="section">
+            <div class="section-title">\ud83d\ude80 Otras Funciones Disponibles</div>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div style="font-size: 36px; margin-bottom: 12px;">\ud83c\udd94</div>
+                    <div style="color: #FFD700; font-weight: bold; margin-bottom: 8px;">Crear Tarjeta FIFA</div>
+                    <div style="color: #aaa; font-size: 13px;">
+                        Dise\u00f1a tu propia tarjeta de jugador tipo FIFA con stats personalizadas, foto y exportaci\u00f3n PNG
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div style="font-size: 36px; margin-bottom: 12px;">\ud83e\udd1d</div>
+                    <div style="color: #FFD700; font-weight: bold; margin-bottom: 8px;">Crear Amistoso</div>
+                    <div style="color: #aaa; font-size: 13px;">
+                        Organiza partidos amistosos entre equipos con fecha, hora, ubicaci\u00f3n y duraci\u00f3n personalizables
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div style="font-size: 36px; margin-bottom: 12px;">\ud83d\udd0d</div>
+                    <div style="color: #FFD700; font-weight: bold; margin-bottom: 8px;">B\u00fasqueda Avanzada</div>
+                    <div style="color: #aaa; font-size: 13px;">
+                        Encuentra jugadores, equipos y torneos con filtros por categor\u00eda, ubicaci\u00f3n y nivel
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div style="font-size: 36px; margin-bottom: 12px;">\ud83d\udcca</div>
+                    <div style="color: #FFD700; font-weight: bold; margin-bottom: 8px;">Estad\u00edsticas Detalladas</div>
+                    <div style="color: #aaa; font-size: 13px;">
+                        Dashboard completo con OVR, goles, asistencias, tasa de victoria y m\u00e1s
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 40px 0; color: #aaa;">
+            <p style="font-size: 18px; margin-bottom: 8px;">\u2705 FutPro 2.0 - Sistema Completo con Tutoriales Interactivos</p>
+            <p style="font-size: 14px;">Todas las funciones est\u00e1n dise\u00f1adas con gu\u00edas paso a paso</p>
+            <p style="font-size: 12px; margin-top: 16px;">Fecha: 14 de diciembre de 2025</p>
+        </div>
+    </div>
+</body>
+</html>

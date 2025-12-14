@@ -40,6 +40,16 @@ async function bootstrap() {
         </I18nextProvider>
       </React.StrictMode>
     );
+
+    // Registrar Service Worker para futuras push notifications
+    if ('serviceWorker' in navigator) {
+      try {
+        const reg = await navigator.serviceWorker.register('/service-worker.js')
+        console.log('🔔 Service Worker registrado', reg.scope)
+      } catch (swErr) {
+        console.warn('SW no registrado:', swErr?.message || swErr)
+      }
+    }
   } catch (err) {
     console.error('❌ Error al inicializar la app:', err);
     try {

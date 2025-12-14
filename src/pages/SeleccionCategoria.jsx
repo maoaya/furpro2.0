@@ -1,25 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import {
-  handleSelect as stubHandleSelect,
-  handleConfirm as stubHandleConfirm,
-  handleGoogleLogin as stubHandleGoogleLogin
-} from '../stubs/seleccionCategoriaFunctions';
-import {
-  handleSelect,
-  handleConfirm,
-  handleGoogleLogin
-} from '../stubs/seleccionCategoriaFunctions';
 import { useNavigate } from 'react-router-dom';
-import supabase from '../supabaseClient';
-import { getConfig } from '../config/environment.js';
 
 export default function SeleccionCategoria() {
   const navigate = useNavigate();
   const [lang, setLang] = useState('es');
   const [selected, setSelected] = useState(null);
   const [confirming, setConfirming] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const config = getConfig();
 
   // Traducciones
   const I18N = {
@@ -73,20 +59,17 @@ export default function SeleccionCategoria() {
     }
   }, []);
 
-  // --- STUB: Selección de categoría ---
   const handleSelect = (value) => {
     setSelected(value);
-    stubHandleSelect(value);
-    console.log('[INTEGRACIÓN STUB] handleSelect ejecutado', value);
+    localStorage.setItem('selectedCategoria', value);
   };
 
-  // --- STUB: Confirmar selección ---
   const handleConfirm = () => {
     if (!selected) return;
     setConfirming(true);
-    stubHandleConfirm(selected, navigate);
-    console.log('[INTEGRACIÓN STUB] handleConfirm ejecutado', selected);
-    setTimeout(() => setConfirming(false), 500); // Simula feedback visual
+    localStorage.setItem('selectedCategoria', selected);
+    navigate(`/formulario-registro?categoria=${encodeURIComponent(selected)}`);
+    setTimeout(() => setConfirming(false), 400);
   };
 
   return (

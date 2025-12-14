@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutPro 2.0 - Flujo Completo de Funciones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #fff;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 48px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+        
+        .section {
+            background: #181818;
+            border: 2px solid #FFD700;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+        
+        .section-title {
+            font-size: 32px;
+            color: #FFD700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .subsection {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .subsection-title {
+            font-size: 24px;
+            color: #00ff88;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .function-item {
+            background: rgba(255, 215, 0, 0.05);
+            border-left: 4px solid #FFD700;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+        }
+        
+        .function-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 8px;
+        }
+        
+        .function-route {
+            color: #00ccff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .function-desc {
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #FFD700;
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .badge-new {
+            background: #00ff88;
+        }
+        
+        .badge-complete {
+            background: #00ccff;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #000;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #000;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+        
+        .flow-diagram {
+            background: #0a0a0a;
+            border: 1px solid #FFD700;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .flow-step {
+            padding: 12px;
+            margin: 8px 0;
+            border-left: 3px solid #FFD700;
+            padding-left: 20px;
+        }
+        
+        .flow-arrow {
+            color: #FFD700;
+            margin: 4px 0;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚽ FutPro 2.0 - Flujo Completo de Funciones</h1>
+        <p class="subtitle">Guía completa de todas las páginas, rutas y funcionalidades</p>
+        
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Páginas Funcionales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">40+</div>
+                <div class="stat-label">Rutas Activas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">15+</div>
+                <div class="stat-label">Componentes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Funcionalidad</div>
+            </div>
+        </div>
+
+        <!-- FLUJO PRINCIPAL -->
+        <div class="section">
+            <div class="section-title">🏠 FLUJO PRINCIPAL DE USUARIO</div>
+            
+            <div class="flow-diagram">
+                <div class="flow-step">1. Login/Registro → /login, /registro, /auth</div>
+                <div class="flow-arrow">↓ OAuth Google o Email/Password</div>
+                <div class="flow-step">2. Selección Categoría → /seleccionar-categoria</div>
+                <div class="flow-arrow">↓ Masculina / Femenina / Mixta / Infantil</div>
+                <div class="flow-step">3. Formulario Registro → /formulario-registro</div>
+                <div class="flow-arrow">↓ Datos personales completos</div>
+                <div class="flow-step">4. Callback Auth → /auth/callback</div>
+                <div class="flow-arrow">↓ Validación Supabase/Firebase</div>
+                <div class="flow-step">5. Perfil Card → /perfil-card</div>
+                <div class="flow-arrow">↓ Tarjeta tipo Instagram</div>
+                <div class="flow-step">6. Homepage → /home</div>
+                <div class="flow-arrow">✓ Feed principal con todas las funciones</div>
+            </div>
+        </div>
+
+        <!-- BÚSQUEDA -->
+        <div class="section">
+            <div class="section-title">🔍 BÚSQUEDA Y DESCUBRIMIENTO</div>
+            
+            <div class="function-item">
+                <div class="function-name">🔍 Buscador Avanzado</div>
+                <div class="function-route">Componente: BuscadorAvanzado.jsx</div>
+                <div class="function-desc">
+                    <span class="badge badge-new">NUEVO</span>
+                    Búsqueda global con filtros por:
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>Tipo: Jugadores, Equipos, Torneos</li>
+                        <li>Categoría: Masculina, Femenina, Mixta, Infantil</li>
+                        <li>Ubicación: Por ciudad/país</li>
+                        <li>Búsqueda en tiempo real con debounce</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERFIL Y ESTADÍSTICAS -->
+        <div class="section">
+            <div class="section-title">👤 PERFIL Y ESTADÍSTICAS</div>
+            
+            <div class="subsection">
+                <div class="subsection-title">📊 Mi Perfil</div>
+                <div class="function-item">
+                    <div class="function-name">👤 Mi Perfil</div>
+                    <div class="function-route">/perfil/me → PerfilInstagram.jsx</div>
+                    <div class="function-desc">
+                        Perfil estilo Instagram con posts, stats y foto
+                    </div>
+                </div>
+                
+                <div class="function-item">
+                    <div class="function-name">✏️ Editar Perfil</div>
+                    <div class="function-route">/editar-perfil → EditarPerfil.jsx</div>
+                    <div class="function-desc">
+                        Modificar datos personales, foto, bio, posición
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <div class="subsection-title">📊 Estadísticas</div>
+                <div class="function-item">
+                    <div class="function-name">📊 Mis Estadísticas</div>
+                    <div class="function-route">/estadisticas → Estadisticas.jsx</div>
+                    <div class="function-desc">
+                        <span class="badge badge-complete">COMPLETO</span>
+                        Dashboard completo con:
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>OVR principal destacado</li>
+                            <li>Goles, asistencias, partidos</li>
+                            <li>Tarjetas amarillas/rojas</li>
+                            <li>Victorias, derrotas, empates</li>
+                            <li>Barras de progreso por atributo</li>
+                            <li>Tasa de victoria calculada</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="function-item">
+                    <div class="function-name">📅 Mis Partidos</div>
+                    <div class="function-route">/partidos → Partidos.jsx</div>
+                    <div class="function-desc">
+                        Historial de partidos jugados con stats
+                    </div>
+                </div>
+                
+                <div class="function-item">
+                    <div class="function-name">🏆 Mis Logros</div>
+                    <div class="function-route">/logros → Logros.jsx</div>
+                    <div class="function-desc">
+                        Sistema de logros y badges desbloqueables
+                    </div>
+                </div>
+                
+                <div class="function-item">
+                    <div class="function-name">🆔 Mis Tarjetas</div>
+                    <div class="function-route">/tarjetas → Tarjetas.jsx</div>
+                    <div class="function-desc">
+                        <span class="badge badge-complete">COMPLETO</span>
+                        Galería de tarjetas tipo FIFA:
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>Tarjetas Gold, Rare, Legend</li>
+                            <li>Visualización 3D con stats</li>
+                            <li>Modal de vista ampliada</li>
+                            <li>Botón crear nueva tarjeta</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EQUIPOS Y TORNEOS -->
+        <div class="section">
+            <div class="section-title">⚽ EQUIPOS Y TORNEOS</div>
+            
+            <div class="subsection">
+                <div class="subsection-title">👥 Equipos</div>
+                <div class="function-item">
+                    <div class="function-name">👥 Ver Equipos</div>
+                    <div class="function-route">/equipos → Equipos.jsx</div>
+                    <div class="function-desc">
+                        Listado de equipos con filtros y búsqueda
+                    </div>
+                </div>
+                
+                <div class="function-item">
+                    <div class="function-name">➕ Crear Equipo</div>
+                    <div class="function-route">/crear-equipo → CrearEquipo.jsx</div>
+                    <div class="function-desc">
+                        <span class="badge badge-complete">COMPLETO</span>
+                        Formulario completo para crear equipos:
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>Nombre y descripción</li>
+                            <li>Categoría (masculina/femenina/mixta/infantil)</li>
+                            <li>Ubicación y máximo de jugadores</li>
+                            <li>Nivel requerido (principiante a profesional)</li>
+                            <li>Validación y guardado en Supabase</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="function-item">
+                    <div class="function-name">📋 Detalle Equipo</div>
+                    <div class="function-route">/equipo/:id → EquipoDetallePage.jsx</div>
+                    <div class="function-desc">
+                        Vista detallada con miembros y stats del equipo
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <div class="subsection-title">🏆 Torneos</div>
+                <div class="function-item">
+                    <div class="function-name">🏆 Ver Torneos</div>
+                    <div class="function-route">/torneos → Torneos.jsx</div>
+                    <div class="function-desc">
+                        Panel de torneos con gráficos de actividad
+                    </div>
+                </div>
+                
+                <div class="function-item">
+                    <div class="function-name">➕ Crear Torneo</div>
+                    <div class="function-route">/crear-torneo → CrearTorneo.jsx</div>
+                    <div class="function-desc">
+                        <span class="badge badge-complete">COMPLETO</span>
+                        Formulario completo para organizar torneos:
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>Nombre y descripción</li>
+                            <li>Tipo: Liga, Copa, Grupos, Mixto</li>
+                            <li>Fechas de inicio y fin</li>
+                            <li>Ubicación y máximo de equipos</li>
+                            <li>Premio opcional</li>
+                            <li>Guardado en Supabase</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="function-item">
+                    <div class="function-name">🏆 Detalle Torneo</div>
+                    <div class="function-route">/torneo/:id → TorneoDetallePage.jsx</div>
+                    <div class="function-desc">
+                        Información completa del torneo con equipos participantes
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <div class="subsection-title">🤝 Partidos</div>
+                <div class="function-item">
+                    <div class="function-name">🤝 Crear Amistoso</div>
+                    <div class="function-route">/amistoso → Amistoso.jsx</div>
+                    <div class="function-desc">
+                        <span class="badge badge-complete">COMPLETO</span>
+                        Organizar partidos amistosos:
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>Selección de equipos (local y visitante)</li>
+                            <li>Fecha, hora y duración</li>
+                            <li>Ubicación del partido</li>
+                            <li>Notas y reglas especiales</li>
+                            <li>Validación completa</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JUEGOS Y CARDS -->
+        <div class="section">
+            <div class="section-title">🎮 JUEGOS Y TARJETAS</div>
+            
+            <div class="function-item">
+                <div class="function-name">⚽ Juego de Penaltis</div>
+                <div class="function-route">/penaltis → Penaltis.jsx</div>
+                <div class="function-desc">
+                    Minijuego interactivo de tiros penales
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">🆔 Card FIFA</div>
+                <div class="function-route">/card-fifa → CardFIFA.jsx</div>
+                <div class="function-desc">
+                    Creador de tarjetas tipo FIFA con:
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>Editor de stats (PAC, SHO, PAS, DRI, DEF, PHY)</li>
+                        <li>Personalización de nombre, posición, país</li>
+                        <li>Upload de foto de jugador</li>
+                        <li>Exportar como PNG</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">💡 Sugerencias Card</div>
+                <div class="function-route">/sugerencias-card → SugerenciasCard.jsx</div>
+                <div class="function-desc">
+                    Recomendaciones para mejorar tu tarjeta de jugador
+                </div>
+            </div>
+        </div>
+
+        <!-- SOCIAL -->
+        <div class="section">
+            <div class="section-title">💬 SOCIAL Y COMUNICACIÓN</div>
+            
+            <div class="function-item">
+                <div class="function-name">🔔 Notificaciones</div>
+                <div class="function-route">/notificaciones → Notificaciones.jsx</div>
+                <div class="function-desc">
+                    Centro de notificaciones de partidos, likes, comentarios y mensajes
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">💬 Chat</div>
+                <div class="function-route">/chat → Chat.jsx</div>
+                <div class="function-desc">
+                    Sistema de mensajería en tiempo real con Firebase
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">🎥 Videos</div>
+                <div class="function-route">/videos → VideosFeed.jsx</div>
+                <div class="function-desc">
+                    Feed de videos tipo TikTok:
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>Deslizar vertical entre videos</li>
+                        <li>Likes y comentarios</li>
+                        <li>Pestañas "Para Ti" y "Siguiendo"</li>
+                        <li>Compartir videos</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">🏪 Marketplace</div>
+                <div class="function-route">/marketplace → MarketplaceCompleto.jsx</div>
+                <div class="function-desc">
+                    Tienda virtual tipo Facebook Marketplace:
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>Productos: botines, pelotas, ropa</li>
+                        <li>Filtros por precio, categoría, ubicación</li>
+                        <li>Ordenar por recientes, precio, popularidad</li>
+                        <li>Modal de detalle con galería</li>
+                        <li>Contactar vendedor</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">📋 Estados</div>
+                <div class="function-route">/estados → Estados.jsx</div>
+                <div class="function-desc">
+                    Estados tipo Twitter/X con:
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>Publicar estados de texto</li>
+                        <li>Likes y comentarios</li>
+                        <li>Real-time con Supabase</li>
+                        <li>Filtro por categoría</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">👫 Amigos/Seguidores</div>
+                <div class="function-route">/amigos → Amigos.jsx</div>
+                <div class="function-desc">
+                    Sistema de amigos completo:
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>Lista de amigos actuales</li>
+                        <li>Solicitudes pendientes</li>
+                        <li>Buscar y agregar nuevos amigos</li>
+                        <li>Real-time con Supabase</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">📡 Transmitir en Vivo</div>
+                <div class="function-route">/transmision-en-vivo → TransmisionEnVivo.jsx</div>
+                <div class="function-desc">
+                    Sistema de streaming de partidos en vivo
+                </div>
+            </div>
+        </div>
+
+        <!-- RANKINGS -->
+        <div class="section">
+            <div class="section-title">🏅 RANKINGS Y CLASIFICACIONES</div>
+            
+            <div class="function-item">
+                <div class="function-name">📊 Ranking Jugadores</div>
+                <div class="function-route">/ranking-jugadores → RankingJugadoresCompleto.jsx</div>
+                <div class="function-desc">
+                    Clasificación de jugadores:
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>Top 100 jugadores</li>
+                        <li>Filtro por categoría</li>
+                        <li>Ordenar por OVR, goles, asistencias, partidos</li>
+                        <li>Resaltar posición del usuario actual</li>
+                        <li>Vista compacta del top 3</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">📈 Ranking Equipos</div>
+                <div class="function-route">/ranking-equipos → RankingEquiposCompleto.jsx</div>
+                <div class="function-desc">
+                    Clasificación de equipos por stats
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">🔍 Buscar Ranking</div>
+                <div class="function-route">/buscar-ranking → BuscarRanking.jsx</div>
+                <div class="function-desc">
+                    Búsqueda avanzada en rankings
+                </div>
+            </div>
+        </div>
+
+        <!-- CONFIGURACIÓN -->
+        <div class="section">
+            <div class="section-title">⚙️ CONFIGURACIÓN Y ADMINISTRACIÓN</div>
+            
+            <div class="function-item">
+                <div class="function-name">🔧 Configuración</div>
+                <div class="function-route">/configuracion → ConfiguracionPage.jsx</div>
+                <div class="function-desc">
+                    Panel de configuración de cuenta:
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>Cambiar contraseña</li>
+                        <li>Actualizar ubicación</li>
+                        <li>Configurar privacidad</li>
+                        <li>Eliminar cuenta</li>
+                        <li>Cerrar sesión</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">🆘 Soporte</div>
+                <div class="function-route">/soporte → Soporte.jsx</div>
+                <div class="function-desc">
+                    Centro de ayuda y soporte técnico
+                </div>
+            </div>
+            
+            <div class="function-item">
+                <div class="function-name">🛡️ Privacidad</div>
+                <div class="function-route">/privacidad → Privacidad.jsx</div>
+                <div class="function-desc">
+                    Políticas de privacidad y términos de uso
+                </div>
+            </div>
+        </div>
+
+        <!-- RESUMEN TÉCNICO -->
+        <div class="section">
+            <div class="section-title">🔧 RESUMEN TÉCNICO</div>
+            
+            <div class="flow-diagram">
+                <h3 style="color: #FFD700; margin-bottom: 16px;">Stack Tecnológico</h3>
+                <div class="flow-step">Frontend: React + Vite</div>
+                <div class="flow-step">Routing: React Router v6</div>
+                <div class="flow-step">Backend: Supabase (PostgreSQL) + Firebase (Realtime)</div>
+                <div class="flow-step">Auth: Supabase Auth + OAuth Google</div>
+                <div class="flow-step">Storage: Supabase Storage</div>
+                <div class="flow-step">Deploy: Netlify (con Functions serverless)</div>
+            </div>
+            
+            <div class="flow-diagram">
+                <h3 style="color: #FFD700; margin-bottom: 16px;">Características Implementadas</h3>
+                <div class="flow-step">✅ Autenticación completa (Email + OAuth)</div>
+                <div class="flow-step">✅ CRUD completo (Usuarios, Equipos, Torneos, Partidos)</div>
+                <div class="flow-step">✅ Real-time (Chat, Estados, Notificaciones)</div>
+                <div class="flow-step">✅ Sistema de búsqueda avanzada</div>
+                <div class="flow-step">✅ Rankings y clasificaciones</div>
+                <div class="flow-step">✅ Marketplace y tienda virtual</div>
+                <div class="flow-step">✅ Feed social tipo Instagram</div>
+                <div class="flow-step">✅ Videos tipo TikTok</div>
+                <div class="flow-step">✅ Creador de tarjetas FIFA</div>
+                <div class="flow-step">✅ Sistema de amigos y seguimiento</div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div style="text-align: center; padding: 40px 0; color: #aaa;">
+            <p style="font-size: 18px; margin-bottom: 8px;">✅ FutPro 2.0 - Sistema Completo</p>
+            <p style="font-size: 14px;">Todas las funciones implementadas y documentadas</p>
+            <p style="font-size: 12px; margin-top: 16px;">Fecha: 13 de diciembre de 2025</p>
+        </div>
+    </div>
+</body>
+</html>
