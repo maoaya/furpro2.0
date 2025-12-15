@@ -28,6 +28,7 @@ export default function FormularioRegistroCompleto() {
     equipoFavorito: '',
     piernaDominante: 'Derecha',
     disponibilidadJuego: 'Fines de semana',
+    frecuenciaJuego: '1-2',
     objetivoDeportivo: '',
     redesSociales: '',
     // Paso 4: Foto
@@ -56,6 +57,101 @@ export default function FormularioRegistroCompleto() {
     }
   }, [location]);
 
+  // Autocompletar ciudad y país por IP
+  useEffect(() => {
+    const fillFromIp = async () => {
+      try {
+        console.log('🌍 Intentando detectar ubicación por IP...');
+        
+        // Crear AbortController para timeouts
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        
+        try {
+          // Intentar con ipapi.co primero (HTTPS)
+          const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.city || data.country_name) {
+              setFormData(prev => ({
+                ...prev,
+                ciudad: prev.ciudad || data.city || '',
+                pais: prev.pais || data.country_name || ''
+              }));
+              console.log('✅ Ubicación detectada (ipapi.co):', data.city, data.country_name);
+              return;
+            }
+          }
+        } catch (e) {
+          clearTimeout(timeoutId);
+          console.warn('⚠️ ipapi.co no disponible:', e.message);
+        }
+
+        // Fallback: usar ipwho.is (HTTPS)
+        const controller2 = new AbortController();
+        const timeoutId2 = setTimeout(() => controller2.abort(), 8000);
+        try {
+          const res2 = await fetch('https://ipwho.is/?fields=city,country', { signal: controller2.signal });
+          clearTimeout(timeoutId2);
+          if (res2.ok) {
+            const data = await res2.json();
+            if (data.city || data.country) {
+              setFormData(prev => ({
+                ...prev,
+                ciudad: prev.ciudad || data.city || '',
+                pais: prev.pais || data.country || ''
+              }));
+              console.log('✅ Ubicación detectada (ipwho.is):', data.city, data.country);
+              return;
+            }
+          }
+        } catch (e) {
+          clearTimeout(timeoutId2);
+          console.warn('⚠️ ipwho.is no disponible:', e.message);
+        }
+        
+        console.log('⚠️ No se pudo detectar ubicación por IP, campos manuales');
+      } catch (error) {
+        console.warn('⚠️ Error general en geolocalización:', error);
+      }
+    };
+    fillFromIp();
+  }, []);
+
+  // Acción manual para detectar ubicación si el auto no funciona
+  const detectarUbicacionPorIp = async () => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const data = await res.json();
+        setFormData(prev => ({
+          ...prev,
+          ciudad: data.city || prev.ciudad || '',
+          pais: data.country_name || prev.pais || ''
+        }));
+        return;
+      }
+    } catch {}
+    try {
+      const controller2 = new AbortController();
+      const timeoutId2 = setTimeout(() => controller2.abort(), 8000);
+      const res2 = await fetch('https://ipwho.is/?fields=city,country', { signal: controller2.signal });
+      clearTimeout(timeoutId2);
+      if (res2.ok) {
+        const data = await res2.json();
+        setFormData(prev => ({
+          ...prev,
+          ciudad: data.city || prev.ciudad || '',
+          pais: data.country || prev.pais || ''
+        }));
+      }
+    } catch {}
+  };
+
   const persistProfileDraft = () => {
     const draft = {
       nombre: formData.nombre,
@@ -73,6 +169,7 @@ export default function FormularioRegistroCompleto() {
       equipo_favorito: formData.equipoFavorito,
       pierna_dominante: formData.piernaDominante,
       disponibilidad_juego: formData.disponibilidadJuego,
+      frecuencia_juego: formData.frecuenciaJuego,
       objetivo_deportivo: formData.objetivoDeportivo,
       redes_sociales: formData.redesSociales,
       puntaje: calcularPuntaje(formData.nivelHabilidad),
@@ -84,13 +181,21 @@ export default function FormularioRegistroCompleto() {
 
   const handleGoogleSignup = async () => {
     try {
+      console.log('🚀 Iniciando registro con Google...');
       // Guardar contexto de origen/objetivo para el callback
       localStorage.setItem('post_auth_origin', 'formulario_registro');
       localStorage.setItem('post_auth_target', '/perfil-card');
       persistProfileDraft();
       await loginWithGoogle();
     } catch (error) {
-      console.error('Error OAuth:', error);
+      console.error('❌ Error en Google OAuth:', error);
+      // Si es error de CAPTCHA, intentar bypass
+      if (error?.message?.includes('captcha') || error?.message?.includes('verification')) {
+        console.log('⚠️ Error de CAPTCHA detectado, intenta desactivar CAPTCHA en Supabase Dashboard');
+        alert('Error: CAPTCHA habilitado en Supabase.\n\nSolución:\n1. Ve a tu dashboard de Supabase\n2. Authentication → Email\n3. Desactiva "Enable Captcha protection"\n4. Reintenra');
+      } else {
+        alert('Error en registro con Google: ' + (error?.message || 'Intenta de nuevo'));
+      }
     }
   };
 
@@ -298,15 +403,6 @@ export default function FormularioRegistroCompleto() {
             />
             <input
               type="number"
-              placeholder="🎂 Edad"
-              value={formData.edad}
-              onChange={(e) => setFormData({ ...formData, edad: e.target.value })}
-              style={inputStyle}
-              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
-              onBlur={(e) => e.target.style.borderColor = '#444'}
-            />
-            <input
-              type="number"
               placeholder="⚖️ Peso (kg)"
               value={formData.peso}
               onChange={(e) => setFormData({ ...formData, peso: e.target.value })}
@@ -323,6 +419,9 @@ export default function FormularioRegistroCompleto() {
               onFocus={(e) => e.target.style.borderColor = '#FFD700'}
               onBlur={(e) => e.target.style.borderColor = '#444'}
             />
+            <div style={{ color: '#999', fontSize: '13px', margin: '-8px 0 12px 4px' }}>
+              📍 La ubicación se detecta automáticamente por IP, puedes editarla.
+            </div>
             <input
               type="tel"
               placeholder="📱 Teléfono (opcional)"
@@ -348,6 +447,26 @@ export default function FormularioRegistroCompleto() {
               onFocus={(e) => e.target.style.borderColor = '#FFD700'}
               onBlur={(e) => e.target.style.borderColor = '#444'}
             />
+            <input
+              type="number"
+              placeholder="🎂 Edad"
+              value={formData.edad}
+              onChange={(e) => setFormData({ ...formData, edad: e.target.value })}
+              style={inputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+              onBlur={(e) => e.target.style.borderColor = '#444'}
+            />
+            <button
+              type="button"
+              onClick={detectarUbicacionPorIp}
+              style={{
+                ...buttonSecondaryStyle,
+                width: '100%',
+                marginTop: '8px'
+              }}
+            >
+              📍 Detectar ubicación por IP
+            </button>
           </div>
         )}
 
@@ -365,17 +484,26 @@ export default function FormularioRegistroCompleto() {
               onChange={(e) => setFormData({ ...formData, posicion: e.target.value })}
               style={selectStyle}
             >
-              <option value="Flexible">🔄 Flexible / Polivalente</option>
-              <option value="Portero">🥅 Portero</option>
-              <option value="Defensa Central">🛡️ Defensa Central</option>
-              <option value="Lateral Derecho">➡️ Lateral Derecho</option>
-              <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
-              <option value="Mediocampista Defensivo">🔒 Mediocampista Defensivo</option>
-              <option value="Mediocampista Central">⚖️ Mediocampista Central</option>
-              <option value="Mediocampista Ofensivo">🎯 Mediocampista Ofensivo</option>
-              <option value="Extremo Derecho">🏃‍♂️ Extremo Derecho</option>
-              <option value="Extremo Izquierdo">🏃‍♂️ Extremo Izquierdo</option>
-              <option value="Delantero Centro">⚽ Delantero Centro</option>
+              <optgroup label="⚽ Fútbol 11">
+                <option value="Flexible">🔄 Flexible / Polivalente</option>
+                <option value="Portero">🥅 Portero</option>
+                <option value="Defensa Central">🛡️ Defensa Central</option>
+                <option value="Lateral Derecho">➡️ Lateral Derecho</option>
+                <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
+                <option value="Mediocampista Defensivo">🔒 Mediocampista Defensivo</option>
+                <option value="Mediocampista Central">⚖️ Mediocampista Central</option>
+                <option value="Mediocampista Ofensivo">🎯 Mediocampista Ofensivo</option>
+                <option value="Extremo Derecho">🏃‍♂️ Extremo Derecho</option>
+                <option value="Extremo Izquierdo">🏃‍♂️ Extremo Izquierdo</option>
+                <option value="Delantero Centro">⚽ Delantero Centro</option>
+              </optgroup>
+              <optgroup label="🏐 Futsal">
+                <option value="Portero Futsal">🥅 Portero</option>
+                <option value="Ala Derecha">➡️ Ala Derecha</option>
+                <option value="Ala Izquierda">⬅️ Ala Izquierda</option>
+                <option value="Pivote">🎯 Pivote</option>
+                <option value="Cierre">🔒 Cierre</option>
+              </optgroup>
             </select>
 
             <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
@@ -427,6 +555,21 @@ export default function FormularioRegistroCompleto() {
               <option value="Entre semana">📅 Entre semana</option>
               <option value="Cualquier día">✅ Cualquier día</option>
               <option value="Por coordinar">⏱️ Por coordinar</option>
+            </select>
+
+            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
+              ¿Cuántas veces juegas a la semana?
+            </label>
+            <select
+              value={formData.frecuenciaJuego}
+              onChange={(e) => setFormData({ ...formData, frecuenciaJuego: e.target.value })}
+              style={selectStyle}
+            >
+              <option value="1-2">1-2 veces por semana</option>
+              <option value="3-4">3-4 veces por semana</option>
+              <option value="5-6">5-6 veces por semana</option>
+              <option value="Todos los días">Todos los días</option>
+              <option value="Ocasional">Ocasional / Variable</option>
             </select>
 
             <textarea
@@ -513,46 +656,19 @@ export default function FormularioRegistroCompleto() {
               onBlur={(e) => e.target.style.borderColor = '#444'}
             />
 
-            <div style={{ 
+            <div style={{
               marginTop: '32px',
               padding: '20px',
               background: '#1a1a1a',
               borderRadius: '12px',
               border: '2px solid #333'
             }}>
-              <p style={{ color: '#999', fontSize: '14px', marginBottom: '16px', textAlign: 'center' }}>
-                También puedes continuar con tu cuenta de Google para usar tu foto de perfil automáticamente
+              <p style={{ color: '#FFD700', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px', textAlign: 'center' }}>
+                ✅ ¡Último paso!
               </p>
-              <button 
-                onClick={handleGoogleSignup}
-                style={{
-                  width: '100%',
-                  padding: '14px',
-                  background: '#4285F4',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '10px',
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '12px',
-                  boxShadow: '0 4px 12px rgba(66, 133, 244, 0.3)',
-                  transition: 'transform 0.2s'
-                }}
-                onMouseOver={(e) => e.target.style.transform = 'scale(1.02)'}
-                onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                Continuar con Google
-              </button>
+              <p style={{ color: '#999', fontSize: '14px', marginBottom: '16px', textAlign: 'center' }}>
+                Completa tu perfil o continúa con tu cuenta de Google para usar tu foto de perfil automáticamente
+              </p>
             </div>
           </div>
         )}
@@ -607,24 +723,32 @@ export default function FormularioRegistroCompleto() {
 
           {pasoActual === 4 && (
             <button
-              onClick={() => {
-                persistProfileDraft();
-                navigate('/perfil-card');
-              }}
+              onClick={handleGoogleSignup}
               style={{
                 ...buttonPrimaryStyle,
-                marginLeft: 'auto'
+                marginLeft: 'auto',
+                background: '#4285F4',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px'
               }}
               onMouseOver={(e) => {
                 e.target.style.transform = 'scale(1.02)';
-                e.target.style.boxShadow = '0 6px 16px rgba(255, 215, 0, 0.5)';
+                e.target.style.boxShadow = '0 6px 16px rgba(66, 133, 244, 0.5)';
               }}
               onMouseOut={(e) => {
                 e.target.style.transform = 'scale(1)';
-                e.target.style.boxShadow = '0 4px 12px rgba(255, 215, 0, 0.3)';
+                e.target.style.boxShadow = '0 4px 12px rgba(66, 133, 244, 0.3)';
               }}
             >
-              ✨ Completar Registro
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              Continuar con Google
             </button>
           )}
         </div>

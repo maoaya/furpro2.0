@@ -12,8 +12,8 @@ const AuthPageUnificada = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
-  const [isLogin, setIsLogin] = useState(false); // CAMBIAR A FALSE POR DEFECTO (MOSTRAR REGISTRO)
-  const [showEmailForm, setShowEmailForm] = useState(true); // CAMBIAR A TRUE (MOSTRAR FORMULARIO SIEMPRE)
+  const [isLogin, setIsLogin] = useState(true); // TRUE = Mostrar LOGIN por defecto
+  const [showEmailForm, setShowEmailForm] = useState(false); // FALSE = Ocultar formulario hasta que se solicite
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -32,6 +32,7 @@ const AuthPageUnificada = () => {
     apellido: '',
     edad: '',
     peso: '',
+    altura: '',
     telefono: '',
     posicion: '',
     equipoFavorito: '',
@@ -42,6 +43,63 @@ const AuthPageUnificada = () => {
     vecesJuegaPorSemana: '',
     foto: null
   });
+
+  // Autocompletar ciudad y país por IP con fallback
+  useEffect(() => {
+    const fillFromIp = async () => {
+      try {
+        console.log('🌍 Intentando detectar ubicación por IP...');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        
+        try {
+          const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.city || data.country_name) {
+              setFormData((prev) => ({
+                ...prev,
+                ubicacion: prev.ubicacion || data.city || '',
+                pais: prev.pais || data.country_name || ''
+              }));
+              console.log('✅ Ubicación detectada (ipapi.co):', data.city, data.country_name);
+              return;
+            }
+          }
+        } catch (e) {
+          clearTimeout(timeoutId);
+          console.warn('⚠️ ipapi.co no disponible:', e.message);
+        }
+
+        const controller2 = new AbortController();
+        const timeoutId2 = setTimeout(() => controller2.abort(), 8000);
+        try {
+          const res2 = await fetch('https://ipwho.is/?fields=city,country', { signal: controller2.signal });
+          clearTimeout(timeoutId2);
+          if (res2.ok) {
+            const data = await res2.json();
+            if (data.city || data.country) {
+              setFormData((prev) => ({
+                ...prev,
+                ubicacion: prev.ubicacion || data.city || '',
+                pais: prev.pais || data.country || ''
+              }));
+              console.log('✅ Ubicación detectada (ipwho.is):', data.city, data.country);
+              return;
+            }
+          }
+        } catch (e) {
+          clearTimeout(timeoutId2);
+          console.warn('⚠️ ipwho.is no disponible:', e.message);
+        }
+        console.log('⚠️ No se pudo detectar ubicación por IP');
+      } catch (error) {
+        console.warn('⚠️ Error general en geolocalización:', error);
+      }
+    };
+    fillFromIp();
+  }, []);
 
   // NO redirigir automáticamente - dejar que el usuario use el formulario de login
   // La redirección ocurrirá después del login exitoso en las funciones handleEmailLogin/handleEmailRegister
@@ -321,30 +379,6 @@ const AuthPageUnificada = () => {
           }}>
             {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
           </h2>
-          
-          {/* Información sobre las funciones de la app para nuevos usuarios */}
-          {!isLogin && (
-            <div style={{
-              background: 'rgba(255, 215, 0, 0.1)',
-              border: '1px solid #FFD700',
-              borderRadius: '8px',
-              padding: '15px',
-              marginTop: '15px',
-              textAlign: 'left'
-            }}>
-              <h4 style={{ color: '#FFD700', margin: '0 0 10px 0', fontSize: '16px' }}>
-                🎯 Con tu cuenta podrás:
-              </h4>
-              <ul style={{ color: '#ccc', fontSize: '14px', margin: '0', paddingLeft: '20px' }}>
-                <li>🏆 Crear y unirte a equipos</li>
-                <li>📅 Organizar partidos y campeonatos</li>
-                <li>💬 Chat con jugadores y equipos</li>
-                <li>📍 Encontrar jugadores cerca de ti</li>
-                <li>📊 Estadísticas y rankings</li>
-                <li>🎮 Marketplace de equipamiento</li>
-              </ul>
-            </div>
-          )}
         </div>
 
         {/* Mensajes */}
@@ -374,98 +408,206 @@ const AuthPageUnificada = () => {
           </div>
         )}
 
-        {/* Botones OAuth */}
-        <div style={{ marginBottom: '30px' }}>
-          <button
-            onClick={handleGoogleAuth}
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '12px',
-              marginBottom: '12px',
-              background: '#db4437',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '10px'
-            }}
-          >
-            🔐 {registroTipo === 'google' ? 'Continuar con Google' : 'Registro rápido con Google'}
-          </button>
+        {/* Formulario de LOGIN/REGISTRO - Siempre visible */}
+        {isLogin ? (
+          /* MODO LOGIN */
+          <form onSubmit={handleEmailLogin}>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+              style={{
+                width: '100%',
+                padding: '14px',
+                marginBottom: '16px',
+                background: '#333',
+                border: '1px solid #555',
+                borderRadius: '8px',
+                color: 'white',
+                fontSize: '16px'
+              }}
+            />
 
-          <button
-            onClick={handleFacebookAuth}
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '12px',
-              background: '#3b5998',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '10px',
-              marginBottom: '12px'
-            }}
-          >
-            📘 {registroTipo === 'facebook' ? 'Continuar con Facebook' : 'Registro rápido con Facebook'}
-          </button>
+            <input
+              type="password"
+              name="password"
+              placeholder="Contraseña"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+              style={{
+                width: '100%',
+                padding: '14px',
+                marginBottom: '12px',
+                background: '#333',
+                border: '1px solid #555',
+                borderRadius: '8px',
+                color: 'white',
+                fontSize: '16px'
+              }}
+            />
 
-          {/* Botón para formulario completo con email */}
-          {!isLogin && (
-            <p style={{ 
-              color: '#999', 
-              fontSize: '12px', 
-              textAlign: 'center', 
-              margin: '10px 0 0 0' 
-            }}>
-              💡 Con OAuth solo necesitas confirmar algunos datos adicionales
-            </p>
-          )}
-        </div>
+            <div style={{ textAlign: 'right', marginBottom: '20px' }}>
+              <a 
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setError('Funcionalidad próximamente');
+                }}
+                style={{ 
+                  color: '#FFD700', 
+                  fontSize: '14px', 
+                  textDecoration: 'none' 
+                }}
+              >
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
 
-        {/* Formulario completo - SIEMPRE VISIBLE */}
-        {true && (
-          <>
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '14px',
+                background: loading ? '#999' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                color: '#222',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+                marginBottom: '20px'
+              }}
+            >
+              {loading ? '⏳ Iniciando sesión...' : '🔐 Iniciar Sesión'}
+            </button>
+
             {/* Divisor */}
             <div style={{
               textAlign: 'center',
-              color: '#FFD700',
+              color: '#999',
               margin: '20px 0',
-              position: 'relative'
+              position: 'relative',
+              fontSize: '14px'
             }}>
-              <span style={{
-                background: '#222',
-                padding: '0 15px',
-                fontSize: '14px'
-              }}>
-                Formulario completo de registro
+              <span style={{ background: '#222', padding: '0 15px', position: 'relative', zIndex: 1 }}>
+                O continúa con
               </span>
               <div style={{
                 position: 'absolute',
                 top: '50%',
-                left: '0',
-                right: '0',
+                left: 0,
+                right: 0,
                 height: '1px',
-                background: '#FFD700',
-                zIndex: '-1'
+                background: '#555'
               }} />
             </div>
 
-            <form onSubmit={isLogin ? handleEmailLogin : handleEmailRegister}>
+            {/* Botones OAuth */}
+            <button
+              type="button"
+              onClick={handleGoogleAuth}
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '12px',
+                marginBottom: '10px',
+                background: '#db4437',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '15px',
+                fontWeight: 'bold',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px'
+              }}
+            >
+              🔐 Google
+            </button>
+
+            <button
+              type="button"
+              onClick={handleFacebookAuth}
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: '#3b5998',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '15px',
+                fontWeight: 'bold',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                marginBottom: '20px'
+              }}
+            >
+              📘 Facebook
+            </button>
+
+            {/* Link a registro */}
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLogin(false);
+                  setError('');
+                  setSuccess('');
+                }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#FFD700',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  textDecoration: 'none'
+                }}
+              >
+                ¿No tienes cuenta? <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>Crea tu cuenta</span>
+              </button>
+            </div>
+          </form>
+        ) : (
+          /* MODO REGISTRO - Solo cuando el usuario lo solicita */
+
+          <form onSubmit={handleEmailRegister}>
+
+            {/* Divisor */}
+            <div style={{
+              textAlign: 'center',
+              color: '#999',
+              margin: '20px 0',
+              position: 'relative',
+              fontSize: '14px'
+            }}>
+              <span style={{ background: '#222', padding: '0 15px', position: 'relative', zIndex: 1 }}>
+                O completa el formulario
+              </span>
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: 0,
+                right: 0,
+                height: '1px',
+                background: '#555'
+              }} />
+            </div>
+
+            {/* REGISTRO COMPLETO: Todos los campos */}
               {/* SECCIÓN 1: INFORMACIÓN PERSONAL */}
               <div style={{ marginBottom: '25px' }}>
                 <h3 style={{ color: '#FFD700', fontSize: '18px', marginBottom: '15px' }}>
@@ -479,7 +621,7 @@ const AuthPageUnificada = () => {
                     placeholder="Nombre *"
                     value={formData.nombre}
                     onChange={handleInputChange}
-                    required
+                    required={!isLogin}
                     style={{
                       flex: '1',
                       padding: '12px',
@@ -497,7 +639,7 @@ const AuthPageUnificada = () => {
                     placeholder="Apellido *"
                     value={formData.apellido}
                     onChange={handleInputChange}
-                    required
+                    required={!isLogin}
                     style={{
                       flex: '1',
                       padding: '12px',
@@ -553,6 +695,27 @@ const AuthPageUnificada = () => {
                 </div>
 
                 <input
+                  type="number"
+                  name="altura"
+                  placeholder="📏 Altura (cm) *"
+                  value={formData.altura}
+                  onChange={handleInputChange}
+                  required
+                  min="140"
+                  max="220"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    marginBottom: '12px',
+                    background: '#333',
+                    border: '1px solid #555',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontSize: '16px'
+                  }}
+                />
+
+                <input
                   type="tel"
                   name="telefono"
                   placeholder="Teléfono *"
@@ -571,6 +734,9 @@ const AuthPageUnificada = () => {
                   }}
                 />
 
+                <div style={{ color: '#999', fontSize: '13px', marginBottom: '8px', marginLeft: '4px' }}>
+                  📍 La ubicación se detecta automáticamente por IP, puedes editarla.
+                </div>
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
                   <input
                     type="text"
@@ -655,30 +821,31 @@ const AuthPageUnificada = () => {
                   }}
                 >
                   <option value="">Selecciona tu posición *</option>
-                  <optgroup label="🥅 Portería">
-                    <option value="portero">Portero</option>
+                  <optgroup label="⚽ Fútbol 11">
+                    <option value="portero">🥅 Portero</option>
+                    <option value="defensa-central">🛡️ Defensa Central</option>
+                    <option value="lateral-derecho">➡️ Lateral Derecho</option>
+                    <option value="lateral-izquierdo">⬅️ Lateral Izquierdo</option>
+                    <option value="libero">🔓 Líbero</option>
+                    <option value="mediocentro-defensivo">🔒 Mediocentro Defensivo</option>
+                    <option value="mediocentro-central">⚖️ Mediocentro Central</option>
+                    <option value="mediocentro-ofensivo">🎯 Mediocentro Ofensivo</option>
+                    <option value="extremo-derecho">🏃‍♂️ Extremo Derecho</option>
+                    <option value="extremo-izquierdo">🏃‍♂️ Extremo Izquierdo</option>
+                    <option value="enganche">✨ Enganche</option>
+                    <option value="delantero-centro">⚽ Delantero Centro</option>
+                    <option value="segundo-delantero">🔥 Segundo Delantero</option>
+                    <option value="falso-nueve">🎭 Falso 9</option>
                   </optgroup>
-                  <optgroup label="🛡️ Defensa">
-                    <option value="defensa-central">Defensa Central</option>
-                    <option value="lateral-derecho">Lateral Derecho</option>
-                    <option value="lateral-izquierdo">Lateral Izquierdo</option>
-                    <option value="libero">Líbero</option>
+                  <optgroup label="🏐 Futsal">
+                    <option value="portero-futsal">🥅 Portero</option>
+                    <option value="ala-derecha">➡️ Ala Derecha</option>
+                    <option value="ala-izquierda">⬅️ Ala Izquierda</option>
+                    <option value="pivote">🎯 Pivote</option>
+                    <option value="cierre">🔒 Cierre</option>
                   </optgroup>
-                  <optgroup label="⚡ Mediocampo">
-                    <option value="mediocentro-defensivo">Mediocentro Defensivo</option>
-                    <option value="mediocentro-central">Mediocentro Central</option>
-                    <option value="mediocentro-ofensivo">Mediocentro Ofensivo</option>
-                    <option value="extremo-derecho">Extremo Derecho</option>
-                    <option value="extremo-izquierdo">Extremo Izquierdo</option>
-                    <option value="enganche">Enganche</option>
-                  </optgroup>
-                  <optgroup label="🎯 Delantero">
-                    <option value="delantero-centro">Delantero Centro</option>
-                    <option value="segundo-delantero">Segundo Delantero</option>
-                    <option value="falso-nueve">Falso 9</option>
-                  </optgroup>
-                  <optgroup label="🔄 Múltiples">
-                    <option value="multiple">Múltiples posiciones</option>
+                  <optgroup label="🔄 Flexible">
+                    <option value="multiple">🔄 Múltiples posiciones / Polivalente</option>
                   </optgroup>
                 </select>
 
@@ -846,7 +1013,7 @@ const AuthPageUnificada = () => {
                 style={{
                   width: '100%',
                   padding: '14px',
-                  background: loading ? '#999' : '#FFD700',
+                  background: loading ? '#999' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
                   color: '#222',
                   border: 'none',
                   borderRadius: '6px',
@@ -854,11 +1021,49 @@ const AuthPageUnificada = () => {
                   fontWeight: 'bold',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.7 : 1,
-                  marginBottom: '20px',
+                  marginBottom: '15px',
                   transition: 'all 0.3s ease'
                 }}
               >
                 {loading ? '⏳ Procesando...' : '🏆 Crear mi perfil FutPro completo'}
+              </button>
+
+              {/* Separador O */}
+              <div style={{ textAlign: 'center', marginBottom: '15px', color: '#999', fontSize: '14px' }}>
+                ─────  O continúa con  ─────
+              </div>
+
+              {/* Botón Google OAuth */}
+              <button
+                type="button"
+                onClick={handleGoogleAuth}
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  background: '#4285F4',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.7 : 1,
+                  marginBottom: '15px',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px'
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Continuar con Google
               </button>
               
               {/* Información adicional para registro */}
@@ -879,384 +1084,68 @@ const AuthPageUnificada = () => {
                   ✅ Perfil completo • Mejor matchmaking • Datos seguros
                 </p>
               </div>
+              
 
-              {/* Toggle entre login y registro */}
-              <div style={{ textAlign: 'center' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsLogin(!isLogin);
-                    setError('');
-                    setSuccess('');
-                  }}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#FFD700',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    textDecoration: 'underline'
-                  }}
-                >
-                  {isLogin ? 
-                    '¿No tienes cuenta? Regístrate aquí' : 
-                    '¿Ya tienes cuenta? Inicia sesión aquí'
-                  }
-                </button>
+              {/* Links de toggle */}
+              <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                {isLogin && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => alert('Recuperación de contraseña: funcionalidad próximamente')}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#FFA500',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        textDecoration: 'underline',
+                        marginBottom: '10px',
+                        display: 'block',
+                        width: '100%'
+                      }}
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/seleccionar-categoria')}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#FFD700',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      ¿No tienes cuenta? <span style={{ textDecoration: 'underline' }}>Crea tu cuenta</span>
+                    </button>
+                  </>
+                )}
+                {!isLogin && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsLogin(true);
+                      setShowEmailForm(false);
+                      setError('');
+                      setSuccess('');
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#FFD700',
+                      fontSize: '14px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ¿Ya tienes cuenta? <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>Inicia sesión aquí</span>
+                  </button>
+                )}
               </div>
             </form>
-          </>
         )}
-
-        {/* Formulario */}
-        <form onSubmit={isLogin ? handleEmailLogin : handleEmailRegister}>
-          {!isLogin && (
-            <>
-              {/* Información Personal */}
-              <div style={{ marginBottom: '20px' }}>
-                <h3 style={{ color: '#FFD700', fontSize: '18px', marginBottom: '15px' }}>
-                  👤 Información Personal
-                </h3>
-                
-                <input
-                  type="text"
-                  name="nombre"
-                  placeholder="Nombre *"
-                  value={formData.nombre}
-                  onChange={handleInputChange}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    marginBottom: '12px',
-                    background: '#333',
-                    border: '1px solid #555',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontSize: '16px'
-                  }}
-                />
-                
-                <input
-                  type="text"
-                  name="apellido"
-                  placeholder="Apellido *"
-                  value={formData.apellido}
-                  onChange={handleInputChange}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    marginBottom: '12px',
-                    background: '#333',
-                    border: '1px solid #555',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontSize: '16px'
-                  }}
-                />
-
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <input
-                    type="number"
-                    name="edad"
-                    placeholder="Edad *"
-                    value={formData.edad}
-                    onChange={handleInputChange}
-                    required
-                    min="16"
-                    max="60"
-                    style={{
-                      flex: '1',
-                      padding: '12px',
-                      marginBottom: '12px',
-                      background: '#333',
-                      border: '1px solid #555',
-                      borderRadius: '6px',
-                      color: 'white',
-                      fontSize: '16px'
-                    }}
-                  />
-                  
-                  <input
-                    type="tel"
-                    name="telefono"
-                    placeholder="Teléfono *"
-                    value={formData.telefono}
-                    onChange={handleInputChange}
-                    required
-                    style={{
-                      flex: '2',
-                      padding: '12px',
-                      marginBottom: '12px',
-                      background: '#333',
-                      border: '1px solid #555',
-                      borderRadius: '6px',
-                      color: 'white',
-                      fontSize: '16px'
-                    }}
-                  />
-                </div>
-
-                <input
-                  type="text"
-                  name="ubicacion"
-                  placeholder="Ciudad/Ubicación *"
-                  value={formData.ubicacion}
-                  onChange={handleInputChange}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    marginBottom: '12px',
-                    background: '#333',
-                    border: '1px solid #555',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontSize: '16px'
-                  }}
-                />
-              </div>
-
-              {/* Información Futbolística */}
-              <div style={{ marginBottom: '20px' }}>
-                <h3 style={{ color: '#FFD700', fontSize: '18px', marginBottom: '15px' }}>
-                  ⚽ Información Futbolística
-                </h3>
-                
-                <select
-                  name="posicion"
-                  value={formData.posicion}
-                  onChange={handleInputChange}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    marginBottom: '12px',
-                    background: '#333',
-                    border: '1px solid #555',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontSize: '16px'
-                  }}
-                >
-                  <option value="">Selecciona tu posición *</option>
-                  <option value="portero">🥅 Portero</option>
-                  <option value="defensa">🛡️ Defensa</option>
-                  <option value="mediocampo">⚡ Mediocampo</option>
-                  <option value="delantero">🎯 Delantero</option>
-                  <option value="multiple">🔄 Múltiples posiciones</option>
-                </select>
-
-                <select
-                  name="experiencia"
-                  value={formData.experiencia}
-                  onChange={handleInputChange}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    marginBottom: '12px',
-                    background: '#333',
-                    border: '1px solid #555',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontSize: '16px'
-                  }}
-                >
-                  <option value="">Nivel de experiencia *</option>
-                  <option value="principiante">🌱 Principiante</option>
-                  <option value="amateur">⚽ Amateur</option>
-                  <option value="intermedio">🏆 Intermedio</option>
-                  <option value="avanzado">🥇 Avanzado</option>
-                  <option value="profesional">👑 Profesional</option>
-                </select>
-
-                <input
-                  type="text"
-                  name="equipoFavorito"
-                  placeholder="Equipo favorito (opcional)"
-                  value={formData.equipoFavorito}
-                  onChange={handleInputChange}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    marginBottom: '12px',
-                    background: '#333',
-                    border: '1px solid #555',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontSize: '16px'
-                  }}
-                />
-
-                <select
-                  name="disponibilidad"
-                  value={formData.disponibilidad}
-                  onChange={handleInputChange}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    marginBottom: '12px',
-                    background: '#333',
-                    border: '1px solid #555',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontSize: '16px'
-                  }}
-                >
-                  <option value="">Disponibilidad de horarios *</option>
-                  <option value="mananas">🌅 Mañanas</option>
-                  <option value="tardes">🌞 Tardes</option>
-                  <option value="noches">🌙 Noches</option>
-                  <option value="fines_semana">📅 Solo fines de semana</option>
-                  <option value="flexible">🔄 Horario flexible</option>
-                </select>
-              </div>
-            </>
-          )}
-
-          <input
-            type="email"
-            name="email"
-            placeholder="Email *"
-            value={formData.email}
-            onChange={handleInputChange}
-            required
-            style={{
-              width: '100%',
-              padding: '12px',
-              marginBottom: '12px',
-              background: '#333',
-              border: '1px solid #555',
-              borderRadius: '6px',
-              color: 'white',
-              fontSize: '16px'
-            }}
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Contraseña *"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-            style={{
-              width: '100%',
-              padding: '12px',
-              marginBottom: '12px',
-              background: '#333',
-              border: '1px solid #555',
-              borderRadius: '6px',
-              color: 'white',
-              fontSize: '16px'
-            }}
-          />
-
-          {!isLogin && (
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirmar Contraseña *"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              required
-              style={{
-                width: '100%',
-                padding: '12px',
-                marginBottom: '12px',
-                background: '#333',
-                border: '1px solid #555',
-                borderRadius: '6px',
-                color: 'white',
-                fontSize: '16px'
-              }}
-            />
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '14px',
-              background: loading ? '#999' : '#FFD700',
-              color: '#222',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-              marginBottom: '20px',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            {loading ? '⏳ Procesando...' : 
-             isLogin ? '🔐 Iniciar Sesión' : '📝 Crear mi cuenta FutPro'}
-          </button>
-          
-          {/* Información adicional para registro */}
-          {!isLogin && (
-            <div style={{
-              background: 'rgba(76, 175, 80, 0.1)',
-              border: '1px solid #4CAF50',
-              borderRadius: '6px',
-              padding: '12px',
-              marginBottom: '15px',
-              textAlign: 'center'
-            }}>
-              <p style={{ 
-                color: '#4CAF50', 
-                fontSize: '14px', 
-                margin: '0',
-                fontWeight: 'bold'
-              }}>
-                ✅ Cuenta 100% gratuita • Sin publicidad • Datos seguros
-              </p>
-            </div>
-          )}
-        </form>
-
-        {/* Toggle entre login y registro */}
-        <div style={{ textAlign: 'center' }}>
-          <button
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setError('');
-              setSuccess('');
-              setFormData({
-                email: '',
-                password: '',
-                confirmPassword: '',
-                nombre: '',
-                apellido: '',
-                edad: '',
-                telefono: '',
-                posicion: '',
-                equipoFavorito: '',
-                experiencia: '',
-                ubicacion: '',
-                disponibilidad: ''
-              });
-            }}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#FFD700',
-              fontSize: '14px',
-              cursor: 'pointer',
-              textDecoration: 'underline'
-            }}
-          >
-            {isLogin ? 
-              '¿No tienes cuenta? Regístrate aquí' : 
-              '¿Ya tienes cuenta? Inicia sesión aquí'
-            }
-          </button>
-        </div>
 
         {loading && (
           <div style={{

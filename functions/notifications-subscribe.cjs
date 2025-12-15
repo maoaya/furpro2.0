@@ -1,9 +1,9 @@
-// Netlify Function: notifications-subscribe (ESM)
+// Netlify Function: notifications-subscribe (CommonJS)
 // Stores Web Push subscriptions in Supabase
 
-import { createClient } from '@supabase/supabase-js'
+const { createClient } = require('@supabase/supabase-js')
 
-export async function handler(event) {
+exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
