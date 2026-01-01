@@ -1,5 +1,5 @@
 // 🔐 FutPro - Servicio de Autenticación
-import supabase from '../supabaseClient';
+import { supabase } from '../lib/supabase';
 import { getConfig } from '../config/environment.js';
 
 export class AuthService {

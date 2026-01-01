@@ -5,10 +5,10 @@
 /auth                 /index.html   200
 /auth/*               /index.html   200
 
-# OAuth callbacks optimizados - REDIRIGIR A auth-callback.html
-/auth/callback        /auth-callback.html   200
-/oauth/callback       /auth-callback.html   200
-/callback             /auth-callback.html   200
+# OAuth callbacks -> SPA (React Router)
+/auth/callback        /index.html   200
+/oauth/callback       /index.html   200
+/callback             /index.html   200
 
 # === RUTAS DE AUTENTICACIÓN LEGACY ===
 /login                /index.html   200

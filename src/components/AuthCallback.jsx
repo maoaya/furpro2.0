@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import supabase from '../supabaseClient';
+import supabase from '../lib/supabase.js';
+import { getConfig } from '../config/environment.js';
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -18,13 +19,16 @@ export default function AuthCallback() {
           temp: !!localStorage.getItem('tempRegistroData')
         });
         
-        setStatus('🔗 Estableciendo conexión efectiva...');
-        
-        // Usar conexión efectiva
-        const { conexionEfectiva } = await import('../services/conexionEfectiva.js');
-        
         setStatus('✅ Verificando autenticación y guardando usuario...');
-        const resultado = await conexionEfectiva.procesarCallback();
+        
+        // Procesamiento directo sin import dinámico
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          throw new Error(`Error obteniendo sesión: ${sessionError.message}`);
+        }
+        
+        const resultado = { success: !!session, user: session?.user, message: 'Usuario autenticado' };
         
         if (resultado.success) {
           console.log('✅ CALLBACK PROCESADO EXITOSAMENTE:', resultado);

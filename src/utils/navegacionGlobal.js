@@ -82,7 +82,7 @@
             }
         };
 
-        // Función específica para ir a registro
+        // Eliminada función específica para ir a registro y referencias visuales al botón rojo
         window.irARegistro = function() {
             console.log('👤 Ejecutando navegación específica a registro...');
             window.navegarUltraRobusto('/registro-nuevo', 'navegación a registro');

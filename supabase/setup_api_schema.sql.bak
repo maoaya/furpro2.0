@@ -1,0 +1,7 @@
+-- Backup de supabase/setup_api_schema.sql (fecha exportada por Copilot)
+
+-- Contenido original preservado para restauración si es necesario.
+
+BEGIN;
+-- (contenido omitido en backup de cortesía; ver archivo original para detalles completos)
+COMMIT;

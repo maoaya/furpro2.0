@@ -1,5 +1,5 @@
 // Inicializador principal de la aplicación FutPro
-import { Database } from './config/supabase.js';
+import { Database } from './config/Database.js';
 import { FirebaseService } from './config/firebase.js';
 import { AuthService } from './services/AuthService.js';
 import { UIManager } from './services/UIManager.js';

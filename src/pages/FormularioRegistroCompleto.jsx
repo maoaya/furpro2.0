@@ -22,7 +22,7 @@ export default function FormularioRegistroCompleto() {
     peso: '',
     altura: '',
     // Paso 3: Info Futbolística
-    categoria: 'masculina',
+    categoria: 'masculino',
     posicion: 'Flexible',
     nivelHabilidad: 'Principiante',
     equipoFavorito: '',
@@ -153,6 +153,9 @@ export default function FormularioRegistroCompleto() {
   };
 
   const persistProfileDraft = () => {
+    const estaturaM = formData.altura ? Number(formData.altura) / 100 : '';
+    const pieDominante = formData.piernaDominante || '';
+    const pesoKg = formData.peso ? Number(formData.peso) : '';
     const draft = {
       nombre: formData.nombre,
       apellido: formData.apellido,
@@ -161,13 +164,15 @@ export default function FormularioRegistroCompleto() {
       ciudad: formData.ciudad,
       pais: formData.pais,
       edad: formData.edad,
-      peso: formData.peso,
+      peso: pesoKg,
       altura: formData.altura,
+      estatura: estaturaM,
       categoria: formData.categoria,
       posicion_favorita: formData.posicion,
       nivel_habilidad: formData.nivelHabilidad,
       equipo_favorito: formData.equipoFavorito,
-      pierna_dominante: formData.piernaDominante,
+      pierna_dominante: pieDominante,
+      pie: pieDominante,
       disponibilidad_juego: formData.disponibilidadJuego,
       frecuencia_juego: formData.frecuenciaJuego,
       objetivo_deportivo: formData.objetivoDeportivo,
@@ -376,7 +381,6 @@ export default function FormularioRegistroCompleto() {
                 ⚠️ Las contraseñas no coinciden
               </p>
             )}
-          </div>
         )}
 
         {/* PASO 2: Datos Personales */}
@@ -456,6 +460,18 @@ export default function FormularioRegistroCompleto() {
               onFocus={(e) => e.target.style.borderColor = '#FFD700'}
               onBlur={(e) => e.target.style.borderColor = '#444'}
             />
+            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
+              Pierna dominante
+            </label>
+            <select
+              value={formData.piernaDominante}
+              onChange={(e) => setFormData({ ...formData, piernaDominante: e.target.value })}
+              style={selectStyle}
+            >
+              <option value="Derecha">🦵 Derecha</option>
+              <option value="Izquierda">🦶 Izquierda</option>
+              <option value="Ambidiestra">🔁 Ambidiestra</option>
+            </select>
             <button
               type="button"
               onClick={detectarUbicacionPorIp}
@@ -477,6 +493,22 @@ export default function FormularioRegistroCompleto() {
               ⚽ Información Futbolística
             </h2>
             <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>
+
+            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '0px', fontSize: '14px', fontWeight: 'bold' }}>
+              Categoría *
+            </label>
+            <select
+              value={formData.categoria}
+              onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
+              style={selectStyle}
+            >
+              <option value="masculino">🔵 Masculina</option>
+              <option value="femenino">🔴 Femenina</option>
+              <option value="infantil_masculino">👦 Infantil Masculina</option>
+              <option value="infantil_femenino">👧 Infantil Femenina</option>
+            </select>
+
+            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
               Posición Favorita
             </label>
             <select
@@ -531,19 +563,6 @@ export default function FormularioRegistroCompleto() {
             />
 
             <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
-              Pierna dominante
-            </label>
-            <select
-              value={formData.piernaDominante}
-              onChange={(e) => setFormData({ ...formData, piernaDominante: e.target.value })}
-              style={selectStyle}
-            >
-              <option value="Derecha">🦵 Derecha</option>
-              <option value="Izquierda">🦶 Izquierda</option>
-              <option value="Ambidiestra">🔁 Ambidiestra</option>
-            </select>
-
-            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
               Disponibilidad de juego
             </label>
             <select
@@ -594,7 +613,7 @@ export default function FormularioRegistroCompleto() {
               onFocus={(e) => e.target.style.borderColor = '#FFD700'}
               onBlur={(e) => e.target.style.borderColor = '#444'}
             />
-          </div>
+          </label>
         )}
 
         {/* PASO 4: Foto de Perfil */}
@@ -778,3 +797,5 @@ export default function FormularioRegistroCompleto() {
     </div>
   );
 }
+
+export default FormularioRegistroCompleto;

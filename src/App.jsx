@@ -19,7 +19,7 @@ import NotFoundPage from './pages/NotFoundPage.jsx';
 import AuthPageUnificada from './pages/AuthPageUnificada';
 import Estados from './pages/Estados';
 import Amigos from './pages/Amigos';
-import ConfiguracionPage from './pages/ConfiguracionPage';
+import LoginFallback from './components/LoginFallback.jsx';
 import AuthCallback from './pages/auth/AuthCallback';
 import EditarPerfil from './pages/EditarPerfil';
 import Estadisticas from './pages/Estadisticas';
@@ -49,6 +49,7 @@ import FormularioRegistroCompleto from './pages/FormularioRegistroCompleto';
 import Logros from './pages/Logros';
 import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
 import SeccionPlaceholder from './pages/SeccionPlaceholder';
+import RegistroPerfil from './pages/RegistroPerfil';
 
 
 function Layout({ children }) {
@@ -65,25 +66,25 @@ function Layout({ children }) {
 function RootRoute() {
   // Decide qué mostrar en la raíz: login si no hay usuario, homepage si ya está autenticado
   const { user } = useAuth();
-  return user ? <HomePage /> : <AuthPageUnificada />;
+  return user ? <HomePage /> : <LoginFallback />;
 }
 
+// El render principal debe estar dentro de la función principal exportada
 export default function App() {
   return (
     <AuthProvider>
       <NotificationsProvider>
-      <Router>
-        <Routes>
-        {/* Raíz: muestra Login si no hay sesión, Home si autenticado */}
-        <Route path="/" element={<RootRoute />} />
-        
-        {/* 🔐 FLUJO DE AUTENTICACIÓN LIMPIO */}
-        <Route path="/login" element={<AuthPageUnificada />} />
-        <Route path="/registro" element={<AuthPageUnificada />} />
-        <Route path="/auth" element={<AuthPageUnificada />} />
-        <Route path="/seleccionar-categoria" element={<SeleccionCategoria />} />
-        <Route path="/formulario-registro" element={<FormularioRegistroCompleto />} />
-        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Router>
+          <Routes>
+            {/* Raíz: muestra Login si no hay sesión, Home si autenticado */}
+            <Route path="/" element={<RootRoute />} />
+            {/* 🔐 FLUJO DE AUTENTICACIÓN LIMPIO */}
+            <Route path="/login" element={<LoginFallback />} />
+            <Route path="/registro" element={<LoginFallback />} />
+            <Route path="/auth" element={<LoginFallback />} />
+            <Route path="/registro-nuevo" element={<RegistroPerfil />} />
+            <Route path="/registro-perfil" element={<RegistroPerfil />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/perfil-card" element={<PerfilCard />} />
         <Route path="/seccion/:slug" element={<SeccionPlaceholder />} />
         

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import supabase from '../supabaseClient';
+import supabase from '../lib/supabase.js';
 import { getConfig } from '../config/environment.js';
 import { handleSuccessfulAuth } from '../utils/navigationUtils.js';
 import { robustSignUp, robustSignIn, createUserProfile } from '../utils/authUtils.js';
@@ -41,6 +41,7 @@ const AuthPageUnificada = () => {
     pais: '',
     disponibilidad: '',
     vecesJuegaPorSemana: '',
+    piernaDominante: 'Derecha',
     foto: null
   });
 
@@ -124,6 +125,49 @@ const AuthPageUnificada = () => {
   // Función ELIMINADA - No debe haber navegación automática
   // La redirección ocurre en handleEmailLogin y handleEmailRegister después del login exitoso
 
+  // Calcular puntaje de card según nivel de habilidad
+  // Sistema de puntaje inicial bajo para fomentar progresión
+  const calcularPuntaje = (nivel) => {
+    const puntajes = {
+      'Elite': 45,           // Jugadores de élite empiezan con ventaja pero deben demostrar
+      'Profesional': 35,     // Profesionales con experiencia
+      'Avanzado': 25,        // Jugadores avanzados
+      'Intermedio': 20,      // Nivel intermedio
+      'Principiante': 15     // Todos empiezan desde abajo y deben subir jugando
+    };
+    return puntajes[nivel] || 15;
+  };
+
+  // Guardar datos del perfil en draft para usar después de OAuth
+  const persistProfileDraft = async () => {
+    console.log('💾 persistProfileDraft: iniciando con formData:', { 
+      hasFoto: !!formData.foto, 
+      nombre: formData.nombre, 
+      edad: formData.edad 
+    });
+    
+    // Convertir foto a data URL si existe
+    let fotoUrl = '';
+    if (formData.foto instanceof File) {
+      try {
+        const reader = new FileReader();
+        fotoUrl = await new Promise((resolve, reject) => {
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(formData.foto);
+        });
+        console.log('📸 Foto convertida a data URL (tamaño:', fotoUrl.length, 'bytes)');
+      } catch (e) {
+        console.error('❌ Error convirtiendo foto:', e);
+      }
+    }
+
+    const puntaje = calcularPuntaje(formData.experiencia);
+    
+    // Guardar CON MÚLTIPLES CLAVES PARA COMPATIBILIDAD
+    const draft = {};
+    // ...resto del cuerpo de la función...
+
   // REGISTRO CON EMAIL Y PASSWORD
   const handleEmailRegister = async (e) => {
     e.preventDefault();
@@ -162,6 +206,47 @@ const AuthPageUnificada = () => {
 
       console.log('📝 Iniciando registro con AuthFlowManager mejorado...');
       setSuccess('Creando cuenta...');
+
+      // Convertir foto a data URL si existe
+      let fotoUrl = '';
+      if (formData.foto instanceof File) {
+        try {
+          const reader = new FileReader();
+          fotoUrl = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(formData.foto);
+          });
+        } catch (e) {
+          console.warn('⚠️ Error convirtiendo foto:', e);
+        }
+      }
+
+      // Guardar todos los datos en localStorage ANTES de registrar
+      const perfilData = {
+        nombre: formData.nombre.trim(),
+        apellido: formData.apellido?.trim() || '',
+        edad: formData.edad ? Number(formData.edad) : null,
+        peso: formData.peso ? Number(formData.peso) : null,
+        altura: formData.altura ? Number(formData.altura) : null,
+        telefono: formData.telefono.trim(),
+        posicion: formData.posicion,
+        equipoFavorito: formData.equipoFavorito?.trim() || '',
+        experiencia: formData.experiencia,
+        ciudad: formData.ubicacion.trim(),
+        pais: formData.pais.trim(),
+        disponibilidad: formData.disponibilidad,
+        piernaDominante: formData.piernaDominante || 'Derecha',
+        avatar_url: fotoUrl || ''
+      };
+      
+      try {
+        localStorage.setItem('pendingProfileData', JSON.stringify(perfilData));
+        localStorage.setItem('draft_carfutpro', JSON.stringify(perfilData));
+        console.log('✅ Datos guardados en localStorage:', perfilData);
+      } catch (e) {
+        console.warn('⚠️ Error guardando en localStorage:', e);
+      }
 
       // Usar el nuevo manager de flujo completo
       const resultado = await handleCompleteRegistration({
@@ -251,38 +336,41 @@ const AuthPageUnificada = () => {
     console.log('[OAuth] handleGoogleAuth llamado');
     setLoading(true);
     setError('');
-    setSuccess('Google auth...');
+    setSuccess('Guardando datos del formulario...');
 
     try {
       console.log('🔐 Iniciando autenticación con Google...');
       
-      // Si estamos en la ruta específica de Google, ir directo al OAuth
-      if (registroTipo === 'google') {
-        const config = getConfig();
-        console.log('[OAuth] redirectTo:', `${window.location.origin}/auth/callback`);
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: `${window.location.origin}/auth/callback`,
-            queryParams: {
-              access_type: 'offline',
-              prompt: 'consent',
-            }
+      // Guardar datos del perfil antes de redirigir a Google (incluyendo foto)
+      await persistProfileDraft();
+      console.log('✅ Datos del formulario guardados, iniciando OAuth...');
+      
+      localStorage.setItem('post_auth_origin', 'formulario_registro');
+      localStorage.setItem('post_auth_target', '/perfil-card');
+      
+      setSuccess('Redirigiendo a Google...');
+      
+      const config = getConfig();
+      console.log('[OAuth] redirectTo:', `${window.location.origin}/auth/callback`);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
           }
-        });
-
-        if (error) {
-          console.error('❌ Error OAuth Google:', error);
-          setError(`Error Google: ${error.message}`);
-        } else {
-          console.log('🔄 Redirigiendo a Google...');
-          setSuccess('Redirigiendo a Google...');
-          // Log extra para depuración
-          console.log('[OAuth] Redirección iniciada correctamente');
         }
+      });
+
+      if (error) {
+        console.error('❌ Error OAuth Google:', error);
+        setError(`Error Google: ${error.message}`);
       } else {
-        // Si no, navegar a la ruta específica
-        navigate('/registro-google');
+        console.log('🔄 Redirigiendo a Google...');
+        setSuccess('Redirigiendo a Google...');
+        // Log extra para depuración
+        console.log('[OAuth] Redirección iniciada correctamente');
       }
     } catch (error) {
       console.error('💥 Error inesperado Google:', error);
@@ -385,7 +473,6 @@ const AuthPageUnificada = () => {
         {error && (
           <div style={{
             background: '#F44336',
-            color: 'white',
             padding: '12px',
             borderRadius: '6px',
             marginBottom: '20px',
@@ -412,6 +499,10 @@ const AuthPageUnificada = () => {
         {isLogin ? (
           /* MODO LOGIN */
           <form onSubmit={handleEmailLogin}>
+            {/* Botón para ir a registro */}
+            <div style={{textAlign:'center', marginBottom:16}}>
+              <button type="button" onClick={()=>setIsLogin(false)} style={{background:'#FFD700',color:'#222',border:'none',borderRadius:8,padding:'8px 20px',fontWeight:'bold',cursor:'pointer'}}>Crear cuenta nueva</button>
+            </div>
             <input
               type="email"
               name="email"
@@ -714,6 +805,30 @@ const AuthPageUnificada = () => {
                     fontSize: '16px'
                   }}
                 />
+
+                <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>
+                  Pierna dominante *
+                </label>
+                <select
+                  name="piernaDominante"
+                  value={formData.piernaDominante}
+                  onChange={handleInputChange}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    marginBottom: '12px',
+                    background: '#333',
+                    border: '1px solid #555',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontSize: '16px'
+                  }}
+                >
+                  <option value="Derecha">🦵 Derecha</option>
+                  <option value="Izquierda">🦶 Izquierda</option>
+                  <option value="Ambidiestra">🔁 Ambidiestra</option>
+                </select>
 
                 <input
                   type="tel"
@@ -1025,7 +1140,8 @@ const AuthPageUnificada = () => {
                   transition: 'all 0.3s ease'
                 }}
               >
-                {loading ? '⏳ Procesando...' : '🏆 Crear mi perfil FutPro completo'}
+                {/* Botón 'Crear mi perfil FutPro completo' eliminado */}
+                {/* Botón rojo 'IR A REGISTRO' eliminado por requerimiento */}
               </button>
 
               {/* Separador O */}
@@ -1123,29 +1239,23 @@ const AuthPageUnificada = () => {
                     </button>
                   </>
                 )}
-                {!isLogin && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsLogin(true);
-                      setShowEmailForm(false);
-                      setError('');
-                      setSuccess('');
-                    }}
-                    style={{
-                      background: 'transparent',
-                      border: 'none',
-                      color: '#FFD700',
-                      fontSize: '14px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    ¿Ya tienes cuenta? <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>Inicia sesión aquí</span>
-                  </button>
+                {isLogin ? (
+                  /* MODO LOGIN */
+                  <form onSubmit={handleEmailLogin}>
+                    ...existing code...
+                  </form>
+                ) : (
+                  /* MODO REGISTRO - Solo cuando el usuario lo solicita */
+                  <form onSubmit={handleEmailRegister}>
+                    {/* Botón para volver a login */}
+                    <div style={{textAlign:'center', marginBottom:16}}>
+                      <button type="button" onClick={()=>setIsLogin(true)} style={{background:'#FFD700',color:'#222',border:'none',borderRadius:8,padding:'8px 20px',fontWeight:'bold',cursor:'pointer'}}>Ya tengo cuenta / Iniciar sesión</button>
+                    </div>
+                    ...existing code...
+                  </form>
+
                 )}
-              </div>
-            </form>
-        )}
+              )}
 
         {loading && (
           <div style={{

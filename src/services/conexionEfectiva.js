@@ -1,5 +1,5 @@
 // Conexión real y efectiva - Sistema completo OAuth (frontend)
-import supabase from '../supabaseClient';
+import { supabase } from '../lib/supabase';
 import { getConfig } from '../config/environment.js';
 
 // Detección automática de entorno

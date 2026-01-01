@@ -1,4 +1,3 @@
-// Punto de entrada único de la SPA FutPro
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -64,3 +63,7 @@ async function bootstrap() {
 }
 
 bootstrap();
+
+// Import estático para forzar a Vite a incluir todos los módulos de la app en el build
+import './App.jsx';
+import './App.jsx';

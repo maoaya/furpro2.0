@@ -1,153 +1,157 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FutPro 2.0 - Plataforma de Gestión Deportiva</title>
-    <meta name="description" content="FutPro 2.0 - La mejor plataforma para gestionar tu carrera deportiva" />
-    
-    <!-- Preload critical resources -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    
-    <!-- Meta tags for SEO -->
-    <meta property="og:title" content="FutPro 2.0" />
-    <meta property="og:description" content="Plataforma de gestión deportiva profesional" />
-    <meta property="og:type" content="website" />
-    
-    <!-- Security -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https: http: wss: ws:;">
-</head>
-<body>
-    <div id="root"></div>
-    <!-- Error overlay para capturar errores JS globales y promesas rechazadas -->
-    <div id="error-overlay" style="display:none; position:fixed; inset:12px; background:rgba(0,0,0,0.85); color:#fff; padding:20px; z-index:99999; overflow:auto; font-family:monospace; font-size:13px; border-radius:8px;"> <strong>Error runtime:</strong><pre id="error-content" style="white-space:pre-wrap; color:#ffdddd;"></pre><button onclick="document.getElementById('error-overlay').style.display='none'" style="position:fixed; right:20px; top:20px;">Cerrar</button></div>
-    
-    <!-- 🚨 BOTON DE EMERGENCIA - Por si JavaScript falla completamente -->
-    <div id="emergency-nav" style="position: fixed; top: 10px; right: 10px; z-index: 9999; display: none;">
-        <a href="/registro-nuevo" style="
-            background: #dc2626; 
-            color: white; 
-            padding: 10px 15px; 
-            text-decoration: none; 
-            border-radius: 8px; 
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
-        ">🚨 IR A REGISTRO</a>
-    </div>
-    
-    <!-- 🔧 SCRIPT GLOBAL DE NAVEGACION ULTRA-ROBUSTO -->
+    <!-- Bloque JS único y limpio -->
     <script>
-        // Script de navegación ultra-robusto inline para máxima compatibilidad
-        (function() {
-            'use strict';
-            console.log('🔥 Navegación ultra-robusta inicializada');
-            
-            // Función global de navegación
-            window.navegarCrearUsuario = function() {
-                console.log('🚀 NAVEGACION CREAR USUARIO - Método ultra-robusto');
-                
-                const metodos = [
-                    () => window.location.href = '/registro-nuevo',
-                    () => window.location.assign('/registro-nuevo'),
-                    () => window.location.replace('/registro-nuevo'),
-                    () => window.open('/registro-nuevo', '_self'),
-                    () => {
-                        const form = document.createElement('form');
-                        form.method = 'GET';
-                        form.action = '/registro-nuevo';
-                        document.body.appendChild(form);
-                        form.submit();
-                    }
-                ];
-                
-                for (let i = 0; i < metodos.length; i++) {
-                    try {
-                        metodos[i]();
-                        console.log(`✅ Método ${i + 1} ejecutado exitosamente`);
-                        break;
-                    } catch (error) {
-                        console.warn(`⚠️ Método ${i + 1} falló:`, error);
-                        if (i === metodos.length - 1) {
-                            alert('Error: No se pudo navegar. Por favor, ve manualmente a /registro-nuevo');
-                        }
-                    }
-                }
-            };
-            
-            // Buscar y adjuntar a botones cuando el DOM esté listo
-            function adjuntarEventos() {
-                setTimeout(() => {
-                    const botones = document.querySelectorAll('button');
-                    let botonCrearUsuarioEncontrado = false;
-                    
-                    botones.forEach(btn => {
-                        const texto = (btn.textContent || '').toLowerCase();
-                        if (texto.includes('crear usuario')) {
-                            botonCrearUsuarioEncontrado = true;
-                            console.log('🔍 Botón crear usuario encontrado:', btn);
-                            
-                            btn.addEventListener('click', function(e) {
-                                console.log('🔗 Click detectado en botón crear usuario');
-                                setTimeout(() => {
-                                    if (window.location.pathname === '/' || window.location.pathname === '/login') {
-                                        console.log('⚠️ Navegación falló, ejecutando backup...');
-                                        window.navegarCrearUsuario();
-                                    }
-                                }, 1000);
-                            }, true);
-                        }
-                    });
-                    
-                    // Mostrar botón de emergencia si hay problemas
-                    if (!botonCrearUsuarioEncontrado && window.location.pathname === '/') {
-                        console.log('⚠️ No se encontró botón crear usuario, mostrando emergencia...');
-                        const emergencyBtn = document.getElementById('emergency-nav');
-                        if (emergencyBtn) {
-                            emergencyBtn.style.display = 'block';
-                        }
-                    }
-                }, 1000);
-            }
-            
-            // Ejecutar múltiples veces para asegurar compatibilidad con React
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', adjuntarEventos);
-            } else {
-                adjuntarEventos();
-            }
-            
-            // Observer para cambios dinámicos
-            new MutationObserver(adjuntarEventos).observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-            
-        })();
-    </script>
-    
-    <script type="module" src="/src/main.jsx"></script>
+    'use strict';
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />     
+        <title>FutPro 2.0 - Plataforma de Gestión Deportiva</title>
+        <meta name="description" content="FutPro 2.0 - La mejor plataforma para gestionar tu carrera deportiva" />
+
+        <!-- Preload critical resources -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+        <!-- Meta tags for SEO -->
+        <meta property="og:title" content="FutPro 2.0" />
+        <meta property="og:description" content="Plataforma de gestión deportiva profesional" />
+        <meta property="og:type" content="website" />
+
+        <!-- Security -->
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https: http: wss: ws:;">
+    </head>
+    <body>
+        <div id="root"></div>
+        <!-- Error overlay para capturar errores JS globales y promesas rechazadas -->
+        <div id="error-overlay" style="display:none; position:fixed; inset:12px; background:rgba(0,0,0,0.85); color:#fff; padding:20px; z-index:99999; overflow:auto; font-family:monospace; font-size:13px; border-radius:8px;"> <strong>Error runtime:</strong><pre id="error-content" style="white-space:pre-wrap; color:#ffdddd;"></pre><button onclick="document.getElementById('error-overlay').style.display='none'" style="position:fixed; right:20px; top:20px;">Cerrar</button></div>
+
+        <!-- 🚨 BOTON DE EMERGENCIA - Por si JavaScript falla completamente -->      
+        <div id="emergency-nav" style="position: fixed; top: 10px; right: 10px; z-index: 9999; display: none;">
+            <a href="/registro-nuevo" style="
+                background: #dc2626;
+                color: white;
+                padding: 10px 15px;
+                text-decoration: none;
+                border-radius: 8px;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+            ">🚨 IR A REGISTRO</a>
+        </div>
+
+        <!-- 🔧 SCRIPT GLOBAL DE NAVEGACION ULTRA-ROBUSTO -->
         <script>
-            // Manejadores globales para mostrar overlay de errores
-            window.addEventListener('error', function (ev) {
-                try {
-                    const overlay = document.getElementById('error-overlay');
-                    const content = document.getElementById('error-content');
-                    overlay.style.display = 'block';
-                    content.textContent = (ev && ev.error && ev.error.stack) ? ev.error.stack : (ev && ev.message) || JSON.stringify(ev);
-                } catch (e) { console.error('Error mostrando overlay', e); }
-            });
-            window.addEventListener('unhandledrejection', function (ev) {
-                try {
-                    const overlay = document.getElementById('error-overlay');
-                    const content = document.getElementById('error-content');
-                    overlay.style.display = 'block';
-                    content.textContent = (ev && ev.reason && ev.reason.stack) ? ev.reason.stack : JSON.stringify(ev.reason || ev);
-                } catch (e) { console.error('Error mostrando overlay', e); }
-            });
+            // Script de navegación ultra-robusto inline para máxima compatibilidad  
+            (function() {
+                'use strict';
+                console.log('🔥 Navegación ultra-robusta inicializada');
+
+                // Función global de navegación
+                window.navegarCrearUsuario = function() {
+                    console.log('🚀 NAVEGACION CREAR USUARIO - Método ultra-robusto');
+
+                    const metodos = [
+                        () => window.location.href = '/registro-nuevo',
+                        () => window.location.assign('/registro-nuevo'),
+                        () => window.location.replace('/registro-nuevo'),
+                        () => window.open('/registro-nuevo', '_self'),
+                        () => {
+                            const form = document.createElement('form');
+                            form.method = 'GET';
+                            form.action = '/registro-nuevo';
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    ];
+
+                    for (let i = 0; i < metodos.length; i++) {
+                        try {
+                            metodos[i]();
+                            console.log(`✅ Método ${i + 1} ejecutado exitosamente`);
+                            break;
+                        } catch (error) {
+                            console.warn(`⚠️ Método ${i + 1} falló:`, error);        
+                            if (i === metodos.length - 1) {
+                                alert('Error: No se pudo navegar. Por favor, ve manualmente a /registro-nuevo');
+                            }
+                        }
+                    }
+                };
+
+                // Buscar y adjuntar a botones cuando el DOM esté listo
+                function adjuntarEventos() {
+                    setTimeout(() => {
+                        const botones = document.querySelectorAll('button');
+                        let botonCrearUsuarioEncontrado = false;
+
+                        botones.forEach(btn => {
+                            const texto = (btn.textContent || '').toLowerCase();     
+                            if (texto.includes('crear usuario')) {
+                                botonCrearUsuarioEncontrado = true;
+                                console.log('🔍 Botón crear usuario encontrado:', btn);
+
+                                btn.addEventListener('click', function(e) {
+                                    console.log('🔗 Click detectado en botón crear usuario');
+                                    setTimeout(() => {
+                                        if (window.location.pathname === '/' || window.location.pathname === '/login') {
+                                            console.log('⚠️ Navegación falló, ejecutando backup...');
+                                            window.navegarCrearUsuario();
+                                        }
+                                    }, 1000);
+                                }, true);
+                            }
+                        });
+
+                        // Mostrar botón de emergencia si hay problemas
+                        if (!botonCrearUsuarioEncontrado && window.location.pathname === '/') {
+                            console.log('⚠️ No se encontró botón crear usuario, mostrando emergencia...');
+                            const emergencyBtn = document.getElementById('emergency-nav');
+                            if (emergencyBtn) {
+                                emergencyBtn.style.display = 'block';
+                            }
+                        }
+                    }, 1000);
+                }
+
+                // Ejecutar múltiples veces para asegurar compatibilidad con React   
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', adjuntarEventos);  
+                } else {
+                    adjuntarEventos();
+                }
+
+                // Observer para cambios dinámicos
+                new MutationObserver(adjuntarEventos).observe(document.body, {       
+                    childList: true,
+                    subtree: true
+                });
+
+            })();
         </script>
-</body>
-</html>
+
+        <script type="module" src="/src/main.jsx"></script>
+            <script>
+                // Manejadores globales para mostrar overlay de errores
+                window.addEventListener('error', function (ev) {
+                    try {
+                        const overlay = document.getElementById('error-overlay');    
+                        const content = document.getElementById('error-content');    
+                        overlay.style.display = 'block';
+                        content.textContent = (ev && ev.error && ev.error.stack) ? ev.error.stack : (ev && ev.message) || JSON.stringify(ev);
+                    } catch (e) { console.error('Error mostrando overlay', e); }     
+                });
+                window.addEventListener('unhandledrejection', function (ev) {        
+                    try {
+                        const overlay = document.getElementById('error-overlay');    
+                        const content = document.getElementById('error-content');    
+                        overlay.style.display = 'block';
+                        content.textContent = (ev && ev.reason && ev.reason.stack) ? ev.reason.stack : JSON.stringify(ev.reason || ev);
+                    } catch (e) { console.error('Error mostrando overlay', e); }     
+                });
+            </script>
+    </body>
+    </html>

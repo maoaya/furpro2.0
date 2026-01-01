@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '../components/Button';
-import supabase from '../supabaseClient';
+import { supabase } from '../lib/supabase';
 
 export default function SoporteChat() {
   const [mensajes, setMensajes] = useState([]);

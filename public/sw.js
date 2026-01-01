@@ -1,72 +1,29 @@
-// Service Worker para funcionalidad offline y notificaciones push
-// Estrategia: network-first para navegación (HTML) para evitar contenido obsoleto
-const CACHE_NAME = 'futpro-v1.0.1';
-const STATIC_CACHE_URLS = [
-  '/offline.html',
-  '/manifest.json',
-  '/images/futpro-logo.png',
-  '/assets/icon-192.png',
-  '/assets/icon-512.png'
-];
+// Service Worker minimalista sin caché para evitar servir HTML obsoleto
+// Versión aumentada para forzar limpieza de caches antiguos
+const CACHE_NAME = 'futpro-no-cache-v1.0.3';
 
-// Instalar Service Worker
+// Instalar y activar de inmediato
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
-    const cache = await caches.open(CACHE_NAME);
-    try {
-      await cache.addAll(STATIC_CACHE_URLS);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.warn('SW precache falló:', e);
-    }
-    // Activar inmediatamente la nueva versión
+    // Borrar caches heredados en instalación
+    const keys = await caches.keys();
+    await Promise.all(keys.map((key) => caches.delete(key)));
     self.skipWaiting();
   })());
 });
 
-// Activar Service Worker
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
+    // Asegurar limpieza total y tomar control
     const keys = await caches.keys();
-    await Promise.all(keys.map((key) => key !== CACHE_NAME && caches.delete(key)));
-    // Reclamar clientes para usar inmediatamente el SW actualizado
+    await Promise.all(keys.map((key) => caches.delete(key)));
     await self.clients.claim();
   })());
 });
 
-// Interceptar peticiones de red
+// Todas las peticiones van directo a red sin cachear
 self.addEventListener('fetch', (event) => {
-  const { request } = event;
-  // Network-first para navegación (HTML)
-  if (request.mode === 'navigate') {
-    event.respondWith((async () => {
-      try {
-        const networkResponse = await fetch(request, { cache: 'no-store' });
-        const cache = await caches.open(CACHE_NAME);
-        // Cachear copia para fallback offline
-        cache.put('/', networkResponse.clone());
-        return networkResponse;
-      } catch (_e) {
-        // Fallback a caché (offline)
-        const cached = await caches.match('/');
-        return cached || caches.match('/offline.html');
-      }
-    })());
-    return;
-  }
-
-  // Para estáticos: cache-first con actualización en segundo plano
-  event.respondWith((async () => {
-    const cached = await caches.match(request);
-    const fetchPromise = fetch(request).then(async (networkResponse) => {
-      try {
-        const cache = await caches.open(CACHE_NAME);
-        cache.put(request, networkResponse.clone());
-      } catch (_) { /* noop */ }
-      return networkResponse;
-    }).catch(() => cached);
-    return cached || fetchPromise;
-  })());
+  event.respondWith(fetch(event.request));
 });
 
 // Manejar notificaciones push

@@ -133,7 +133,9 @@
       *.google.com 
       *.googleapis.com;
       connect-src 'self' 
+      https: http: wss: ws:
       qqrxetxcglwrejtblwut.supabase.co 
+      wss://qqrxetxcglwrejtblwut.supabase.co
       *.googleapis.com 
       *.google.com 
       *.firebase.com 

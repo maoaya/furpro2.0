@@ -1,9 +1,28 @@
 /**
- * CARD SERVICE
- * Servicio para creación y gestión de tarjetas FIFA-style
+ * CARD SERVICE - Sistema completo de Cards con Tiers por puntos
+ * Todos los jugadores comienzan en BRONCE
+ * Suben a PLATA, ORO, DIAMANTE, LEYENDA según puntos acumulados
  */
 
-import supabase from '../supabaseClient.js';
+import { supabase } from '../lib/supabase';
+
+export const CARD_TIERS = {
+  BRONCE: { tier: 'bronce', color: '#CD7F32', minPoints: 0, maxPoints: 499, label: '🥉 Bronce', emoji: '🥉' },
+  PLATA: { tier: 'plata', color: '#C0C0C0', minPoints: 500, maxPoints: 999, label: '🥈 Plata', emoji: '🥈' },
+  ORO: { tier: 'oro', color: '#FFD700', minPoints: 1000, maxPoints: 1999, label: '🥇 Oro', emoji: '🥇' },
+  DIAMANTE: { tier: 'diamante', color: '#00D9FF', minPoints: 2000, maxPoints: 4999, label: '💎 Diamante', emoji: '💎' },
+  LEYENDA: { tier: 'leyenda', color: '#FF00FF', minPoints: 5000, maxPoints: Infinity, label: '👑 Leyenda', emoji: '👑' }
+};
+
+// Funciones públicas de utilidad
+export const calculateTierFromPoints = (points = 0) => {
+  const numPoints = parseInt(points, 10) || 0;
+  if (numPoints < 500) return CARD_TIERS.BRONCE;
+  if (numPoints < 1000) return CARD_TIERS.PLATA;
+  if (numPoints < 2000) return CARD_TIERS.ORO;
+  if (numPoints < 5000) return CARD_TIERS.DIAMANTE;
+  return CARD_TIERS.LEYENDA;
+};
 
 class CardService {
   constructor() {

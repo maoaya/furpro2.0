@@ -1,4 +1,4 @@
-import supabase from '../supabaseClient';
+import { supabase } from '../lib/supabase';
 
 /**
  * Función robusta de signup que maneja errores 502

@@ -1,5 +1,5 @@
 // Utilidad para configurar Supabase sin confirmación de email obligatoria
-import supabase from '../supabaseClient';
+import { supabase } from '../lib/supabase';
 import { getConfig } from '../config/environment';
 
 /**

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import supabase from '../supabaseClient';
+import supabase from '../lib/supabase.js';
 import { detectSupabaseOnline } from '../config/supabase.js';
 import { getConfig } from '../config/environment.js';
 // Carga perezosa del tracking para evitar efectos secundarios durante el render
@@ -89,10 +89,11 @@ export const AuthProvider = ({ children }) => {
           }
           
           // Obtener rol y equipoId desde la base de datos
+          // Cargar perfil desde tabla principal api.carfutpro usando user_id
           const { data: userData, error: userError } = await supabase
-            .from('usuarios')
+            .from('carfutpro')
             .select('*')
-            .eq('id', session.user.id)
+            .eq('user_id', session.user.id)
             .single();
             
           if (userData) {
@@ -104,10 +105,10 @@ export const AuthProvider = ({ children }) => {
             console.log('⚠️ No se encontró perfil de usuario, creando registro básico...');
             // Crear registro mínimo del usuario para garantizar presencia en DB
             const { error: insertBasicError } = await supabase
-              .from('usuarios')
+              .from('carfutpro')
               .insert([
                 {
-                  id: session.user.id,
+                  user_id: session.user.id,
                   email: session.user.email,
                   nombre: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Jugador',
                   rol: 'player',
@@ -194,9 +195,9 @@ export const AuthProvider = ({ children }) => {
           
           // Obtener datos del usuario
           const { data: userData } = await supabase
-            .from('usuarios')
+            .from('carfutpro')
             .select('*')
-            .eq('id', session.user.id)
+            .eq('user_id', session.user.id)
             .single();
             
           if (userData) {
@@ -211,16 +212,35 @@ export const AuthProvider = ({ children }) => {
               try {
                 const profileData = JSON.parse(pendingData);
                 // Crear el perfil del usuario con los datos pendientes
+                // Mapear sólo las columnas existentes en tabla usuarios para evitar 400/406
+                // Solo columnas existentes en tabla usuarios para evitar 400/406
+                const payload = {
+                  id: session.user.id,
+                  email: session.user.email,
+                  nombre: profileData.nombre,
+                  apellido: profileData.apellido || '',
+                  telefono: profileData.telefono || '',
+                  pais: profileData.pais || null,
+                  edad: profileData.edad ?? null,
+                  peso: profileData.peso ?? null,
+                  altura: profileData.altura ?? null,
+                  posicion_favorita: profileData.posicion || null,
+                  nivel_habilidad: profileData.experiencia || null,
+                  equipo_favorito: profileData.equipoFavorito || null,
+                  pierna_dominante: profileData.piernaDominante || profileData.pierna_dominante || null,
+                  disponibilidad_juego: profileData.disponibilidad || null,
+                  avatar_url: profileData.avatar_url || null,
+                  updated_at: new Date().toISOString()
+                };
+
                 const { error: insertError } = await supabase
-                  .from('usuarios')
-                  .insert([
-                    {
-                      id: session.user.id,
-                      email: session.user.email,
-                      ...profileData,
-                      updated_at: new Date().toISOString()
-                    }
-                  ]);
+                  .from('carfutpro')
+                  .insert([payload])
+                  .select();
+
+                if (insertError) {
+                  console.error('❌ Error insertando perfil pendiente (detalle):', insertError);
+                }
 
                 if (!insertError) {
                   setRole(profileData.rol || 'player');
@@ -291,9 +311,9 @@ export const AuthProvider = ({ children }) => {
       
       // Obtener datos completos del usuario
       const { data: userData } = await supabase
-        .from('usuarios')
+        .from('carfutpro')
         .select('*')
-        .eq('id', data.user.id)
+        .eq('user_id', data.user.id)
         .single();
         
       if (userData) {
@@ -331,12 +351,12 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const { data, error } = await supabase
-        .from('usuarios')
+        .from('carfutpro')
         .update({
           ...profileData,
           updated_at: new Date().toISOString()
         })
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .select()
         .single();
 

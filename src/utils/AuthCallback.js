@@ -1,5 +1,5 @@
 // 🔄 Auth Callback Handler para FutPro
-import supabase from '../supabaseClient';
+import { supabase } from '../lib/supabase';
 // Maneja el callback de autenticación de proveedores OAuth
 
 class AuthCallbackHandler {

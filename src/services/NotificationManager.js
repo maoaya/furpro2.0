@@ -3,12 +3,12 @@ import { io } from 'socket.io-client';
 export class NotificationManager {
     constructor(database, uiManager) {
         this.database = database;
-        this.ui = uiManager;
+            this.ui = uiManager;
         this.socket = null;
         this.notificationQueue = [];
         this.isPermissionGranted = false;
         this.serviceWorkerRegistration = null;
-        this.vapidPublicKey = 'TU_VAPID_PUBLIC_KEY'; // Reemplazar con clave real
+        this.vapidPublicKey = (window.__ENV?.VAPID_PUBLIC_KEY || ''); // configurar por entorno
         
         this.notificationTypes = {
             LIKE: 'like',
@@ -46,8 +46,12 @@ export class NotificationManager {
             // Configurar socket para notificaciones en tiempo real
             this.initializeSocket();
 
-            // Cargar notificaciones pendientes
-            await this.loadPendingNotifications();
+                // Cargar notificaciones pendientes (si el adaptador expone el método)
+                if (this.database?.getUserNotifications) {
+                    await this.loadPendingNotifications();
+                } else {
+                    console.warn('Database adapter sin getUserNotifications; se omite carga inicial.');
+                }
 
             // Configurar suscripción push
             if (this.isPermissionGranted) {
@@ -108,6 +112,13 @@ export class NotificationManager {
         try {
             if (!this.serviceWorkerRegistration) {
                 console.warn('Service Worker no disponible para push notifications');
+                return;
+            }
+
+            // Validar VAPID key
+            if (!this.vapidPublicKey || this.vapidPublicKey.length < 10) {
+                console.warn('VAPID public key no válida, se omite suscripción push');
+                this.ui?.showToast?.('Notificaciones push deshabilitadas (clave VAPID inválida)', 'info');
                 return;
             }
 
@@ -519,7 +530,8 @@ export class NotificationManager {
     // Cargar notificaciones pendientes
     async loadPendingNotifications() {
         try {
-            const notifications = await this.database.getUserNotifications();
+            const uid = this.database?.currentUser?.id || null;
+                const notifications = await this.database.getUserNotifications(uid);
             this.notificationQueue = notifications;
             this.updateNotificationCounter();
         } catch (error) {

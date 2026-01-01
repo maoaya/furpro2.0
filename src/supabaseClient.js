@@ -27,7 +27,8 @@ const supabaseOptions = isJest ? {
         storage: undefined,
     },
     global: { headers: { 'x-client-info': 'futpro-vip@test', 'x-application-name': 'FutPro VIP Test' } },
-    realtime: { params: { eventsPerSecond: 0 } }
+    realtime: { params: { eventsPerSecond: 0 } },
+    db: { schema: 'api' }
 } : {
     auth: {
         autoRefreshToken: true,
@@ -43,7 +44,8 @@ const supabaseOptions = isJest ? {
             'x-application-name': 'FutPro VIP'
         }
     },
-    realtime: { params: { eventsPerSecond: 10 } }
+    realtime: { params: { eventsPerSecond: 10 } },
+    db: { schema: 'api' }
 };
 
 if (!isJest) {

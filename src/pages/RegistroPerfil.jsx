@@ -29,11 +29,15 @@ export default function RegistroPerfil() {
   const [nombre, setNombre] = useState(draftInicial.nombre || '');
   const [ciudad, setCiudad] = useState(draftInicial.ciudad || '');
   const [pais, setPais] = useState(draftInicial.pais || '');
-  const [posicion, setPosicion] = useState(draftInicial.posicion_favorita || 'Flexible');
+  const [posicion, setPosicion] = useState(draftInicial.posicion || 'Flexible');
   const [nivel, setNivel] = useState(draftInicial.nivel_habilidad || 'Principiante');
   const [equipo, setEquipo] = useState(draftInicial.equipo || '');
   const [avatar, setAvatar] = useState(draftInicial.avatar_url || '');
-  const [categoria] = useState(draftInicial.categoria || 'infantil_femenina');
+  const [edad, setEdad] = useState(draftInicial.edad || '');
+  const [peso, setPeso] = useState(draftInicial.peso || '');
+  const [pie, setPie] = useState(draftInicial.pie || 'derecho');
+  const [estatura, setEstatura] = useState(draftInicial.estatura || '');
+  const [categoria, setCategoria] = useState(draftInicial.categoria || 'mixto');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
 
@@ -42,15 +46,32 @@ export default function RegistroPerfil() {
     const draft = {
       ...(draftInicial || {}),
       nombre, ciudad, pais,
-      posicion_favorita: posicion,
+      posicion,
       nivel_habilidad: nivel,
       equipo, avatar_url: avatar,
+      edad, peso, pie, estatura,
       categoria,
       updatedAt: new Date().toISOString(),
       estado: 'borrador_perfil'
     };
     try {
       localStorage.setItem('draft_carfutpro', JSON.stringify(draft));
+      // También persistimos en pendingProfileData para que AuthCallback/PerfilCard fallback lo lean
+      const pendingSubset = {
+        nombre,
+        ciudad,
+        pais,
+        posicion,
+        nivel_habilidad: nivel,
+        equipo,
+        avatar_url: avatar,
+        edad,
+        peso,
+        pie,
+        estatura,
+        categoria
+      };
+      localStorage.setItem('pendingProfileData', JSON.stringify(pendingSubset));
     } catch {}
     // Esfuerzo best-effort a Firebase
     (async () => {
@@ -62,12 +83,17 @@ export default function RegistroPerfil() {
         await set(ref(database, `autosave/carfutpro/${uid}`), draft);
       } catch {}
     })();
-  }, [nombre, ciudad, pais, posicion, nivel, equipo, avatar, categoria]);
+  }, [nombre, ciudad, pais, posicion, nivel, equipo, avatar, categoria, edad, peso, pie, estatura]);
 
   const continuar = async () => {
     setMsg('');
     setLoading(true);
     try {
+      if (!categoria) {
+        setMsg('Selecciona la categoría para continuar.');
+        setLoading(false);
+        return;
+      }
       const { data: sessionRes } = await supabase.auth.getSession();
       const userId = sessionRes?.session?.user?.id;
       if (!userId) {
@@ -78,23 +104,35 @@ export default function RegistroPerfil() {
         return navigate('/login');
       }
 
+      // Fallback de avatar si el campo está vacío: toma foto de Google o pravatar
+      const avatarFallback = avatar || sessionRes?.session?.user?.user_metadata?.avatar_url || sessionRes?.session?.user?.user_metadata?.picture || (userId ? `https://i.pravatar.cc/300?u=${userId}` : '');
+
       // Crear/actualizar registro en Supabase
       const payload = {
         user_id: userId,
-        categoria,
         nombre,
         ciudad,
         pais,
-        posicion_favorita: posicion,
+        posicion,
         nivel_habilidad: nivel,
         equipo,
-        avatar_url: avatar,
-        creada_en: new Date().toISOString(),
-        estado: 'activa'
+        avatar_url: avatarFallback,
+        edad: edad ? Number(edad) : null,
+        peso: peso ? Number(peso) : null,
+        pie,
+        estatura: estatura ? Number(estatura) : null,
+        categoria,
+        puntos_totales: 35,
+        card_tier: 'futpro',
+        partidos_ganados: 0,
+        entrenamientos: 0,
+        amistosos: 0,
+        puntos_comportamiento: 0,
+        ultima_actualizacion: new Date().toISOString()
       };
 
-      const { data, error } = await supabase
-        .from('carfutpro')
+          const { data, error } = await supabase
+            .from('carfutpro')
         .upsert(payload, { onConflict: 'user_id' })
         .select()
         .single();
@@ -106,18 +144,40 @@ export default function RegistroPerfil() {
         categoria: data.categoria,
         nombre: data.nombre,
         ciudad: data.ciudad,
-        pais: data.pais,
-        posicion_favorita: data.posicion_favorita,
+        pais: data.pais || pais,
+        posicion_favorita: data.posicion || posicion,
+        posicion: data.posicion || posicion,
         nivel_habilidad: data.nivel_habilidad,
-        puntaje: data.puntaje || 50,
+        puntaje: data.puntos_totales || 0,
+        puntos_totales: data.puntos_totales || 0,
+        card_tier: data.card_tier || 'futpro',
         equipo: data.equipo || '—',
         fecha_registro: new Date().toISOString(),
         esPrimeraCard: true,
-        avatar_url: data.avatar_url || ''
+        avatar_url: data.avatar_url || avatarFallback || '',
+        pie: data.pie || pie || null,
+        edad: data.edad || (edad ? Number(edad) : null),
+        peso: data.peso || (peso ? Number(peso) : null),
+        estatura: data.estatura || (estatura ? Number(estatura) : null)
       };
       try {
         localStorage.setItem('futpro_user_card_data', JSON.stringify(cardData));
         localStorage.setItem('show_first_card', 'true');
+        // Refrescamos también pendingProfileData con los datos confirmados del guardado
+        const pendingConfirm = {
+          nombre: data.nombre,
+          ciudad: data.ciudad,
+          pais: data.pais,
+          posicion: data.posicion,
+          nivel_habilidad: data.nivel_habilidad,
+          equipo: data.equipo,
+          avatar_url: data.avatar_url,
+          edad: data.edad,
+          pie: data.pie,
+          estatura: data.estatura,
+          categoria: data.categoria
+        };
+        localStorage.setItem('pendingProfileData', JSON.stringify(pendingConfirm));
       } catch {}
 
       // Limpiar autosave en Firebase
@@ -175,14 +235,49 @@ export default function RegistroPerfil() {
               </select>
             </div>
           </div>
+          <div style={{ display:'grid', gap: 8, gridTemplateColumns: '1fr 1fr', gapRow: 10, gapColumn: 10 }}>
+            <div>
+              <label style={{ color: '#bbb' }}>Edad</label>
+              <input type="number" min="5" max="80" value={edad} onChange={(e)=>setEdad(e.target.value)} placeholder="Ej: 22" style={{ width:'100%', padding: 12, background:'#1c1c1c', color:'#eee', border:'1px solid #333', borderRadius: 10 }} />
+            </div>
+            <div>
+              <label style={{ color: '#bbb' }}>Peso (kg)</label>
+              <input type="number" step="0.1" min="30" max="150" value={peso} onChange={(e)=>setPeso(e.target.value)} placeholder="Ej: 75" style={{ width:'100%', padding: 12, background:'#1c1c1c', color:'#eee', border:'1px solid #333', borderRadius: 10 }} />
+            </div>
+          </div>
+          <div style={{ display:'grid', gap: 8, gridTemplateColumns: '1fr 1fr 1fr', gapRow: 10, gapColumn: 10 }}>
+            <div>
+              <label style={{ color: '#bbb' }}>Pie dominante</label>
+              <select value={pie} onChange={(e)=>setPie(e.target.value)} style={{ width:'100%', padding: 12, background:'#1c1c1c', color:'#eee', border:'1px solid #333', borderRadius: 10 }}>
+                <option value="derecho">Derecho</option>
+                <option value="izquierdo">Izquierdo</option>
+                <option value="ambidiestro">Ambidiestro</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ color: '#bbb' }}>Categoría *</label>
+              <select required value={categoria} onChange={(e)=>setCategoria(e.target.value)} style={{ width:'100%', padding: 12, background:'#1c1c1c', color:'#eee', border:'1px solid #333', borderRadius: 10 }}>
+                <option value="masculino">Masculina</option>
+                <option value="femenino">Femenina</option>
+                <option value="infantil_masculino">Infantil Masculina</option>
+                <option value="infantil_femenino">Infantil Femenina</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ color: '#bbb' }}>Estatura (m)</label>
+              <input type="number" step="0.01" min="1.20" max="2.30" value={estatura} onChange={(e)=>setEstatura(e.target.value)} placeholder="Ej: 1.78" style={{ width:'100%', padding: 12, background:'#1c1c1c', color:'#eee', border:'1px solid #333', borderRadius: 10 }} />
+            </div>
+          </div>
           <div style={{ display: 'grid', gap: 8 }}>
             <label style={{ color: '#bbb' }}>Equipo favorito</label>
             <input value={equipo} onChange={(e)=>setEquipo(e.target.value)} placeholder="Ej: Barcelona" style={{ padding: 12, background:'#1c1c1c', color:'#eee', border:'1px solid #333', borderRadius: 10 }} />
           </div>
+          {/* Eliminada duplicidad de Categoría */}
           <div style={{ display: 'grid', gap: 8 }}>
             <label style={{ color: '#bbb' }}>Avatar (URL)</label>
             <input value={avatar} onChange={(e)=>setAvatar(e.target.value)} placeholder="https://..." style={{ padding: 12, background:'#1c1c1c', color:'#eee', border:'1px solid #333', borderRadius: 10 }} />
           </div>
+
 
           <button onClick={continuar} disabled={loading} style={{ width: '100%', padding: 12, background:'linear-gradient(135deg,#22c55e,#16a34a)', color:'#111', border:'none', borderRadius: 10, fontWeight:800, cursor:'pointer', opacity: loading?0.7:1 }}>
             {loading ? 'Guardando...' : 'Guardar y finalizar'}

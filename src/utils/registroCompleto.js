@@ -1,7 +1,7 @@
 // 🔧 SOLUCIONADOR DE REGISTRO - Arregla el flujo completo de registro
 // Este archivo corrige todos los problemas conocidos del registro
 
-import supabase from '../supabaseClient';
+import { supabase } from '../lib/supabase';
 
 /**
  * Función principal para registrar un usuario completo
@@ -313,7 +313,7 @@ export const verificarEstadoRegistro = async () => {
     }
 
     const { data: perfil } = await supabase
-      .from('usuarios')
+      .from('api.usuarios')
       .select('*')
       .eq('id', session.session.user.id)
       .single();
