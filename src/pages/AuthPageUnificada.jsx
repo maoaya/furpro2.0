@@ -165,8 +165,33 @@ const AuthPageUnificada = () => {
     const puntaje = calcularPuntaje(formData.experiencia);
     
     // Guardar CON MÚLTIPLES CLAVES PARA COMPATIBILIDAD
-    const draft = {};
-    // ...resto del cuerpo de la función...
+    const draft = {
+      nombre: formData.nombre,
+      apellido: formData.apellido,
+      edad: formData.edad,
+      peso: formData.peso,
+      altura: formData.altura,
+      telefono: formData.telefono,
+      posicion: formData.posicion,
+      equipoFavorito: formData.equipoFavorito,
+      experiencia: formData.experiencia,
+      ubicacion: formData.ubicacion,
+      pais: formData.pais,
+      disponibilidad: formData.disponibilidad,
+      vecesJuegaPorSemana: formData.vecesJuegaPorSemana,
+      piernaDominante: formData.piernaDominante,
+      avatar_url: fotoUrl,
+      puntaje: puntaje
+    };
+    
+    try {
+      localStorage.setItem('pendingProfileData', JSON.stringify(draft));
+      localStorage.setItem('draft_carfutpro', JSON.stringify(draft));
+      console.log('✅ Datos guardados en localStorage:', draft);
+    } catch (e) {
+      console.warn('⚠️ Error guardando en localStorage:', e);
+    }
+  };
 
   // REGISTRO CON EMAIL Y PASSWORD
   const handleEmailRegister = async (e) => {
@@ -1202,91 +1227,60 @@ const AuthPageUnificada = () => {
               </div>
               
 
-              {/* Links de toggle */}
+              {/* Link para volver a login */}
               <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                {isLogin && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => alert('Recuperación de contraseña: funcionalidad próximamente')}
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        color: '#FFA500',
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                        textDecoration: 'underline',
-                        marginBottom: '10px',
-                        display: 'block',
-                        width: '100%'
-                      }}
-                    >
-                      ¿Olvidaste tu contraseña?
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => navigate('/seleccionar-categoria')}
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        color: '#FFD700',
-                        fontSize: '14px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      ¿No tienes cuenta? <span style={{ textDecoration: 'underline' }}>Crea tu cuenta</span>
-                    </button>
-                  </>
-                )}
-                {isLogin ? (
-                  /* MODO LOGIN */
-                  <form onSubmit={handleEmailLogin}>
-                    ...existing code...
-                  </form>
-                ) : (
-                  /* MODO REGISTRO - Solo cuando el usuario lo solicita */
-                  <form onSubmit={handleEmailRegister}>
-                    {/* Botón para volver a login */}
-                    <div style={{textAlign:'center', marginBottom:16}}>
-                      <button type="button" onClick={()=>setIsLogin(true)} style={{background:'#FFD700',color:'#222',border:'none',borderRadius:8,padding:'8px 20px',fontWeight:'bold',cursor:'pointer'}}>Ya tengo cuenta / Iniciar sesión</button>
-                    </div>
-                    ...existing code...
-                  </form>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLogin(true);
+                    setError('');
+                    setSuccess('');
+                  }}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#FFD700',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    textDecoration: 'none'
+                  }}
+                >
+                  ¿Ya tienes cuenta? <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>Inicia sesión</span>
+                </button>
+              </div>
+            </form>
+          )}
 
-                )}
-              )}
-
-        {loading && (
-          <div style={{
-            marginTop: '20px',
-            textAlign: 'center',
-            color: '#FFD700',
-            fontSize: '14px'
-          }}>
+          {loading && (
             <div style={{
-              display: 'inline-block',
-              width: '20px',
-              height: '20px',
-              border: '2px solid #FFD700',
-              borderTop: '2px solid transparent',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite'
-            }} />
-            <style>
-              {`
-                @keyframes spin {
-                  0% { transform: rotate(0deg); }
-                  100% { transform: rotate(360deg); }
-                }
-              `}
-            </style>
-            <p style={{ margin: '10px 0 0 0' }}>Procesando...</p>
-          </div>
-        )}
+              marginTop: '20px',
+              textAlign: 'center',
+              color: '#FFD700',
+              fontSize: '14px'
+            }}>
+              <div style={{
+                display: 'inline-block',
+                width: '20px',
+                height: '20px',
+                border: '2px solid #FFD700',
+                borderTop: '2px solid transparent',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }} />
+              <style>
+                {`
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                `}
+              </style>
+              <p style={{ margin: '10px 0 0 0' }}>Procesando...</p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
 };
 
 export default AuthPageUnificada;

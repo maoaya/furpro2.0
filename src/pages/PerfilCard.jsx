@@ -9,8 +9,12 @@ const PerfilCard = () => {
   const location = useLocation();
   const { user } = useAuth();
   const [cardData, setCardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showHelp, setShowHelp] = useState(false);
+  
   useEffect(() => {
-    // ...código original del useEffect aquí...
+    cargarCard();
   }, [user?.id]);
 
   const cargarCard = async () => {
@@ -599,3 +603,5 @@ const PerfilCard = () => {
     </div>
   );
 }
+
+export default PerfilCard;

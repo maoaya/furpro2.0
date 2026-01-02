@@ -45,7 +45,7 @@ import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
 import PerfilCard from './pages/PerfilCard';
 import SeleccionCategoria from './pages/SeleccionCategoria';
-import FormularioRegistroCompleto from './pages/FormularioRegistroCompleto';
+// import FormularioRegistroCompleto from './pages/FormularioRegistroCompleto';
 import Logros from './pages/Logros';
 import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
 import SeccionPlaceholder from './pages/SeccionPlaceholder';
