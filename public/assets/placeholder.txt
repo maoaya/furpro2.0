@@ -1,0 +1,13 @@
+IMPORTANT: Las imágenes por defecto deben ser generadas aquí.
+- default-avatar.png (usuario por defecto)
+- default-avatar.jpg (usuario por defecto)
+- default-team.png (equipo por defecto)
+
+Estas se referencian en:
+- ChatManager.js
+- MatchManager.js
+- BlockManager.js
+- TeamManager.js
+- TournamentManager.js
+
+Para resolver: Copiar imágenes válidas a esta carpeta o ajustar las referencias en el código.

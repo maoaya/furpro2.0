@@ -265,7 +265,7 @@ export class BlockManager {
                         ${blockedUsers.map(user => `
                             <div class="blocked-user-card">
                                 <div class="user-info">
-                                    <img src="${user.avatar_url || '/assets/default-avatar.jpg'}" 
+                                    <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=Blocked'}" 
                                          alt="${user.name}" class="user-avatar">
                                     <div class="user-details">
                                         <h4>${user.name}</h4>

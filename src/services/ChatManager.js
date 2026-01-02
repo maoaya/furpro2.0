@@ -294,7 +294,7 @@ export class ChatManager {
             <div class="chat-item ${chat.unreadCount > 0 ? 'unread' : ''}" 
                  data-chat-id="${chat.id}" onclick="chatManager.openChat('${chat.id}')">
                 <div class="chat-avatar">
-                    <img src="${chat.avatar || '/assets/default-avatar.png'}" 
+                    <img src="${chat.avatar || 'https://ui-avatars.com/api/?name=User'}" 
                          alt="${chat.name}">
                     ${this.onlineUsers.has(chat.userId) ? '<div class="online-indicator"></div>' : ''}
                 </div>
@@ -322,7 +322,7 @@ export class ChatManager {
                 </button>
                 <div class="chat-participant-info">
                     <div class="participant-avatar">
-                        <img src="/assets/default-avatar.png" alt="Chat">
+                        <img src="https://ui-avatars.com/api/?name=Chat" alt="Chat">
                     </div>
                     <div class="participant-details">
                         <div class="participant-name">Chat</div>
@@ -394,7 +394,7 @@ export class ChatManager {
             <div class="message ${isOwn ? 'own' : 'other'}" data-message-id="${message.id}">
                 ${!isOwn ? `
                     <div class="message-avatar">
-                        <img src="${message.senderAvatar || '/assets/default-avatar.png'}" 
+                        <img src="${message.senderAvatar || 'https://ui-avatars.com/api/?name=Sender'}" 
                              alt="${message.senderName}">
                     </div>
                 ` : ''}
