@@ -414,6 +414,21 @@ export default function FormularioRegistroCompleto() {
               onFocus={(e) => e.target.style.borderColor = '#FFD700'}
               onBlur={(e) => e.target.style.borderColor = '#444'}
             />
+            
+            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
+              Categoría *
+            </label>
+            <select
+              value={formData.categoria}
+              onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
+              style={selectStyle}
+            >
+              <option value="masculino">🔵 Masculina</option>
+              <option value="femenino">🔴 Femenina</option>
+              <option value="infantil_masculino">👦 Infantil Masculina</option>
+              <option value="infantil_femenino">👧 Infantil Femenina</option>
+            </select>
+            
             <input
               type="number"
               placeholder="📏 Altura (cm)"
@@ -492,23 +507,8 @@ export default function FormularioRegistroCompleto() {
             <h2 style={{ color: '#FFD700', fontSize: '24px', marginBottom: '24px', fontWeight: 'bold' }}>
               ⚽ Información Futbolística
             </h2>
-            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>
 
             <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '0px', fontSize: '14px', fontWeight: 'bold' }}>
-              Categoría *
-            </label>
-            <select
-              value={formData.categoria}
-              onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
-              style={selectStyle}
-            >
-              <option value="masculino">🔵 Masculina</option>
-              <option value="femenino">🔴 Femenina</option>
-              <option value="infantil_masculino">👦 Infantil Masculina</option>
-              <option value="infantil_femenino">👧 Infantil Femenina</option>
-            </select>
-
-            <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
               Posición Favorita
             </label>
             <select
