@@ -41,6 +41,7 @@ import RankingEquiposCompleto from './pages/RankingEquiposCompleto';
 import BuscarRanking from './pages/BuscarRanking';
 import Soporte from './pages/Soporte';
 import Privacidad from './pages/Privacidad';
+import ConfiguracionPage from './pages/ConfiguracionPage';
 import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
 import PerfilCard from './pages/PerfilCard';
@@ -66,7 +67,18 @@ function Layout({ children }) {
 function RootRoute() {
   // Decide qué mostrar en la raíz: login si no hay usuario, homepage si ya está autenticado
   const { user } = useAuth();
-  return user ? <HomePage /> : <LoginFallback />;
+  console.log('🔍 RootRoute - user:', user);
+  
+  // Validación estricta: solo mostrar HomePage si hay usuario Y tiene email
+  const tieneUsuarioValido = user && user.email;
+  
+  if (tieneUsuarioValido) {
+    console.log('✅ Usuario autenticado detectado, mostrando HomePage');
+    return <HomePage />;
+  } else {
+    console.log('❌ No hay usuario autenticado, mostrando LoginFallback');
+    return <LoginFallback />;
+  }
 }
 
 // El render principal debe estar dentro de la función principal exportada
