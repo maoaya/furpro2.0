@@ -51,6 +51,7 @@ import Logros from './pages/Logros';
 import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
 import SeccionPlaceholder from './pages/SeccionPlaceholder';
 import RegistroPerfil from './pages/RegistroPerfil';
+import LoginPage from './pages/LoginPage';
 
 
 function Layout({ children }) {
@@ -76,8 +77,8 @@ function RootRoute() {
     console.log('✅ Usuario autenticado detectado, mostrando HomePage');
     return <HomePage />;
   } else {
-    console.log('❌ No hay usuario autenticado, mostrando LoginFallback');
-    return <LoginFallback />;
+    console.log('❌ No hay usuario autenticado, mostrando LoginPage');
+    return <LoginPage />;
   }
 }
 
@@ -91,9 +92,9 @@ export default function App() {
             {/* Raíz: muestra Login si no hay sesión, Home si autenticado */}
             <Route path="/" element={<RootRoute />} />
             {/* 🔐 FLUJO DE AUTENTICACIÓN LIMPIO */}
-            <Route path="/login" element={<LoginFallback />} />
-            <Route path="/registro" element={<LoginFallback />} />
-            <Route path="/auth" element={<LoginFallback />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/registro" element={<LoginPage />} />
+            <Route path="/auth" element={<LoginPage />} />
             <Route path="/registro-nuevo" element={<RegistroPerfil />} />
             <Route path="/registro-perfil" element={<RegistroPerfil />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
