@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import supabase from '../supabaseClient';
 
 export default function FormularioRegistroCompleto() {
   const { loginWithGoogle } = useAuth();
@@ -22,7 +23,7 @@ export default function FormularioRegistroCompleto() {
     peso: '',
     altura: '',
     // Paso 3: Info Futbolística
-    categoria: 'masculino',
+    categoria: 'masculina',
     posicion: 'Flexible',
     nivelHabilidad: 'Principiante',
     equipoFavorito: '',
@@ -31,6 +32,10 @@ export default function FormularioRegistroCompleto() {
     frecuenciaJuego: '1-2',
     objetivoDeportivo: '',
     redesSociales: '',
+    // Árbitro
+    licenseNumber: '',
+    certificationLevel: 'Regional',
+    experienceYears: '' ,
     // Paso 4: Foto
     avatarUrl: '',
     fotoFile: null
@@ -77,7 +82,10 @@ export default function FormularioRegistroCompleto() {
               setFormData(prev => ({
                 ...prev,
                 ciudad: prev.ciudad || data.city || '',
-                pais: prev.pais || data.country_name || ''
+                pais: prev.pais || data.country_name || '',
+                lat: prev.lat || data.latitude || null,
+                lon: prev.lon || data.longitude || null,
+                region: prev.region || data.region || data.region_code || ''
               }));
               console.log('✅ Ubicación detectada (ipapi.co):', data.city, data.country_name);
               return;
@@ -100,7 +108,10 @@ export default function FormularioRegistroCompleto() {
               setFormData(prev => ({
                 ...prev,
                 ciudad: prev.ciudad || data.city || '',
-                pais: prev.pais || data.country || ''
+                pais: prev.pais || data.country || '',
+                lat: prev.lat || data.latitude || null,
+                lon: prev.lon || data.longitude || null,
+                region: prev.region || data.region || data.region_code || ''
               }));
               console.log('✅ Ubicación detectada (ipwho.is):', data.city, data.country);
               return;
@@ -152,6 +163,11 @@ export default function FormularioRegistroCompleto() {
     } catch {}
   };
 
+  // Persistir todos los datos de perfil para que Card y registro los lean (incluye peso, categoría, ubicación, foto, pie, edad, estatura)
+  useEffect(() => {
+    persistProfileDraft();
+  }, [formData]);
+
   const persistProfileDraft = () => {
     const estaturaM = formData.altura ? Number(formData.altura) / 100 : '';
     const pieDominante = formData.piernaDominante || '';
@@ -163,13 +179,18 @@ export default function FormularioRegistroCompleto() {
       telefono: formData.telefono,
       ciudad: formData.ciudad,
       pais: formData.pais,
+      lat: formData.lat || null,
+      lon: formData.lon || null,
+      region: formData.region || '',
       edad: formData.edad,
       peso: pesoKg,
       altura: formData.altura,
       estatura: estaturaM,
       categoria: formData.categoria,
+      posicion: formData.posicion, // Agregar sin _favorita para AuthCallback
       posicion_favorita: formData.posicion,
       nivel_habilidad: formData.nivelHabilidad,
+      equipo: formData.equipoFavorito, // Agregar sin _favorito para AuthCallback
       equipo_favorito: formData.equipoFavorito,
       pierna_dominante: pieDominante,
       pie: pieDominante,
@@ -178,10 +199,20 @@ export default function FormularioRegistroCompleto() {
       objetivo_deportivo: formData.objetivoDeportivo,
       redes_sociales: formData.redesSociales,
       puntaje: calcularPuntaje(formData.nivelHabilidad),
-      avatar_url: formData.avatarUrl
+      puntos_totales: calcularPuntaje(formData.nivelHabilidad),
+        avatar_url: formData.avatarUrl?.startsWith('data:') ? null : formData.avatarUrl, // Solo guardar si es URL externa
+        license_number: formData.licenseNumber,
+        certification_level: formData.certificationLevel,
+        experience_years: formData.experienceYears
     };
-    localStorage.setItem('pendingProfileData', JSON.stringify(draft));
-    localStorage.setItem('card_preview', JSON.stringify(draft));
+    
+    try {
+      localStorage.setItem('pendingProfileData', JSON.stringify(draft));
+      localStorage.setItem('draft_carfutpro', JSON.stringify(draft));
+      console.log('✅ Datos guardados para OAuth');
+    } catch (e) {
+      console.error('Error guardando:', e);
+    }
   };
 
   const handleGoogleSignup = async () => {
@@ -189,7 +220,9 @@ export default function FormularioRegistroCompleto() {
       console.log('🚀 Iniciando registro con Google...');
       // Guardar contexto de origen/objetivo para el callback
       localStorage.setItem('post_auth_origin', 'formulario_registro');
-      localStorage.setItem('post_auth_target', '/perfil-card');
+      localStorage.setItem('post_auth_target', '/perfil-card');      
+      
+      // Guardar SOLO datos de texto sin imagen base64 para evitar exceder cuota
       persistProfileDraft();
       await loginWithGoogle();
     } catch (error) {
@@ -201,6 +234,173 @@ export default function FormularioRegistroCompleto() {
       } else {
         alert('Error en registro con Google: ' + (error?.message || 'Intenta de nuevo'));
       }
+    }
+  };
+
+  const handleFinalizarRegistro = async () => {
+    try {
+      console.log('🚀 Finalizando registro con email/password...');
+      
+      // Validaciones finales
+      if (!formData.nombre || !formData.apellido) {
+        alert('Por favor completa tu nombre y apellido');
+        return;
+      }
+
+      // Registrar usuario en Supabase
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            nombre: formData.nombre,
+            apellido: formData.apellido,
+            avatar_url: formData.avatarUrl
+          }
+        }
+      });
+
+      if (authError) throw authError;
+
+      const userId = authData.user?.id;
+      if (!userId) throw new Error('No se pudo obtener el ID de usuario');
+
+      // Guardar perfil en carfutpro
+      const estaturaM = formData.altura ? Number(formData.altura) / 100 : null;
+      const pesoKg = formData.peso ? Number(formData.peso) : null;
+      const pieDominante = formData.piernaDominante?.toLowerCase() || 'derecho';
+      
+      const payload = {
+        user_id: userId,
+        nombre: formData.nombre,
+        apellido: formData.apellido,
+        email: formData.email,
+        ciudad: formData.ciudad,
+        pais: formData.pais,
+        posicion: formData.posicion,
+        nivel_habilidad: formData.nivelHabilidad,
+        equipo: formData.equipoFavorito || '—',
+        avatar_url: formData.avatarUrl || `https://i.pravatar.cc/300?u=${userId}`,
+        edad: formData.edad ? Number(formData.edad) : null,
+        peso: pesoKg,
+        pie: pieDominante,
+        estatura: estaturaM,
+        categoria: formData.categoria,
+        pierna_dominante: pieDominante,
+        disponibilidad_juego: formData.disponibilidadJuego,
+        puntos_totales: 0,
+        card_tier: 'Bronce',
+        partidos_ganados: 0,
+        entrenamientos: 0,
+        amistosos: 0,
+        puntos_comportamiento: 0,
+        ultima_actualizacion: new Date().toISOString()
+      };
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('carfutpro')
+        .upsert(payload, { onConflict: 'user_id' })
+        .select()
+        .single();
+
+      if (profileError) throw profileError;
+
+      // Si se registró como Árbitro, guardar en tournament_referees
+      if (formData.posicion === 'Árbitro') {
+        const refPayload = {
+          user_id: userId,
+          license_number: formData.licenseNumber || null,
+          certification_level: formData.certificationLevel || null,
+          experience_years: formData.experienceYears ? Number(formData.experienceYears) : null,
+          available: true,
+          availability_schedule: null
+        };
+        try {
+          await supabase
+            .from('tournament_referees')
+            .upsert(refPayload, { onConflict: 'user_id' });
+        } catch (refError) {
+          console.warn('⚠️ No se pudo guardar árbitro:', refError.message);
+        }
+      }
+
+      // Preparar datos para la card
+      const cardData = {
+        id: profileData.id,
+        categoria: profileData.categoria,
+        nombre: profileData.nombre,
+        apellido: profileData.apellido,
+        ciudad: profileData.ciudad,
+        pais: profileData.pais || formData.pais,
+        posicion_favorita: profileData.posicion || formData.posicion,
+        posicion: profileData.posicion || formData.posicion,
+        nivel_habilidad: profileData.nivel_habilidad,
+        puntaje: profileData.puntos_totales || 0,
+        puntos_totales: profileData.puntos_totales || 0,
+        card_tier: profileData.card_tier || 'Bronce',
+        equipo: profileData.equipo || '—',
+        fecha_registro: new Date().toISOString(),
+        esPrimeraCard: true,
+        avatar_url: profileData.avatar_url || formData.avatarUrl || '',
+        pie: profileData.pie || pieDominante || null,
+        edad: profileData.edad || (formData.edad ? Number(formData.edad) : null),
+        peso: profileData.peso || pesoKg,
+        estatura: profileData.estatura || estaturaM
+      };
+
+      // Guardar en localStorage para la card (múltiples copias de seguridad)
+      try {
+        localStorage.setItem('futpro_user_card_data', JSON.stringify(cardData));
+        localStorage.setItem('show_first_card', 'true');
+        localStorage.setItem('pendingProfileData', JSON.stringify({
+          nombre: profileData.nombre,
+          apellido: profileData.apellido,
+          ciudad: profileData.ciudad,
+          pais: profileData.pais,
+          posicion: profileData.posicion,
+          nivel_habilidad: profileData.nivel_habilidad,
+          equipo: profileData.equipo,
+          avatar_url: profileData.avatar_url,
+          edad: profileData.edad,
+          peso: profileData.peso,
+          pie: profileData.pie,
+          estatura: profileData.estatura,
+          categoria: profileData.categoria
+        }));
+        
+        // También guardar el usuario básico
+        localStorage.setItem('futpro_user', JSON.stringify({
+          id: userId,
+          nombre: profileData.nombre,
+          apellido: profileData.apellido,
+          email: formData.email,
+          avatar: profileData.avatar_url,
+          posicion: profileData.posicion
+        }));
+        
+        console.log('✅ Registro completado exitosamente');
+        console.log('✅ CardData guardado:', cardData);
+        console.log('✅ PendingProfileData guardado');
+        console.log('✅ Usuario guardado en futpro_user');
+        console.log('✅ Navegando a /perfil-card...');
+        
+        // Navegar a la card
+        navigate('/perfil-card', { 
+          state: { 
+            cardData,
+            fromRegistro: true,
+            timestamp: Date.now()
+          } 
+        });
+      } catch (saveError) {
+        console.error('❌ Error guardando en localStorage:', saveError);
+        // Intentar navegar de todas formas
+        navigate('/perfil-card', { state: { cardData } });
+      }
+      
+    } catch (error) {
+      console.error('❌ Error en registro:', error);
+      alert('Error al completar el registro: ' + (error?.message || 'Intenta de nuevo'));
     }
   };
 
@@ -381,6 +581,7 @@ export default function FormularioRegistroCompleto() {
                 ⚠️ Las contraseñas no coinciden
               </p>
             )}
+          </div>
         )}
 
         {/* PASO 2: Datos Personales */}
@@ -423,10 +624,10 @@ export default function FormularioRegistroCompleto() {
               onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
               style={selectStyle}
             >
-              <option value="masculino">🔵 Masculina</option>
-              <option value="femenino">🔴 Femenina</option>
-              <option value="infantil_masculino">👦 Infantil Masculina</option>
-              <option value="infantil_femenino">👧 Infantil Femenina</option>
+               <option value="masculina">🔵 Masculina</option>
+              <option value="femenina">🔴 Femenina</option>
+              <option value="infantil masculina">👦 Infantil Masculina</option>
+              <option value="infantil femenina">👧 Infantil Femenina</option>
             </select>
             
             <input
@@ -468,9 +669,11 @@ export default function FormularioRegistroCompleto() {
             />
             <input
               type="number"
-              placeholder="🎂 Edad"
+              placeholder="🎂 Edad (mínimo 8 años)"
               value={formData.edad}
               onChange={(e) => setFormData({ ...formData, edad: e.target.value })}
+              min="8"
+              max="99"
               style={inputStyle}
               onFocus={(e) => e.target.style.borderColor = '#FFD700'}
               onBlur={(e) => e.target.style.borderColor = '#444'}
@@ -613,7 +816,7 @@ export default function FormularioRegistroCompleto() {
               onFocus={(e) => e.target.style.borderColor = '#FFD700'}
               onBlur={(e) => e.target.style.borderColor = '#444'}
             />
-          </label>
+          </div>
         )}
 
         {/* PASO 4: Foto de Perfil */}
@@ -745,12 +948,12 @@ export default function FormularioRegistroCompleto() {
               onClick={handleGoogleSignup}
               style={{
                 ...buttonPrimaryStyle,
-                marginLeft: 'auto',
                 background: '#4285F4',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '12px'
+                gap: '12px',
+                marginLeft: 'auto'
               }}
               onMouseOver={(e) => {
                 e.target.style.transform = 'scale(1.02)';
@@ -797,5 +1000,3 @@ export default function FormularioRegistroCompleto() {
     </div>
   );
 }
-
-export default FormularioRegistroCompleto;

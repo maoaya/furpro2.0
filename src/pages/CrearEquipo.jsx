@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../config/supabase';
@@ -14,6 +14,7 @@ export default function CrearEquipo() {
     descripcion: '',
     categoria: 'masculina',
     ubicacion: '',
+    pais: '',
     maxJugadores: 11,
     nivelRequerido: 'principiante'
   });
@@ -110,6 +111,74 @@ export default function CrearEquipo() {
     setError('');
   };
 
+  // Geolocalización automática para ubicación del equipo (lat,long) + Fallback por IP
+  useEffect(() => {
+    const fallbackIpGeo = async () => {
+      try {
+        // 1) ipapi.co (HTTPS)
+        const controller = new AbortController();
+        const t = setTimeout(() => controller.abort(), 8000);
+        try {
+          const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
+          clearTimeout(t);
+          if (res.ok) {
+            const data = await res.json();
+            const city = data?.city || '';
+            const country = data?.country_name || '';
+            if (city || country) {
+              setForm(prev => ({
+                ...prev,
+                ubicacion: prev.ubicacion || [city, country].filter(Boolean).join(', '),
+                pais: prev.pais || country
+              }));
+              return;
+            }
+          }
+        } catch (_) {}
+
+        // 2) ipwho.is (fallback)
+        const controller2 = new AbortController();
+        const t2 = setTimeout(() => controller2.abort(), 8000);
+        try {
+          const res2 = await fetch('https://ipwho.is/?fields=city,country', { signal: controller2.signal });
+          clearTimeout(t2);
+          if (res2.ok) {
+            const data2 = await res2.json();
+            const city2 = data2?.city || '';
+            const country2 = data2?.country || '';
+            if (city2 || country2) {
+              setForm(prev => ({
+                ...prev,
+                ubicacion: prev.ubicacion || [city2, country2].filter(Boolean).join(', '),
+                pais: prev.pais || country2
+              }));
+              return;
+            }
+          }
+        } catch (_) {}
+      } catch (_) {}
+    };
+
+    if (!form.ubicacion && typeof navigator !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords || {};
+          if (latitude && longitude) {
+            setForm(prev => ({ ...prev, ubicacion: `${latitude.toFixed(5)}, ${longitude.toFixed(5)}` }));
+          } else {
+            fallbackIpGeo();
+          }
+        },
+        () => { fallbackIpGeo(); },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    } else if (!form.ubicacion) {
+      // Si no hay geolocalización disponible
+      fallbackIpGeo();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
@@ -122,12 +191,19 @@ export default function CrearEquipo() {
     setError('');
     setSuccess('');
 
+    if (!user || !user.id) {
+      setError('Debes iniciar sesión para crear un equipo.');
+      setLoading(false);
+      return;
+    }
+
     if (!form.nombre || !form.ubicacion) {
       setError('Por favor completa todos los campos requeridos');
       setLoading(false);
       return;
     }
 
+    let equipoCreado = false;
     try {
       // 1. Subir logo si existe
       let logoUrl = null;
@@ -138,42 +214,69 @@ export default function CrearEquipo() {
 
       // 2. Crear equipo
       setSuccess('🏗️ Creando equipo...');
-      const { data, error: supabaseError } = await supabase
+      const { data: teamData, error: supabaseError } = await supabase
         .from('teams')
         .insert([{
           name: form.nombre,
           description: form.descripcion,
-          category: form.categoria,
-          location: form.ubicacion,
-          max_players: parseInt(form.maxJugadores),
-          required_level: form.nivelRequerido,
-          owner_email: user?.email,
+          format: form.categoria,
+          country: form.pais || 'Colombia',
+          city: form.ubicacion,
+          max_members: parseInt(form.maxJugadores),
+          level: form.nivelRequerido,
+          captain_id: user?.id,
           logo_url: logoUrl,
-          stats: {
-            wins: 0,
-            losses: 0,
-            draws: 0,
-            goals_for: 0,
-            goals_against: 0,
-            tournaments_won: 0,
-            current_streak: 0
-          },
-          created_at: new Date().toISOString()
+          is_recruiting: true
         }])
         .select();
 
-      if (supabaseError) throw supabaseError;
+      if (supabaseError) {
+        console.error('Error creando equipo:', supabaseError);
+        setError(supabaseError.message || 'Error al crear equipo');
+        setSuccess('');
+        return;
+      }
 
-      // 3. El trigger SQL auto-agrega al creador como captain
-      setSuccess('✅ ¡Equipo creado exitosamente!');
-      setTimeout(() => {
-        navigate('/equipos');
-      }, 2000);
+      equipoCreado = true;
+      setSuccess('Equipo creado, finalizando...');
+      // 3. Crear la card del equipo en carfutpro
+      if (teamData && teamData[0]) {
+        try {
+          const { error: cardError } = await supabase
+            .from('carfutpro')
+            .insert([{
+              user_id: user?.id,
+              nombre: form.nombre,
+              apellido: '',
+              equipo: form.nombre,
+              categoria: form.categoria,
+              ciudad: form.ubicacion,
+              pais: form.pais || 'Colombia',
+              posicion_favorita: 'Equipo',
+              photo_url: logoUrl,
+              avatar_url: logoUrl,
+              es_equipo: true,
+              team_id: teamData[0].id
+            }]);
+          if (cardError) {
+            console.warn('Error creando card:', cardError);
+          }
+        } catch (cardErr) {
+          console.warn('Error creando card del equipo:', cardErr);
+        }
+      }
     } catch (err) {
       console.error('Error creando equipo:', err);
       setError('Error al crear el equipo. Intenta nuevamente.');
+      setSuccess('');
     } finally {
       setLoading(false);
+      if (equipoCreado) {
+        setSuccess('✅ ¡Equipo creado exitosamente!');
+        setTimeout(() => {
+          navigate('/equipos');
+        }, 1500);
+      }
     }
   };
 
@@ -553,7 +656,7 @@ export default function CrearEquipo() {
                   </p>
                 </div>
                 <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
-                  {[7, 11, 15, 22].map((num) => (
+                  {[7, 11, 15, 18, 20, 22, 25, 30, 35, 40, 45, 50, 55, 60].map((num) => (
                     <button
                       key={num}
                       type="button"
@@ -838,38 +941,136 @@ export default function CrearEquipo() {
                 </div>
               </div>
 
-              {/* Resumen Final */}
+              {/* Resumen Final - CARD ESTILO FIFA */}
               <div style={{
-                background: '#0a0a0a',
-                border: '2px solid #FFD700',
-                borderRadius: '12px',
-                padding: '24px',
-                marginBottom: '24px'
+                background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)',
+                border: '3px solid #FFD700',
+                borderRadius: '16px',
+                padding: '32px',
+                marginBottom: '24px',
+                position: 'relative',
+                boxShadow: '0 8px 32px rgba(255, 215, 0, 0.3)'
               }}>
-                <h3 style={{ color: '#FFD700', marginBottom: '16px', fontSize: '18px' }}>
-                  📋 Resumen de tu Equipo
-                </h3>
+                {/* Header Card */}
+                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  <h3 style={{ 
+                    color: '#FFD700', 
+                    fontSize: '24px',
+                    marginBottom: '8px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '2px'
+                  }}>
+                    {form.nombre || 'TU EQUIPO'}
+                  </h3>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '16px' }}>
+                    {/* Puntaje */}
+                    <div style={{
+                      background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                      borderRadius: '8px',
+                      padding: '8px 16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      <span style={{ fontSize: '20px' }}>⭐</span>
+                      <div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', lineHeight: '1' }}>0</div>
+                        <div style={{ fontSize: '10px', color: '#000', opacity: 0.8 }}>PUNTOS</div>
+                      </div>
+                    </div>
+                    
+                    {/* Fans */}
+                    <div style={{
+                      background: 'linear-gradient(135deg, #ff3366 0%, #ff6b9d 100%)',
+                      borderRadius: '8px',
+                      padding: '8px 16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      <span style={{ fontSize: '20px' }}>❤️</span>
+                      <div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#fff', lineHeight: '1' }}>0</div>
+                        <div style={{ fontSize: '10px', color: '#fff', opacity: 0.9 }}>FANS</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Escudo Preview */}
+                {logoPreview && (
+                  <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                    <div style={{
+                      width: '120px',
+                      height: '120px',
+                      margin: '0 auto',
+                      borderRadius: '50%',
+                      background: '#000',
+                      border: '4px solid #FFD700',
+                      overflow: 'hidden',
+                      boxShadow: '0 4px 16px rgba(255, 215, 0, 0.5)'
+                    }}>
+                      <img src={logoPreview} alt="Escudo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                  </div>
+                )}
+
+                {/* Stats Grid */}
                 <div style={{ display: 'grid', gap: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: '#181818', borderRadius: '8px' }}>
-                    <span style={{ color: '#aaa' }}>Nombre:</span>
-                    <span style={{ color: '#FFD700', fontWeight: 'bold' }}>{form.nombre || '(Sin nombre)'}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: 'rgba(255, 215, 0, 0.1)', borderRadius: '8px', border: '1px solid rgba(255, 215, 0, 0.2)' }}>
+                    <span style={{ color: '#aaa', fontSize: '14px' }}>📌 Categoría:</span>
+                    <span style={{ color: '#00ff88', fontWeight: 'bold', textTransform: 'uppercase' }}>{form.categoria}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: '#181818', borderRadius: '8px' }}>
-                    <span style={{ color: '#aaa' }}>Categoría:</span>
-                    <span style={{ color: '#00ff88', fontWeight: 'bold' }}>{form.categoria}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: '#181818', borderRadius: '8px' }}>
-                    <span style={{ color: '#aaa' }}>Ubicación:</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: 'rgba(255, 215, 0, 0.1)', borderRadius: '8px', border: '1px solid rgba(255, 215, 0, 0.2)' }}>
+                    <span style={{ color: '#aaa', fontSize: '14px' }}>📍 Ubicación:</span>
                     <span style={{ color: '#00ccff', fontWeight: 'bold' }}>{form.ubicacion || '(Sin ubicación)'}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: '#181818', borderRadius: '8px' }}>
-                    <span style={{ color: '#aaa' }}>Máx. Jugadores:</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: 'rgba(255, 215, 0, 0.1)', borderRadius: '8px', border: '1px solid rgba(255, 215, 0, 0.2)' }}>
+                    <span style={{ color: '#aaa', fontSize: '14px' }}>👥 Máx. Jugadores:</span>
                     <span style={{ color: '#ff9500', fontWeight: 'bold' }}>{form.maxJugadores}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: '#181818', borderRadius: '8px' }}>
-                    <span style={{ color: '#aaa' }}>Nivel:</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: 'rgba(255, 215, 0, 0.1)', borderRadius: '8px', border: '1px solid rgba(255, 215, 0, 0.2)' }}>
+                    <span style={{ color: '#aaa', fontSize: '14px' }}>🎯 Nivel:</span>
                     <span style={{ color: '#ff3366', fontWeight: 'bold', textTransform: 'capitalize' }}>{form.nivelRequerido}</span>
                   </div>
+                  
+                  {/* Estadísticas iniciales */}
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(3, 1fr)', 
+                    gap: '8px',
+                    marginTop: '12px',
+                    padding: '16px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    borderRadius: '8px'
+                  }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ color: '#FFD700', fontSize: '20px', fontWeight: 'bold' }}>0</div>
+                      <div style={{ color: '#666', fontSize: '11px' }}>PARTIDOS</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ color: '#00ff88', fontSize: '20px', fontWeight: 'bold' }}>0</div>
+                      <div style={{ color: '#666', fontSize: '11px' }}>VICTORIAS</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ color: '#00ccff', fontSize: '20px', fontWeight: 'bold' }}>0</div>
+                      <div style={{ color: '#666', fontSize: '11px' }}>GOLES</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Info adicional */}
+                <div style={{
+                  marginTop: '16px',
+                  padding: '12px',
+                  background: 'rgba(255, 215, 0, 0.05)',
+                  borderRadius: '8px',
+                  border: '1px dashed #FFD700',
+                  textAlign: 'center'
+                }}>
+                  <p style={{ color: '#FFD700', fontSize: '13px', margin: 0 }}>
+                    ⚡ Tu equipo empezará con 0 puntos. Gana partidos y consigue fans para subir en el ranking
+                  </p>
                 </div>
               </div>
             </div>

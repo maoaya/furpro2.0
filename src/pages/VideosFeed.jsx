@@ -1,71 +1,141 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../config/supabase';
+import { useAuth } from '../context/AuthContext';
+
+const SHARED_STORAGE_KEY = 'futpro_shared_moments';
+
+const persistSharedMoment = (moment) => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(SHARED_STORAGE_KEY) || '[]');
+    const exists = stored.find((m) => m.id === moment.id && m.type === moment.type);
+    const next = exists ? stored : [{ ...moment, shared_at: new Date().toISOString() }, ...stored].slice(0, 50);
+    localStorage.setItem(SHARED_STORAGE_KEY, JSON.stringify(next));
+  } catch (err) {
+    console.error('No se pudo guardar en Momentos compartidos:', err);
+  }
+};
 
 export default function VideosFeed() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [videos, setVideos] = useState([]);
+  const [livestreams, setLivestreams] = useState([]);
+  const [followedUsers, setFollowedUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [likes, setLikes] = useState({});
   const [showComments, setShowComments] = useState(false);
   const [activeTab, setActiveTab] = useState('paraTi');
   const containerRef = useRef(null);
+  const viewedRef = useRef(new Set());
 
   useEffect(() => {
-    loadVideos();
-  }, [activeTab]);
+    if (user) {
+      cargarFollowers();
+      loadVideos();
+      loadLivestreams();
+    }
+  }, [activeTab, user]);
 
-  const loadVideos = () => {
-    // Stub: Videos de ejemplo
-    const videosData = [
-      {
-        id: 1,
-        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-        user: {
-          name: 'Lucia Martínez',
-          username: '@luciaM10',
-          avatar: '👤'
-        },
-        description: '⚽ Gol de la victoria! 🔥 #futbol #gol',
-        likes: 1205,
-        comments: 89,
-        shares: 34,
-        isLiked: false
-      },
-      {
-        id: 2,
-        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-        user: {
-          name: 'Carlos FC',
-          username: '@carlosFC',
-          avatar: '👤'
-        },
-        description: 'Entrenamiento de hoy 💪 #training',
-        likes: 842,
-        comments: 56,
-        shares: 21,
-        isLiked: false
-      },
-      {
-        id: 3,
-        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        user: {
-          name: 'Team Lions',
-          username: '@teamLions',
-          avatar: '🦁'
-        },
-        description: 'Partido del domingo ⚡',
-        likes: 2103,
-        comments: 145,
-        shares: 67,
-        isLiked: false
+  const cargarFollowers = async () => {
+    try {
+      const { data } = await supabase
+        .from('friends')
+        .select('friend_id')
+        .eq('user_id', user.id);
+      setFollowedUsers(data?.map(f => f.friend_id) || []);
+    } catch (err) {
+      console.error('Error cargando followers:', err);
+    }
+  };
+
+  const loadVideos = async () => {
+    try {
+      // Cargar posts con media_url (videos)
+      let query = supabase
+        .from('posts')
+        .select('*')
+        .not('media_url', 'is', null)
+        .order('created_at', { ascending: false });
+
+      // Filtrar por seguidos si activeTab === 'siguiendo'
+      if (activeTab === 'siguiendo' && followedUsers.length > 0) {
+        query = query.in('user_id', followedUsers);
       }
-    ];
 
-    setVideos(videosData);
-    
+      const { data, error } = await query.limit(50);
+      if (error) throw error;
+
+      // Formatear videos
+      const formatted = await Promise.all(
+        (data || []).map(async (p) => {
+          const { data: cardData } = await supabase
+            .from('carfutpro')
+            .select('nombre, apellido, avatar_url, photo_url')
+            .eq('user_id', p.user_id)
+            .single();
+
+          return {
+            id: p.id,
+            url: p.media_url || p.imagen_url,
+            user: {
+              name: cardData ? `${cardData.nombre} ${cardData.apellido || ''}`.trim() : 'Usuario',
+              username: `@${cardData?.nombre || 'user'}`,
+              avatar: cardData?.photo_url || cardData?.avatar_url || '👤'
+            },
+            description: p.contenido || p.caption || '',
+            likes: p.likes_count ?? p.likes ?? 0,
+            comments: p.comments_count ?? p.comments ?? 0,
+            shares: p.shares_count ?? p.shares ?? 0,
+            isLiked: false,
+            views: p.views_count ?? p.views ?? 0,
+            ubicacion: p.ubicacion || '—',
+            created_at: p.created_at,
+            user_id: p.user_id
+          };
+        })
+      );
+
+      setVideos(formatted);
+    } catch (err) {
+      console.error('Error cargando videos:', err);
+      setVideos([]);
+    }
+
     // Inicializar likes del localStorage
     const savedLikes = JSON.parse(localStorage.getItem('futpro_video_likes') || '{}');
     setLikes(savedLikes);
+  };
+
+  const loadLivestreams = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('live_streams')
+        .select('*, streamer:carfutpro!user_id(nombre, apellido, avatar_url, photo_url)')
+        .eq('status', 'live')
+        .order('viewers_count', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+
+      const formatted = (data || []).map(stream => ({
+        id: stream.id,
+        title: stream.title,
+        description: stream.description,
+        thumbnail: stream.thumbnail_url || 'https://via.placeholder.com/400x225',
+        streamer: {
+          name: stream.streamer ? `${stream.streamer.nombre} ${stream.streamer.apellido || ''}`.trim() : 'Streamer',
+          avatar: stream.streamer?.photo_url || stream.streamer?.avatar_url || '👤'
+        },
+        viewers: stream.viewers_count || 0,
+        category: stream.category || 'En vivo',
+        started_at: stream.started_at
+      }));
+
+      setLivestreams(formatted);
+    } catch (err) {
+      console.error('Error cargando livestreams:', err);
+    }
   };
 
   const handleScroll = (e) => {
@@ -75,6 +145,33 @@ export default function VideosFeed() {
     
     if (newIndex !== currentIndex && newIndex < videos.length) {
       setCurrentIndex(newIndex);
+    }
+  };
+
+  useEffect(() => {
+    if (videos[currentIndex]) {
+      registerView(videos[currentIndex]);
+    }
+  }, [currentIndex, videos]);
+
+  const registerView = async (video) => {
+    if (!video || viewedRef.current.has(video.id)) return;
+    viewedRef.current.add(video.id);
+
+    setVideos(prev => prev.map(v => v.id === video.id ? { ...v, views: (v.views || 0) + 1 } : v));
+
+    try {
+      const rpcResponse = await supabase.rpc('increment_post_view', { post_id: video.id });
+      if (rpcResponse.error) throw rpcResponse.error;
+    } catch (err) {
+      try {
+        await supabase
+          .from('posts')
+          .update({ views_count: (video.views || 0) + 1 })
+          .eq('id', video.id);
+      } catch (fallbackErr) {
+        console.error('Error registrando vista (rpc y fallback):', fallbackErr);
+      }
     }
   };
 
@@ -111,6 +208,17 @@ export default function VideosFeed() {
 
   const handleShare = (videoId) => {
     const video = videos.find(v => v.id === videoId);
+    persistSharedMoment({
+      id: video.id,
+      type: 'video',
+      user: video.user?.name || 'Usuario',
+      image: video.url,
+      description: video.description || '',
+      ubicacion: video.ubicacion || '—',
+      created_at: video.created_at || new Date().toISOString(),
+      likes: video.likes || 0,
+      views: video.views || 0
+    });
     if (navigator.share) {
       navigator.share({
         title: `Video de ${video.user.name}`,
@@ -120,12 +228,22 @@ export default function VideosFeed() {
     } else {
       alert('Compartir: ' + video.description);
     }
+
+    setVideos(prev => prev.map(v => v.id === videoId ? { ...v, shares: (v.shares || 0) + 1 } : v));
   };
 
   const currentVideo = videos[currentIndex];
 
   return (
     <div style={styles.container}>
+      {/* Header con botón atrás */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 16px', background: '#1a1a1a', borderBottom: '1px solid #333' }}>
+        <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px' }}>
+          ← Atrás
+        </button>
+        <h2 style={{ margin: 0, color: '#FFD700', flex: 1, fontSize: '16px', fontWeight: 'bold' }}>Vídeos</h2>
+      </div>
+
       {/* Tabs superiores */}
       <div style={styles.tabs}>
         <button 
@@ -140,9 +258,82 @@ export default function VideosFeed() {
         >
           Siguiendo
         </button>
+        <button 
+          style={{...styles.tab, ...(activeTab === 'enVivo' ? styles.tabActive : {})}}
+          onClick={() => setActiveTab('enVivo')}
+        >
+          🔴 En Vivo
+        </button>
       </div>
 
+      {/* Transmisiones en vivo */}
+      {activeTab === 'enVivo' && (
+        <div style={{ padding: '16px', background: '#000', minHeight: '100vh' }}>
+          <h2 style={{ color: '#FFD700', marginBottom: '16px' }}>🔴 Transmisiones en vivo</h2>
+          {livestreams.length === 0 ? (
+            <div style={{ textAlign: 'center', color: '#888', padding: '40px 0' }}>
+              No hay transmisiones activas en este momento
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+              {livestreams.map(stream => (
+                <div key={stream.id} style={{
+                  background: '#1a1a1a',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  border: '2px solid #FF0050',
+                  cursor: 'pointer'
+                }}
+                onClick={() => navigate(`/stream/${stream.id}`)}
+                >
+                  <div style={{ position: 'relative' }}>
+                    <img src={stream.thumbnail} alt={stream.title} style={{ width: '100%', display: 'block' }} />
+                    <div style={{
+                      position: 'absolute',
+                      top: 10,
+                      left: 10,
+                      background: '#FF0050',
+                      color: '#fff',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    }}>
+                      🔴 EN VIVO
+                    </div>
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 10,
+                      right: 10,
+                      background: 'rgba(0,0,0,0.7)',
+                      color: '#fff',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '12px'
+                    }}>
+                      👁️ {stream.viewers}
+                    </div>
+                  </div>
+                  <div style={{ padding: '12px' }}>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '8px' }}>
+                      <div style={{ fontSize: '24px' }}>{stream.streamer.avatar}</div>
+                      <div>
+                        <div style={{ color: '#fff', fontWeight: 'bold' }}>{stream.streamer.name}</div>
+                        <div style={{ color: '#888', fontSize: '12px' }}>{stream.category}</div>
+                      </div>
+                    </div>
+                    <div style={{ color: '#FFD700', fontWeight: 'bold', marginBottom: '4px' }}>{stream.title}</div>
+                    <div style={{ color: '#ccc', fontSize: '14px' }}>{stream.description || 'Transmisión en vivo'}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Contenedor de videos */}
+      {activeTab !== 'enVivo' && (
       <div 
         ref={containerRef}
         style={styles.videosContainer}
@@ -167,6 +358,7 @@ export default function VideosFeed() {
                 <div>
                   <div style={styles.username}>{video.user.name}</div>
                   <div style={styles.handle}>{video.user.username}</div>
+                  <div style={{ color: '#ccc', fontSize: '12px', marginTop: 4 }}>📍 {video.ubicacion || '—'}</div>
                 </div>
                 <button style={styles.followBtn}>Seguir</button>
               </div>
@@ -215,6 +407,7 @@ export default function VideosFeed() {
           </div>
         ))}
       </div>
+      )}
 
       {/* Modal de comentarios */}
       {showComments && currentVideo && (

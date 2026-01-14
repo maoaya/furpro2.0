@@ -111,7 +111,7 @@
     X-Content-Type-Options = "nosniff"
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Permissions-Policy = "camera=*, microphone=*, geolocation=*"
     Content-Security-Policy = """
       default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: 
       qqrxetxcglwrejtblwut.supabase.co 
@@ -131,7 +131,12 @@
       img-src 'self' data: blob: 
       *.supabase.co 
       *.google.com 
-      *.googleapis.com;
+      *.googleapis.com
+      *.googleusercontent.com
+      lh3.googleusercontent.com
+      i.pravatar.cc
+      placekitten.com
+      via.placeholder.com;
       connect-src 'self' 
       https: http: wss: ws:
       qqrxetxcglwrejtblwut.supabase.co 

@@ -1,256 +1,218 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import supabase from '../../supabaseClient'
+import cardManager from '../../services/CardManager'
 
 export default function AuthCallback() {
   const navigate = useNavigate()
   const [status, setStatus] = useState('Autenticando...')
 
   useEffect(() => {
+    let isMounted = true
+
     const handleOAuthCallback = async () => {
       try {
         console.log('=== AuthCallback START ===')
-        setStatus('Procesando autenticación...')
+        console.log('URL:', window.location.href)
+        if (isMounted) setStatus('Procesando autenticación...')
 
-        // 1. Get current session from OAuth
-        console.log('📍 Step 1: Getting session from OAuth...')
-        const {
-          data: { session },
-          error: sessionError
-        } = await supabase.auth.getSession()
+        // Paso 1: Obtener sesión
+        if (isMounted) setStatus('Paso 1: obteniendo sesión...')
+        console.log('📍 Step 1: Obteniendo sesión...')
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
         if (sessionError) {
-          console.error('❌ Session error:', sessionError)
-          setStatus(`Error: ${sessionError.message}`)
+          console.error('❌ Error:', sessionError)
+          if (isMounted) setStatus(`Error: ${sessionError.message}`)
+          setTimeout(() => window.location.href = '/', 2000)
           return
         }
 
         if (!session) {
-          console.warn('⚠️ No session found')
-          setStatus('No se encontró sesión')
-          return
-        }
-
-        console.log('✅ Session obtained:', {
-          user_id: session.user.id,
-          email: session.user.email,
-          has_picture: !!session.user.user_metadata?.picture
-        })
-
-        // 2. Get pendingProfileData from localStorage
-        console.log('📍 Step 2: Reading pendingProfileData from localStorage...')
-        const pendingDataStr = localStorage.getItem('pendingProfileData')
-        console.log('📄 pendingProfileData raw:', pendingDataStr)
-
-        // Intentar fallback a draft_carfutpro si no existe pendingProfileData
-        let formData = {}
-        if (!pendingDataStr) {
-          const draftStr = localStorage.getItem('draft_carfutpro')
-          if (draftStr) {
+          // 1) Intentar flujo PKCE (code en query)
+          const url = new URL(window.location.href)
+          const code = url.searchParams.get('code')
+          if (code) {
             try {
-              formData = JSON.parse(draftStr)
-              console.warn('ℹ️ Usando draft_carfutpro como fallback:', formData)
-            } catch (e) {
-              console.error('Error parsing draft_carfutpro:', e)
-            }
-          } else {
-            console.warn('⚠️ No pendingProfileData ni draft_carfutpro encontrados, se usará mínimo')
-          }
-        } else {
-          try {
-            formData = JSON.parse(pendingDataStr)
-            console.log('✅ pendingProfileData parsed:', formData)
-          } catch (parseError) {
-            console.error('❌ Error parsing pendingProfileData:', parseError)
-          }
-        }
-
-        // 3. Build cardData from session + form data
-        console.log('📍 Step 3: Building cardData...')
-        console.log('📋 formData recibido:', formData)
-        
-        // 3.1 Intentar subir foto a Supabase Storage si es data URL
-        let fotoUrl = '';
-        
-        if (formData.avatar_url && formData.avatar_url.startsWith('data:')) {
-          console.log('📸 Foto es data URL, intentando subir a Storage...');
-          try {
-            // Extraer la parte base64 de data:image/jpeg;base64,xxxxx
-            const parts = formData.avatar_url.split(',');
-            if (parts.length === 2) {
-              const base64Data = parts[1];
-              const binaryString = atob(base64Data);
-              const bytes = new Uint8Array(binaryString.length);
-              for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
+              console.log('🔄 Intercambiando code por sesión (PKCE)...')
+              if (isMounted) setStatus('Paso 2: intercambiando código OAuth...')
+              const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+              if (exchangeError) {
+                console.error('❌ Error al intercambiar código:', exchangeError)
               }
-              const blob = new Blob([bytes], { type: 'image/jpeg' });
-              const fileName = `${session.user.id}-${Date.now()}.jpg`;
-              
-              console.log('📤 Subiendo blob a Storage:', { fileName, size: blob.size });
-              const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('avatars')
-                .upload(fileName, blob, {
-                  contentType: 'image/jpeg',
-                  upsert: false
-                });
-              
-              if (uploadError) {
-                console.error('❌ Error subiendo foto a Storage:', uploadError);
-                console.warn('⚠️ Usando data URL como fallback (puede causar problemas con URLs muy largas)');
-                // Si el data URL es muy grande (>1MB), usar avatar por defecto
-                if (formData.avatar_url.length > 1000000) {
-                  console.warn('⚠️ Data URL muy grande, usando avatar por defecto');
-                  fotoUrl = `https://i.pravatar.cc/300?u=${session.user.id}`;
-                } else {
-                  fotoUrl = formData.avatar_url; // Fallback a data URL
+            } catch (ex) {
+              console.error('❌ Excepción en exchangeCodeForSession:', ex)
+            }
+          }
+
+          // 2) Intentar flujo hash (access_token/refresh_token en fragment)
+          if (!code && window.location.hash) {
+            const params = new URLSearchParams(window.location.hash.slice(1))
+            const access_token = params.get('access_token')
+            const refresh_token = params.get('refresh_token')
+            if (access_token && refresh_token) {
+              try {
+                console.log('🔄 Seteando sesión desde fragment (hash tokens)...')
+                if (isMounted) setStatus('Paso 2b: restaurando sesión del hash...')
+                const { error: setError } = await supabase.auth.setSession({ access_token, refresh_token })
+                if (setError) {
+                  console.error('❌ Error al setear sesión desde hash:', setError)
                 }
-              } else {
-                console.log('✅ Foto subida exitosamente a Storage:', fileName);
-                const { data: publicData } = supabase.storage
-                  .from('avatars')
-                  .getPublicUrl(fileName);
-                fotoUrl = publicData.publicUrl;
-                console.log('🔗 URL pública de foto:', fotoUrl);
+              } catch (ex) {
+                console.error('❌ Excepción en setSession hash:', ex)
               }
             }
-          } catch (uploadErr) {
-            console.error('❌ Error procesando foto:', uploadErr);
-            fotoUrl = formData.avatar_url; // Fallback a data URL
           }
-        } else if (formData.avatar_url) {
-          // Si no es data URL, usar directamente
-          fotoUrl = formData.avatar_url;
-        } else {
-          // Último fallback a metadata de Google
-          fotoUrl = session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || '';
-        }
-        
-        console.log('📋 formData completo recibido:', formData);
-        console.log('✅ fotoUrl final para card:', fotoUrl);
-        
-        // Ajustar a columnas reales de api.carfutpro (según MIGRATE_CARFUTPRO_TO_API.sql)
-        const cardData = {
-          user_id: session.user.id,
-          nombre: formData.nombre || session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Usuario',
-          avatar_url: fotoUrl,
-          ciudad: formData.ciudad || formData.ubicacion || null,
-          pais: formData.pais || null,
-          posicion: formData.posicion || formData.posicion_favorita || null,
-          edad: formData.edad ? Number(formData.edad) : null,
-          pie: formData.pie || formData.pierna_dominante || formData.piernaDominante || null,
-          estatura: formData.estatura ? Number(formData.estatura) : (formData.altura ? Number(formData.altura) / 100 : null),
-          equipo: formData.equipo || formData.equipo_favorito || formData.equipoFavorito || null,
-          nivel_habilidad: formData.nivel_habilidad || formData.experiencia || null,
-          // Categoria es requerida en el modelo; usar fallback seguro
-          categoria: formData.categoria || 'mixto',
-          puntos_totales: 35,
-          card_tier: 'futpro',
-          partidos_ganados: 0,
-          entrenamientos: 0,
-          amistosos: 0,
-          puntos_comportamiento: 0,
-          ultima_actualizacion: new Date().toISOString()
-        };
 
-        console.log('📋 cardData to insert:', cardData)
-
-        // 4. Check if card already exists
-        console.log('📍 Step 4: Checking if card already exists...')
-        const { data: existingCard, error: selectError } = await supabase
-          .from('carfutpro')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .maybeSingle()
-
-        if (selectError && selectError.code !== 'PGRST116') {
-          console.error('❌ Error checking existing card:')
-          console.error('Full error object:', selectError)
-          console.error('Error breakdown:', {
-            code: selectError.code,
-            message: selectError.message,
-            details: selectError.details,
-            hint: selectError.hint,
-            status: selectError.status,
-            statusText: selectError.statusText
-          })
-          console.error('⚠️ POSIBLE CAUSA: Tabla carfutpro no existe o RLS policy bloqueando SELECT')
-          console.error('SOLUCIÓN: Ejecutar SQL en Supabase (ver EJECUTAR_SQL_AHORA.md)')
-        } else if (existingCard) {
-          console.log('✅ Card already exists, normalizing fields')
-          // Solo actualizar campos del cardData nuevo, preservando puntos/tier existentes
-          const updateData = {
-            ...cardData,
-            puntos_totales: existingCard.puntos_totales ?? cardData.puntos_totales ?? 35,
-            card_tier: existingCard.card_tier || cardData.card_tier || 'bronce'
-          }
-          const { data: updatedCard, error: updateError } = await supabase
-            .from('carfutpro')
-            .update(updateData)
-            .eq('user_id', session.user.id)
-            .select()
-
-          if (updateError) {
-            console.error('❌ UPDATE error:', updateError)
-            setStatus(`Error actualizando card: ${updateError.message}`)
+          console.warn('⚠️ No hay sesión, esperando...')
+          if (isMounted) setStatus('Paso 3: esperando sesión de Supabase...')
+          // Esperar un poco a que Supabase procese
+          await new Promise(r => setTimeout(r, 1000))
+          
+          const { data: { session: session2 } } = await supabase.auth.getSession()
+          if (!session2) {
+            console.error('❌ No hay sesión después de esperar')
+            if (isMounted) setStatus('No se encontró sesión. Redirigiendo...')
+            setTimeout(() => window.location.href = '/', 2000)
             return
           }
-
-          console.log('✅ Card updated:', updatedCard)
-          setStatus('Card actualizada')
-          localStorage.removeItem('pendingProfileData')
-          setTimeout(() => navigate('/perfil-card'), 800)
+          
+          console.log('✅ Sesión obtenida después de esperar')
+          await processCardCreation(session2, isMounted)
           return
         }
 
-        // 5. INSERT new card
-        console.log('📍 Step 5: Inserting new card...')
-        const { data: insertedCard, error: insertError } = await supabase
-          .from('carfutpro')
-          .insert([cardData])
-          .select()
-
-        if (insertError) {
-          console.error('❌ INSERT error:')
-          console.error('Full error object:', insertError)
-          console.error('Error breakdown:', {
-            code: insertError.code,
-            message: insertError.message,
-            details: insertError.details,
-            hint: insertError.hint,
-            status: insertError.status,
-            statusText: insertError.statusText
-          })
-          console.error('⚠️ POSIBLES CAUSAS:')
-          console.error('  1. Tabla carfutpro no existe en schema public')
-          console.error('  2. RLS policy bloqueando INSERT')
-          console.error('  3. Columnas faltantes en tabla')
-          console.error('SOLUCIÓN: Ejecutar cards_system.sql completo en Supabase')
-          setStatus(`Error al crear card: ${insertError.message}`)
-          return
-        }
-
-        console.log('✅ Card created successfully:', insertedCard)
-        setStatus('✅ Card creada correctamente')
-
-        // 6. Cleanup
-        console.log('📍 Step 6: Cleaning up...')
-        localStorage.removeItem('pendingProfileData')
-
-        // 7. Redirect
-        console.log('📍 Step 7: Redirecting to perfil-card...')
-        setTimeout(() => {
-          console.log('=== AuthCallback COMPLETE ===')
-          navigate('/perfil-card')
-        }, 1500)
-
+        if (isMounted) setStatus('Paso 4: sesión obtenida, creando card...')
+        console.log('✅ Sesión obtenida:', session.user.id)
+        await processCardCreation(session, isMounted)
+        
       } catch (error) {
-        console.error('❌ Unexpected error:', error)
-        setStatus(`Error inesperado: ${error.message}`)
+        console.error('❌ Error fatal:', error)
+        if (isMounted) setStatus(`Error: ${error.message}`)
+      }
+    }
+    
+    const processCardCreation = async (session, mounted) => {
+      try {
+        const userId = session.user.id
+
+        // Leer datos del formulario
+        console.log('📄 Leyendo datos de formulario...')
+        const draftStr = localStorage.getItem('draft_carfutpro')
+        const pendingDataStr = localStorage.getItem('pendingProfileData')
+        
+        let formData = {}
+        
+        if (draftStr) {
+          try {
+            formData = JSON.parse(draftStr)
+            console.log('✓ draft_carfutpro:', Object.keys(formData))
+          } catch (e) {
+            console.error('Error parsing draft:', e)
+          }
+        }
+        
+        if (pendingDataStr) {
+          try {
+            formData = { ...formData, ...JSON.parse(pendingDataStr) }
+            console.log('✓ pendingProfileData:', Object.keys(formData))
+          } catch (e) {
+            console.error('Error parsing pending:', e)
+          }
+        }
+
+        // Preparar avatar
+        let avatarUrl = formData.avatar_url || session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || `https://i.pravatar.cc/300?u=${userId}`
+        
+        if (avatarUrl?.startsWith('data:')) {
+          console.log('📸 Subiendo avatar...')
+          if (mounted) setStatus('Subiendo foto de perfil...')
+          try {
+            const file = cardManager.dataURLtoFile(avatarUrl, `avatar-${userId}.jpg`)
+            avatarUrl = await cardManager.uploadAvatar(userId, file)
+            console.log('✅ Avatar subido')
+          } catch (err) {
+            console.error('⚠️  Error subiendo avatar:', err.message)
+            avatarUrl = `https://i.pravatar.cc/300?u=${userId}`
+          }
+        }
+
+        // Preparar datos de perfil
+        const profileData = {
+          id: userId,
+          nombre: formData.nombre || session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Jugador',
+          apellido: formData.apellido || '',
+          avatar_url: avatarUrl,
+          ciudad: formData.ciudad || '',
+          pais: formData.pais || '',
+          posicion_favorita: formData.posicion || formData.posicion_favorita || 'Flexible',
+          edad: formData.edad ? Number(formData.edad) : null,
+          pierna_dominante: formData.pie || formData.pierna_dominante || 'Derecha',
+          altura: formData.estatura || formData.altura || '',
+          peso: formData.peso || '',
+          equipo: formData.equipo || formData.equipo_favorito || '—',
+          nivel_habilidad: formData.nivel_habilidad || 'Principiante',
+          categoria: formData.categoria || 'masculina'
+        }
+
+        console.log('📋 Datos del perfil:', profileData)
+
+        // Crear card
+        console.log('📍 Creando card...')
+        if (mounted) setStatus('Creando tu card FutPro...')
+        
+        try {
+          const card = await cardManager.getOrCreateCard(userId, profileData)
+          console.log('✅ Card creada:', card.id)
+          if (mounted) setStatus('✅ Card creada correctamente')
+          
+          // Guardar en localStorage
+          localStorage.setItem('futpro_user_card_data', JSON.stringify({
+            ...card,
+            esPrimeraCard: true,
+            fecha_registro: new Date().toISOString()
+          }))
+          localStorage.setItem('show_first_card', 'true')
+          
+          // Limpiar datos temporales
+          console.log('🧹 Limpiando localStorage...')
+          localStorage.removeItem('pendingProfileData')
+          localStorage.removeItem('draft_carfutpro')
+          localStorage.removeItem('post_auth_origin')
+          localStorage.removeItem('post_auth_target')
+
+          // Redirigir
+          console.log('✅ Redirigiendo a /perfil-card...')
+          setTimeout(() => {
+            if (mounted) navigate('/perfil-card')
+          }, 1500)
+          
+        } catch (cardError) {
+          console.error('❌ Error creando card:', {
+            message: cardError.message,
+            details: cardError.details,
+            hint: cardError.hint,
+            code: cardError.code,
+            status: cardError.status
+          })
+          if (mounted) setStatus(`Error creando card: ${cardError.message || cardError.code || cardError.status || 'desconocido'}`)
+          
+          // Redirigir a perfil-card de todas formas (intenta crear ahí)
+          setTimeout(() => {
+            if (mounted) navigate('/perfil-card')
+          }, 2000)
+        }
+      } catch (error) {
+        console.error('❌ Error procesando card:', error)
+        throw error
       }
     }
 
     handleOAuthCallback()
+
+    return () => {
+      isMounted = false
+    }
   }, [navigate])
 
   return (
@@ -265,9 +227,19 @@ export default function AuthCallback() {
       color: '#fff',
       fontFamily: 'system-ui'
     }}>
-      <div style={{ fontSize: '24px', fontWeight: 'bold' }}>FutPro</div>
-      <div style={{ fontSize: '16px', color: '#a0aec0' }}>{status}</div>
-      <div style={{ marginTop: '40px', width: '40px', height: '40px', border: '3px solid #3b82f6', borderRadius: '50%', borderTopColor: 'transparent', animation: 'spin 1s linear infinite' }} />
+      <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '10px' }}>⚽ FutPro VIP</div>
+      <div style={{ fontSize: '16px', color: '#a0aec0', textAlign: 'center', maxWidth: '400px', padding: '0 20px' }}>
+        {status}
+      </div>
+      <div style={{ 
+        marginTop: '40px', 
+        width: '40px', 
+        height: '40px', 
+        border: '3px solid #3b82f6', 
+        borderRadius: '50%', 
+        borderTopColor: 'transparent', 
+        animation: 'spin 1s linear infinite' 
+      }} />
       <style>{`
         @keyframes spin {
           to { transform: rotate(360deg); }

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import FutproLogo from '../components/FutproLogo.jsx';
 import TournamentInviteBanner from '../components/TournamentInviteBanner.jsx';
 import NotificationsBell from '../components/NotificationsBell.jsx';
@@ -6,6 +6,9 @@ import { NotificationsProvider } from '../context/NotificationsContext.jsx';
 import NotificationsEnableButton from '../components/NotificationsEnableButton.jsx';
 import CommentsModal from '../components/CommentsModal.jsx';
 import MenuHamburguesa from '../components/MenuHamburguesa.jsx';
+import BottomNavBar from '../components/BottomNavBar.jsx';
+import UploadContenidoComponent from '../components/UploadContenidoComponent.jsx';
+import PostCard from '../components/PostCard.jsx';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
 import { NotificationManager } from '../services/NotificationManager';
@@ -15,6 +18,7 @@ const gold = '#FFD700';
 const black = '#0a0a0a';
 const darkCard = '#1a1a1a';
 const lightGold = '#FFA500';
+const SHARED_STORAGE_KEY = 'futpro_shared_moments';
 
 const menuItemsList = (actions) => ([
   { key: 'perfil', label: '👤 Mi Perfil', action: actions.irAPerfil },
@@ -88,6 +92,17 @@ const seedStories = [
   { id: 4, name: 'Leo FC', avatar: 'https://placekitten.com/83/83' }
 ];
 
+const persistSharedMoment = (moment) => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(SHARED_STORAGE_KEY) || '[]');
+    const exists = stored.find((m) => m.id === moment.id && m.type === moment.type);
+    const next = exists ? stored : [{ ...moment, shared_at: new Date().toISOString() }, ...stored].slice(0, 50);
+    localStorage.setItem(SHARED_STORAGE_KEY, JSON.stringify(next));
+  } catch (err) {
+    console.error('No se pudo guardar en Momentos compartidos:', err);
+  }
+};
+
 export default function HomePage() {
   const navigate = useNavigate();
   const { user, loginWithGoogle } = useAuth();
@@ -95,7 +110,6 @@ export default function HomePage() {
   const menuItems = useMemo(() => menuItemsList(menuActions), [menuActions]);
   const [search, setSearch] = useState('');
   const [posts, setPosts] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState({});
@@ -103,6 +117,16 @@ export default function HomePage() {
   const [followedUsers, setFollowedUsers] = useState([]);
   const [suggestedPosts, setSuggestedPosts] = useState([]);
   const [selectedPostForComments, setSelectedPostForComments] = useState(null);
+  const [searchResults, setSearchResults] = useState({ players: [], posts: [], teams: [], tournaments: [] });
+  const [searching, setSearching] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [uploadingStory, setUploadingStory] = useState(false);
+  const [storyMessage, setStoryMessage] = useState('');
+  const [storyCaption, setStoryCaption] = useState('');
+  const [storyLocation, setStoryLocation] = useState('');
+  const [storyTournament, setStoryTournament] = useState('');
+  const fileInputRef = useRef(null);
+  const [menuHamburguesaOpen, setMenuHamburguesaOpen] = useState(false);
   // Realtime y notificaciones consolidadas en NotificationsProvider
 
   // Cargar posts y followers al montar
@@ -113,27 +137,27 @@ export default function HomePage() {
     }
 
     cargarFollowers();
-    cargarPosts();
+    loadPosts();
 
     // Suscribirse a cambios en realtime
     const channelPosts = supabase
       .channel('posts:all')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
-        cargarPosts();
+        loadPosts();
       })
       .subscribe();
 
     const channelLikes = supabase
       .channel('likes:all')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'likes' }, () => {
-        cargarPosts();
+        loadPosts();
       })
       .subscribe();
 
     const channelComments = supabase
       .channel('comments:all')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, () => {
-        cargarPosts();
+        loadPosts();
       })
       .subscribe();
 
@@ -150,70 +174,270 @@ export default function HomePage() {
     try {
       if (!user) return;
 
-      // Obtener usuarios que el usuario actual sigue
-      const { data: followedData, error: followError } = await supabase
+      // Intentar primero con tabla friends en public schema
+      let { data: followedData, error: followError } = await supabase
         .from('friends')
-        .select('friend_email')
-        .eq('user_email', user.email);
+        .select('friend_id')
+        .eq('user_id', user.id);
 
-      if (followError) throw followError;
-
-      // Convertir emails a IDs
-      const followedEmails = followedData?.map(f => f.friend_email) || [];
-      if (followedEmails.length > 0) {
-        const { data: followedIds } = await supabase
-          .from('users')
-          .select('id')
-          .in('email', followedEmails);
-        setFollowedUsers(followedIds?.map(u => u.id) || []);
-      } else {
-        setFollowedUsers([]);
+      // Si falla, intentar con api.friends
+      if (followError) {
+        console.warn('⚠️ Error en friends (public), intentando api.friends:', followError.message);
+        const result = await supabase
+          .from('api.friends')
+          .select('friend_id')
+          .eq('user_id', user.id);
+        
+        followedData = result.data;
+        followError = result.error;
       }
+
+      if (followError) {
+        console.error('❌ Error cargando followers (ambos schemas):', {
+          code: followError.code,
+          message: followError.message,
+          details: followError.details,
+          hint: followError.hint
+        });
+        // No hacer throw, simplemente establecer array vacío
+        setFollowedUsers([]);
+        return;
+      }
+
+      const followedIds = followedData?.map(f => f.friend_id) || [];
+      setFollowedUsers(followedIds);
+      console.log('✅ Followers cargados:', followedIds.length);
     } catch (err) {
-      console.error('Error cargando followers:', err);
+      console.error('❌ Error inesperado cargando followers:', err);
+      setFollowedUsers([]);
     }
   }
 
-  async function cargarPosts() {
+  async function cargarUnreadNotifications() {
+    if (!user) return;
+    try {
+      const { count, error } = await supabase
+        .from('notifications')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('is_read', false);
+      if (error) throw error;
+      setUnreadCount(count || 0);
+    } catch (err) {
+      console.error('Error cargando notificaciones:', err);
+    }
+  }
+
+  async function ejecutarBusqueda() {
+    if (!search.trim()) {
+      setSearchResults({ players: [], posts: [], teams: [], tournaments: [] });
+      return;
+    }
+    const like = `%${search.trim()}%`;
+    const results = { players: [], posts: [], teams: [], tournaments: [] };
+    setSearching(true);
+    try {
+      const { data: players } = await supabase
+        .from('carfutpro')
+        .select('user_id, nombre, apellido, ciudad, pais, categoria, equipo, posicion_favorita, edad, photo_url, avatar_url')
+        .or([
+          `nombre.ilike.${like}`,
+          `apellido.ilike.${like}`,
+          `ciudad.ilike.${like}`,
+          `pais.ilike.${like}`,
+          `categoria.ilike.${like}`,
+          `equipo.ilike.${like}`,
+          `posicion_favorita.ilike.${like}`,
+          `edad::text.ilike.${like}`
+        ].join(','))
+        .limit(25);
+      results.players = players || [];
+    } catch (err) {
+      console.error('Busqueda jugadores falló:', err);
+    }
+
+    try {
+      const { data: posts } = await supabase
+        .from('posts')
+        .select('id, caption, media_url, created_at, user_id')
+        .or([
+          `caption.ilike.${like}`,
+          `media_url.ilike.${like}`
+        ].join(','))
+        .limit(25);
+      results.posts = posts || [];
+    } catch (err) {
+      console.error('Busqueda posts falló:', err);
+    }
+
+    try {
+      const { data: teams } = await supabase
+        .from('teams')
+        .select('id, name, location, category, logo_url')
+        .or([
+          `name.ilike.${like}`,
+          `location.ilike.${like}`,
+          `category.ilike.${like}`
+        ].join(','))
+        .limit(15);
+      results.teams = teams || [];
+    } catch (err) {
+      console.warn('Busqueda equipos omitida:', err.message);
+    }
+
+    try {
+      const { data: tournaments } = await supabase
+        .from('tournaments')
+        .select('id, name, location, category, start_date')
+        .or([
+          `name.ilike.${like}`,
+          `location.ilike.${like}`,
+          `category.ilike.${like}`
+        ].join(','))
+        .limit(15);
+      results.tournaments = tournaments || [];
+    } catch (err) {
+      console.warn('Busqueda torneos omitida:', err.message);
+    }
+
+    setSearchResults(results);
+    setSearching(false);
+  }
+
+  function onSearchSubmit(e) {
+    e.preventDefault();
+    ejecutarBusqueda();
+  }
+
+  async function loadPosts() {
     try {
       setLoading(true);
-      // Cargar posts con joins para usuario, conteo de likes y comentarios
+
       const { data: postsData, error } = await supabase
         .from('posts')
-        .select(`
-          *,
-          user:users!posts_user_id_fkey(id, email, full_name, avatar_url),
-          likes_count:likes(count),
-          comments_count:comments(count)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
-        .limit(100);
+        .limit(20);
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error cargando posts:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        });
+        setPosts([]);
+        setSuggestedPosts([]);
+        setLoading(false);
+        return;
+      }
 
-      // Formatear posts
-      const formatted = postsData.map(p => ({
-        id: p.id,
-        user: p.user?.full_name || p.user?.email || 'Usuario',
-        avatar: p.user?.avatar_url || 'https://via.placeholder.com/90',
-        image: p.image_url,
-        title: p.tags?.[0] || 'Post',
-        description: p.content,
-        likes: p.likes_count?.[0]?.count || 0,
-        comments: p.comments_count?.[0]?.count || 0,
-        tags: p.tags || [],
-        user_id: p.user_id,
-        created_at: p.created_at
+      const formatted = await Promise.all((postsData || []).map(async (p) => {
+        let userName = 'Usuario';
+        let userAvatar = 'https://via.placeholder.com/90';
+
+        // Intentar cargar desde carfutpro
+        try {
+          const { data: card } = await supabase
+            .from('carfutpro')
+            .select('nombre, apellido, avatar_url, photo_url')
+            .eq('user_id', p.user_id)
+            .single();
+          
+          if (card) {
+            userName = `${card.nombre || ''} ${card.apellido || ''}`.trim() || 'Usuario';
+            userAvatar = card.photo_url || card.avatar_url || userAvatar;
+          }
+        } catch (cardErr) {
+          // Si falla, intentar tabla usuarios
+          try {
+            const { data: usuario } = await supabase
+              .from('usuarios')
+              .select('nombre_completo, foto_perfil, nombre, apellido')
+              .eq('id', p.user_id)
+              .single();
+            
+            if (usuario) {
+              userName = usuario.nombre_completo || 
+                         `${usuario.nombre || ''} ${usuario.apellido || ''}`.trim() || 
+                         'Usuario';
+              userAvatar = usuario.foto_perfil || userAvatar;
+            }
+          } catch (userErr) {
+            // Último intento: auth.users metadata
+            try {
+              const { data: authData } = await supabase.auth.admin.getUserById(p.user_id);
+              if (authData?.user) {
+                userName = authData.user.user_metadata?.full_name || 
+                           authData.user.email?.split('@')[0] || 
+                           'Usuario';
+                userAvatar = authData.user.user_metadata?.avatar_url || userAvatar;
+              }
+            } catch (authErr) {
+              console.warn(`⚠️ No se pudo cargar info de usuario ${p.user_id}`);
+            }
+          }
+        }
+
+        return {
+          id: p.id,
+          user: userName,
+          avatar: userAvatar,
+          image: p.imagen_url || p.media_url,
+          title: 'Post',
+          description: p.contenido || p.caption || '',
+          likes: p.likes_count ?? 0,
+          comments: p.comments_count ?? 0,
+          views: p.views_count ?? 0,
+          ubicacion: p.ubicacion || 'Ubicación no disponible',
+          tags: [],
+          user_id: p.user_id,
+          created_at: p.created_at,
+          isLiked: likedMap[p.id] || false
+        };
       }));
 
-      // Separar posts de usuarios seguidos y sugerencias
-      const followed = formatted.filter(p => followedUsers.includes(p.user_id));
-      const suggested = formatted.filter(p => !followedUsers.includes(p.user_id) && p.user_id !== user?.id);
+      setPosts(formatted);
+      setSuggestedPosts(formatted);
 
-      setPosts(followed);
-      setSuggestedPosts(suggested);
+      // Cargar productos destacados y agregarlos arriba de sugeridos
+      try {
+        const { data: productsData, error: prodError } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true)
+          .order('views', { ascending: false })
+          .limit(6);
+
+        if (prodError) {
+          console.warn('⚠️ Error cargando productos:', prodError.message);
+        } else if (productsData && productsData.length > 0) {
+          const productPosts = productsData.map(prod => ({
+            id: `product-${prod.id}`,
+            user: 'Marketplace',
+            avatar: 'https://via.placeholder.com/90',
+            image: prod.images?.[0] || 'https://via.placeholder.com/400',
+            title: prod.title,
+            description: `💰 $${prod.price} ${prod.currency || 'USD'} • ${prod.category || 'Producto'}`,
+            likes: prod.favorites || 0,
+            comments: 0,
+            views: prod.views || 0,
+            ubicacion: prod.location || '—',
+            tags: ['marketplace', prod.category || 'producto'],
+            user_id: prod.seller_id,
+            created_at: prod.created_at,
+            isProduct: true,
+            productId: prod.id
+          }));
+          setSuggestedPosts(prev => [...productPosts, ...prev]);
+        }
+      } catch (prodErr) {
+        console.error('❌ Error procesando productos:', prodErr);
+      }
     } catch (err) {
-      console.error('Error cargando posts:', err);
+      console.error('❌ Error inesperado cargando posts:', err);
+      setPosts([]);
+      setSuggestedPosts([]);
     } finally {
       setLoading(false);
     }
@@ -222,34 +446,137 @@ export default function HomePage() {
   const filteredPosts = useMemo(() => {
     if (!search) return posts;
     const term = search.toLowerCase();
-    return posts.filter(p =>
-      p.user.toLowerCase().includes(term) ||
-      p.title.toLowerCase().includes(term) ||
-      p.description.toLowerCase().includes(term)
+    return posts.filter(post => 
+      post.caption?.toLowerCase().includes(term) ||
+      post.user_name?.toLowerCase().includes(term)
     );
   }, [posts, search]);
+
+  const [showCameraMenu, setShowCameraMenu] = useState(false);
+  const photoInputRef = useRef(null);
+  const videoInputRef = useRef(null);
+
+  const handleCameraClick = () => {
+    setShowCameraMenu(true);
+  };
+
+  const handleSelectPhoto = () => {
+    setShowCameraMenu(false);
+    setStoryMessage('');
+    if (photoInputRef.current) {
+      photoInputRef.current.value = '';
+      photoInputRef.current.click();
+    }
+  };
+
+  const handleSelectVideo = () => {
+    setShowCameraMenu(false);
+    setStoryMessage('');
+    if (videoInputRef.current) {
+      videoInputRef.current.value = '';
+      videoInputRef.current.click();
+    }
+  };
+
+  const handleStartLive = () => {
+    setShowCameraMenu(false);
+    navigate('/transmision-en-vivo');
+  };
+
+  const handleStoryFile = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+    setUploadingStory(true);
+    setStoryMessage('');
+    try {
+      // Validar duración de video: máximo 60s
+      if (file.type.startsWith('video')) {
+        const duration = await new Promise((resolve, reject) => {
+          try {
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.onloadedmetadata = () => {
+              URL.revokeObjectURL(video.src);
+              resolve(video.duration || 0);
+            };
+            video.onerror = () => resolve(0);
+            video.src = URL.createObjectURL(file);
+          } catch (e) { resolve(0); }
+        });
+        if (duration > 60) {
+          setStoryMessage('❌ El video supera 60 segundos');
+          setUploadingStory(false);
+          return;
+        }
+      }
+      const ext = file.name.split('.').pop();
+      const path = `${user.id}/${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from('stories').upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: publicData } = supabase.storage.from('stories').getPublicUrl(path);
+      const mediaType = file.type.startsWith('video') ? 'video' : 'image';
+      await supabase.from('stories').insert({
+        user_id: user.id,
+        media_url: publicData?.publicUrl,
+        media_type: mediaType,
+        caption: storyCaption || 'Nueva historia',
+        location: storyLocation || null,
+        tournament: storyTournament || null
+      });
+      setStoryMessage('✅ Historia subida');
+      setStoryCaption('');
+      setStoryLocation('');
+      setStoryTournament('');
+    } catch (err) {
+      console.error('Error subiendo historia:', err);
+      setStoryMessage('❌ No se pudo subir la historia');
+    } finally {
+      setUploadingStory(false);
+    }
+  };
+
+  const [likedMap, setLikedMap] = useState({});
 
   const onLike = async (postId) => {
     if (!user) {
       alert('Debes iniciar sesión para dar like');
       return;
     }
+
+    const isLiked = likedMap[postId] || false;
+    const delta = isLiked ? -1 : 1;
+
+    // Optimista en UI
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, likes: (p.likes || 0) + delta, isLiked: !isLiked } : p));
+    setSuggestedPosts(prev => prev.map(p => p.id === postId ? { ...p, likes: (p.likes || 0) + delta, isLiked: !isLiked } : p));
+    setLikedMap(prev => ({ ...prev, [postId]: !isLiked }));
+
     try {
-      // Verificar si ya dio like
-      const { data: existingLike } = await supabase
+      // Persistir en tabla de likes (si existe)
+      const { data: existingLikeArr } = await supabase
         .from('likes')
         .select('id')
         .eq('post_id', postId)
         .eq('user_id', user.id)
-        .single();
+        .limit(1);
+
+      const existingLike = existingLikeArr?.[0];
 
       if (existingLike) {
-        // Quitar like
-        await supabase.from('likes').delete().eq('id', existingLike.id);
+        if (isLiked) {
+          await supabase.from('likes').delete().eq('id', existingLike.id);
+        }
       } else {
-        // Dar like
-        await supabase.from('likes').insert([{ post_id: postId, user_id: user.id }]);
+        if (!isLiked) {
+          await supabase.from('likes').insert([{ post_id: postId, user_id: user.id }]);
+        }
       }
+
+      // Actualizar contador en posts (ignorar error si no existe columna)
+      const target = posts.find(p => p.id === postId) || suggestedPosts.find(p => p.id === postId);
+      const nextLikes = (target?.likes || 0) + delta;
+      await supabase.from('posts').update({ likes_count: nextLikes }).eq('id', postId);
     } catch (err) {
       console.error('Error al dar like:', err);
     }
@@ -279,7 +606,33 @@ export default function HomePage() {
   };
 
   const onShare = (id) => {
-    console.log('Compartir post', id);
+    const target = posts.find(p => p.id === id) || suggestedPosts.find(p => p.id === id);
+    if (!target) return;
+
+    persistSharedMoment({
+      id: target.id,
+      type: 'post',
+      user: target.user,
+      image: target.image,
+      description: target.description,
+      ubicacion: target.ubicacion || '—',
+      created_at: target.created_at || new Date().toISOString(),
+      likes: target.likes || 0,
+      views: target.views || 0
+    });
+
+    const sharePayload = {
+      title: 'FutPro',
+      text: target.description || 'Mira este momento en FutPro',
+      url: window.location.href
+    };
+
+    if (navigator.share) {
+      navigator.share(sharePayload).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(`${sharePayload.text} - ${sharePayload.url}`);
+      alert('📋 Copiado para compartir');
+    }
   };
 
   const goHome = () => navigate('/');
@@ -323,23 +676,35 @@ export default function HomePage() {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ position: 'relative' }}>
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar jugadores, equipos..."
-                style={{
-                  padding: '12px 44px 12px 14px',
-                  borderRadius: 24,
-                  border: `2px solid ${gold}`,
-                  background: '#0f0f0f',
-                  color: gold,
-                  width: 260,
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.45)'
-                }}
-              />
-              <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: gold, fontWeight: 700 }}>🔍</span>
-            </div>
+            {user && (
+              <>
+                <NotificationsBell />
+                <button
+                  onClick={() => setMenuHamburguesaOpen(true)}
+                  style={{
+                    background: '#FFD700',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '42px',
+                    height: '42px',
+                    fontSize: '20px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 'bold',
+                    color: '#0a0a0a',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
+                  onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                  title="Abrir menú"
+                >
+                  ☰
+                </button>
+                <MenuHamburguesa isOpen={menuHamburguesaOpen} onClose={() => setMenuHamburguesaOpen(false)} />
+              </>
+            )}
             {!user && (
               <button
                 onClick={async () => {
@@ -362,22 +727,51 @@ export default function HomePage() {
                 Iniciar sesión
               </button>
             )}
-            <button 
-              aria-label="Nueva publicación" 
-              onClick={() => navigate('/crear-publicacion')}
-              style={{ borderRadius: '50%', width: 42, height: 42, border: `2px solid ${gold}`, background: 'linear-gradient(135deg, #FFD700, #FFA500)', color: '#000', boxShadow: '0 3px 12px rgba(255,215,0,0.4)', fontSize: '24px', fontWeight: 'bold' }}
-            >
-              📸
-            </button>
-            <NotificationsEnableButton />
-            <NotificationsBell />
-            <button aria-label="Menu" onClick={() => setMenuOpen(!menuOpen)} style={{ borderRadius: '50%', width: 42, height: 42, border: `2px solid ${gold}`, background: '#0f0f0f', color: gold, boxShadow: '0 3px 12px rgba(0,0,0,0.4)' }}>☰</button>
           </div>
         </div>
       </header>
 
-      {/* Menu Hamburguesa Mejorado */}
-      <MenuHamburguesa isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+      {storyMessage && (
+        <div style={{ padding: '8px 16px', color: storyMessage.startsWith('✅') ? '#4CAF50' : '#FF6B6B', fontWeight: 700 }}>
+          {storyMessage}
+        </div>
+      )}
+
+      {/* Panel de resultados de búsqueda */}
+      {(searchResults.players?.length || searchResults.posts?.length || searchResults.teams?.length || searchResults.tournaments?.length) ? (
+        <div style={{ padding: '8px 16px', color: '#fff' }}>
+          <div style={{ color: gold, fontWeight: 700, marginBottom: 6 }}>
+            Resultados: Jugadores {searchResults.players?.length || 0} · Equipos {searchResults.teams?.length || 0} · Torneos {searchResults.tournaments?.length || 0} · Contenido {searchResults.posts?.length || 0}
+          </div>
+          <div style={{ display: 'grid', gap: 8, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+            {(searchResults.players || []).slice(0, 4).map((p) => (
+              <div key={`p-${p.user_id}`} style={{ background: '#141414', border: `1px solid ${gold}`, borderRadius: 12, padding: 10 }}>
+                <div style={{ fontWeight: 700, color: gold }}>{p.nombre} {p.apellido}</div>
+                <div style={{ fontSize: 12, color: '#ccc' }}>{p.ciudad || '—'}, {p.pais || '—'} · {p.categoria || '—'}</div>
+                <div style={{ fontSize: 12, color: '#888' }}>{p.posicion_favorita || 'Posición'} · Edad {p.edad || '—'}</div>
+              </div>
+            ))}
+            {(searchResults.teams || []).slice(0, 3).map((t) => (
+              <div key={`t-${t.id}`} style={{ background: '#141414', border: `1px solid ${gold}`, borderRadius: 12, padding: 10 }}>
+                <div style={{ fontWeight: 700, color: '#00ff88' }}>{t.name}</div>
+                <div style={{ fontSize: 12, color: '#ccc' }}>{t.location || '—'} · {t.category || '—'}</div>
+              </div>
+            ))}
+            {(searchResults.tournaments || []).slice(0, 3).map((t) => (
+              <div key={`tor-${t.id}`} style={{ background: '#141414', border: `1px solid ${gold}`, borderRadius: 12, padding: 10 }}>
+                <div style={{ fontWeight: 700, color: '#FFB347' }}>{t.name}</div>
+                <div style={{ fontSize: 12, color: '#ccc' }}>{t.location || '—'} · {t.category || '—'}</div>
+              </div>
+            ))}
+            {(searchResults.posts || []).slice(0, 3).map((p) => (
+              <div key={`post-${p.id}`} style={{ background: '#141414', border: `1px solid ${gold}`, borderRadius: 12, padding: 10 }}>
+                <div style={{ fontWeight: 700, color: '#fff' }}>{p.caption || 'Contenido'}</div>
+                <div style={{ fontSize: 12, color: '#888' }}>{p.media_url ? 'Media adjunta' : 'Sin media'} · {new Date(p.created_at).toLocaleDateString()}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <section style={{ padding: '12px 16px', overflowX: 'auto', display: 'flex', gap: 12 }}>
         {seedStories.map(story => (
@@ -398,6 +792,11 @@ export default function HomePage() {
       </section>
 
       <main style={{ padding: '0 16px 80px' }}>
+        {/* Componente de subida de contenido */}
+        <div style={{ marginBottom: '24px' }}>
+          <UploadContenidoComponent />
+        </div>
+
         {/* Invitaciones a torneos */}
         <TournamentInviteBanner />
         {/* Posts de usuarios seguidos */}
@@ -414,29 +813,14 @@ export default function HomePage() {
           )}
           <div style={{ display: 'grid', gap: 16 }}>
             {filteredPosts.map(post => (
-              <article key={post.id} style={{ background: darkCard, borderRadius: 16, overflow: 'hidden', border: `1px solid ${gold}` }}>
-                <header style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12 }}>
-                  <img src={post.avatar} alt={post.user} style={{ width: 40, height: 40, borderRadius: '50%' }} />
-                  <div>
-                    <div style={{ fontWeight: 700 }}>{post.user}</div>
-                    <div style={{ fontSize: 12, color: '#ccc' }}>{post.title}</div>
-                  </div>
-                  <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, fontSize: 12 }}>
-                    {post.tags.map(tag => (<span key={tag} style={{ background: '#222', padding: '4px 8px', borderRadius: 12 }}>{tag}</span>))}
-                  </div>
-                </header>
-                <div>
-                  <img src={post.image} alt={post.title} style={{ width: '100%', display: 'block' }} />
-                </div>
-                <div style={{ padding: 12, color: '#ddd' }}>{post.description}</div>
-                <footer style={{ padding: '0 12px 12px' }}>
-                  <div style={{ display: 'flex', gap: 12 }}>
-                    <button onClick={() => onLike(post.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'transparent', border: `1px solid ${gold}`, color: gold, padding: 8, borderRadius: 8, cursor: 'pointer' }}>⚽ {post.likes}</button>
-                    <button onClick={() => setSelectedPostForComments(post.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'transparent', border: `1px solid ${gold}`, color: gold, padding: 8, borderRadius: 8, cursor: 'pointer' }}>💬 {post.comments}</button>
-                    <button onClick={() => onShare(post.id)} style={{ flex: 1, background: 'transparent', border: `1px solid ${gold}`, color: gold, padding: 8, borderRadius: 8, cursor: 'pointer' }}>📤</button>
-                  </div>
-                </footer>
-              </article>
+              <PostCard
+                key={post.id}
+                post={{ ...post, isLiked: likedMap[post.id] || false }}
+                user={user}
+                onLike={onLike}
+                setSelectedPostForComments={setSelectedPostForComments}
+                loadPosts={loadPosts}
+              />
             ))}
           </div>
         </div>
@@ -485,13 +869,7 @@ export default function HomePage() {
         onClose={() => setSelectedPostForComments(null)}
       />
 
-      <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#111', borderTop: `1px solid ${gold}`, display: 'flex', justifyContent: 'space-around', padding: '10px 0' }}>
-        <button onClick={goHome}>🏠 Home</button>
-        <button onClick={goMarket}>🛒 Market</button>
-        <button onClick={goVideos}>🎥 Videos</button>
-        <button onClick={goAlerts}>🔔 Alertas</button>
-        <button onClick={goChat}>💬 Chat</button>
-      </nav>
+      <BottomNavBar />
 
       <button
         onClick={() => navigate('/crear-publicacion')}

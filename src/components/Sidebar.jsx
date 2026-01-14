@@ -1,7 +1,7 @@
 import React from 'react';
 
 const links = [
-  { label: 'Inicio', path: '/inicio' },
+  { label: 'Inicio', path: '/home' },
   { label: 'Perfil', path: '/perfil' },
   { label: 'Equipos', path: '/equipos' },
   { label: 'Torneos', path: '/torneos' },

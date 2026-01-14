@@ -12,9 +12,15 @@ export function useWebSocketLikes(onNewLike, options = {}) {
     if (!enabled) return () => {};
 
     const isLocal = typeof window !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
-    const viteEnv = (typeof globalThis !== 'undefined' && globalThis.import && globalThis.import.meta && globalThis.import.meta.env)
-      ? globalThis.import.meta.env
-      : undefined;
+    let viteEnv = undefined;
+    try {
+      // Safely access import.meta in Vite environments
+      if (typeof globalThis !== 'undefined' && typeof globalThis.import !== 'undefined') {
+        viteEnv = globalThis.import.meta?.env;
+      }
+    } catch (e) {
+      // Silently ignore in Jest/Node environments
+    }
     const wsFromEnv = (typeof process !== 'undefined' && process.env && (process.env.VITE_WS_URL || process.env.WS_URL))
       || (typeof window !== 'undefined' && window.__ENV && (window.__ENV.VITE_WS_URL || window.__ENV.WS_URL))
       || (viteEnv && (viteEnv.VITE_WS_URL || viteEnv.WS_URL));

@@ -13,6 +13,8 @@ const isNode = typeof window === 'undefined';
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
     console.error('❌ Variables de entorno de Supabase faltantes');
+    console.error('   VITE_SUPABASE_URL:', SUPABASE_URL ? '✓ presente' : '✗ FALTA');
+    console.error('   VITE_SUPABASE_ANON_KEY:', SUPABASE_KEY ? '✓ presente' : '✗ FALTA');
     throw new Error('Configuración de Supabase incompleta');
 }
 
@@ -28,13 +30,13 @@ const supabaseOptions = isJest ? {
     },
     global: { headers: { 'x-client-info': 'futpro-vip@test', 'x-application-name': 'FutPro VIP Test' } },
     realtime: { params: { eventsPerSecond: 0 } },
-    db: { schema: 'api' }
+    db: { schema: 'public' }
 } : {
     auth: {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true,
-        flowType: 'pkce',
+        flowType: 'implicit',
         storage: (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : undefined,
         storageKey: 'futpro-auth-token'
     },
@@ -45,7 +47,7 @@ const supabaseOptions = isJest ? {
         }
     },
     realtime: { params: { eventsPerSecond: 10 } },
-    db: { schema: 'api' }
+    db: { schema: 'public' }
 };
 
 if (!isJest) {

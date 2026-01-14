@@ -61,16 +61,7 @@ const MainLayout = () => {
             <h1 className="futpro-title">FutPro</h1>
           </div>
 
-          <div className="search-section">
-            <input
-              type="text"
-              placeholder="Buscar equipos, usuarios..."
-              className="search-input"
-            />
-            <button className="search-btn">
-              <i className="fas fa-search"></i>
-            </button>
-          </div>
+          <div style={{ flex: 1 }}></div>
 
           <button className="hamburger-btn" onClick={toggleMenu}>
             <i className="fas fa-bars"></i>

@@ -1165,8 +1165,7 @@ const AuthPageUnificada = () => {
                   transition: 'all 0.3s ease'
                 }}
               >
-                {/* Botón 'Crear mi perfil FutPro completo' eliminado */}
-                {/* Botón rojo 'IR A REGISTRO' eliminado por requerimiento */}
+                Crear Cuenta
               </button>
 
               {/* Separador O */}

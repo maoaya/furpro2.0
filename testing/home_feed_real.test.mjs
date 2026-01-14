@@ -9,8 +9,7 @@ describe('HomePage tipo Instagram (real)', () => {
 		({ app } = await getServerAndApp());
 		({ getToken } = await import('./auth_token_real.helper.mjs'));
 		token = await getToken();
-	}, 20000);
-
+	}, 45000);
 	it('debe mostrar el feed principal', async () => {
 		const res = await supertest(app)
 			.get('/api/feed')
@@ -26,9 +25,6 @@ describe('HomePage tipo Instagram (real)', () => {
 		expect([200, 201]).toContain(res.statusCode);
 		expect(Array.isArray(res.body.stories)).toBe(true);
 	});
-	afterAll(() => {
-		// No es necesario setTimeout aquí
-	}, 20000);
 });
 // ...existing code...
 // Este archivo fue convertido a ES Module

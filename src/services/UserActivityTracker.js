@@ -311,8 +311,8 @@ class UserActivityTracker {
     console.log(`💾 Procesando ${actionsToProcess.length} acciones...`);
 
     try {
-      // Guardar en Supabase
-      const { error } = await supabase
+      // Intentar guardar primero en api.user_activities
+      let result = await supabase
         .from('api.user_activities')
         .insert(actionsToProcess.map(action => ({
           id: action.id,
@@ -322,35 +322,52 @@ class UserActivityTracker {
           created_at: new Date(action.created).toISOString()
         })));
 
+      let error = result.error;
+
+      // Si falla api.user_activities por schema/tabla inexistente, intentar con public.user_activities
+      if (error && (error.code === 'PGRST106' || error.code === '42P01')) {
+        console.warn('⚠️ api.user_activities no existe, intentando public.user_activities');
+        result = await supabase
+          .from('user_activities')
+          .insert(actionsToProcess.map(action => ({
+            id: action.id,
+            user_id: action.userId,
+            action_type: action.actionType,
+            action_data: action.data,
+            created_at: new Date(action.created).toISOString()
+          })));
+        error = result.error;
+      }
+
       if (error) {
-        console.error('❌ Error guardando actividades:', error);
-        
-        // Si el error es de schema (PGRST106), deshabilitar tracking permanentemente
-        if (error.code === 'PGRST106') {
-          console.warn('⚠️ TRACKING DESHABILITADO: Error de schema en Supabase');
+        console.error('❌ Error guardando actividades:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          table: 'user_activities (ambos schemas)'
+        });
+
+        // Si el error es de schema/tabla no existe después de ambos intentos, deshabilitar tracking
+        if (error.code === 'PGRST106' || error.code === '42P01') {
+          console.warn('⚠️ TRACKING DESHABILITADO: Tabla user_activities no existe en ningún schema');
           localStorage.setItem('futpro_tracking_disabled', 'true');
           this.pendingActions = []; // Limpiar cola
           clearInterval(this.autoSaveInterval); // Detener auto-save
           this.disabled = true;
           return;
         }
-        
+
         // Volver a añadir a la cola con incremento de intentos (solo para otros errores)
-        actionsToProcess.forEach(action => {
-          action.attempts += 1;
-          if (action.attempts < 3) {
-            this.pendingActions.push(action);
-          }
-        });
+        actionsToProcess.forEach(action => { action.attempts += 1; });
+        // Restaurar acciones en caso de error
+        this.pendingActions.unshift(...actionsToProcess);
       } else {
-        console.log(`✅ ${actionsToProcess.length} acciones guardadas exitosamente`);
+        console.log(`✅ Acciones guardadas: ${actionsToProcess.length}`);
         this.lastSave = new Date().toISOString();
-        
-        // Limpiar localStorage
-        localStorage.removeItem('futpro_pending_actions');
       }
-    } catch (error) {
-      console.error('💥 Error crítico guardando:', error);
+    } catch (err) {
+      console.error('💥 Error crítico guardando:', err);
       // Restaurar acciones en caso de error crítico
       this.pendingActions.unshift(...actionsToProcess);
     }

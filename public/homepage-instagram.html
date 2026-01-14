@@ -575,6 +575,12 @@
             </div>
         </div>
         <div class="dropdown-menu" id="dropdownMenu" style="display:none;top:74px;right:48px;position:absolute;z-index:10000;overflow-y:auto;overflow-x:hidden;">
+                    <!-- TARJETA DE PERFIL -->
+                    <div class="profile-card" id="userProfileCard">
+                        <div class="profile-avatar" id="userAvatar">?</div>
+                        <div class="profile-name" id="userName">Usuario</div>
+                        <div class="profile-position" id="userPosition">Posición</div>
+                    </div>
                     <!-- SECCIÓN PRINCIPAL -->
                     <div class="menu-section-title">Principal</div>
                     <a href="#" class="dropdown-item" onclick="irAInicio(); return false;"><i class="fas fa-home"></i><span>Inicio</span></a>
@@ -743,6 +749,47 @@
         `;
         document.body.appendChild(modal);
         setTimeout(() => modal.remove(), 3000);
+    }
+
+    // ===== FUNCIÓN PARA CARGAR INFO DEL USUARIO EN EL MENÚ =====
+    function cargarInfoUsuario() {
+        try {
+            // Intentar obtener datos de carfutpro primero (más completo)
+            const cardData = JSON.parse(localStorage.getItem('futpro_user_card_data') || '{}');
+            const user = JSON.parse(localStorage.getItem('futpro_user') || '{}');
+            
+            // Usar datos de la card si están disponibles, sino usar datos básicos del usuario
+            const nombre = cardData.nombre || user.nombre || 'Usuario';
+            const apellido = cardData.apellido || user.apellido || '';
+            const nombreCompleto = apellido ? `${nombre} ${apellido}` : nombre;
+            const posicion = cardData.posicion || cardData.posicion_favorita || user.posicion || 'Jugador';
+            const avatarUrl = cardData.avatar_url || user.avatar || '';
+            
+            // Actualizar elementos del DOM
+            const userNameEl = document.getElementById('userName');
+            const userPositionEl = document.getElementById('userPosition');
+            const userAvatarEl = document.getElementById('userAvatar');
+            
+            if (userNameEl) userNameEl.textContent = nombreCompleto;
+            if (userPositionEl) userPositionEl.textContent = posicion;
+            
+            if (userAvatarEl) {
+                if (avatarUrl && avatarUrl.startsWith('http')) {
+                    // Si hay URL de foto, mostrar la imagen
+                    userAvatarEl.style.backgroundImage = `url(${avatarUrl})`;
+                    userAvatarEl.style.backgroundSize = 'cover';
+                    userAvatarEl.style.backgroundPosition = 'center';
+                    userAvatarEl.textContent = '';
+                } else {
+                    // Si no hay foto, mostrar inicial
+                    userAvatarEl.textContent = nombreCompleto.charAt(0).toUpperCase();
+                }
+            }
+            
+            console.log('✅ Info de usuario cargada:', { nombreCompleto, posicion, avatarUrl });
+        } catch (error) {
+            console.error('❌ Error al cargar info del usuario:', error);
+        }
     }
 
     // ===== INICIALIZACIÓN DE PERFIL =====
@@ -2313,6 +2360,7 @@
         const menu = document.getElementById('dropdownMenu');
         if (menu.style.display === 'none' || menu.style.display === '') {
             menu.style.display = 'block';
+            cargarInfoUsuario(); // Cargar info del usuario al abrir el menú
             setTimeout(() => menu.classList.add('show'), 10);
         } else {
             menu.classList.remove('show');
@@ -3851,16 +3899,32 @@
         }
         // Lógica para asignar Card al iniciar sesión
         function asignarCardAlIniciarSesion() {
-            const userData = localStorage.getItem('futpro_usuario');
-            if (userData) {
-                const user = JSON.parse(userData);
-                // Simulación: asignar card según nivel
-                let card = 'Bronce';
-                if (user.nivel === 'avanzado') card = 'Oro';
-                if (user.nivel === 'intermedio') card = 'Plata';
+            // Intentar desde múltiples fuentes
+            let user = null;
+            const futproUser = localStorage.getItem('futpro_user');
+            if (futproUser) {
+                try { user = JSON.parse(futproUser); } catch {}
+            }
+            
+            if (!user) {
+                const cardData = localStorage.getItem('futpro_user_card_data');
+                if (cardData) {
+                    try { user = JSON.parse(cardData); } catch {}
+                }
+            }
+            
+            if (user) {
+                // Asignar card según nivel
+                let card = user.card_tier || 'Bronce';
+                if (user.nivel_habilidad === 'Avanzado' || user.nivel_habilidad === 'Élite') card = 'Oro';
+                if (user.nivel_habilidad === 'Intermedio') card = 'Plata';
                 localStorage.setItem('futpro_card', card);
-                // Mostrar card en el menú
-                document.getElementById('profilePosition').textContent += ` • Card: ${card}`;
+                
+                // Actualizar posición con card tier
+                const profilePositionEl = document.getElementById('profilePosition');
+                if (profilePositionEl && !profilePositionEl.textContent.includes('Card:')) {
+                    profilePositionEl.textContent += ` • Card: ${card}`;
+                }
             }
         }
 
@@ -3886,24 +3950,73 @@
 
         // CARGAR PERFIL DEL USUARIO REGISTRADO
         function loadUserProfile() {
-            const userData = localStorage.getItem('futpro_usuario');
-            if (userData) {
-                const user = JSON.parse(userData);
-                
+            // Intentar cargar desde múltiples fuentes
+            let user = null;
+            
+            // 1. Intentar desde futpro_user (principal)
+            const futproUser = localStorage.getItem('futpro_user');
+            if (futproUser) {
+                try { user = JSON.parse(futproUser); } catch {}
+            }
+            
+            // 2. Fallback a pendingProfileData (draft de registro)
+            if (!user || !user.nombre) {
+                const pendingData = localStorage.getItem('pendingProfileData');
+                if (pendingData) {
+                    try { user = JSON.parse(pendingData); } catch {}
+                }
+            }
+            
+            // 3. Fallback a futpro_user_card_data
+            if (!user || !user.nombre) {
+                const cardData = localStorage.getItem('futpro_user_card_data');
+                if (cardData) {
+                    try { user = JSON.parse(cardData); } catch {}
+                }
+            }
+            
+            if (user && user.nombre) {
                 // Actualizar información del perfil en el menú
-                document.getElementById('profileName').textContent = `${user.nombre} ${user.apellido}`;
-                document.getElementById('profilePosition').textContent = user.posicion || 'Jugador';
+                const nombreCompleto = user.apellido 
+                    ? `${user.nombre} ${user.apellido}` 
+                    : user.nombre;
                 
-                // Crear avatar con iniciales
-                const initials = `${user.nombre.charAt(0)}${user.apellido.charAt(0)}`.toUpperCase();
-                document.getElementById('profileAvatar').textContent = initials;
+                const profileNameEl = document.getElementById('profileName');
+                const profilePositionEl = document.getElementById('profilePosition');
+                const profileAvatarEl = document.getElementById('profileAvatar');
                 
-                console.log('Perfil cargado:', user);
+                if (profileNameEl) {
+                    profileNameEl.textContent = nombreCompleto;
+                }
+                
+                if (profilePositionEl) {
+                    profilePositionEl.textContent = user.posicion || user.posicion_favorita || 'Jugador';
+                }
+                
+                // Mostrar avatar con foto o iniciales
+                if (profileAvatarEl) {
+                    if (user.avatar_url || user.avatarUrl) {
+                        const avatarUrl = user.avatar_url || user.avatarUrl;
+                        profileAvatarEl.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+                    } else {
+                        // Crear avatar con iniciales
+                        const apellido = user.apellido || '';
+                        const initials = apellido 
+                            ? `${user.nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase()
+                            : user.nombre.substring(0, 2).toUpperCase();
+                        profileAvatarEl.textContent = initials;
+                    }
+                }
+                
+                console.log('✅ Perfil cargado:', nombreCompleto);
             } else {
-                // Si no hay usuario registrado, redirigir al registro
-                console.log('No hay usuario registrado');
-                document.getElementById('profileName').textContent = 'Invitado';
-                document.getElementById('profilePosition').textContent = 'No registrado';
+                // Si no hay usuario registrado
+                console.log('⚠️ No hay usuario registrado');
+                const profileNameEl = document.getElementById('profileName');
+                const profilePositionEl = document.getElementById('profilePosition');
+                
+                if (profileNameEl) profileNameEl.textContent = 'Invitado';
+                if (profilePositionEl) profilePositionEl.textContent = 'No registrado';
             }
         }
 

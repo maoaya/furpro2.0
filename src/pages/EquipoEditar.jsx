@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import Button from './Button';
+
+// Componente Button simple si no existe en la ruta
+const Button = ({ children, onClick, disabled, style, className }) => (
+  <button 
+    onClick={onClick} 
+    disabled={disabled} 
+    style={style}
+    className={className}
+  >
+    {children}
+  </button>
+);
 
 export default function EquipoEditar() {
   const [form, setForm] = useState({ nombre: '', categoria: '', miembros: 0 });

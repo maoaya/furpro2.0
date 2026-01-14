@@ -82,12 +82,6 @@
             }
         };
 
-        // Eliminada función específica para ir a registro y referencias visuales al botón rojo
-        window.irARegistro = function() {
-            console.log('👤 Ejecutando navegación específica a registro...');
-            window.navegarUltraRobusto('/registro-nuevo', 'navegación a registro');
-        };
-
         // Función específica para ir al home
         window.irAHome = function() {
             console.log('🏠 Ejecutando navegación específica al home...');
@@ -150,7 +144,6 @@
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = {
             navegarUltraRobusto: window.navegarUltraRobusto,
-            irARegistro: window.irARegistro,
             irAHome: window.irAHome
         };
     }

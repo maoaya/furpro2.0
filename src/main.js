@@ -523,7 +523,7 @@ class FutProApp {
   }
 
     // Registrar SW unificado sin caché para evitar servir HTML obsoleto
-    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
       try {
         navigator.serviceWorker.register('/sw.js')
           .then(reg => console.log('🔔 SW registrado (main.js)', reg.scope))

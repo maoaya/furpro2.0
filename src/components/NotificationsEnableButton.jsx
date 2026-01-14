@@ -1,7 +1,14 @@
 import React, { useState } from 'react'
 
 export default function NotificationsEnableButton() {
-  const [status, setStatus] = useState(Notification?.permission || 'default')
+  const getInitialNotificationStatus = () => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      return window.Notification.permission || 'default'
+    }
+    return 'default'
+  }
+  
+  const [status, setStatus] = useState(getInitialNotificationStatus())
 
   const enable = async () => {
     try {

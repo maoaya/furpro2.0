@@ -35,13 +35,11 @@
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
-            <version>3.1.0</version>
         </dependency>
         <!-- Hibernate Core (proveedor JPA) -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>6.6.33.Final</version>
         </dependency>
         <!-- H2 Database (puedes cambiar por MySQL, PostgreSQL, etc.) -->
         <dependency>

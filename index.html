@@ -20,6 +20,14 @@
 
   <!-- Security -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https: http: wss: ws:;">
+  
+  <!-- Ocultar botón de emergencia IR A REGISTRO -->
+  <style>
+    #emergency-nav, 
+    [aria-label="IR A REGISTRO"] {
+      display: none !important;
+    }
+  </style>
 </head>
 <body>
   <div id="root"></div>
@@ -31,20 +39,7 @@
     <button onclick="document.getElementById('error-overlay').style.display='none'" style="position:fixed; right:20px; top:20px;">Cerrar</button>
   </div>
 
-  <!-- 🚨 BOTON DE EMERGENCIA - Por si JavaScript falla completamente -->
-  <div id="emergency-nav" style="position: fixed; top: 10px; right: 10px; z-index: 9999; display: none;">
-    <a href="/registro-nuevo" style="
-      background: #dc2626;
-      color: white;
-      padding: 10px 15px;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
-    ">🚨 IR A REGISTRO</a>
-  </div>
-
-  <!-- 🔧 SCRIPT GLOBAL DE NAVEGACION ULTRA-ROBUSTO -->
+  <!--  SCRIPT GLOBAL DE NAVEGACION ULTRA-ROBUSTO -->
   <script>
     (function() {
       'use strict';

@@ -27,6 +27,7 @@ export default function RegistroPerfil() {
   }, [location.state]);
 
   const [nombre, setNombre] = useState(draftInicial.nombre || '');
+  const [apellido, setApellido] = useState(draftInicial.apellido || '');
   const [ciudad, setCiudad] = useState(draftInicial.ciudad || '');
   const [pais, setPais] = useState(draftInicial.pais || '');
   const [posicion, setPosicion] = useState(draftInicial.posicion || 'Flexible');
@@ -45,7 +46,7 @@ export default function RegistroPerfil() {
   useEffect(() => {
     const draft = {
       ...(draftInicial || {}),
-      nombre, ciudad, pais,
+      nombre, apellido, ciudad, pais,
       posicion,
       nivel_habilidad: nivel,
       equipo, avatar_url: avatar,
@@ -83,7 +84,7 @@ export default function RegistroPerfil() {
         await set(ref(database, `autosave/carfutpro/${uid}`), draft);
       } catch {}
     })();
-  }, [nombre, ciudad, pais, posicion, nivel, equipo, avatar, categoria, edad, peso, pie, estatura]);
+  }, [nombre, apellido, ciudad, pais, posicion, nivel, equipo, avatar, categoria, edad, peso, pie, estatura]);
 
   const continuar = async () => {
     setMsg('');
@@ -111,12 +112,14 @@ export default function RegistroPerfil() {
       const payload = {
         user_id: userId,
         nombre,
+        apellido,
         ciudad,
         pais,
         posicion,
         nivel_habilidad: nivel,
         equipo,
         avatar_url: avatarFallback,
+        photo_url: avatarFallback,
         edad: edad ? Number(edad) : null,
         peso: peso ? Number(peso) : null,
         pie,
@@ -210,6 +213,10 @@ export default function RegistroPerfil() {
           <div style={{ display: 'grid', gap: 8 }}>
             <label style={{ color: '#bbb' }}>Nombre</label>
             <input value={nombre} onChange={(e)=>setNombre(e.target.value)} placeholder="Tu nombre" style={{ padding: 12, background:'#1c1c1c', color:'#eee', border:'1px solid #333', borderRadius: 10 }} />
+          </div>
+          <div style={{ display: 'grid', gap: 8 }}>
+            <label style={{ color: '#bbb' }}>Apellido</label>
+            <input value={apellido} onChange={(e)=>setApellido(e.target.value)} placeholder="Tu apellido" style={{ padding: 12, background:'#1c1c1c', color:'#eee', border:'1px solid #333', borderRadius: 10 }} />
           </div>
           <div style={{ display: 'grid', gap: 8, gridTemplateColumns: '1fr 1fr', gapRow: 10, gapColumn: 10 }}>
             <div>

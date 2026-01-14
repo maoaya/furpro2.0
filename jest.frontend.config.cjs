@@ -13,6 +13,7 @@ module.exports = {
     '/src/.*\\.cy\\.spec\\.js$'
   ],
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: { url: 'http://localhost' },
   transform: {
     '^.+\\.[jt]sx?$': 'babel-jest'
   },

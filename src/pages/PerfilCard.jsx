@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import supabase from '../supabaseClient';
-import { calculateTierFromPoints, CARD_TIERS } from '../services/CardService';
+import cardManager, { CARD_TIERS } from '../services/CardManager';
 
 const PerfilCard = () => {
   const navigate = useNavigate();
@@ -12,181 +12,153 @@ const PerfilCard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showHelp, setShowHelp] = useState(false);
+  const [progreso, setProgreso] = useState(null);
   
   useEffect(() => {
     cargarCard();
   }, [user?.id]);
 
   const cargarCard = async () => {
-    if (!user) {
-      navigate('/');
+    console.log('🔍 Iniciando carga de card...');
+    console.log('👤 Usuario actual:', user);
+    
+    // Primero intentar cargar desde location state o localStorage
+    const cardFromState = location.state?.cardData;
+    const cardFromLocalStorage = localStorage.getItem('futpro_user_card_data');
+    
+    console.log('📦 Card desde state:', cardFromState);
+    console.log('💾 Card desde localStorage:', cardFromLocalStorage ? 'Disponible' : 'No disponible');
+    
+    if (cardFromState) {
+      console.log('✅ Usando card desde navigation state');
+      setCardData(cardFromState);
+      setLoading(false);
       return;
     }
-
-    setLoading(true);
-    try {
-      console.log('📍 Cargando card para user_id:', user.id);
-      
-      let { data: card, error } = await supabase
-            .from('carfutpro')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('❌ Error SELECT en PerfilCard:');
-        console.error('Full error object:', error);
-        console.error('Error breakdown:', {
-          code: error.code,
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          status: error.status
-        });
-        console.error('⚠️ Tabla carfutpro no existe o RLS bloqueando. Ejecutar cards_system.sql');
-        throw error;
+    
+    if (cardFromLocalStorage) {
+      try {
+        const parsedCard = JSON.parse(cardFromLocalStorage);
+        console.log('✅ Usando card desde localStorage:', parsedCard);
+        setCardData(parsedCard);
+        setLoading(false);
+        return;
+      } catch (e) {
+        console.error('❌ Error parseando localStorage card:', e);
       }
+    }
+    
+    if (!user) {
+      console.warn('⚠️ No hay usuario autenticado, redirigiendo...');
+      navigate('/')
+      return
+    }
+
+    setLoading(true)
+    try {
+      console.log('📍 Cargando card para user_id:', user.id)
+      
+      const card = await cardManager.getCard(user.id)
 
       if (!card) {
-        console.warn('⚠️ Card no encontrada. Intentando crear...');
-        await crearCardFallback();
-        return;
+        console.warn('⚠️ Card no encontrada. Intentando crear fallback...')
+        await crearCardFallback()
+        return
       }
 
-      // Usar datos directamente de la card - NO hacer fallback a localStorage/Google
-      console.log('✅ Card cargada desde DB:', card);
-      const puntosNormalizados = computePuntos(card);
-      const normalizedCard = { ...card, puntos_totales: puntosNormalizados };
-      setCardData(normalizedCard);
-      setProgreso(calcularProgreso(puntosNormalizados));
+      console.log('✅ Card cargada:', card)
+      const normalized = {
+        ...card,
+        puntos_totales: Number(card.puntos_totales) || 0
+      }
+      setCardData(normalized)
+      setProgreso(calcularProgreso(normalized.puntos_totales))
     } catch (err) {
       console.error('❌ Error cargando card:', {
         message: err.message,
         details: err.details,
         hint: err.hint,
-        code: err.code,
-        stack: err.stack
-      });
+        code: err.code
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   };
 
   const crearCardFallback = async () => {
-    console.log('🔧 Fallback: Creando card...');
+    console.log('🔧 Fallback: Creando card...')
     
-    // Intentar obtener datos pendientes del registro
-    const pendingDataStr = localStorage.getItem('pendingProfileData');
-    const draftStr = localStorage.getItem('draft_carfutpro');
-    let formData = {};
+    const pendingDataStr = localStorage.getItem('pendingProfileData')
+    const draftStr = localStorage.getItem('draft_carfutpro')
+    let formData = {}
 
     try {
       if (pendingDataStr) {
-        formData = { ...formData, ...(JSON.parse(pendingDataStr) || {}) };
-        console.log('📄 pendingProfileData:', formData);
+        formData = { ...formData, ...JSON.parse(pendingDataStr) }
       }
     } catch (e) {
-      console.error('Error parsing pendingProfileData:', e);
+      console.error('Error parsing pendingProfileData:', e)
     }
 
     try {
       if (draftStr) {
-        formData = { ...formData, ...(JSON.parse(draftStr) || {}) };
-        console.log('📄 draft_carfutpro:', formData);
+        formData = { ...formData, ...JSON.parse(draftStr) }
       }
     } catch (e) {
-      console.error('Error parsing draft_carfutpro:', e);
+      console.error('Error parsing draft_carfutpro:', e)
     }
 
-    // Construir card con datos mínimos requeridos por schema
-    const cardData = {
-      user_id: user.id,
-      nombre: formData.nombre || user.user_metadata?.name || user.email?.split('@')[0] || 'Usuario',
-      avatar_url: formData.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '',
-      ciudad: formData.ciudad || null,
-      pais: formData.pais || null,
-      posicion: formData.posicion || formData.posicion_favorita || null,
-      edad: formData.edad ? Number(formData.edad) : null,
-      pie: formData.pie || null,
-      estatura: formData.estatura ? Number(formData.estatura) : null,
-      equipo: formData.equipo || null,
-      nivel_habilidad: formData.nivel_habilidad || null,
-      categoria: formData.categoria || null,
-      puntos_totales: 35,
-      card_tier: 'futpro',
-      partidos_ganados: 0,
-      entrenamientos: 0,
-      amistosos: 0,
-      puntos_comportamiento: 0
-    };
-
-    console.log('📋 Insertando cardData:', cardData);
-
-    const { data: insertedCard, error: insertError } = await supabase
-        .from('carfutpro')
-      .insert([cardData])
-      .select();
-
-    if (insertError) {
-      console.error('❌ Error INSERT en PerfilCard fallback:');
-      console.error('Full error object:', insertError);
-      console.error('Error breakdown:', {
-        code: insertError.code,
-        message: insertError.message,
-        details: insertError.details,
-        hint: insertError.hint,
-        status: insertError.status
-      });
-      console.error('⚠️ SOLUCIÓN: Ejecutar cards_system.sql en Supabase (ver EJECUTAR_SQL_AHORA.md)');
-      setLoading(false);
-      return;
+    try {
+      const card = await cardManager.createCard(user.id, formData)
+      console.log('✅ Card creada en fallback:', card)
+      const normalized = {
+        ...card,
+        puntos_totales: Number(card.puntos_totales) || 0
+      }
+      setCardData(normalized)
+      setProgreso(calcularProgreso(normalized.puntos_totales))
+      localStorage.removeItem('pendingProfileData')
+      localStorage.removeItem('draft_carfutpro')
+    } catch (insertError) {
+      console.error('❌ Error creando card fallback:', insertError)
+      setError(`No se pudo crear la card: ${insertError.message}`)
+    } finally {
+      setLoading(false)
     }
-
-    console.log('✅ Card creada en fallback:', insertedCard);
-    const normalized = insertedCard[0];
-    const puntosNormalizados = computePuntos(normalized);
-    const normalizedCard = { ...normalized, puntos_totales: puntosNormalizados };
-    setCardData(normalizedCard);
-    setProgreso(calcularProgreso(puntosNormalizados));
-    setLoading(false);
-    localStorage.removeItem('pendingProfileData');
   };
 
   const getTierColor = (tier) => {
-    const colors = {
-      futpro: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-      bronce: 'linear-gradient(135deg, #CD7F32 0%, #8B4513 100%)',
-      plata: 'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)',
-      oro: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-      diamante: 'linear-gradient(135deg, #B9F2FF 0%, #00CED1 100%)',
-      leyenda: 'linear-gradient(135deg, #FF1493 0%, #8B008B 100%)'
-    };
-    return colors[tier] || colors.futpro;
-  };
+    const tierData = Object.values(CARD_TIERS).find(t => t.tier === tier)
+    if (!tierData) return 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)'
+    
+    const colorMap = {
+      futpro: `linear-gradient(135deg, ${tierData.color} 0%, #FFA500 100%)`,
+      bronce: `linear-gradient(135deg, ${tierData.color} 0%, #8B4513 100%)`,
+      plata: `linear-gradient(135deg, ${tierData.color} 0%, #808080 100%)`,
+      oro: `linear-gradient(135deg, ${tierData.color} 0%, #FFA500 100%)`,
+      diamante: `linear-gradient(135deg, ${tierData.color} 0%, #00CED1 100%)`,
+      leyenda: `linear-gradient(135deg, ${tierData.color} 0%, #8B008B 100%)`
+    }
+    return colorMap[tier] || `linear-gradient(135deg, ${tierData.color} 0%, rgba(${tierData.color}, 0.5) 100%)`
+  }
 
   const getTierLabel = (tier) => {
-    const labels = {
-      futpro: 'FUTPRO',
-      bronce: 'BRONCE',
-      plata: 'PLATA',
-      oro: 'ORO',
-      diamante: 'DIAMANTE',
-      leyenda: 'LEYENDA'
-    };
-    return labels[tier] || 'FUTPRO';
-  };
+    const tierData = Object.values(CARD_TIERS).find(t => t.tier === tier)
+    return tierData ? tierData.label.split(' ')[1] : 'FUTPRO'
+  }
 
-  const computePuntos = (card) => {
-    // Base inicial 15 puntos para tier futpro, pasa a bronce al llegar a 35
-    const base = card?.card_tier === 'futpro' ? 15 : 35;
-    const partidosGanados = Number(card?.partidos_ganados) || 0;
-    const empates = Number(card?.empates) || 0;
-    const conducta = Number(card?.puntos_comportamiento) || 0;
-    const campeon = Number(card?.campeonatos_ganados) || 0;
-    const calculado = base + partidosGanados * 1 + empates * 0.5 + conducta * 1 + campeon * 3;
-    const stored = Number(card?.puntos_totales);
-    return Number.isFinite(stored) ? Math.max(stored, calculado) : calculado;
-  };
+  const calcularProgreso = (puntos) => {
+    const progress = cardManager.calculateProgress(puntos)
+    return {
+      tierActual: progress.current?.tier,
+      tierSiguiente: progress.next?.tier,
+      puntosParaSiguiente: progress.pointsToNext,
+      porcentaje: Math.round(progress.percentage),
+      config: progress.current
+    }
+  }
+
+  const getTierConfig = () => CARD_TIERS
 
   if (loading) {
     return (
@@ -229,14 +201,14 @@ const PerfilCard = () => {
   }
 
   const tier = cardData.card_tier || 'bronce';
-  const puntos = cardData.puntos_totales ?? 15;
+  const puntos = cardData.puntos_totales ?? 0;
 
-  // Mapeo de categorías
+  // Mapeo de categorías (deben coincidir con valores en BD)
   const categoriaLabels = {
-    masculino: 'Masculina',
-    femenino: 'Femenina',
-    infantil_masculino: 'Infantil Masculina',
-    infantil_femenino: 'Infantil Femenina',
+    masculina: 'Masculina',
+    femenina: 'Femenina',
+    infantil_masculina: 'Infantil Masculina',
+    infantil_femenina: 'Infantil Femenina',
     mixto: 'Mixto',
     infantil: 'Infantil'
   };
@@ -282,9 +254,9 @@ const PerfilCard = () => {
         background: getTierColor(tier),
         borderRadius: '20px',
         padding: '25px',
-        boxShadow: `0 15px 50px ${progreso?.config?.color}99`,
+        boxShadow: `0 15px 50px ${progreso?.config?.color || '#FFD700'}99`,
         position: 'relative',
-        border: `4px solid ${progreso?.config?.color}`,
+        border: `4px solid ${progreso?.config?.color || '#FFD700'}`,
         marginBottom: '30px',
         overflow: 'hidden'
       }}>
@@ -313,7 +285,127 @@ const PerfilCard = () => {
           </div>
         </div>
 
-        {/* Foto + Calificación al lado (FIFA style) */}
+        {/* Avatar y nombre */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '15px',
+          marginBottom: '15px'
+        }}>
+          <div style={{
+            width: '150px',
+            height: '150px',
+            borderRadius: '50%',
+            background: '#fff',
+            border: '3px solid #FFD700',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <img src={displayAvatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Avatar" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontSize: '1.4rem',
+              fontWeight: 'bold',
+              color: '#fff',
+              textShadow: '0 2px 4px rgba(0,0,0,0.8)'
+            }}>
+              {cardData.nombre}
+            </div>
+            <div style={{
+              fontSize: '0.9rem',
+              color: '#FFD700',
+              marginTop: '3px'
+            }}>
+              {displayUbicacion}
+            </div>
+            <div style={{
+              fontSize: '0.85rem',
+              color: '#fff',
+              marginTop: '3px'
+            }}>
+              {displayCategoria}
+            </div>
+          </div>
+          <div style={{
+            background: '#FFD700',
+            color: '#000',
+            padding: '12px 18px',
+            borderRadius: '12px',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: '1.2rem',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.3)'
+          }}>
+            {puntos}
+            <div style={{ fontSize: '0.7rem', fontWeight: 'normal', marginTop: '2px' }}>RATING</div>
+          </div>
+        </div>
+
+        {/* Atributos en grid tipo FIFA */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '10px',
+          marginBottom: '15px',
+          background: 'rgba(0,0,0,0.3)',
+          padding: '12px',
+          borderRadius: '10px'
+        }}>
+          <div style={{ color: '#FFD700', fontSize: '0.8rem' }}>
+            <div style={{ fontWeight: 'bold', color: '#fff' }}>{displayPosicion}</div>
+            <div>POSICIÓN</div>
+          </div>
+          <div style={{ color: '#FFD700', fontSize: '0.8rem' }}>
+            <div style={{ fontWeight: 'bold', color: '#fff' }}>{displayPie}</div>
+            <div>PIE</div>
+          </div>
+          <div style={{ color: '#FFD700', fontSize: '0.8rem' }}>
+            <div style={{ fontWeight: 'bold', color: '#fff' }}>{displayEstatura}</div>
+            <div>ALTURA</div>
+          </div>
+          <div style={{ color: '#FFD700', fontSize: '0.8rem' }}>
+            <div style={{ fontWeight: 'bold', color: '#fff' }}>{displayEdad}</div>
+            <div>EDAD</div>
+          </div>
+          <div style={{ color: '#FFD700', fontSize: '0.8rem' }}>
+            <div style={{ fontWeight: 'bold', color: '#fff' }}>{displayPeso}</div>
+            <div>PESO</div>
+          </div>
+          <div style={{ color: '#FFD700', fontSize: '0.8rem' }}>
+            <div style={{ fontWeight: 'bold', color: '#fff' }}>{cardData.nivel_habilidad || 'N/A'}</div>
+            <div>NIVEL</div>
+          </div>
+        </div>
+
+        {/* Estadísticas */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '10px',
+          background: 'rgba(0,0,0,0.3)',
+          padding: '12px',
+          borderRadius: '10px'
+        }}>
+          <div style={{
+            textAlign: 'center',
+            borderRight: '1px solid #FFD700',
+            paddingRight: '10px'
+          }}>
+            <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#FFD700' }}>⚽ {cardData.partidos_ganados || 0}</div>
+            <div style={{ fontSize: '0.75rem', color: '#fff' }}>PARTIDOS</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#FFD700' }}>🎖️ {cardData.puntos_comportamiento || 0}</div>
+            <div style={{ fontSize: '0.75rem', color: '#fff' }}>CONDUCTA</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Progreso hacia siguiente tier */}
+      {progreso && progreso.tierSiguiente && (
         <div style={{
           display: 'flex',
           gap: '20px',
@@ -410,86 +502,13 @@ const PerfilCard = () => {
             </div>
           </div>
         </div>
+      )}
 
-        {/* Posición y Datos Físicos */}
-        <div style={{
-          background: 'rgba(0,0,0,0.3)',
-          borderRadius: '12px',
-          padding: '15px',
-          marginBottom: '15px'
-        }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <div style={{ color: '#fff', fontSize: '0.9rem' }}>
-              <div style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '1.1rem' }}>{displayPosicion}</div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>POSICIÓN</div>
-            </div>
-            <div style={{ color: '#fff', fontSize: '0.9rem' }}>
-              <div style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '1.1rem' }}>{displayPie}</div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>PIE</div>
-            </div>
-            <div style={{ color: '#fff', fontSize: '0.9rem' }}>
-              <div style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '1.1rem' }}>{displayEstatura}</div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>ALTURA</div>
-            </div>
-            <div style={{ color: '#fff', fontSize: '0.9rem' }}>
-              <div style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '1.1rem' }}>{displayEdad}</div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>EDAD</div>
-            </div>
-            <div style={{ color: '#fff', fontSize: '0.9rem' }}>
-              <div style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '1.1rem' }}>{displayPeso}</div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>PESO</div>
-            </div>
-            <div style={{ color: '#fff', fontSize: '0.9rem' }}>
-              <div style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '1.1rem' }}>{cardData.nivel_habilidad || '—'}</div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>NIVEL</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Estadísticas */}
-        <div style={{
-          background: 'rgba(0,0,0,0.3)',
-          borderRadius: '12px',
-          padding: '15px',
-          marginBottom: '15px'
-        }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-              <span style={{ color: '#fff', fontSize: '0.9rem' }}>⚽ PARTIDOS</span>
-              <span style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '1.2rem' }}>{cardData.partidos_ganados || 0}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-              <span style={{ color: '#fff', fontSize: '0.9rem' }}>🏋️ ENTRENOS</span>
-              <span style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '1.2rem' }}>{cardData.entrenamientos || 0}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-              <span style={{ color: '#fff', fontSize: '0.9rem' }}>🤝 AMISTOSOS</span>
-              <span style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '1.2rem' }}>{cardData.amistosos || 0}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-              <span style={{ color: '#fff', fontSize: '0.9rem' }}>⭐ CONDUCTA</span>
-              <span style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '1.2rem' }}>{cardData.puntos_comportamiento || 0}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div style={{
-          textAlign: 'center',
-          color: '#fff',
-          fontSize: '0.9rem',
-          opacity: 0.85,
-          letterSpacing: '2px',
-          paddingTop: '10px',
-          borderTop: '1px solid rgba(255,255,255,0.2)'
-        }}>
-          ⚽ CARD FUTPRO • {getTierLabel(tier)}
-        </div>
-      </div>
-
+      {/* Progreso hacia siguiente tier */}
       {progreso && progreso.tierSiguiente && (
         <div style={{
-          width: '350px',
+          width: '100%',
+          maxWidth: '420px',
           background: 'rgba(255,255,255,0.1)',
           borderRadius: '15px',
           padding: '20px',

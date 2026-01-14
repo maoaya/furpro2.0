@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 const SECCIONES = [
   { nombre: 'Inicio', icono: '🏠', ruta: '/', categoria: 'Principal' },
   { nombre: 'Mi Perfil', icono: '👤', ruta: '/perfil', categoria: 'Perfil' },
+  { nombre: 'Perfil (Nuevo)', icono: '🎯', ruta: '/perfil/me', categoria: 'Perfil' },
   { nombre: 'Editar Perfil', icono: '✏️', ruta: '/editar-perfil', categoria: 'Perfil' },
   { nombre: 'Mis Estadísticas', icono: '📊', ruta: '/estadisticas', categoria: 'Perfil' },
   { nombre: 'Ver Equipos', icono: '👥', ruta: '/equipos', categoria: 'Equipos & Torneos' },
@@ -26,6 +27,7 @@ const SECCIONES = [
   { nombre: 'Configuración', icono: '🔧', ruta: '/configuracion', categoria: 'Sistema' },
   { nombre: 'Soporte', icono: '🆘', ruta: '/soporte', categoria: 'Sistema' },
   { nombre: 'Privacidad', icono: '🛡️', ruta: '/privacidad', categoria: 'Sistema' }
+  ,{ nombre: 'Diagnóstico Funciones', icono: '🧪', ruta: '/diagnostico-funciones', categoria: 'Sistema' }
 ];
 
 export default function MenuHamburguesa({ isOpen, onClose }) {
@@ -86,38 +88,51 @@ export default function MenuHamburguesa({ isOpen, onClose }) {
           `}
         </style>
 
-        {/* Header */}
+        {/* Header - Estilo TopNavBar */}
         <div style={{
-          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-          padding: '24px',
+          background: '#0a0a0a',
+          padding: '20px',
           borderBottom: '2px solid #FFD700'
         }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: '16px'
+            marginBottom: user ? '16px' : '0'
           }}>
             <div style={{
-              fontSize: '28px',
+              fontSize: '24px',
               fontWeight: 'bold',
-              color: '#000'
+              color: '#FFD700',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
             }}>
-              ⚽ FutPro Menu
+              ⚽ <span style={{ fontWeight: '800' }}>FutPro</span>
             </div>
             <button
               onClick={onClose}
               style={{
-                background: 'rgba(0,0,0,0.2)',
-                border: 'none',
+                background: 'transparent',
+                border: '2px solid #FFD700',
                 borderRadius: '50%',
                 width: '36px',
                 height: '36px',
-                fontSize: '20px',
+                fontSize: '18px',
+                color: '#FFD700',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                transition: 'all 0.3s'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = '#FFD700';
+                e.target.style.color = '#0a0a0a';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'transparent';
+                e.target.style.color = '#FFD700';
               }}
             >
               ✕
@@ -129,28 +144,32 @@ export default function MenuHamburguesa({ isOpen, onClose }) {
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
-              background: 'rgba(0,0,0,0.2)',
+              background: '#1a1a1a',
               padding: '12px',
-              borderRadius: '12px'
+              borderRadius: '12px',
+              border: '1px solid #333'
             }}>
               <div style={{
-                width: '48px',
-                height: '48px',
+                width: '52px',
+                height: '52px',
                 borderRadius: '50%',
-                background: 'rgba(0,0,0,0.3)',
+                border: '2px solid #FFD700',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '24px'
+                overflow: 'hidden',
+                background: '#0a0a0a'
               }}>
-                👤
+                <img 
+                  src={user.user_metadata?.avatar_url || user.user_metadata?.photo_url || `https://i.pravatar.cc/96?u=${user.id}`} 
+                  alt="Avatar"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = '👤'; }}
+                />
               </div>
-              <div>
-                <div style={{ fontWeight: 'bold', color: '#000', fontSize: '16px' }}>
-                  {user.email?.split('@')[0]}
-                </div>
-                <div style={{ fontSize: '12px', color: '#333' }}>
-                  {user.email}
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 'bold', color: '#FFD700', fontSize: '16px' }}>
+                  {user.user_metadata?.full_name || user.user_metadata?.nombre || user.email?.split('@')[0]}
                 </div>
               </div>
             </div>

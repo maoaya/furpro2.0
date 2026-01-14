@@ -10,150 +10,143 @@ export default function MarketplaceCompleto() {
   const [precioMax, setPrecioMax] = useState(10000);
   const [categoria, setCategoria] = useState('todos');
   const [ubicacion, setUbicacion] = useState('todos');
+  const [ciudad, setCiudad] = useState('');
   const [ordenar, setOrdenar] = useState('recientes');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [userLat, setUserLat] = useState(null);
+  const [userLon, setUserLon] = useState(null);
+  const [distanciaMax, setDistanciaMax] = useState(100); // km
 
   useEffect(() => {
     loadProductos();
+    obtenerUbicacionUsuario();
 
-    // Suscripción realtime para nuevos productos y cambios en stock
     const channel = supabase
       .channel('marketplace:all')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'marketplace_items' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'api', table: 'products' }, () => {
         loadProductos();
       })
       .subscribe();
 
     return () => channel.unsubscribe();
-  }, []);
+  }, [search, precioMin, precioMax, categoria, ciudad, ordenar]);
+
+  const obtenerUbicacionUsuario = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserLat(pos.coords.latitude);
+          setUserLon(pos.coords.longitude);
+        },
+        (err) => console.log('Ubicación no disponible:', err.message)
+      );
+    }
+  };
 
   const loadProductos = async () => {
     try {
-      // Intentar cargar desde Supabase primero
-      const { data, error } = await supabase
-        .from('marketplace_items')
-        .select('*')
-        .order('created_at', { ascending: false });
+      let query = supabase
+        .from('products')
+        .select('*, seller:carfutpro!seller_id(nombre, apellido, avatar_url)')
+        .eq('is_active', true);
 
-      if (!error && data && data.length > 0) {
-        setProductos(data.map(item => ({
-          id: item.id,
-          titulo: item.name || item.title,
-          descripcion: item.description,
-          precio: item.price,
-          imagen: item.image_url || 'https://via.placeholder.com/300',
-          categoria: item.category || 'equipamiento',
-          ubicacion: item.location || 'Ubicación no especificada',
-          vendedor: {
-            nombre: item.seller_name || 'Vendedor',
-            avatar: '👤',
-            rating: 4.5
-          },
-          fecha: new Date(item.created_at),
-          stock: item.stock || 1
-        })));
-        return;
+      // Filtros de búsqueda
+      if (search.trim()) {
+        query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,category.ilike.%${search}%`);
       }
-    } catch (err) {
-      console.log('Tabla marketplace_items no existe, usando datos de ejemplo');
-    }
+      if (categoria !== 'todos') {
+        query = query.eq('category', categoria);
+      }
+      if (ciudad.trim()) {
+        query = query.ilike('city', `%${ciudad}%`);
+      }
+      if (precioMin > 0) {
+        query = query.gte('price', precioMin);
+      }
+      if (precioMax < 10000) {
+        query = query.lte('price', precioMax);
+      }
 
-    // Fallback: Productos de ejemplo
-    const productosData = [
-      {
-        id: 1,
-        titulo: 'Botines Nike Mercurial',
-        descripcion: 'Talla 42, muy buen estado, poco uso',
-        precio: 8500,
-        imagen: 'https://picsum.photos/300/300?random=1',
-        categoria: 'calzado',
-        ubicacion: 'Barcelona',
+      // Ordenamiento
+      switch (ordenar) {
+        case 'precio-bajo':
+          query = query.order('price', { ascending: true });
+          break;
+        case 'precio-alto':
+          query = query.order('price', { ascending: false });
+          break;
+        case 'popularidad':
+          query = query.order('views', { ascending: false });
+          break;
+        case 'recientes':
+        default:
+          query = query.order('created_at', { ascending: false });
+      }
+
+      const { data, error } = await query.limit(100);
+      if (error) throw error;
+
+      // Calcular distancia si hay ubicación del usuario
+      let formatted = (data || []).map(item => ({
+        id: item.id,
+        titulo: item.title,
+        descripcion: item.description,
+        precio: item.price,
+        imagen: item.images?.[0] || 'https://via.placeholder.com/300',
+        categoria: item.category || 'equipamiento',
+        ubicacion: item.location || item.city || 'Ubicación no especificada',
+        ciudad: item.city,
         vendedor: {
-          nombre: 'Lucia Martínez',
-          avatar: '👤',
-          rating: 4.8
-        },
-        fecha: new Date('2024-12-10')
-      },
-      {
-        id: 2,
-        titulo: 'Pelota Adidas',
-        descripcion: 'Pelota oficial de fútbol 11',
-        precio: 3200,
-        imagen: 'https://picsum.photos/300/300?random=2',
-        categoria: 'equipamiento',
-        ubicacion: 'Madrid',
-        vendedor: {
-          nombre: 'Carlos FC',
-          avatar: '👤',
+          nombre: item.seller?.nombre ? `${item.seller.nombre} ${item.seller.apellido || ''}`.trim() : 'Vendedor',
+          avatar: item.seller?.avatar_url || '👤',
           rating: 4.5
         },
-        fecha: new Date('2024-12-11')
-      },
-      {
-        id: 3,
-        titulo: 'Camiseta FC Barcelona',
-        descripcion: 'Original 2023/24, talla M',
-        precio: 6500,
-        imagen: 'https://picsum.photos/300/300?random=3',
-        categoria: 'ropa',
-        ubicacion: 'Barcelona',
-        vendedor: {
-          nombre: 'Team Lions',
-          avatar: '🦁',
-          rating: 5.0
-        },
-        fecha: new Date('2024-12-09')
-      },
-      {
-        id: 4,
-        titulo: 'Espinilleras Puma',
-        descripcion: 'Nuevas, sin uso',
-        precio: 1500,
-        imagen: 'https://picsum.photos/300/300?random=4',
-        categoria: 'proteccion',
-        ubicacion: 'Valencia',
-        vendedor: {
-          nombre: 'Sofia López',
-          avatar: '👤',
-          rating: 4.2
-        },
-        fecha: new Date('2024-12-12')
-      },
-      {
-        id: 5,
-        titulo: 'Guantes de portero Adidas',
-        descripcion: 'Talla 9, excelente agarre',
-        precio: 4200,
-        imagen: 'https://picsum.photos/300/300?random=5',
-        categoria: 'equipamiento',
-        ubicacion: 'Sevilla',
-        vendedor: {
-          nombre: 'Mateo García',
-          avatar: '👤',
-          rating: 4.7
-        },
-        fecha: new Date('2024-12-08')
-      },
-      {
-        id: 6,
-        titulo: 'Bolsa deportiva Nike',
-        descripcion: 'Grande, con compartimentos',
-        precio: 2800,
-        imagen: 'https://picsum.photos/300/300?random=6',
-        categoria: 'accesorios',
-        ubicacion: 'Barcelona',
-        vendedor: {
-          nombre: 'Ana Rodríguez',
-          avatar: '👤',
-          rating: 4.9
-        },
-        fecha: new Date('2024-12-11')
-      }
-    ];
+        fecha: new Date(item.created_at),
+        stock: item.stock || 0,
+        views: item.views || 0,
+        favorites: item.favorites || 0,
+        latitude: item.latitude,
+        longitude: item.longitude,
+        distancia: null
+      }));
 
-    setProductos(productosData);
+      // Calcular distancia si ambas coordenadas existen
+      if (userLat && userLon) {
+        formatted = formatted.map(prod => {
+          if (prod.latitude && prod.longitude) {
+            const dist = calcularDistancia(userLat, userLon, prod.latitude, prod.longitude);
+            return { ...prod, distancia: dist };
+          }
+          return prod;
+        });
+
+        // Filtrar por distancia máxima
+        formatted = formatted.filter(p => !p.distancia || p.distancia <= distanciaMax);
+
+        // Ordenar por distancia si se seleccionó
+        if (ordenar === 'distancia') {
+          formatted.sort((a, b) => (a.distancia || 999) - (b.distancia || 999));
+        }
+      }
+
+      setProductos(formatted);
+    } catch (err) {
+      console.error('Error cargando productos:', err);
+      setProductos([]);
+    }
+  };
+
+  const calcularDistancia = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radio de la Tierra en km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distancia en km
   };
 
   const filteredProductos = productos.filter(p => {

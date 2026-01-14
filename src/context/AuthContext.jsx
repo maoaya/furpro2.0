@@ -2,6 +2,30 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import supabase from '../lib/supabase.js';
 import { detectSupabaseOnline } from '../config/supabase.js';
 import { getConfig } from '../config/environment.js';
+
+// ===== UTILIDADES DE EDAD =====
+function calculateAge(birthDate) {
+  if (!birthDate) return null;
+  const today = new Date();
+  const birth = new Date(birthDate);
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  
+  return age;
+}
+
+// Verificar si el usuario cumple años hoy
+function isBirthdayToday(birthDate) {
+  if (!birthDate) return false;
+  const today = new Date();
+  const birth = new Date(birthDate);
+  return today.getMonth() === birth.getMonth() && today.getDate() === birth.getDate();
+}
+
 // Carga perezosa del tracking para evitar efectos secundarios durante el render
 let trackingInitializer = null;
 const ensureTracking = async () => {
@@ -99,8 +123,38 @@ export const AuthProvider = ({ children }) => {
           if (userData) {
             setRole(userData.rol || 'player');
             setEquipoId(userData.equipoId || null);
-            setUserProfile(userData);
-            console.log('✅ Perfil de usuario cargado:', userData.nombre);
+            
+            // ===== AUTO-ACTUALIZAR EDAD =====
+            let updatedUserData = { ...userData };
+            if (userData.fecha_nacimiento) {
+              const calculatedAge = calculateAge(userData.fecha_nacimiento);
+              const currentStoredAge = userData.edad;
+              
+              // Si la edad calculada es diferente a la almacenada (cumpleaños), actualizar
+              if (calculatedAge !== currentStoredAge) {
+                console.log(`🎂 Detectado cumpleaños: edad actual ${calculatedAge} (antes era ${currentStoredAge})`);
+                
+                const { data: updateData, error: updateError } = await supabase
+                  .from('carfutpro')
+                  .update({ 
+                    edad: calculatedAge,
+                    updated_at: new Date().toISOString()
+                  })
+                  .eq('user_id', session.user.id)
+                  .select()
+                  .single();
+                
+                if (updateError) {
+                  console.warn('⚠️ Error actualizando edad:', updateError);
+                } else {
+                  updatedUserData = updateData || updatedUserData;
+                  console.log('✅ Edad actualizada automáticamente');
+                }
+              }
+            }
+            
+            setUserProfile(updatedUserData);
+            console.log('✅ Perfil de usuario cargado:', updatedUserData.nombre);
           } else {
             console.log('⚠️ No se encontró perfil de usuario, creando registro básico...');
             // Crear registro mínimo del usuario para garantizar presencia en DB
@@ -130,9 +184,17 @@ export const AuthProvider = ({ children }) => {
             }
           }
           
-          // Guardar en localStorage
-          localStorage.setItem('session', JSON.stringify(session.user));
-          localStorage.setItem('authCompleted', 'true');
+          // Guardar en localStorage para persistencia
+          try {
+            localStorage.setItem('session', JSON.stringify(session.user));
+            localStorage.setItem('authCompleted', 'true');
+            localStorage.setItem('loginSuccess', 'true');
+            localStorage.setItem('userEmail', session.user.email);
+            localStorage.setItem('userId', session.user.id);
+            console.log('✅ Sesión guardada en localStorage');
+          } catch (storageErr) {
+            console.warn('⚠️ Error guardando sesión en localStorage:', storageErr);
+          }
           
         } else if (authCompleted || loginSuccess) {
           // Hay indicadores de auth pero no sesión - intentar refresh
@@ -494,6 +556,26 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('session');
   };
 
+  const resetPassword = async (email) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return {
+        success: true,
+        message: 'Si el email existe, recibirás instrucciones para restablecer tu contraseña.'
+      };
+    } catch (error) {
+      console.error('Error enviando email de recuperación:', error);
+      return { error: error.message || 'Error al enviar email' };
+    }
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -506,7 +588,8 @@ export const AuthProvider = ({ children }) => {
       loginWithGoogle,
       loginWithFacebook,
       logout,
-      completeUserProfile 
+      completeUserProfile,
+      resetPassword 
     }}>
       {children}
     </AuthContext.Provider>

@@ -34,24 +34,65 @@ export default function AuthCallback() {
           console.log('✅ CALLBACK PROCESADO EXITOSAMENTE:', resultado);
           
           if (resultado.user) {
-            setStatus(`¡${resultado.message}! Completando registro...`);
+            setStatus(`¡${resultado.message}! Verificando perfil...`);
             
-            // Guardar datos del usuario en el contexto si es necesario
+            // Guardar datos del usuario en el contexto
             if (window.localStorage) {
               localStorage.setItem('currentUser', JSON.stringify(resultado.user));
             }
             
-            // Redirigir al formulario de registro completo
-            setTimeout(() => {
-              console.log('📝 Redirigiendo al formulario de registro completo...');
-              navigate('/registro', { replace: true });
-            }, 2000);
+            // 🔍 Verificar si usuario tiene card en carfutpro
+            try {
+              const { data: card, error: cardError } = await supabase
+                .from('carfutpro')
+                .select('*')
+                .eq('user_id', resultado.user.id)
+                .maybeSingle();
+              
+              console.log('📋 Card encontrada:', !!card);
+              
+              if (cardError && !cardError.message?.includes('not found')) {
+                console.warn('⚠️ Error verificando card:', cardError);
+              }
+              
+              // Si tiene card completa
+              if (card && card.nombre && card.posicion) {
+                setStatus('¡Bienvenido! Redirigiendo al inicio...');
+                setTimeout(() => {
+                  console.log('🏠 Usuario con card, ir a home');
+                  navigate('/home', { replace: true });
+                }, 1500);
+              }
+              // Si tiene card incompleta
+              else if (card && (!card.nombre || !card.posicion)) {
+                setStatus('Completando tu perfil...');
+                setTimeout(() => {
+                  console.log('✏️ Usuario con card incompleta, ir a editar');
+                  navigate('/editar-perfil', { replace: true });
+                }, 1500);
+              }
+              // Si NO tiene card (nuevo usuario)
+              else {
+                setStatus('Completando tu registro...');
+                setTimeout(() => {
+                  console.log('📝 Nuevo usuario, ir a registro');
+                  navigate('/registro', { replace: true });
+                }, 1500);
+              }
+            } catch (cardCheckError) {
+              console.error('❌ Error verificando card:', cardCheckError);
+              // Fallback: ir a registro
+              setStatus('Completando registro...');
+              setTimeout(() => {
+                navigate('/registro', { replace: true });
+              }, 1500);
+            }
             
           } else {
             setStatus('¡Bienvenido de vuelta! Redirigiendo...');
             setTimeout(() => {
-              navigate('/dashboard', { replace: true });
-            }, 2000);
+              navigate('/home', { replace: true });
+            }, 1500);
           }
           
         } else {

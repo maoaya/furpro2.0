@@ -42,6 +42,24 @@ export class AuthService {
     try {
       const { email, password, name, phone, userType, position } = userData
 
+      // ✅ VERIFICAR SI EL EMAIL YA EXISTE EN LA BASE DE DATOS
+      try {
+        const { data: existingUser } = await supabase
+          .from('users')
+          .select('email')
+          .eq('email', email)
+          .maybeSingle()
+        
+        if (existingUser) {
+          throw new Error('Este email ya está registrado. Por favor inicia sesión.')
+        }
+      } catch (checkErr) {
+        if (checkErr.message.includes('ya está registrado')) {
+          throw checkErr
+        }
+        console.warn('Advertencia verificando email:', checkErr)
+      }
+
       // Crear usuario en Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -52,11 +70,19 @@ export class AuthService {
             phone,
             user_type: userType,
             position: position || null
-          }
+          },
+          emailRedirectTo: window.location.origin + '/auth/callback'
         }
       })
 
-      if (error) throw error
+      if (error) {
+        // Detectar errores de duplicado de Supabase Auth
+        if (error.message?.includes('already registered') || 
+            error.message?.includes('User already registered')) {
+          throw new Error('Este email ya está registrado. Por favor inicia sesión.')
+        }
+        throw error
+      }
 
       // Crear perfil en la base de datos
       const profileData = {

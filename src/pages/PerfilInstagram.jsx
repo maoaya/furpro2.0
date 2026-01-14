@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
 
+const SHARED_STORAGE_KEY = 'futpro_shared_moments';
+
 export default function PerfilInstagram() {
   const { userId } = useParams();
   const navigate = useNavigate();
@@ -14,10 +16,24 @@ export default function PerfilInstagram() {
   const [activeTab, setActiveTab] = useState('posts');
   const [showFollowersModal, setShowFollowersModal] = useState(false);
   const [showFollowingModal, setShowFollowingModal] = useState(false);
+  const [sharedMoments, setSharedMoments] = useState([]);
 
   useEffect(() => {
     loadCurrentUser();
     loadProfileData();
+    loadSharedMoments();
+    // Forzar recarga de posts tras publicar
+    window.addEventListener('futpro_post_created', () => {
+      loadProfileData();
+      loadSharedMoments();
+    });
+
+    const onStorage = (e) => {
+      if (e.key === SHARED_STORAGE_KEY) {
+        loadSharedMoments();
+      }
+    };
+    window.addEventListener('storage', onStorage);
 
     // Suscribirse a cambios en friends (followers/following)
     const channelFriends = supabase
@@ -38,8 +54,16 @@ export default function PerfilInstagram() {
     return () => {
       channelFriends.unsubscribe();
       channelPosts.unsubscribe();
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('futpro_post_created', loadProfileData);
     };
-  }, [userId]);
+  }, [userId, currentUser]);
+
+  useEffect(() => {
+    if (activeTab === 'posts') {
+      loadSharedMoments();
+    }
+  }, [activeTab]);
 
   const loadCurrentUser = async () => {
     const { data } = await supabase.auth.getSession();
@@ -60,6 +84,25 @@ export default function PerfilInstagram() {
         .single();
 
       if (userError) throw userError;
+
+      // Cargar datos adicionales desde carfutpro
+      let peso = null;
+      let altura = null;
+      let categoria = null;
+      try {
+        const { data: cardData } = await supabase
+          .from('carfutpro')
+          .select('peso, altura, categoria')
+          .eq('user_id', profileId)
+          .single();
+        if (cardData) {
+          peso = cardData.peso;
+          altura = cardData.altura;
+          categoria = cardData.categoria;
+        }
+      } catch (err) {
+        console.warn('No se pudieron cargar datos de carfutpro:', err);
+      }
 
       // Contar posts
       const { count: postsCount } = await supabase
@@ -98,13 +141,26 @@ export default function PerfilInstagram() {
         avatar: userData.avatar_url || '👤',
         postsCount: postsCount || 0,
         followersCount: followersCount || 0,
-        followingCount: followingCount || 0
+        followingCount: followingCount || 0,
+        peso: peso || '—',
+        altura: altura || '—',
+        categoria: categoria || 'Sin categoría'
       });
 
       // Cargar posts
       await loadProfilePosts(profileId);
     } catch (err) {
       console.error('Error cargando perfil:', err);
+    }
+  };
+
+  const loadSharedMoments = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(SHARED_STORAGE_KEY) || '[]');
+      setSharedMoments(stored);
+    } catch (err) {
+      console.error('No se pudo cargar Momentos compartidos:', err);
+      setSharedMoments([]);
     }
   };
 
@@ -125,41 +181,28 @@ export default function PerfilInstagram() {
 
       if (error) throw error;
 
-      setPosts(data.map(p => ({
+      // Prevenir duplicados por id
+      const unique = [];
+      const ids = new Set();
+      for (const p of data) {
+        if (!ids.has(p.id)) {
+          ids.add(p.id);
+          unique.push(p);
+        }
+      }
+
+      setPosts(unique.map(p => ({
         id: p.id,
-        image: p.image_url || 'https://via.placeholder.com/300',
-        likes: p.likes_count?.[0]?.count || 0,
-        comments: p.comments_count?.[0]?.count || 0
+        image: p.imagen_url || p.image_url || p.media_url || 'https://via.placeholder.com/300',
+        description: p.contenido || p.caption || '',
+        likes: p.likes_count?.[0]?.count || p.likes_count || 0,
+        comments: p.comments_count?.[0]?.count || p.comments_count || 0,
+        views: p.views_count || 0,
+        ubicacion: p.ubicacion || '—',
+        created_at: p.created_at
       })));
     } catch (err) {
       console.error('Error cargando posts del perfil:', err);
-    }
-  };
-
-  const handleFollow = async () => {
-    if (!currentUser || !profileUser) return;
-    
-    try {
-      if (isFollowing) {
-        // Dejar de seguir
-        await supabase
-          .from('friends')
-          .delete()
-          .eq('user_email', currentUser.email)
-          .eq('friend_email', profileUser.nombre.includes('@') ? profileUser.nombre : `${profileUser.username}@futpro.com`);
-      } else {
-        // Seguir
-        await supabase
-          .from('friends')
-          .insert([{
-            user_email: currentUser.email,
-            friend_email: profileUser.nombre.includes('@') ? profileUser.nombre : `${profileUser.username}@futpro.com`,
-            friend_name: profileUser.nombre
-          }]);
-      }
-      // El realtime actualizará automáticamente
-    } catch (err) {
-      console.error('Error al seguir/dejar de seguir:', err);
     }
   };
 
@@ -168,26 +211,34 @@ export default function PerfilInstagram() {
   };
 
   const isOwner = userId === 'me' || userId === currentUser?.id;
-
-  if (!profileUser) return <div style={styles.loading}>Cargando perfil...</div>;
+  // El return condicional debe estar aquí, no fuera de la función
+  if (!profileUser) {
+    return <div style={styles.loading}>Cargando perfil...</div>;
+  }
 
   return (
     <div style={styles.container}>
       {/* Header */}
       <div style={styles.header}>
         <div style={styles.profileSection}>
-          <div style={styles.avatar}>{profileUser.avatar}</div>
+          <div 
+            style={{...styles.avatar, cursor: isOwner ? 'pointer' : 'default'}} 
+            onClick={() => isOwner && navigate('/editar-perfil')}
+            title={isOwner ? 'Click para editar foto' : ''}
+          >
+            {profileUser.avatar}
+          </div>
           <div style={styles.stats}>
             <div style={styles.statItem}>
               <strong style={styles.statNumber}>{profileUser.postsCount}</strong>
-              <span style={styles.statLabel}>posts</span>
+              <span style={styles.statLabel}>momentos</span>
             </div>
             <div 
               style={styles.statItem} 
               onClick={() => setShowFollowersModal(true)}
             >
               <strong style={styles.statNumber}>{profileUser.followersCount}</strong>
-              <span style={styles.statLabel}>seguidores</span>
+              <span style={styles.statLabel}>fans</span>
             </div>
             <div 
               style={styles.statItem}
@@ -203,6 +254,11 @@ export default function PerfilInstagram() {
           <h2 style={styles.nombre}>{profileUser.nombre}</h2>
           <p style={styles.username}>{profileUser.username}</p>
           <pre style={styles.bio}>{profileUser.bio}</pre>
+          <div style={{ display: 'flex', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
+            <div style={styles.badgeInfo}>📍 {profileUser.categoria}</div>
+            <div style={styles.badgeInfo}>⚖️ {profileUser.peso} kg</div>
+            <div style={styles.badgeInfo}>📏 {profileUser.altura} cm</div>
+          </div>
         </div>
 
         {/* Botones de acción */}
@@ -268,17 +324,58 @@ export default function PerfilInstagram() {
 
       {/* Contenido según tab */}
       {activeTab === 'posts' && (
-        <div style={styles.grid}>
-          {posts.map(post => (
-            <div key={post.id} style={styles.gridItem}>
-              <img src={post.image} alt="Post" style={styles.gridImage} />
-              <div style={styles.gridOverlay}>
-                <span>❤️ {post.likes}</span>
-                <span>💬 {post.comments}</span>
+        <>
+          <h3 style={{ color: '#FFD700', margin: '12px 0 8px' }}>Mis momentos</h3>
+          <div style={styles.grid}>
+            {posts.length === 0 && (
+              <div style={{ color: '#aaa', padding: 16 }}>Aún no tienes momentos.</div>
+            )}
+            {posts.map(post => (
+              <div key={post.id} style={{...styles.gridItem, maxWidth: 220}}>
+                <img 
+                  src={post.image || 'https://via.placeholder.com/300'} 
+                  alt={profileUser.nombre || 'Post'} 
+                  style={{...styles.gridImage, maxHeight: 180, objectFit: 'cover', width: '100%'}} 
+                  onError={e => { e.target.src = 'https://via.placeholder.com/300'; }}
+                />
+                <div style={styles.gridOverlay}>
+                  <span>❤️ {post.likes}</span>
+                  <span>👁️ {post.views}</span>
+                  <span>💬 {post.comments}</span>
+                </div>
+                <div style={styles.gridFooterInfo}>
+                  <div style={styles.gridFooterAvatar}>{profileUser.avatar}</div>
+                  <div style={styles.gridFooterText}>
+                    <div style={styles.gridFooterName}>{profileUser.nombre}</div>
+                    <div style={styles.gridFooterMeta}>{new Date(post.created_at).toLocaleString('es-ES')}</div>
+                  </div>
+                </div>
               </div>
+            ))}
+          </div>
+
+          <h3 style={{ color: '#FFD700', margin: '16px 0 8px' }}>
+            Historias compartidas ({sharedMoments.filter(m => m.type === 'historia').length})
+          </h3>
+          {sharedMoments.filter(m => m.type === 'historia').length === 0 ? (
+            <div style={{ background: '#111', border: '1px solid #222', borderRadius: 12, padding: 16, color: '#ccc' }}>
+              <div style={{ fontSize: 14 }}>Aquí verás las historias que compartes de otros usuarios. Usa el botón 📖 Historia en cualquier post para compartir.</div>
             </div>
-          ))}
-        </div>
+          ) : (
+            <div style={styles.grid}>
+              {sharedMoments.filter(m => m.type === 'historia').map(moment => (
+                <div key={`historia-${moment.id}`} style={styles.gridItem}>
+                  <img src={moment.image} alt="Historia" style={styles.gridImage} />
+                  <div style={styles.gridOverlay}>
+                    <span>❤️ {moment.likes || 0}</span>
+                    <span>👁️ {moment.views || 0}</span>
+                    <span>{moment.ubicacion || '—'}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       {activeTab === 'stats' && (
@@ -369,7 +466,6 @@ export default function PerfilInstagram() {
       )}
     </div>
   );
-}
 
 const styles = {
   container: {
@@ -397,14 +493,19 @@ const styles = {
     marginBottom: 16
   },
   avatar: {
-    width: 80,
-    height: 80,
+    width: 120,
+    height: 120,
     borderRadius: '50%',
     background: 'linear-gradient(135deg, #FFD700, #FFA500)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: 36
+    fontSize: 48,
+    transition: 'transform 0.2s, box-shadow 0.2s',
+    ':hover': {
+      transform: 'scale(1.05)',
+      boxShadow: '0 0 20px rgba(255,215,0,0.6)'
+    }
   },
   stats: {
     display: 'flex',
@@ -630,5 +731,17 @@ const styles = {
     textAlign: 'center',
     color: '#aaa',
     padding: 32
+  },
+  badgeInfo: {
+    background: 'rgba(255,215,0,0.1)',
+    border: '1px solid rgba(255,215,0,0.3)',
+    borderRadius: 8,
+    padding: '4px 12px',
+    fontSize: 13,
+    color: '#FFD700',
+    fontWeight: '600'
   }
 };
+
+  }
+
