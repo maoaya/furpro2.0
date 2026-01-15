@@ -1,4 +1,4 @@
-import { supabase } from '../config/supabaseClient';
+import { supabase } from '../config/supabase';
 
 /**
  * ⚽ FUNCIONES PARA SISTEMA DE PENALTIS MULTIJUGADOR

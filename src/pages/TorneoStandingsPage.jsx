@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { supabase } from '../config/supabaseClient';
+import { supabase } from '../config/supabase';
 import TournamentService from '../services/TournamentService';
 import MainLayout from '../components/MainLayout';
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TournamentService } from '../services/TournamentService';
+import { supabase } from '../config/supabase';
 import './CrearTorneoMejorado.css';
 
 export function CrearTorneoMejorado() {
@@ -45,18 +45,23 @@ export function CrearTorneoMejorado() {
     setError('');
     
     try {
-      const result = await TournamentService.createTournament({
-        name: formData.nombre,
-        description: formData.descripcion,
-        start_date: formData.fechaInicio,
-        end_date: formData.fechaFin,
-        format: formData.tipoTorneo,
-        category: formData.categoria,
-        max_teams: formData.maximoEquipos,
-        max_groups: formData.maximoGrupos,
-        evaluation_type: formData.tipoDeEvaluacion,
-        is_live_required: formData.requiereTransmision
-      });
+      const { data, error } = await supabase
+        .from('tournaments')
+        .insert([{
+          name: formData.nombre,
+          description: formData.descripcion,
+          tournament_start: formData.fechaInicio,
+          tournament_end: formData.fechaFin,
+          format: formData.tipoTorneo,
+          category: formData.categoria,
+          max_teams: formData.maximoEquipos,
+          max_groups: formData.maximoGrupos,
+          evaluation_type: formData.tipoDeEvaluacion,
+          is_live_required: formData.requiereTransmision,
+          status: 'draft'
+        }]);
+
+      if (error) throw error;
 
       setSuccess(true);
       setStep(1);

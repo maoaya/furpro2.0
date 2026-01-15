@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '../config/supabaseClient';
+import { supabase } from '../config/supabase';
 import { UserService } from '../services/UserService';
 import './MiEquipoMejorado.css';
 

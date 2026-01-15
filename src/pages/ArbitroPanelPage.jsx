@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../services/AuthService';
+import { supabase } from '../config/supabase';
 import RefereeService from '../services/RefereeService';
 import MainLayout from '../components/MainLayout';
 
 export default function ArbitroPanelPage() {
-  const { user } = useAuth();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const { data: { user } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user);
+    });
+    return () => data?.subscription?.unsubscribe();
+  }, []);
   const [matches, setMatches] = useState([]);
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [loading, setLoading] = useState(true);

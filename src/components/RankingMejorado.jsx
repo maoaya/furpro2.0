@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { TournamentService } from '../services/TournamentService';
-import { RefereeService } from '../services/RefereeService';
+import { getAvailableTournaments } from '../services/TournamentService';
+import { supabase } from '../config/supabase';
 import './RankingMejorado.css';
 
 export function RankingMejorado() {
@@ -27,11 +27,15 @@ export function RankingMejorado() {
     try {
       setLoading(true);
       // Obtener todos los rankings
-      const data = await TournamentService.getTeamRankings();
+      const data = await getAvailableTournaments();
       setRankings(data || []);
       
       // Obtener árbitros disponibles
-      const refData = await RefereeService.getAvailableReferees();
+      const { data: refData, error } = await supabase
+        .from('referees')
+        .select('*')
+        .eq('is_available', true);
+      
       setReferees(refData || []);
     } catch (error) {
       console.error('Error loading rankings:', error);
