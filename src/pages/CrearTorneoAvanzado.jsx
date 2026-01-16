@@ -4,12 +4,17 @@ import { useAuth } from '../context/AuthContext';
 import { supabase } from '../config/supabase';
 
 const COUNTRIES = ['Colombia', 'Argentina', 'Brasil', 'Mexico', 'España', 'USA'];
-const CATEGORIES = ['Masculino', 'Femenino', 'Mixto', 'U-13', 'U-17'];
+const CATEGORIES = [
+  'Masculino', 'Femenino', 'Mixto', 
+  'Sub-13', 'Sub-15', 'Sub-17', 'Sub-20',
+  'Libre', 'Veteranos', 'Amateur', 'Profesional'
+];
 const TOURNAMENT_FORMATS = [
   { value: 'league', label: 'Liga (todos contra todos)' },
   { value: 'knockout', label: 'Eliminación Directa (Llaves)' },
   { value: 'group_knockout', label: 'Grupos + Eliminación Directa' },
-  { value: 'repechaje', label: 'Con Repechaje (mejor tercero)' }
+  { value: 'repechaje', label: 'Con Repechaje (mejor tercero)' },
+  { value: 'sudden_death', label: 'Muerte Súbita' }
 ];
 const PLAYOFF_TYPES = [
   { value: 'standard', label: 'Clásico (Victoria=3pts, Empate=1pt, Derrota=0)' },

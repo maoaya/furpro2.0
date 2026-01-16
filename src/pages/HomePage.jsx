@@ -13,6 +13,8 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
 import { NotificationManager } from '../services/NotificationManager';
 import { useAuth } from '../context/AuthContext';
+import { StoryService } from '../services/StoryService.js';
+import { PostService } from '../services/PostService.js';
 
 const gold = '#FFD700';
 const black = '#0a0a0a';
@@ -32,6 +34,7 @@ const menuItemsList = (actions) => ([
   { key: 'crear-torneo', label: '➕ Crear Torneo', action: actions.crearTorneo },
   { key: 'amistoso', label: '🤝 Crear Amistoso', action: actions.crearAmistoso },
   { key: 'penaltis', label: '⚽ Juego de Penaltis', action: actions.jugarPenaltis },
+  { key: 'penalty-pvp', label: '⚽ Penaltis PvP', action: actions.jugarPenaltisPvP },
   { key: 'card-fifa', label: '🆔 Card Futpro', action: actions.verCardFIFA },
   { key: 'sugerencias-card', label: '💡 Sugerencias Card', action: actions.sugerenciasCard },
   { key: 'notificaciones', label: '🔔 Notificaciones', action: actions.verNotificaciones },
@@ -63,6 +66,7 @@ const createMenuActions = (navigate) => ({
   crearTorneo: () => navigate('/crear-torneo'),
   crearAmistoso: () => navigate('/amistoso'),
   jugarPenaltis: () => navigate('/penaltis'),
+  jugarPenaltisPvP: () => navigate('/penalty-pvp'),
   verCardFIFA: () => navigate('/card-fifa'),
   sugerenciasCard: () => navigate('/sugerencias-card'),
   verNotificaciones: () => navigate('/notificaciones'),
@@ -148,15 +152,15 @@ export default function HomePage() {
       .subscribe();
 
     const channelLikes = supabase
-      .channel('likes:all')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'likes' }, () => {
+      .channel('post_likes:all')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'post_likes' }, () => {
         loadPosts();
       })
       .subscribe();
 
     const channelComments = supabase
-      .channel('comments:all')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, () => {
+      .channel('post_comments:all')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'post_comments' }, () => {
         loadPosts();
       })
       .subscribe();
@@ -483,6 +487,11 @@ export default function HomePage() {
     navigate('/transmision-en-vivo');
   };
 
+  const handleGoLive = () => {
+    // Botón directo para transmisión en vivo
+    navigate('/transmision-en-vivo');
+  };
+
   const handleStoryFile = async (event) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
@@ -515,14 +524,10 @@ export default function HomePage() {
       if (uploadError) throw uploadError;
 
       const { data: publicData } = supabase.storage.from('stories').getPublicUrl(path);
-      const mediaType = file.type.startsWith('video') ? 'video' : 'image';
-      await supabase.from('stories').insert({
+      await supabase.from('user_stories').insert({
         user_id: user.id,
-        media_url: publicData?.publicUrl,
-        media_type: mediaType,
-        caption: storyCaption || 'Nueva historia',
-        location: storyLocation || null,
-        tournament: storyTournament || null
+        image_url: publicData?.publicUrl,
+        caption: storyCaption || 'Nueva historia'
       });
       setStoryMessage('✅ Historia subida');
       setStoryCaption('');

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Button from './Button';
-import { PostsService } from '../services/PostsService';
+import { PostService } from '../services/PostService';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Posts() {
+  const { user } = useAuth();
   const [posts, setPosts] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ titulo: '', contenido: '' });
@@ -11,8 +13,10 @@ export default function Posts() {
   const [feedback, setFeedback] = useState('');
 
   useEffect(() => {
-    PostsService.getPosts().then(setPosts);
-  }, []);
+    if (user?.id) {
+      PostService.getFeed(user.id).then(res => res.success && setPosts(res.data || []));
+    }
+  }, [user?.id]);
 
   const handleOpenForm = (post = null) => {
     if (post) {
@@ -47,13 +51,14 @@ export default function Posts() {
         return;
       }
       if (editId) {
-        await PostsService.updatePost(editId, form);
+        await PostService.updatePost(editId, { content: form.contenido, imageUrl: null, videoUrl: null });
         setFeedback('Post actualizado');
       } else {
-        await PostsService.createPost(form);
+        await PostService.createPost({ userId: user?.id, content: form.contenido, imageUrl: null, videoUrl: null });
         setFeedback('Post creado');
       }
-      const nuevos = await PostsService.getPosts();
+      const res = await PostService.getFeed(user?.id || '');
+      const nuevos = res.success ? res.data : [];
       setPosts(nuevos);
       handleCloseForm();
     } catch (err) {
@@ -66,8 +71,9 @@ export default function Posts() {
     if (!window.confirm('¿Eliminar este post?')) return;
     setLoading(true);
     try {
-      await PostsService.deletePost(id);
-      setPosts(await PostsService.getPosts());
+      await PostService.deletePost(id);
+      const res = await PostService.getFeed(user?.id || '');
+      setPosts(res.success ? res.data : []);
       setFeedback('Post eliminado');
     } catch {
       setFeedback('Error al eliminar');

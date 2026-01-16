@@ -28,16 +28,16 @@ export default function PostCard({ post, user, onLike, setSelectedPostForComment
   };
 
   const handleShare = () => {
-    const text = `Mira este post en FutPro: ${post.description || post.contenido || 'Nueva publicación'}`;
+    const text = `Mira este post en FutPro: ${post.content || post.caption || 'Nueva publicación'}`;
     persistSharedMoment({
       id: post.id,
       type: 'post',
-      user: post.user || 'Usuario',
-      image: post.image || post.imagen_url || post.media_url,
-      description: post.description || post.contenido || '',
-      ubicacion: post.ubicacion || '—',
+      user: post.usuarios?.nombre || 'Usuario',
+      image: post.image_url || post.video_url,
+      description: post.content || post.caption || '',
+      ubicacion: post.location || '—',
       created_at: post.created_at || new Date().toISOString(),
-      likes: post.likes || 0,
+      likes: post.likes_count || 0,
       views: post.views || 0
     });
     if (navigator.share) {
@@ -54,12 +54,12 @@ export default function PostCard({ post, user, onLike, setSelectedPostForComment
       <header style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
           <img 
-            src={post.avatar || 'https://via.placeholder.com/48'} 
-            alt={post.user} 
+            src={post.usuarios?.avatar_url || 'https://via.placeholder.com/48'} 
+            alt={post.usuarios?.nombre || 'Usuario'} 
             style={{ width: 48, height: 48, borderRadius: '50%', border: `2px solid ${GOLD}`, objectFit: 'cover' }} 
           />
           <div>
-            <div style={{ fontWeight: 700, color: '#fff', fontSize: 14 }}>{post.user || 'Usuario'}</div>
+            <div style={{ fontWeight: 700, color: '#fff', fontSize: 14 }}>{post.usuarios?.nombre || 'Usuario'} {post.usuarios?.apellido || ''}</div>
             <div style={{ fontSize: 12, color: '#888' }}>
               {post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES') : '—'}
             </div>
@@ -88,27 +88,38 @@ export default function PostCard({ post, user, onLike, setSelectedPostForComment
 
       {/* IMAGEN */}
       <div style={{ width: '100%', maxHeight: 350, overflow: 'hidden', backgroundColor: '#000' }}>
-        <img 
-          src={post.image || post.imagen_url || post.media_url || 'https://via.placeholder.com/400'} 
-          alt={post.title || 'Post'} 
-          style={{ width: '100%', maxHeight: 350, display: 'block', objectFit: 'cover' }} 
-        />
+        {post.image_url && (
+          <img 
+            src={post.image_url} 
+            alt="Post media" 
+            style={{ width: '100%', maxHeight: 350, display: 'block', objectFit: 'cover' }} 
+          />
+        )}
+        {post.video_url && (
+          <video 
+            src={post.video_url} 
+            controls
+            style={{ width: '100%', maxHeight: 350, display: 'block', objectFit: 'cover' }} 
+          />
+        )}
+        {!post.image_url && !post.video_url && (
+          <div style={{ width: '100%', height: 350, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#222' }}>
+            <span style={{ color: '#666' }}>Sin media</span>
+          </div>
+        )}
       </div>
 
       {/* CONTENIDO */}
       <div style={{ padding: 12 }}>
-        <div style={{ color: '#888', fontSize: 12, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-          📍 <span>{post.ubicacion || 'Ubicación no disponible'}</span>
-        </div>
         <div style={{ color: '#ddd', fontSize: 14, lineHeight: 1.5 }}>
-          {post.description || post.contenido || 'Sin descripción'}
+          {post.content || 'Sin descripción'}
         </div>
       </div>
 
       {/* FOOTER - ACCIONES */}
       <footer style={{ padding: '0 12px 12px' }}>
         <div style={{ color: '#888', fontSize: 12, marginBottom: 8, display: 'flex', gap: 12, alignItems: 'center' }}>
-          👁️ {post.views || 0} vistas · ⚽ {post.likes || 0} likes
+          ⚽ {post.likes_count || 0} likes · 💬 {post.comments_count || 0} comentarios
         </div>
 
         <div style={{ display: 'flex', gap: 12 }}>

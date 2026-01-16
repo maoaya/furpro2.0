@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AppRouter from './pages/AppRouter';
 import TorneosPage from './pages/TorneosPage';
 import ChatPage from './components/ChatPage';
+import ChatInstagramNew from './pages/ChatInstagramNew';
+import PenaltyGamePvP from './pages/PenaltyGamePvP';
+import TransmisionEnVivo from './pages/TransmisionEnVivo';
 import ChatSQLPage from './pages/ChatSQLPage';
 import BuscarMisCampeonatosPage from './pages/BuscarMisCampeonatosPage';
 import CompartirContenidoPage from './pages/CompartirContenidoPage';
@@ -78,8 +81,10 @@ export default function FutProRoutes() {
         <Route path="/notificaciones" element={<div>Notificaciones</div>} />
         <Route path="/integraciones" element={<div>Integraciones</div>} />
         <Route path="/integraciones-api" element={<div>Integraciones API</div>} />
-        <Route path="/chat" element={<ChatPage />} />
-        <Route path="/chat/:id" element={<ChatPage />} />
+        <Route path="/chat" element={<ChatInstagramNew />} />
+        <Route path="/chat/:id" element={<ChatInstagramNew />} />
+        <Route path="/penalty-pvp" element={<PenaltyGamePvP />} />
+        <Route path="/transmision-en-vivo" element={<TransmisionEnVivo />} />
         <Route path="/chat-sql" element={<ChatSQLPage />} />
         <Route path="/campeonatos" element={<BuscarMisCampeonatosPage />} />
         <Route path="/compartir" element={<CompartirContenidoPage />} />
