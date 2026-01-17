@@ -48,8 +48,8 @@ const PerfilCard = () => {
       }
     }
     
-    if (!user) {
-      console.warn('⚠️ No hay usuario autenticado, redirigiendo...');
+    if (!user && !cardFromState && !cardFromLocalStorage) {
+      console.warn('⚠️ No hay usuario ni datos de card, redirigiendo...');
       navigate('/')
       return
     }

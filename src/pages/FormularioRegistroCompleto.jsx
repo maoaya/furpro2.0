@@ -326,28 +326,29 @@ export default function FormularioRegistroCompleto() {
         }
       }
 
-      // Preparar datos para la card
+      // Preparar datos para la card - GARANTIZAR QUE TENEMOS DATOS
       const cardData = {
-        id: profileData.id,
-        categoria: profileData.categoria,
-        nombre: profileData.nombre,
-        apellido: profileData.apellido,
-        ciudad: profileData.ciudad,
-        pais: profileData.pais || formData.pais,
-        posicion_favorita: profileData.posicion || formData.posicion,
-        posicion: profileData.posicion || formData.posicion,
-        nivel_habilidad: profileData.nivel_habilidad,
-        puntaje: profileData.puntos_totales || 0,
-        puntos_totales: profileData.puntos_totales || 0,
-        card_tier: profileData.card_tier || 'Bronce',
-        equipo: profileData.equipo || '—',
+        id: profileData?.id || userId,
+        user_id: userId,
+        categoria: profileData?.categoria || formData.categoria || 'masculina',
+        nombre: profileData?.nombre || formData.nombre || 'Usuario',
+        apellido: profileData?.apellido || formData.apellido || '',
+        ciudad: profileData?.ciudad || formData.ciudad || 'No especificada',
+        pais: profileData?.pais || formData.pais || 'No especificado',
+        posicion_favorita: profileData?.posicion || formData.posicion || 'Flexible',
+        posicion: profileData?.posicion || formData.posicion || 'Flexible',
+        nivel_habilidad: profileData?.nivel_habilidad || formData.nivelHabilidad || 'Principiante',
+        puntaje: profileData?.puntos_totales || 0,
+        puntos_totales: profileData?.puntos_totales || 0,
+        card_tier: profileData?.card_tier || 'Bronce',
+        equipo: profileData?.equipo || formData.equipoFavorito || '—',
         fecha_registro: new Date().toISOString(),
         esPrimeraCard: true,
-        avatar_url: profileData.avatar_url || formData.avatarUrl || '',
-        pie: profileData.pie || pieDominante || null,
-        edad: profileData.edad || (formData.edad ? Number(formData.edad) : null),
-        peso: profileData.peso || pesoKg,
-        estatura: profileData.estatura || estaturaM
+        avatar_url: profileData?.avatar_url || formData.avatarUrl || `https://i.pravatar.cc/300?u=${userId}`,
+        pie: profileData?.pie || formData.piernaDominante || 'Derecho',
+        edad: profileData?.edad || (formData.edad ? Number(formData.edad) : null),
+        peso: profileData?.peso || (formData.peso ? Number(formData.peso) : null),
+        estatura: profileData?.estatura || (formData.altura ? Number(formData.altura) / 100 : null)
       };
 
       // Guardar en localStorage para la card (múltiples copias de seguridad)
