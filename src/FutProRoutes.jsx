@@ -5,6 +5,8 @@ import ChatPage from './components/ChatPage';
 import ChatInstagramNew from './pages/ChatInstagramNew';
 import PenaltyGamePvP from './pages/PenaltyGamePvP';
 import TransmisionEnVivo from './pages/TransmisionEnVivo';
+import TorneoDetalleCompleto from './pages/TorneoDetalleCompleto';
+import PartidoArbitroPanel from './pages/PartidoArbitroPanel';
 import ChatSQLPage from './pages/ChatSQLPage';
 import BuscarMisCampeonatosPage from './pages/BuscarMisCampeonatosPage';
 import CompartirContenidoPage from './pages/CompartirContenidoPage';
@@ -42,6 +44,7 @@ const StreamingDetalle = () => <div style={{ color: '#FFD700', background: '#181
 const MediaDetalle = () => <div style={{ color: '#FFD700', background: '#181818', padding: 32 }}>Detalle de archivo multimedia</div>;
 import EquipoEditarPage from './pages/EquipoEditarPage';
 import TorneoEditarPage from './pages/TorneoEditarPage';
+import TorneoDetailPage from './pages/TorneoDetailPage';
 import PartidoDetallePage from './pages/PartidoDetallePage';
 import PartidoEditarPage from './pages/PartidoEditarPage';
 import UsuarioEditarPage from './pages/UsuarioEditarPage';
@@ -58,10 +61,11 @@ export default function FutProRoutes() {
         <Route path="/equipos/:equipoId" element={<EquipoDetallePage />} />
         <Route path="/equipos/:equipoId/editar" element={<EquipoEditarPage />} />
         <Route path="/torneos" element={<TorneosPage />} />
-        <Route path="/torneos/:torneoId" element={<div>Detalle de torneo</div>} />
+        <Route path="/torneos/:torneoId" element={<TorneoDetalleCompleto />} />
         <Route path="/torneos/:torneoId/editar" element={<TorneoEditarPage />} />
         <Route path="/partidos" element={<div>Listado de partidos</div>} />
         <Route path="/partidos/:partidoId" element={<PartidoDetallePage />} />
+        <Route path="/partidos/:partidoId/arbitro" element={<PartidoArbitroPanel />} />
         <Route path="/partidos/:partidoId/editar" element={<PartidoEditarPage />} />
         <Route path="/usuarios" element={<UsuariosPage />} />
         <Route path="/usuarios/:usuarioId" element={<div>Detalle de usuario</div>} />
