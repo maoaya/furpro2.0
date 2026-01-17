@@ -337,7 +337,8 @@ export default function HomePage() {
       }
 
       const formatted = await Promise.all((postsData || []).map(async (p) => {
-        let userName = 'Usuario';
+        let nombre = 'Usuario';
+        let apellido = '';
         let userAvatar = 'https://via.placeholder.com/90';
 
         // Intentar cargar desde carfutpro
@@ -349,7 +350,8 @@ export default function HomePage() {
             .single();
           
           if (card) {
-            userName = `${card.nombre || ''} ${card.apellido || ''}`.trim() || 'Usuario';
+            nombre = card.nombre || 'Usuario';
+            apellido = card.apellido || '';
             userAvatar = card.photo_url || card.avatar_url || userAvatar;
           }
         } catch (cardErr) {
@@ -357,46 +359,31 @@ export default function HomePage() {
           try {
             const { data: usuario } = await supabase
               .from('usuarios')
-              .select('nombre_completo, foto_perfil, nombre, apellido')
+              .select('nombre, apellido, foto_perfil, avatar_url')
               .eq('id', p.user_id)
               .single();
             
             if (usuario) {
-              userName = usuario.nombre_completo || 
-                         `${usuario.nombre || ''} ${usuario.apellido || ''}`.trim() || 
-                         'Usuario';
-              userAvatar = usuario.foto_perfil || userAvatar;
+              nombre = usuario.nombre || 'Usuario';
+              apellido = usuario.apellido || '';
+              userAvatar = usuario.avatar_url || usuario.foto_perfil || userAvatar;
             }
           } catch (userErr) {
-            // Último intento: auth.users metadata
-            try {
-              const { data: authData } = await supabase.auth.admin.getUserById(p.user_id);
-              if (authData?.user) {
-                userName = authData.user.user_metadata?.full_name || 
-                           authData.user.email?.split('@')[0] || 
-                           'Usuario';
-                userAvatar = authData.user.user_metadata?.avatar_url || userAvatar;
-              }
-            } catch (authErr) {
-              console.warn(`⚠️ No se pudo cargar info de usuario ${p.user_id}`);
-            }
+            console.warn(`⚠️ No se pudo cargar info de usuario ${p.user_id}`);
           }
         }
 
         return {
+          ...p,
           id: p.id,
-          user: userName,
-          avatar: userAvatar,
-          image: p.imagen_url || p.media_url,
-          title: 'Post',
-          description: p.contenido || p.caption || '',
-          likes: p.likes_count ?? 0,
-          comments: p.comments_count ?? 0,
-          views: p.views_count ?? 0,
-          ubicacion: p.ubicacion || 'Ubicación no disponible',
-          tags: [],
+          usuarios: {
+            nombre: nombre,
+            apellido: apellido,
+            avatar_url: userAvatar,
+            user_id: p.user_id
+          },
+          image: p.image_url || p.imagen_url || p.media_url,
           user_id: p.user_id,
-          created_at: p.created_at,
           isLiked: likedMap[p.id] || false
         };
       }));

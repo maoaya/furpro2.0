@@ -42,27 +42,54 @@ export class AuthService {
     try {
       const { email, password, name, phone, userType, position } = userData
 
-      // ✅ VERIFICAR SI EL EMAIL YA EXISTE EN LA BASE DE DATOS
+      // ✅ VERIFICAR SI EL EMAIL YA EXISTE - BÚSQUEDA DUAL
+      const emailLower = email.toLowerCase().trim()
+      
+      // Verificar en tabla 'users'
       try {
-        const { data: existingUser } = await supabase
+        const { data: existingInUsers, error: usersError } = await supabase
           .from('users')
-          .select('email')
-          .eq('email', email)
-          .maybeSingle()
+          .select('id, email')
+          .eq('email', emailLower)
+          .single()
         
-        if (existingUser) {
-          throw new Error('Este email ya está registrado. Por favor inicia sesión.')
+        if (existingInUsers) {
+          throw new Error('Este email ya está registrado en el sistema. Por favor inicia sesión.')
         }
       } catch (checkErr) {
-        if (checkErr.message.includes('ya está registrado')) {
-          throw checkErr
+        // Si el error es "no rows found", está bien (significa que no existe)
+        if (!checkErr.message?.includes('no rows') && !checkErr.message?.includes('0 rows') && !checkErr.message?.includes('No data')) {
+          if (checkErr.message?.includes('registrado')) {
+            throw checkErr
+          }
+          console.warn('Advertencia verificando email en users:', checkErr.message)
         }
-        console.warn('Advertencia verificando email:', checkErr)
+      }
+
+      // Verificar en tabla 'carfutpro'
+      try {
+        const { data: existingInCarfutpro, error: carfutproError } = await supabase
+          .from('carfutpro')
+          .select('id, email')
+          .eq('email', emailLower)
+          .single()
+        
+        if (existingInCarfutpro) {
+          throw new Error('Este email ya está registrado en carfutpro. Por favor inicia sesión.')
+        }
+      } catch (checkErr) {
+        // Si el error es "no rows found", está bien (significa que no existe)
+        if (!checkErr.message?.includes('no rows') && !checkErr.message?.includes('0 rows') && !checkErr.message?.includes('No data')) {
+          if (checkErr.message?.includes('registrado')) {
+            throw checkErr
+          }
+          console.warn('Advertencia verificando email en carfutpro:', checkErr.message)
+        }
       }
 
       // Crear usuario en Supabase Auth
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: emailLower,
         password,
         options: {
           data: {
@@ -78,7 +105,8 @@ export class AuthService {
       if (error) {
         // Detectar errores de duplicado de Supabase Auth
         if (error.message?.includes('already registered') || 
-            error.message?.includes('User already registered')) {
+            error.message?.includes('User already registered') ||
+            error.message?.includes('Email already registered')) {
           throw new Error('Este email ya está registrado. Por favor inicia sesión.')
         }
         throw error
@@ -87,7 +115,7 @@ export class AuthService {
       // Crear perfil en la base de datos
       const profileData = {
         id: data.user.id,
-        email,
+        email: emailLower,
         name,
         phone,
         user_type: userType,

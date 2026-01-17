@@ -28,19 +28,21 @@ const Estados = () => {
 
   const cargarEstados = async () => {
     if (!user) return;
+    // Cargar SOLO las historias (user_stories) del usuario actual
     const { data, error } = await supabase
-      .from('statuses')
-      .select('id, text, user_email, category, created_at, likes_count, comments_count')
+      .from('user_stories')
+      .select('id, content_url, created_at, expires_at, user_id')
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false });
     if (!error && data) {
       const mapped = data.map(row => ({
         id: row.id,
-        texto: row.text,
-        usuario: row.user_email,
-        categoria: row.category,
+        texto: 'Foto/Video',
+        usuario: user.email,
+        imagen: row.content_url,
         fecha: row.created_at,
-        likes: row.likes_count || 0,
-        comentariosCount: row.comments_count || 0,
+        likes: 0,
+        comentariosCount: 0,
         comentarios: []
       }));
       setEstados(mapped);

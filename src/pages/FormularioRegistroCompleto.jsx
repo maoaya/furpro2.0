@@ -306,19 +306,21 @@ export default function FormularioRegistroCompleto() {
       if (profileError) throw profileError;
 
       // Si se registró como Árbitro, guardar en tournament_referees
-      if (formData.posicion === 'Árbitro') {
+      if (formData.posicion === 'Árbitro' || formData.posicion === 'Árbitro Asistente' || formData.posicion === 'Cuarto Árbitro' || formData.posicion === 'Delegado') {
         const refPayload = {
           user_id: userId,
           license_number: formData.licenseNumber || null,
           certification_level: formData.certificationLevel || null,
           experience_years: formData.experienceYears ? Number(formData.experienceYears) : null,
           available: true,
-          availability_schedule: null
+          availability_schedule: null,
+          referee_type: formData.posicion // Guardar el tipo específico de árbitro
         };
         try {
           await supabase
             .from('tournament_referees')
             .upsert(refPayload, { onConflict: 'user_id' });
+          console.log('✅ Árbitro registrado exitosamente:', refPayload);
         } catch (refError) {
           console.warn('⚠️ No se pudo guardar árbitro:', refError.message);
         }
@@ -712,7 +714,7 @@ export default function FormularioRegistroCompleto() {
             </h2>
 
             <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '0px', fontSize: '14px', fontWeight: 'bold' }}>
-              Posición Favorita
+              Posición Favorita / Rol
             </label>
             <select
               value={formData.posicion}
@@ -739,6 +741,12 @@ export default function FormularioRegistroCompleto() {
                 <option value="Pivote">🎯 Pivote</option>
                 <option value="Cierre">🔒 Cierre</option>
               </optgroup>
+              <optgroup label="🏟️ Árbitro / Staff">
+                <option value="Árbitro">🤴 Árbitro</option>
+                <option value="Árbitro Asistente">👥 Árbitro Asistente</option>
+                <option value="Cuarto Árbitro">📋 Cuarto Árbitro</option>
+                <option value="Delegado">📍 Delegado de Torneo</option>
+              </optgroup>
             </select>
 
             <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '16px', fontSize: '14px', fontWeight: 'bold' }}>
@@ -755,6 +763,62 @@ export default function FormularioRegistroCompleto() {
               <option value="Profesional">⭐ Profesional</option>
               <option value="Elite">👑 Elite</option>
             </select>
+
+            {/* 🤴 CAMPOS ESPECÍFICOS PARA ÁRBITRO */}
+            {(formData.posicion === 'Árbitro' || formData.posicion === 'Árbitro Asistente' || formData.posicion === 'Cuarto Árbitro') && (
+              <div style={{
+                marginTop: '24px',
+                padding: '16px',
+                background: '#1a1a1a',
+                borderRadius: '10px',
+                border: '2px solid #FFD700'
+              }}>
+                <h3 style={{ color: '#FFD700', marginBottom: '16px', fontSize: '16px', fontWeight: 'bold' }}>
+                  🤴 Credenciales de Árbitro
+                </h3>
+
+                <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>
+                  Número de Licencia (opcional)
+                </label>
+                <input
+                  placeholder="Ej: ARB-2024-00123"
+                  value={formData.licenseNumber}
+                  onChange={(e) => setFormData({ ...formData, licenseNumber: e.target.value })}
+                  style={inputStyle}
+                  onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+                  onBlur={(e) => e.target.style.borderColor = '#444'}
+                />
+
+                <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '12px', fontSize: '14px', fontWeight: 'bold' }}>
+                  Nivel de Certificación
+                </label>
+                <select
+                  value={formData.certificationLevel}
+                  onChange={(e) => setFormData({ ...formData, certificationLevel: e.target.value })}
+                  style={selectStyle}
+                >
+                  <option value="Local">🏘️ Local</option>
+                  <option value="Regional">🗺️ Regional</option>
+                  <option value="Nacional">🇦🇷 Nacional</option>
+                  <option value="Internacional">🌍 Internacional</option>
+                </select>
+
+                <label style={{ color: '#FFD700', display: 'block', marginBottom: '8px', marginTop: '12px', fontSize: '14px', fontWeight: 'bold' }}>
+                  Años de Experiencia
+                </label>
+                <input
+                  type="number"
+                  placeholder="Ej: 5"
+                  value={formData.experienceYears}
+                  onChange={(e) => setFormData({ ...formData, experienceYears: e.target.value })}
+                  min="0"
+                  max="60"
+                  style={inputStyle}
+                  onFocus={(e) => e.target.style.borderColor = '#FFD700'}
+                  onBlur={(e) => e.target.style.borderColor = '#444'}
+                />
+              </div>
+            )}
 
             <input
               placeholder="🏆 Equipo Favorito"

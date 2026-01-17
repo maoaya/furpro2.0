@@ -72,9 +72,14 @@ export default function TopNavBar() {
       }}>
         <input
           type="text"
-          placeholder="🔍 Buscar..."
+          placeholder="🔍 Buscar usuario, equipo, torneo..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && searchQuery.trim()) {
+              navigate(`/buscar-ranking?q=${encodeURIComponent(searchQuery)}`);
+            }
+          }}
           style={{
             width: '100%',
             padding: '10px 15px',
