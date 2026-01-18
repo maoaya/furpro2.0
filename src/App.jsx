@@ -159,7 +159,6 @@ export default function App() {
             <Route path="/usuario/:id" element={<MainLayout><UsuarioDetallePage /></MainLayout>} />
             
             {/* 💬 COMUNICACIÓN Y SOCIAL */}
-            <Route path="/chat" element={<ChatInstagram />} />
             <Route path="/estados" element={<MainLayout><Estados /></MainLayout>} />
             <Route path="/amigos" element={<MainLayout><Amigos /></MainLayout>} />
             <Route path="/transmision-en-vivo" element={<MainLayout><LiveStreamPage /></MainLayout>} />
