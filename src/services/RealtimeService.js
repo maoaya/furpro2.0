@@ -42,8 +42,16 @@ class RealtimeService {
       this.initialize();
     }
 
-    const channelName = `${tableName}_${Date.now()}`;
-    
+    // FP-MEM-001: nombre estable (evitar proliferar channels con Date.now)
+    const filterKey = JSON.stringify(filters || {});
+    const channelName = `${tableName}_${filterKey}`.slice(0, 120);
+
+    // Reutilizar si ya existe
+    if (this.subscriptions.has(channelName)) {
+      this.callbacks.set(channelName, callback);
+      return channelName;
+    }
+
     try {
       let channel = supabase
         .channel(channelName)

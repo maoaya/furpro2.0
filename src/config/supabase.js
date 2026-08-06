@@ -554,9 +554,15 @@ export const realtimeSubscriptions = {
   },
 
   unsubscribe(subscription) {
-    if (subscription) {
-      subscription.unsubscribe()
-    }
+    // FP-MEM-001: prefer removeChannel over bare unsubscribe
+    if (!subscription) return
+    try {
+      if (typeof supabase?.removeChannel === 'function') {
+        supabase.removeChannel(subscription)
+        return
+      }
+    } catch { /* fall through */ }
+    try { subscription.unsubscribe?.() } catch { /* noop */ }
   }
 }
 

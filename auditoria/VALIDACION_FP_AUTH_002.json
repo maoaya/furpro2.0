@@ -1,0 +1,87 @@
+{
+  "id": "FP-AUTH-002",
+  "pass": true,
+  "grepPass": true,
+  "forbiddenCount": 0,
+  "forbidden": [],
+  "allowedAuthCallback": [
+    "/workspace/src/pages/auth/AuthCallback.jsx:22:        const { data: { session }, error: sessionError } = await supabase.auth.getSession()",
+    "/workspace/src/pages/auth/AuthCallback.jsx:72:          const { data: { session: session2 } } = await supabase.auth.getSession()"
+  ],
+  "navPass": true,
+  "nav": [
+    {
+      "route": "/login",
+      "status": 200,
+      "ms": 805,
+      "hardFail": false,
+      "pathname": "/login",
+      "rootTextLen": 211,
+      "hasRoot": true
+    },
+    {
+      "route": "/home",
+      "status": 200,
+      "ms": 723,
+      "hardFail": false,
+      "pathname": "/home",
+      "rootTextLen": 408,
+      "hasRoot": true
+    },
+    {
+      "route": "/feed",
+      "status": 200,
+      "ms": 714,
+      "hardFail": false,
+      "pathname": "/feed",
+      "rootTextLen": 408,
+      "hasRoot": true
+    },
+    {
+      "route": "/perfil",
+      "status": 200,
+      "ms": 712,
+      "hardFail": false,
+      "pathname": "/perfil",
+      "rootTextLen": 90,
+      "hasRoot": true
+    },
+    {
+      "route": "/notificaciones",
+      "status": 200,
+      "ms": 727,
+      "hardFail": false,
+      "pathname": "/notificaciones",
+      "rootTextLen": 90,
+      "hasRoot": true
+    },
+    {
+      "route": "/ranking",
+      "status": 200,
+      "ms": 710,
+      "hardFail": false,
+      "pathname": "/ranking",
+      "rootTextLen": 531,
+      "hasRoot": true
+    },
+    {
+      "route": "/marketplace",
+      "status": 200,
+      "ms": 703,
+      "hardFail": false,
+      "pathname": "/marketplace",
+      "rootTextLen": 53,
+      "hasRoot": true
+    },
+    {
+      "route": "/amigos",
+      "status": 200,
+      "ms": 695,
+      "hardFail": false,
+      "pathname": "/amigos",
+      "rootTextLen": 123,
+      "hasRoot": true
+    }
+  ],
+  "generatedAt": "2026-08-06T23:53:13.697Z"
+}

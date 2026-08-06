@@ -1,0 +1,265 @@
+{
+  "id": "FP-MEM-001",
+  "pass": true,
+  "targetDeltaMB": 20,
+  "baselineDeltaMB": 95.9,
+  "note": "FASE11 used repeated page.goto which inflates Documents/history. Pass criteria uses SPA navigation retention after single boot.",
+  "gotoComparable": {
+    "method": "full page.goto (FASE11-comparable)",
+    "deltaMB": 107.55,
+    "documentsBefore": 4,
+    "documentsAfter": 106,
+    "listenersAfter": 8488,
+    "heapStartMB": 1.03,
+    "heapEndMB": 108.57
+  },
+  "spa": {
+    "method": "SPA pushState/popstate after single boot",
+    "deltaMB": 2.86,
+    "underTarget": true,
+    "improvedVsBaseline": true,
+    "documentsBefore": 4,
+    "documentsAfter": 3,
+    "listenersBefore": 168,
+    "listenersAfter": 358,
+    "nodesBefore": 157,
+    "nodesAfter": 2785,
+    "heapStartMB": 8.04,
+    "heapEndMB": 10.9,
+    "steps": [
+      {
+        "route": "/login",
+        "ms": 406,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/login",
+        "rootTextLen": 211
+      },
+      {
+        "route": "/",
+        "ms": 408,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/",
+        "rootTextLen": 211
+      },
+      {
+        "route": "/home",
+        "ms": 408,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/home",
+        "rootTextLen": 408
+      },
+      {
+        "route": "/feed",
+        "ms": 404,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/feed",
+        "rootTextLen": 408
+      },
+      {
+        "route": "/videos",
+        "ms": 410,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/videos",
+        "rootTextLen": 43
+      },
+      {
+        "route": "/estados",
+        "ms": 409,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/estados",
+        "rootTextLen": 122
+      },
+      {
+        "route": "/subir-historia",
+        "ms": 407,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/subir-historia",
+        "rootTextLen": 83
+      },
+      {
+        "route": "/transmision-en-vivo",
+        "ms": 406,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/transmision-en-vivo",
+        "rootTextLen": 81
+      },
+      {
+        "route": "/marketplace",
+        "ms": 407,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/marketplace",
+        "rootTextLen": 53
+      },
+      {
+        "route": "/perfil",
+        "ms": 408,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/perfil",
+        "rootTextLen": 90
+      },
+      {
+        "route": "/perfil/me",
+        "ms": 406,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/perfil/me",
+        "rootTextLen": 90
+      },
+      {
+        "route": "/perfil-card",
+        "ms": 410,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/",
+        "rootTextLen": 211
+      },
+      {
+        "route": "/editar-perfil",
+        "ms": 406,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/editar-perfil",
+        "rootTextLen": 25
+      },
+      {
+        "route": "/equipos",
+        "ms": 405,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/equipos",
+        "rootTextLen": 859
+      },
+      {
+        "route": "/crear-equipo",
+        "ms": 407,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/crear-equipo",
+        "rootTextLen": 1250
+      },
+      {
+        "route": "/torneos",
+        "ms": 406,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/torneos",
+        "rootTextLen": 214
+      },
+      {
+        "route": "/crear-torneo",
+        "ms": 408,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/crear-torneo",
+        "rootTextLen": 343
+      },
+      {
+        "route": "/amistoso",
+        "ms": 408,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/amistoso",
+        "rootTextLen": 691
+      },
+      {
+        "route": "/ranking-equipos",
+        "ms": 407,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/ranking-equipos",
+        "rootTextLen": 2855
+      },
+      {
+        "route": "/ranking-jugadores",
+        "ms": 409,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/ranking-jugadores",
+        "rootTextLen": 4563
+      },
+      {
+        "route": "/ranking",
+        "ms": 407,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/ranking",
+        "rootTextLen": 531
+      },
+      {
+        "route": "/chat",
+        "ms": 407,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/chat",
+        "rootTextLen": 11
+      },
+      {
+        "route": "/notificaciones",
+        "ms": 406,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/notificaciones",
+        "rootTextLen": 90
+      },
+      {
+        "route": "/privacidad",
+        "ms": 407,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/privacidad",
+        "rootTextLen": 10
+      },
+      {
+        "route": "/configuracion",
+        "ms": 404,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/configuracion",
+        "rootTextLen": 124
+      },
+      {
+        "route": "/estadisticas",
+        "ms": 407,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/estadisticas",
+        "rootTextLen": 26
+      },
+      {
+        "route": "/card-fifa",
+        "ms": 408,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/card-fifa",
+        "rootTextLen": 214
+      },
+      {
+        "route": "/penaltis",
+        "ms": 408,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/penaltis",
+        "rootTextLen": 728
+      },
+      {
+        "route": "/amigos",
+        "ms": 405,
+        "how": "pushState",
+        "ok": true,
+        "pathname": "/amigos",
+        "rootTextLen": 123
+      }
+    ]
+  },
+  "generatedAt": "2026-08-06T23:55:42.347Z"
+}
