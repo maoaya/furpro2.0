@@ -5,7 +5,7 @@ import supabase from '../supabaseClient';
 import cardManager from '../services/CardManager';
 
 export default function PerfilNuevo() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [cardData, setCardData] = useState(null);
   const [momentos, setMomentos] = useState([]);
@@ -14,11 +14,15 @@ export default function PerfilNuevo() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // FP-NAV-001: sin sesión no dejar loading eterno (pantalla en blanco / spinner infinito).
   useEffect(() => {
-    if (user) {
-      cargarDatos();
+    if (authLoading) return;
+    if (!user) {
+      setLoading(false);
+      return;
     }
-  }, [user]);
+    cargarDatos();
+  }, [user, authLoading]);
 
   const cargarDatos = async () => {
     try {
@@ -113,10 +117,50 @@ export default function PerfilNuevo() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div style={{ minHeight: '100vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFD700' }}>
         <div style={{ fontSize: '1.5rem' }}>⚽ Cargando perfil...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#000', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 }}>
+        <h1 style={{ color: '#FFD700', margin: 0 }}>Mi Perfil</h1>
+        <p style={{ maxWidth: 360, textAlign: 'center', opacity: 0.9 }}>
+          Inicia sesión para ver tu perfil, card y momentos.
+        </p>
+        <button
+          type="button"
+          onClick={() => navigate('/login')}
+          style={{
+            background: '#FFD700',
+            color: '#000',
+            border: 'none',
+            borderRadius: 8,
+            padding: '12px 20px',
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          Iniciar sesión
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/home')}
+          style={{
+            background: 'transparent',
+            color: '#FFD700',
+            border: '1px solid #FFD700',
+            borderRadius: 8,
+            padding: '10px 18px',
+            cursor: 'pointer',
+          }}
+        >
+          Ir al inicio
+        </button>
       </div>
     );
   }

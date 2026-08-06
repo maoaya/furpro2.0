@@ -1,0 +1,123 @@
+{
+  "issue": "FP-NAV-001",
+  "generatedAt": "2026-08-06T23:47:56.800Z",
+  "base": "http://127.0.0.1:5173",
+  "pass": true,
+  "results": [
+    {
+      "route": "/perfil",
+      "status": 200,
+      "ms": 1012,
+      "hardFail": false,
+      "aborted": false,
+      "pathname": "/perfil",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "hasRoot": true,
+      "rootTextLen": 90,
+      "rootPreview": "Mi Perfil\n\nInicia sesión para ver tu perfil, card y momentos.\n\nIniciar sesión\nIr al inicio",
+      "isStub": false
+    },
+    {
+      "route": "/perfil/me",
+      "status": 200,
+      "ms": 944,
+      "hardFail": false,
+      "aborted": false,
+      "pathname": "/perfil/me",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "hasRoot": true,
+      "rootTextLen": 90,
+      "rootPreview": "Mi Perfil\n\nInicia sesión para ver tu perfil, card y momentos.\n\nIniciar sesión\nIr al inicio",
+      "isStub": false
+    },
+    {
+      "route": "/crear-equipo",
+      "status": 200,
+      "ms": 905,
+      "hardFail": false,
+      "aborted": false,
+      "pathname": "/crear-equipo",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "hasRoot": true,
+      "rootTextLen": 1250,
+      "rootPreview": "➕ Crear Equipo\n\nSigue los pasos para crear tu equipo profesional\n\n💡 Guía Rápida: ¿Cómo crear un equipo?\nPaso 1: Elige u",
+      "isStub": false
+    },
+    {
+      "route": "/login",
+      "status": 200,
+      "ms": 904,
+      "hardFail": false,
+      "aborted": false,
+      "pathname": "/login",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "hasRoot": true,
+      "rootTextLen": 211,
+      "rootPreview": "⚽\nFutPro\n\nPlataforma de Fútbol\n\n🔐 Iniciar Sesión\n✔️ Iniciar sesión\n👤 Crear nueva cuenta\no continúa con\nContinuar con G",
+      "isStub": false
+    },
+    {
+      "route": "/home",
+      "status": 200,
+      "ms": 896,
+      "hardFail": false,
+      "aborted": false,
+      "pathname": "/home",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "hasRoot": true,
+      "rootTextLen": 408,
+      "rootPreview": "Ranking de Usuarios por Valoración Promedio\nNo hay datos de ranking aún.\nFiltrar por tipo de usuario: \nTodos\nCampeonato\n",
+      "isStub": false
+    }
+  ],
+  "stress": [
+    {
+      "i": 0,
+      "route": "/perfil",
+      "ms": 300,
+      "aborted": false,
+      "text": 90,
+      "hasRoot": true
+    },
+    {
+      "i": 0,
+      "route": "/crear-equipo",
+      "ms": 297,
+      "aborted": false,
+      "text": 1250,
+      "hasRoot": true
+    },
+    {
+      "i": 1,
+      "route": "/perfil",
+      "ms": 322,
+      "aborted": false,
+      "text": 90,
+      "hasRoot": true
+    },
+    {
+      "i": 1,
+      "route": "/crear-equipo",
+      "ms": 292,
+      "aborted": false,
+      "text": 1250,
+      "hasRoot": true
+    },
+    {
+      "i": 2,
+      "route": "/perfil",
+      "ms": 323,
+      "aborted": false,
+      "text": 90,
+      "hasRoot": true
+    },
+    {
+      "i": 2,
+      "route": "/crear-equipo",
+      "ms": 297,
+      "aborted": false,
+      "text": 1250,
+      "hasRoot": true
+    }
+  ]
+}

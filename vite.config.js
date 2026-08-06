@@ -9,6 +9,32 @@ export default defineConfig(({ command, mode }) => {
   
   return {
     plugins: [
+      // FP-NAV-001: stubs HTML en raíz (p.ej. perfil.html) no deben secuestrar rutas React.
+      {
+        name: 'fp-spa-route-priority',
+        configureServer(server) {
+          server.middlewares.use((req, _res, next) => {
+            const raw = req.url || '';
+            const pathname = raw.split('?')[0];
+            const spaPaths = new Set([
+              '/perfil',
+              '/perfil/me',
+              '/crear-equipo',
+              '/editar-perfil',
+              '/home',
+              '/equipos',
+              '/torneos',
+              '/marketplace',
+              '/login',
+            ]);
+            if (spaPaths.has(pathname)) {
+              const qs = raw.includes('?') ? `?${raw.split('?')[1]}` : '';
+              req.url = `/index.html${qs}`;
+            }
+            next();
+          });
+        },
+      },
       // Permite JSX dentro de archivos .js transformándolos ANTES del import-analysis de Vite
       {
         name: 'jsx-in-js-pre-transform',
