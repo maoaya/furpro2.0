@@ -1,0 +1,115 @@
+{
+  "note": "Proxy estático: no React Profiler en headless. Conteos de hooks/queries por pantalla pesada.",
+  "pages": [
+    {
+      "file": "src/pages/HomePage.jsx",
+      "lines": 877,
+      "useState": 20,
+      "useEffect": 1,
+      "useMemo": 3,
+      "useCallback": 0,
+      "from": 19,
+      "rpc": 0
+    },
+    {
+      "file": "src/pages/FeedPage.jsx",
+      "lines": 319,
+      "useState": 16,
+      "useEffect": 1,
+      "useMemo": 1,
+      "useCallback": 0,
+      "from": 7,
+      "rpc": 1
+    },
+    {
+      "file": "src/pages/Torneos.jsx",
+      "lines": 102,
+      "useState": 1,
+      "useEffect": 0,
+      "useMemo": 0,
+      "useCallback": 0,
+      "from": 0,
+      "rpc": 0
+    },
+    {
+      "file": "src/pages/Equipos.jsx",
+      "lines": 118,
+      "useState": 6,
+      "useEffect": 1,
+      "useMemo": 0,
+      "useCallback": 0,
+      "from": 0,
+      "rpc": 0
+    },
+    {
+      "file": "src/pages/MarketplaceCompleto.jsx",
+      "lines": 606,
+      "useState": 13,
+      "useEffect": 1,
+      "useMemo": 0,
+      "useCallback": 0,
+      "from": 1,
+      "rpc": 0
+    },
+    {
+      "file": "src/pages/RankingJugadoresCompleto.jsx",
+      "lines": 313,
+      "useState": 6,
+      "useEffect": 2,
+      "useMemo": 0,
+      "useCallback": 0,
+      "from": 1,
+      "rpc": 0
+    },
+    {
+      "file": "src/pages/Chat.jsx",
+      "lines": 40,
+      "useState": 3,
+      "useEffect": 1,
+      "useMemo": 0,
+      "useCallback": 0,
+      "from": 0,
+      "rpc": 0
+    },
+    {
+      "file": "src/pages/PerfilInstagram.jsx",
+      "lines": 748,
+      "useState": 10,
+      "useEffect": 2,
+      "useMemo": 0,
+      "useCallback": 0,
+      "from": 7,
+      "rpc": 0
+    },
+    {
+      "file": "src/pages/VideosFeed.jsx",
+      "lines": 649,
+      "useState": 7,
+      "useEffect": 2,
+      "useMemo": 0,
+      "useCallback": 0,
+      "from": 5,
+      "rpc": 1
+    },
+    {
+      "file": "src/context/AuthContext.jsx",
+      "lines": 605,
+      "useState": 6,
+      "useEffect": 1,
+      "useMemo": 0,
+      "useCallback": 0,
+      "from": 7,
+      "rpc": 0
+    },
+    {
+      "file": "src/context/NotificationsContext.jsx",
+      "lines": 130,
+      "useState": 3,
+      "useEffect": 1,
+      "useMemo": 1,
+      "useCallback": 0,
+      "from": 1,
+      "rpc": 0
+    }
+  ]
+}

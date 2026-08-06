@@ -1,0 +1,79 @@
+# FASE 8 — Botones (20260806)
+
+- [/login] ✔️ Iniciar sesión: 2.70ms 
+- [/login] 👤 Crear nueva cuenta: 1.10ms 
+- [/login] Continuar con Google: 0.90ms 
+- [/login] 🔑 ¿Olvidaste tu contraseña?: 0.10ms 
+- [/login] Cerrar: 0.10ms 
+- [/] ✔️ Iniciar sesión: 1.80ms 
+- [/] 👤 Crear nueva cuenta: 0.50ms 
+- [/] Continuar con Google: 0.50ms 
+- [/] 🔑 ¿Olvidaste tu contraseña?: 0.00ms 
+- [/] Cerrar: 0.10ms 
+- [/home] Fácil: 0.40ms 
+- [/home] Difícil: 0.10ms 
+- [/home] Muy Difícil: 0.00ms 
+- [/home] Guardar calificación: 0.20ms 
+- [/home] Nueva publicación: 0.00ms 
+- [/home] Cerrar: 0.00ms 
+- [/feed] Fácil: 0.40ms 
+- [/feed] Difícil: 0.00ms 
+- [/feed] Muy Difícil: 0.10ms 
+- [/feed] Guardar calificación: 0.00ms 
+- [/feed] Nueva publicación: 0.10ms 
+- [/feed] Cerrar: 0.10ms 
+- [/videos] ← Atrás: 0.30ms 
+- [/videos] Para ti: 0.10ms 
+- [/videos] Siguiendo: 0.10ms 
+- [/videos] 🔴 En Vivo: 0.10ms 
+- [/videos] Cerrar: 0.00ms 
+- [/estados] Publicar: 0.20ms 
+- [/estados] Cerrar: 0.10ms 
+- [/subir-historia] ← Volver: 0.40ms 
+- [/subir-historia] Cerrar: 0.10ms 
+- [/transmision-en-vivo] Cerrar: 0.10ms 
+- [/marketplace] 🔍 Filtros: 0.30ms 
+- [/marketplace] ➕ Vender: 0.30ms 
+- [/marketplace] Cerrar: 0.10ms 
+- [/perfil/me] Cerrar: 0.10ms 
+- [/perfil-card] ✔️ Iniciar sesión: 1.60ms 
+- [/perfil-card] 👤 Crear nueva cuenta: 0.30ms 
+- [/perfil-card] Continuar con Google: 0.40ms 
+- [/perfil-card] 🔑 ¿Olvidaste tu contraseña?: 0.00ms 
+- [/perfil-card] Cerrar: 0.10ms 
+- [/editar-perfil] Cerrar: 0.00ms 
+- [/equipos] timeout: 3000.00ms 
+- [/torneos] Liga FutPro: 0.30ms 
+- [/torneos] Copa Oro: 0.10ms 
+- [/torneos] Supercopa: 0.10ms 
+- [/torneos] Consultar: 0.00ms 
+- [/torneos] Actualizar: 0.00ms 
+- [/torneos] Ver historial: 0.10ms 
+- [/crear-torneo] Cancelar: 0.50ms 
+- [/crear-torneo] Crear Torneo: 1.40ms 
+- [/crear-torneo] Cerrar: 0.10ms 
+- [/amistoso] Cancelar: 0.60ms 
+- [/amistoso] Crear Amistoso: 1.10ms 
+- [/amistoso] Cerrar: 0.10ms 
+- [/ranking-equipos] Cerrar: 0.20ms 
+- [/ranking-jugadores] Tu posición: #45: 0.40ms 
+- [/ranking-jugadores] Cerrar: 0.00ms 
+- [/ranking] ⚽ Equipos: 0.30ms 
+- [/ranking] ⚖️ Árbitros: 0.10ms 
+- [/ranking] 🔄 Limpiar Filtros: 0.00ms 
+- [/ranking] Cerrar: 0.00ms 
+- [/chat] Enviar: 0.20ms 
+- [/chat] Cerrar: 0.00ms 
+- [/notificaciones] Cerrar: 0.20ms 
+- [/privacidad] Cerrar: 0.10ms 
+- [/configuracion] Guardar: 0.20ms 
+- [/configuracion] Guardar cambios: 0.30ms 
+- [/configuracion] Ver reportes: 0.00ms 
+- [/configuracion] Cerrar: 0.10ms 
+- [/estadisticas] Cerrar: 0.10ms 
+- [/card-fifa] timeout: 3000.00ms 
+- [/penaltis] ✕: 0.30ms 
+- [/penaltis] 🚀 Comenzar Juego: 0.10ms 
+- [/penaltis] Cerrar: 0.10ms 
+- [/amigos] btn: 0.20ms 
+- [/amigos] Cerrar: 0.10ms 

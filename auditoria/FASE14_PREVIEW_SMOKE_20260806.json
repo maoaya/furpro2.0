@@ -1,0 +1,45 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "out": [
+    {
+      "route": "/login",
+      "status": 200,
+      "ms": 445,
+      "path": "/login",
+      "text": 211,
+      "btns": 5
+    },
+    {
+      "route": "/home",
+      "status": 200,
+      "ms": 424,
+      "path": "/home",
+      "text": 408,
+      "btns": 6
+    },
+    {
+      "route": "/torneos",
+      "status": 200,
+      "ms": 426,
+      "path": "/torneos",
+      "text": 214,
+      "btns": 11
+    },
+    {
+      "route": "/marketplace",
+      "status": 200,
+      "ms": 444,
+      "path": "/marketplace",
+      "text": 0,
+      "btns": 10
+    },
+    {
+      "route": "/ranking-jugadores",
+      "status": 200,
+      "ms": 424,
+      "path": "/ranking-jugadores",
+      "text": 4556,
+      "btns": 2
+    }
+  ]
+}

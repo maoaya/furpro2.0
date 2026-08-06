@@ -1,0 +1,96 @@
+{
+  "contexts": [
+    {
+      "file": "src/context/AuthContext.jsx",
+      "exports": [
+        "AuthContext",
+        "AuthProvider",
+        "useAuth"
+      ]
+    },
+    {
+      "file": "src/context/NotificationsContext.jsx",
+      "exports": [
+        "NotificationsProvider",
+        "useNotifications"
+      ]
+    },
+    {
+      "file": "src/context/RoleContext.js",
+      "exports": [
+        "RoleContext",
+        "RoleProvider",
+        "useRole"
+      ]
+    }
+  ],
+  "appProviderTree": [
+    "AuthProvider",
+    "NotificationsProvider",
+    "Router/Routes"
+  ],
+  "localStorageKeys": [
+    "amistosoPoints",
+    "arbitroPerfil",
+    "authCompleted",
+    "authTimestamp",
+    "card_futpro_borrador",
+    "currentUser",
+    "draft_carfutpro",
+    "equipo_tecnico",
+    "futpro-theme",
+    "futpro_cards",
+    "futpro_historial",
+    "futpro_historial_completo",
+    "futpro_pending_actions",
+    "futpro_publicaciones_globales",
+    "futpro_push_subscription",
+    "futpro_remember",
+    "futpro_search_history",
+    "futpro_session_id",
+    "futpro_session_start",
+    "futpro_token",
+    "futpro_tracking_disabled",
+    "futpro_user",
+    "futpro_user_card_data",
+    "futpro_video_likes",
+    "grupos",
+    "lastPath",
+    "loginSuccess",
+    "navigationLogs",
+    "patrocinios",
+    "penaltyGoals",
+    "penaltyPoints",
+    "penalty_achievements",
+    "penalty_best",
+    "penalty_games",
+    "penalty_goals",
+    "penalty_shots",
+    "pendingProfileData",
+    "perfil",
+    "postLoginRedirect",
+    "postLoginRedirectReason",
+    "post_auth_origin",
+    "post_auth_target",
+    "publicaciones",
+    "registroCompleto",
+    "registroExitoso",
+    "registroProgreso",
+    "selectedCategoria",
+    "session",
+    "show_first_card",
+    "tempRegistroData",
+    "token",
+    "torneos",
+    "userEmail",
+    "userId",
+    "userLoggedIn",
+    "userRegistrado",
+    "usuarioActivo",
+    "usuarios"
+  ],
+  "sessionStorageKeys": [
+    "lastPath",
+    "navigationLogs"
+  ]
+}

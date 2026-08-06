@@ -1,0 +1,955 @@
+{
+  "totalRiskFlags": 95,
+  "risks": [
+    {
+      "file": "src/components/AdminDashboard.jsx",
+      "line": 20,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/components/AdminPanelPage.js",
+      "line": 13,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "React.useEffect(() => {"
+    },
+    {
+      "file": "src/components/AuthCallback.jsx",
+      "line": 11,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/components/CommentsModal.jsx",
+      "line": 18,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/components/CommentsModal.jsx",
+      "line": 25,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/components/ConvocarJugadores.jsx",
+      "line": 36,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/components/MiEquipoMejorado.jsx",
+      "line": 56,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/components/NotificacionesPanel.js",
+      "line": 13,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/components/RankingMejorado.jsx",
+      "line": 22,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/components/SeleccionarAlineacion.jsx",
+      "line": 40,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/components/TopNavBar.jsx",
+      "line": 14,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/context/AuthContext.jsx",
+      "line": 60,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/context/NotificationsContext.jsx",
+      "line": 28,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/Amigos.jsx",
+      "line": 13,
+      "hasSupabase": true,
+      "hasSetState": false,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/Amistoso.jsx",
+      "line": 25,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ChatInstagram.jsx",
+      "line": 28,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ChatInstagramNew.jsx",
+      "line": 16,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ChatInstagramNew.jsx",
+      "line": 22,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ConfiguracionCuenta.jsx",
+      "line": 28,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ConvocarJugadores.jsx",
+      "line": 70,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/CrearTorneoCompleto.jsx",
+      "line": 104,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/CrearTorneoCompleto.jsx",
+      "line": 111,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/CrearTorneoCompleto.jsx",
+      "line": 118,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/EditarPerfil.jsx",
+      "line": 13,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/EquipoDetallePage.js",
+      "line": 12,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/EquipoDetallePage.jsx",
+      "line": 17,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/EquipoTorneosPage.jsx",
+      "line": 28,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/Estadisticas.jsx",
+      "line": 20,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/Estados.jsx",
+      "line": 12,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/FeedPage.jsx",
+      "line": 31,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/HistorialEquipo.jsx",
+      "line": 13,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/HistorialPromociones.jsx",
+      "line": 10,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/HomePage.jsx",
+      "line": 137,
+      "hasSupabase": true,
+      "hasSetState": false,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 26,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 43,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 57,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/LoginPage.jsx",
+      "line": 32,
+      "hasSupabase": true,
+      "hasSetState": false,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/LogrosEquipoPage.js",
+      "line": 13,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/LogrosPage.js",
+      "line": 11,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/LogrosPage.jsx",
+      "line": 9,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/MarketplaceCompleto.jsx",
+      "line": 21,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/MediaDetalle.jsx",
+      "line": 12,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/MediaPage.js",
+      "line": 12,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ModeracionReportes.jsx",
+      "line": 12,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ModerationPage.jsx",
+      "line": 15,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ModerationPage.jsx",
+      "line": 31,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/NaticoBotonera.jsx",
+      "line": 9,
+      "hasSupabase": true,
+      "hasSetState": false,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/NotificacionDetalle.jsx",
+      "line": 12,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/Notificaciones.jsx",
+      "line": 7,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/NotificacionesTorneoPage.jsx",
+      "line": 14,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 34,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/PartidoDetalle.jsx",
+      "line": 18,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "React.useEffect(() => {"
+    },
+    {
+      "file": "src/pages/PartidoDetalle.jsx",
+      "line": 30,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "React.useEffect(() => {"
+    },
+    {
+      "file": "src/pages/PenaltyGamePvP.jsx",
+      "line": 20,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/PenaltyGamePvP.jsx",
+      "line": 26,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/Perfil.jsx",
+      "line": 27,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/PerfilAvanzado.jsx",
+      "line": 100,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 21,
+      "hasSupabase": true,
+      "hasSetState": false,
+      "emptyDeps": false,
+      "addListener": true,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 62,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/PerfilNuevo.jsx",
+      "line": 17,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/PlantillaEquipo.jsx",
+      "line": 103,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/PlantillaEquipo.jsx",
+      "line": 108,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ProgramacionPartidosPage.jsx",
+      "line": 34,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ProgramacionPartidosPage.jsx",
+      "line": 42,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ProgresoPage.js",
+      "line": 9,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/RankingEquiposCompleto.jsx",
+      "line": 10,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/RankingEquiposCompleto.jsx",
+      "line": 14,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/RankingEquiposPage.jsx",
+      "line": 33,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/RankingJugadoresCompleto.jsx",
+      "line": 14,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/RankingJugadoresCompleto.jsx",
+      "line": 19,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/RankingJugadoresPage.jsx",
+      "line": 13,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/RegistroPerfil.jsx",
+      "line": 46,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ReportesGenerales.jsx",
+      "line": 9,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/ReportesPage.jsx",
+      "line": 17,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "React.useEffect(() => {"
+    },
+    {
+      "file": "src/pages/SoporteChat.jsx",
+      "line": 12,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/StreamingDetalle.jsx",
+      "line": 11,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/TorneoDetailPage.jsx",
+      "line": 23,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/TorneoDetalleCompleto.jsx",
+      "line": 21,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/TorneoDetallePage.js",
+      "line": 14,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/TorneoDetallePage.jsx",
+      "line": 15,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "React.useEffect(() => {"
+    },
+    {
+      "file": "src/pages/TorneoStandingsPage.jsx",
+      "line": 15,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/TorneoStandingsPage.jsx",
+      "line": 23,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/TransmisionEnVivo.jsx",
+      "line": 15,
+      "hasSupabase": true,
+      "hasSetState": false,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": true,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/UsuarioDetallePage.jsx",
+      "line": 14,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/VerMiPlantilla.jsx",
+      "line": 28,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/VideosFeed.jsx",
+      "line": 32,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/VideosFeed.jsx",
+      "line": 151,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/admin/AdminAuditoriaPage.jsx",
+      "line": 18,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/admin/AdminConfigPage.jsx",
+      "line": 13,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/admin/AdminEstadisticasPage.jsx",
+      "line": 12,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": true,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/admin/AdminNotificacionesPage.jsx",
+      "line": 18,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/admin/AdminPagosPage.jsx",
+      "line": 18,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/admin/AdminReportesPage.jsx",
+      "line": 19,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/admin/AdminUsersPage.jsx",
+      "line": 20,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    },
+    {
+      "file": "src/pages/auth/AuthCallback.jsx",
+      "line": 10,
+      "hasSupabase": true,
+      "hasSetState": true,
+      "emptyDeps": false,
+      "addListener": false,
+      "hasCleanup": false,
+      "snippet": "useEffect(() => {"
+    }
+  ]
+}

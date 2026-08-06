@@ -1,0 +1,239 @@
+{
+  "summary": {
+    "getSession": 23,
+    "onAuthStateChange": 5,
+    "getUser": 9,
+    "refreshSession": 1
+  },
+  "total": 38,
+  "rows": [
+    {
+      "method": "getSession",
+      "file": "src/components/AuthCallback.jsx",
+      "line": 25,
+      "snippet": "const { data: { session }, error: sessionError } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "onAuthStateChange",
+      "file": "src/components/AuthPage.js",
+      "line": 18,
+      "snippet": "const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {"
+    },
+    {
+      "method": "getUser",
+      "file": "src/config/Database.js",
+      "line": 12,
+      "snippet": "const { data: { user }, error } = await supabase.auth.getUser()"
+    },
+    {
+      "method": "getUser",
+      "file": "src/config/supabase.js",
+      "line": 200,
+      "snippet": "const { data, error } = await supabase.auth.getUser(token);"
+    },
+    {
+      "method": "getSession",
+      "file": "src/context/AuthContext.jsx",
+      "line": 91,
+      "snippet": "const { data: { session }, error } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "refreshSession",
+      "file": "src/context/AuthContext.jsx",
+      "line": 203,
+      "snippet": "const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();"
+    },
+    {
+      "method": "onAuthStateChange",
+      "file": "src/context/AuthContext.jsx",
+      "line": 245,
+      "snippet": "const { data: { subscription: sub } } = supabase.auth.onAuthStateChange("
+    },
+    {
+      "method": "onAuthStateChange",
+      "file": "src/pages/ArbitroPanelPage.jsx",
+      "line": 10,
+      "snippet": "const { data: { user } } = supabase.auth.onAuthStateChange((event, session) => {"
+    },
+    {
+      "method": "getUser",
+      "file": "src/pages/ConfiguracionCuenta.jsx",
+      "line": 34,
+      "snippet": "const { data: { user } } = await supabase.auth.getUser();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/pages/EditarPerfil.jsx",
+      "line": 15,
+      "snippet": "const { data: session } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getUser",
+      "file": "src/pages/FeedPage.jsx",
+      "line": 35,
+      "snippet": "const { data } = await supabase.auth.getUser();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/pages/LoginPage.jsx",
+      "line": 34,
+      "snippet": "const { data: { session } } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/pages/Notificaciones.jsx",
+      "line": 9,
+      "snippet": "const { data: session } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getUser",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 40,
+      "snippet": "const { data: { user: currentUser } } = await supabase.auth.getUser();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 69,
+      "snippet": "const { data } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/pages/RankingJugadoresCompleto.jsx",
+      "line": 24,
+      "snippet": "const { data } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/pages/RegistroPerfil.jsx",
+      "line": 80,
+      "snippet": "const { data } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/pages/RegistroPerfil.jsx",
+      "line": 98,
+      "snippet": "const { data: sessionRes } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getUser",
+      "file": "src/pages/TorneoDetalleCompleto.jsx",
+      "line": 28,
+      "snippet": "const { data: { user: currentUser } } = await supabase.auth.getUser();"
+    },
+    {
+      "method": "getUser",
+      "file": "src/pages/TransmisionEnVivo.jsx",
+      "line": 50,
+      "snippet": "const user = (await supabase.auth.getUser()).data.user;"
+    },
+    {
+      "method": "getSession",
+      "file": "src/pages/auth/AuthCallback.jsx",
+      "line": 22,
+      "snippet": "const { data: { session }, error: sessionError } = await supabase.auth.getSession()"
+    },
+    {
+      "method": "getSession",
+      "file": "src/pages/auth/AuthCallback.jsx",
+      "line": 72,
+      "snippet": "const { data: { session: session2 } } = await supabase.auth.getSession()"
+    },
+    {
+      "method": "getSession",
+      "file": "src/services/AuthService.js",
+      "line": 388,
+      "snippet": "'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`"
+    },
+    {
+      "method": "getSession",
+      "file": "src/services/AuthService.js",
+      "line": 415,
+      "snippet": "'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`"
+    },
+    {
+      "method": "getUser",
+      "file": "src/services/AuthService.js",
+      "line": 311,
+      "snippet": "const { data: { user } } = await supabase.auth.getUser()"
+    },
+    {
+      "method": "onAuthStateChange",
+      "file": "src/services/AuthService.js",
+      "line": 614,
+      "snippet": "return supabase.auth.onAuthStateChange((event, session) => {"
+    },
+    {
+      "method": "getUser",
+      "file": "src/services/ContentModerationService.js",
+      "line": 261,
+      "snippet": "const { data: usuario } = await supabase.auth.getUser();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/services/MobileManager.js",
+      "line": 352,
+      "snippet": "const { data, error } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/services/RealtimeService.js",
+      "line": 25,
+      "snippet": "const { error } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/services/conexionEfectiva.js",
+      "line": 89,
+      "snippet": "const { data, error } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/services/conexionEfectiva.js",
+      "line": 249,
+      "snippet": "const { data, error } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/services/flujoCompletoRegistro.js",
+      "line": 43,
+      "snippet": "const { data: session, error: sessionError } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/services/flujoCompletoRegistro.js",
+      "line": 139,
+      "snippet": "const { data: session } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "onAuthStateChange",
+      "file": "src/supabaseClient.js",
+      "line": 111,
+      "snippet": "supabase.auth.onAuthStateChange((event, session) => {"
+    },
+    {
+      "method": "getSession",
+      "file": "src/utils/AuthCallback.js",
+      "line": 22,
+      "snippet": "const { data: { session }, error } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/utils/authFlowManager.js",
+      "line": 269,
+      "snippet": "const { data: { session }, error } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/utils/diagnostico-produccion.js",
+      "line": 53,
+      "snippet": "const { data, error } = await supabase.auth.getSession();"
+    },
+    {
+      "method": "getSession",
+      "file": "src/utils/registroCompleto.js",
+      "line": 306,
+      "snippet": "const { data: session } = await supabase.auth.getSession();"
+    }
+  ]
+}

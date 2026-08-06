@@ -1,0 +1,208 @@
+{
+  "base": "http://127.0.0.1:5173",
+  "httpResults": [
+    {
+      "route": "/login",
+      "ok": true,
+      "status": 200,
+      "ms": 11,
+      "bytes": 5507
+    },
+    {
+      "route": "/",
+      "ok": true,
+      "status": 200,
+      "ms": 3,
+      "bytes": 5507
+    },
+    {
+      "route": "/home",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/feed",
+      "ok": true,
+      "status": 200,
+      "ms": 3,
+      "bytes": 5507
+    },
+    {
+      "route": "/videos",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/estados",
+      "ok": true,
+      "status": 200,
+      "ms": 3,
+      "bytes": 5507
+    },
+    {
+      "route": "/subir-historia",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/transmision-en-vivo",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/marketplace",
+      "ok": true,
+      "status": 200,
+      "ms": 3,
+      "bytes": 5507
+    },
+    {
+      "route": "/perfil",
+      "ok": true,
+      "status": 200,
+      "ms": 1,
+      "bytes": 431
+    },
+    {
+      "route": "/perfil/me",
+      "ok": true,
+      "status": 200,
+      "ms": 3,
+      "bytes": 5507
+    },
+    {
+      "route": "/perfil-card",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/editar-perfil",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/equipos",
+      "ok": true,
+      "status": 200,
+      "ms": 3,
+      "bytes": 5507
+    },
+    {
+      "route": "/crear-equipo",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/torneos",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/crear-torneo",
+      "ok": true,
+      "status": 200,
+      "ms": 3,
+      "bytes": 5507
+    },
+    {
+      "route": "/amistoso",
+      "ok": true,
+      "status": 200,
+      "ms": 3,
+      "bytes": 5507
+    },
+    {
+      "route": "/ranking-equipos",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/ranking-jugadores",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/ranking",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/chat",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/notificaciones",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/privacidad",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/configuracion",
+      "ok": true,
+      "status": 200,
+      "ms": 2,
+      "bytes": 5507
+    },
+    {
+      "route": "/estadisticas",
+      "ok": true,
+      "status": 200,
+      "ms": 1,
+      "bytes": 5507
+    },
+    {
+      "route": "/card-fifa",
+      "ok": true,
+      "status": 200,
+      "ms": 1,
+      "bytes": 5507
+    },
+    {
+      "route": "/penaltis",
+      "ok": true,
+      "status": 200,
+      "ms": 3,
+      "bytes": 5507
+    },
+    {
+      "route": "/amigos",
+      "ok": true,
+      "status": 200,
+      "ms": 4,
+      "bytes": 5507
+    }
+  ]
+}

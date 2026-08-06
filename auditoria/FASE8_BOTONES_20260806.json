@@ -1,0 +1,390 @@
+{
+  "total": 77,
+  "clicks": [
+    {
+      "route": "/login",
+      "label": "✔️ Iniciar sesión",
+      "ms": 2.700000000069849
+    },
+    {
+      "route": "/login",
+      "label": "👤 Crear nueva cuenta",
+      "ms": 1.099999999976717
+    },
+    {
+      "route": "/login",
+      "label": "Continuar con Google",
+      "ms": 0.9000000000232831
+    },
+    {
+      "route": "/login",
+      "label": "🔑 ¿Olvidaste tu contraseña?",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/login",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/",
+      "label": "✔️ Iniciar sesión",
+      "ms": 1.7999999999301508
+    },
+    {
+      "route": "/",
+      "label": "👤 Crear nueva cuenta",
+      "ms": 0.5
+    },
+    {
+      "route": "/",
+      "label": "Continuar con Google",
+      "ms": 0.5
+    },
+    {
+      "route": "/",
+      "label": "🔑 ¿Olvidaste tu contraseña?",
+      "ms": 0
+    },
+    {
+      "route": "/",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/home",
+      "label": "Fácil",
+      "ms": 0.40000000002328306
+    },
+    {
+      "route": "/home",
+      "label": "Difícil",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/home",
+      "label": "Muy Difícil",
+      "ms": 0
+    },
+    {
+      "route": "/home",
+      "label": "Guardar calificación",
+      "ms": 0.2000000000698492
+    },
+    {
+      "route": "/home",
+      "label": "Nueva publicación",
+      "ms": 0
+    },
+    {
+      "route": "/home",
+      "label": "Cerrar",
+      "ms": 0
+    },
+    {
+      "route": "/feed",
+      "label": "Fácil",
+      "ms": 0.40000000002328306
+    },
+    {
+      "route": "/feed",
+      "label": "Difícil",
+      "ms": 0
+    },
+    {
+      "route": "/feed",
+      "label": "Muy Difícil",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/feed",
+      "label": "Guardar calificación",
+      "ms": 0
+    },
+    {
+      "route": "/feed",
+      "label": "Nueva publicación",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/feed",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/videos",
+      "label": "← Atrás",
+      "ms": 0.30000000004656613
+    },
+    {
+      "route": "/videos",
+      "label": "Para ti",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/videos",
+      "label": "Siguiendo",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/videos",
+      "label": "🔴 En Vivo",
+      "ms": 0.10000000009313226
+    },
+    {
+      "route": "/videos",
+      "label": "Cerrar",
+      "ms": 0
+    },
+    {
+      "route": "/estados",
+      "label": "Publicar",
+      "ms": 0.19999999995343387
+    },
+    {
+      "route": "/estados",
+      "label": "Cerrar",
+      "ms": 0.10000000009313226
+    },
+    {
+      "route": "/subir-historia",
+      "label": "← Volver",
+      "ms": 0.39999999990686774
+    },
+    {
+      "route": "/subir-historia",
+      "label": "Cerrar",
+      "ms": 0.10000000009313226
+    },
+    {
+      "route": "/transmision-en-vivo",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/marketplace",
+      "label": "🔍 Filtros",
+      "ms": 0.2999999999301508
+    },
+    {
+      "route": "/marketplace",
+      "label": "➕ Vender",
+      "ms": 0.30000000004656613
+    },
+    {
+      "route": "/marketplace",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/perfil/me",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/perfil-card",
+      "label": "✔️ Iniciar sesión",
+      "ms": 1.599999999976717
+    },
+    {
+      "route": "/perfil-card",
+      "label": "👤 Crear nueva cuenta",
+      "ms": 0.30000000004656613
+    },
+    {
+      "route": "/perfil-card",
+      "label": "Continuar con Google",
+      "ms": 0.40000000002328306
+    },
+    {
+      "route": "/perfil-card",
+      "label": "🔑 ¿Olvidaste tu contraseña?",
+      "ms": 0
+    },
+    {
+      "route": "/perfil-card",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/editar-perfil",
+      "label": "Cerrar",
+      "ms": 0
+    },
+    {
+      "route": "/equipos",
+      "label": "timeout",
+      "ms": 3000
+    },
+    {
+      "route": "/torneos",
+      "label": "Liga FutPro",
+      "ms": 0.2999999999301508
+    },
+    {
+      "route": "/torneos",
+      "label": "Copa Oro",
+      "ms": 0.10000000009313226
+    },
+    {
+      "route": "/torneos",
+      "label": "Supercopa",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/torneos",
+      "label": "Consultar",
+      "ms": 0
+    },
+    {
+      "route": "/torneos",
+      "label": "Actualizar",
+      "ms": 0
+    },
+    {
+      "route": "/torneos",
+      "label": "Ver historial",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/crear-torneo",
+      "label": "Cancelar",
+      "ms": 0.5
+    },
+    {
+      "route": "/crear-torneo",
+      "label": "Crear Torneo",
+      "ms": 1.3999999999068677
+    },
+    {
+      "route": "/crear-torneo",
+      "label": "Cerrar",
+      "ms": 0.10000000009313226
+    },
+    {
+      "route": "/amistoso",
+      "label": "Cancelar",
+      "ms": 0.5999999999767169
+    },
+    {
+      "route": "/amistoso",
+      "label": "Crear Amistoso",
+      "ms": 1.1000000000931323
+    },
+    {
+      "route": "/amistoso",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/ranking-equipos",
+      "label": "Cerrar",
+      "ms": 0.19999999995343387
+    },
+    {
+      "route": "/ranking-jugadores",
+      "label": "Tu posición: #45",
+      "ms": 0.40000000002328306
+    },
+    {
+      "route": "/ranking-jugadores",
+      "label": "Cerrar",
+      "ms": 0
+    },
+    {
+      "route": "/ranking",
+      "label": "⚽ Equipos",
+      "ms": 0.30000000004656613
+    },
+    {
+      "route": "/ranking",
+      "label": "⚖️ Árbitros",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/ranking",
+      "label": "🔄 Limpiar Filtros",
+      "ms": 0
+    },
+    {
+      "route": "/ranking",
+      "label": "Cerrar",
+      "ms": 0
+    },
+    {
+      "route": "/chat",
+      "label": "Enviar",
+      "ms": 0.19999999995343387
+    },
+    {
+      "route": "/chat",
+      "label": "Cerrar",
+      "ms": 0
+    },
+    {
+      "route": "/notificaciones",
+      "label": "Cerrar",
+      "ms": 0.19999999995343387
+    },
+    {
+      "route": "/privacidad",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/configuracion",
+      "label": "Guardar",
+      "ms": 0.19999999995343387
+    },
+    {
+      "route": "/configuracion",
+      "label": "Guardar cambios",
+      "ms": 0.30000000004656613
+    },
+    {
+      "route": "/configuracion",
+      "label": "Ver reportes",
+      "ms": 0
+    },
+    {
+      "route": "/configuracion",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/estadisticas",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/card-fifa",
+      "label": "timeout",
+      "ms": 3000
+    },
+    {
+      "route": "/penaltis",
+      "label": "✕",
+      "ms": 0.30000000004656613
+    },
+    {
+      "route": "/penaltis",
+      "label": "🚀 Comenzar Juego",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/penaltis",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    },
+    {
+      "route": "/amigos",
+      "label": "btn",
+      "ms": 0.19999999995343387
+    },
+    {
+      "route": "/amigos",
+      "label": "Cerrar",
+      "ms": 0.09999999997671694
+    }
+  ]
+}

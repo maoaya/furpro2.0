@@ -1,0 +1,584 @@
+{
+  "customEvents": [
+    "authUpdate",
+    "autosave:success",
+    "futpro:user_id",
+    "modal:hidden",
+    "modal:shown",
+    "user-blocked"
+  ],
+  "addEventListenerSites": 71,
+  "setIntervalSites": 7,
+  "channelSites": 35,
+  "listeners": [
+    {
+      "file": "src/app.js",
+      "line": 275,
+      "snippet": "window.addEventListener('hashchange', () => {"
+    },
+    {
+      "file": "src/app.js",
+      "line": 280,
+      "snippet": "window.addEventListener('popstate', () => {"
+    },
+    {
+      "file": "src/app.js",
+      "line": 285,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/components/Feed.js",
+      "line": 40,
+      "snippet": "el.addEventListener('touchstart', handleTouchStart);"
+    },
+    {
+      "file": "src/components/Feed.js",
+      "line": 41,
+      "snippet": "el.addEventListener('touchend', handleTouchEnd);"
+    },
+    {
+      "file": "src/components/Feed.jsx",
+      "line": 34,
+      "snippet": "el.addEventListener('touchstart', handleTouchStart);"
+    },
+    {
+      "file": "src/components/Feed.jsx",
+      "line": 35,
+      "snippet": "el.addEventListener('touchend', handleTouchEnd);"
+    },
+    {
+      "file": "src/components/PenaltyGameComponent.js",
+      "line": 39,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/components/PenaltyGameComponent.js",
+      "line": 59,
+      "snippet": "document.addEventListener('keydown', (e) => {"
+    },
+    {
+      "file": "src/components/PenaltyGameComponent.js",
+      "line": 68,
+      "snippet": "document.addEventListener('mousedown', (e) => {"
+    },
+    {
+      "file": "src/components/PenaltyGameComponent.js",
+      "line": 74,
+      "snippet": "document.addEventListener('mouseup', () => {"
+    },
+    {
+      "file": "src/hooks/useActivityTracker.js",
+      "line": 212,
+      "snippet": "window.addEventListener('scroll', handleScroll, { passive: true });"
+    },
+    {
+      "file": "src/main.js",
+      "line": 115,
+      "snippet": "categorySelect.addEventListener('change', async (e) => {"
+    },
+    {
+      "file": "src/main.js",
+      "line": 239,
+      "snippet": "input.addEventListener('input', async () => {"
+    },
+    {
+      "file": "src/main.js",
+      "line": 267,
+      "snippet": "item.addEventListener('click', () => {"
+    },
+    {
+      "file": "src/main.js",
+      "line": 538,
+      "snippet": "document.addEventListener('DOMContentLoaded', () => {"
+    },
+    {
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 26,
+      "snippet": "window.addEventListener('futpro_post_created', () => {"
+    },
+    {
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 36,
+      "snippet": "window.addEventListener('storage', onStorage);"
+    },
+    {
+      "file": "src/services/AnalyticsManager.js",
+      "line": 42,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/AnalyticsManager.js",
+      "line": 52,
+      "snippet": "window.addEventListener('beforeunload', () => {"
+    },
+    {
+      "file": "src/services/BlockManager.js",
+      "line": 16,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/BlockManager.js",
+      "line": 114,
+      "snippet": "document.getElementById('also-report').addEventListener('change', (e) => {"
+    },
+    {
+      "file": "src/services/ChatManager.js",
+      "line": 60,
+      "snippet": "document.addEventListener('submit', (e) => {"
+    },
+    {
+      "file": "src/services/ChatManager.js",
+      "line": 68,
+      "snippet": "document.addEventListener('input', (e) => {"
+    },
+    {
+      "file": "src/services/ChatManager.js",
+      "line": 75,
+      "snippet": "document.addEventListener('keypress', (e) => {"
+    },
+    {
+      "file": "src/services/MatchManager.js",
+      "line": 21,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/MatchManager.js",
+      "line": 69,
+      "snippet": "document.addEventListener('submit', (e) => {"
+    },
+    {
+      "file": "src/services/MatchManager.js",
+      "line": 958,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/MobileManager.js",
+      "line": 116,
+      "snippet": "document.addEventListener('touchstart', function(e) {"
+    },
+    {
+      "file": "src/services/MobileManager.js",
+      "line": 184,
+      "snippet": "document.addEventListener('touchmove', function(e) {"
+    },
+    {
+      "file": "src/services/MobileManager.js",
+      "line": 191,
+      "snippet": "document.addEventListener('touchstart', (e) => {"
+    },
+    {
+      "file": "src/services/MobileManager.js",
+      "line": 195,
+      "snippet": "document.addEventListener('touchend', (e) => {"
+    },
+    {
+      "file": "src/services/MobileManager.js",
+      "line": 211,
+      "snippet": "window.addEventListener('beforeinstallprompt', (e) => {"
+    },
+    {
+      "file": "src/services/MobileManager.js",
+      "line": 218,
+      "snippet": "window.addEventListener('appinstalled', () => {"
+    },
+    {
+      "file": "src/services/MobileManager.js",
+      "line": 288,
+      "snippet": "window.addEventListener('hashchange', () => {"
+    },
+    {
+      "file": "src/services/MobileManager.js",
+      "line": 477,
+      "snippet": "document.addEventListener('visibilitychange', () => {"
+    },
+    {
+      "file": "src/services/NotificationManager.js",
+      "line": 343,
+      "snippet": "notificationElement.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/ProfileManager.js",
+      "line": 62,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/ProfileManager.js",
+      "line": 83,
+      "snippet": "document.addEventListener('submit', (e) => {"
+    },
+    {
+      "file": "src/services/ProfileManager.js",
+      "line": 425,
+      "snippet": "document.addEventListener('click', () => {"
+    },
+    {
+      "file": "src/services/RatingManager.js",
+      "line": 21,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/RatingManager.js",
+      "line": 40,
+      "snippet": "document.addEventListener('submit', (e) => {"
+    },
+    {
+      "file": "src/services/RatingManager.js",
+      "line": 127,
+      "snippet": "star.addEventListener('click', () => {"
+    },
+    {
+      "file": "src/services/RatingManager.js",
+      "line": 141,
+      "snippet": "star.addEventListener('mouseenter', () => {"
+    },
+    {
+      "file": "src/services/RatingManager.js",
+      "line": 152,
+      "snippet": "ratingContainer.addEventListener('mouseleave', () => {"
+    },
+    {
+      "file": "src/services/StreamManager.js",
+      "line": 76,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/TeamManager.js",
+      "line": 18,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/TeamManager.js",
+      "line": 47,
+      "snippet": "document.addEventListener('submit', (e) => {"
+    },
+    {
+      "file": "src/services/TeamManager.js",
+      "line": 565,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/TournamentManager.js",
+      "line": 481,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/TrackingInitializer.js",
+      "line": 59,
+      "snippet": "window.addEventListener('error', (event) => {"
+    },
+    {
+      "file": "src/services/TrackingInitializer.js",
+      "line": 71,
+      "snippet": "window.addEventListener('unhandledrejection', (event) => {"
+    },
+    {
+      "file": "src/services/TrackingInitializer.js",
+      "line": 90,
+      "snippet": "document.addEventListener('click', (event) => {"
+    },
+    {
+      "file": "src/services/TrackingInitializer.js",
+      "line": 121,
+      "snippet": "window.addEventListener('scroll', () => {"
+    },
+    {
+      "file": "src/services/TrackingInitializer.js",
+      "line": 140,
+      "snippet": "window.addEventListener('beforeunload', () => {"
+    },
+    {
+      "file": "src/services/TrackingInitializer.js",
+      "line": 150,
+      "snippet": "document.addEventListener('visibilitychange', () => {"
+    },
+    {
+      "file": "src/services/TrackingInitializer.js",
+      "line": 166,
+      "snippet": "window.addEventListener('online', () => {"
+    },
+    {
+      "file": "src/services/TrackingInitializer.js",
+      "line": 173,
+      "snippet": "window.addEventListener('offline', () => {"
+    },
+    {
+      "file": "src/services/UIManager.js",
+      "line": 72,
+      "snippet": "toast.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/UIManager.js",
+      "line": 560,
+      "snippet": "document.addEventListener('keydown', (e) => {"
+    },
+    {
+      "file": "src/services/UIManager.js",
+      "line": 570,
+      "snippet": "document.addEventListener('click', (e) => {"
+    },
+    {
+      "file": "src/services/UIManager.js",
+      "line": 579,
+      "snippet": "document.addEventListener('input', (e) => {"
+    },
+    {
+      "file": "src/services/UIManager.js",
+      "line": 591,
+      "snippet": "document.addEventListener('keydown', (e) => {"
+    },
+    {
+      "file": "src/services/UserActivityTracker.js",
+      "line": 71,
+      "snippet": "window.addEventListener('online', () => {"
+    },
+    {
+      "file": "src/services/UserActivityTracker.js",
+      "line": 77,
+      "snippet": "window.addEventListener('offline', () => {"
+    },
+    {
+      "file": "src/services/UserActivityTracker.js",
+      "line": 83,
+      "snippet": "window.addEventListener('beforeunload', () => {"
+    },
+    {
+      "file": "src/services/UserActivityTracker.js",
+      "line": 88,
+      "snippet": "document.addEventListener('visibilitychange', () => {"
+    },
+    {
+      "file": "src/trackingInit.js",
+      "line": 63,
+      "snippet": "window.addEventListener('beforeunload', () => {"
+    },
+    {
+      "file": "src/utils/AuthCallback.js",
+      "line": 123,
+      "snippet": "document.addEventListener('DOMContentLoaded', () => {"
+    },
+    {
+      "file": "src/utils/navegacionGlobal.js",
+      "line": 101,
+      "snippet": "boton.addEventListener('click', function(e) {"
+    },
+    {
+      "file": "src/utils/navegacionGlobal.js",
+      "line": 119,
+      "snippet": "document.addEventListener('DOMContentLoaded', adjuntarEventos);"
+    }
+  ],
+  "intervals": [
+    {
+      "file": "src/components/AdminDashboard.jsx",
+      "line": 29,
+      "snippet": "const interval = setInterval(() => {"
+    },
+    {
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 45,
+      "snippet": "const id = setInterval(() => {"
+    },
+    {
+      "file": "src/services/AnalyticsManager.js",
+      "line": 29,
+      "snippet": "setInterval(() => {"
+    },
+    {
+      "file": "src/services/AutoSaveService.js",
+      "line": 47,
+      "snippet": "setInterval(() => {"
+    },
+    {
+      "file": "src/services/StreamManager.js",
+      "line": 748,
+      "snippet": "this.durationTimer = setInterval(() => {"
+    },
+    {
+      "file": "src/services/UserActivityTracker.js",
+      "line": 57,
+      "snippet": "this.autoSaveInterval = setInterval(() => {"
+    },
+    {
+      "file": "src/utils/authFlowManager.js",
+      "line": 226,
+      "snippet": "const interval = setInterval(() => {"
+    }
+  ],
+  "channels": [
+    {
+      "file": "src/components/CommentsModal.jsx",
+      "line": 29,
+      "snippet": ".channel(`comments:post:${postId}`)"
+    },
+    {
+      "file": "src/components/NotificacionesPanel.js",
+      "line": 16,
+      "snippet": ".channel('notificaciones')"
+    },
+    {
+      "file": "src/config/supabase.js",
+      "line": 515,
+      "snippet": ".channel('matches')"
+    },
+    {
+      "file": "src/config/supabase.js",
+      "line": 529,
+      "snippet": ".channel(`notifications:${userId}`)"
+    },
+    {
+      "file": "src/config/supabase.js",
+      "line": 544,
+      "snippet": ".channel(`chat:${chatId}`)"
+    },
+    {
+      "file": "src/context/NotificationsContext.jsx",
+      "line": 39,
+      "snippet": ".channel('friends:notifications')"
+    },
+    {
+      "file": "src/context/NotificationsContext.jsx",
+      "line": 54,
+      "snippet": ".channel('likes:notifications')"
+    },
+    {
+      "file": "src/context/NotificationsContext.jsx",
+      "line": 63,
+      "snippet": ".channel('comments:notifications')"
+    },
+    {
+      "file": "src/context/NotificationsContext.jsx",
+      "line": 72,
+      "snippet": ".channel('tournament_invitations:notifications')"
+    },
+    {
+      "file": "src/context/NotificationsContext.jsx",
+      "line": 90,
+      "snippet": ".channel('tournaments:notifications')"
+    },
+    {
+      "file": "src/context/NotificationsContext.jsx",
+      "line": 100,
+      "snippet": ".channel('matches:notifications')"
+    },
+    {
+      "file": "src/pages/Amigos.jsx",
+      "line": 20,
+      "snippet": ".channel(`friend_requests:${user.email}`)"
+    },
+    {
+      "file": "src/pages/Amigos.jsx",
+      "line": 29,
+      "snippet": ".channel(`friends:${user.email}`)"
+    },
+    {
+      "file": "src/pages/ChatInstagramNew.jsx",
+      "line": 30,
+      "snippet": ".channel(`chat-messages-${selectedConversation.id}`)"
+    },
+    {
+      "file": "src/pages/Estados.jsx",
+      "line": 17,
+      "snippet": ".channel('statuses:all')"
+    },
+    {
+      "file": "src/pages/HomePage.jsx",
+      "line": 148,
+      "snippet": ".channel('posts:all')"
+    },
+    {
+      "file": "src/pages/HomePage.jsx",
+      "line": 155,
+      "snippet": ".channel('post_likes:all')"
+    },
+    {
+      "file": "src/pages/HomePage.jsx",
+      "line": 162,
+      "snippet": ".channel('post_comments:all')"
+    },
+    {
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 31,
+      "snippet": ".channel(`live-comments-${streamId}`)"
+    },
+    {
+      "file": "src/pages/MarketplaceCompleto.jsx",
+      "line": 26,
+      "snippet": ".channel('marketplace:all')"
+    },
+    {
+      "file": "src/pages/ModerationPage.jsx",
+      "line": 33,
+      "snippet": ".channel('reportes-changes')"
+    },
+    {
+      "file": "src/pages/NotificacionesTorneoPage.jsx",
+      "line": 47,
+      "snippet": ".channel(`notifications-${user.id}`)"
+    },
+    {
+      "file": "src/pages/PartidoDetalle.jsx",
+      "line": 20,
+      "snippet": ".channel('partidos-changes')"
+    },
+    {
+      "file": "src/pages/PenaltyGamePvP.jsx",
+      "line": 29,
+      "snippet": ".channel(`penalty-match-${currentMatch.id}`)"
+    },
+    {
+      "file": "src/pages/Perfil.jsx",
+      "line": 33,
+      "snippet": ".channel('perfil:friends')"
+    },
+    {
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 40,
+      "snippet": ".channel('friends:profile')"
+    },
+    {
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 48,
+      "snippet": ".channel('posts:profile')"
+    },
+    {
+      "file": "src/pages/TorneoBracketPage.jsx",
+      "line": 58,
+      "snippet": ".channel(`brackets-${tournamentId}`)"
+    },
+    {
+      "file": "src/pages/TorneoDetalleCompleto.jsx",
+      "line": 62,
+      "snippet": ".channel(`tournament-${torneoId}`)"
+    },
+    {
+      "file": "src/pages/TorneoStandingsPage.jsx",
+      "line": 76,
+      "snippet": ".channel(`standings-${selectedGroup}`)"
+    },
+    {
+      "file": "src/pages/TransmisionEnVivo.jsx",
+      "line": 72,
+      "snippet": "const channel = supabase.channel(`stream-${newStreamId}`)"
+    },
+    {
+      "file": "src/services/PenaltyService.js",
+      "line": 274,
+      "snippet": "const channel = supabase.channel(`penalty-match-${matchId}`);"
+    },
+    {
+      "file": "src/services/RealtimeService.js",
+      "line": 49,
+      "snippet": ".channel(channelName)"
+    },
+    {
+      "file": "src/services/RealtimeService.js",
+      "line": 145,
+      "snippet": "const channel = supabase.channel('presence');"
+    },
+    {
+      "file": "src/services/streamingService.js",
+      "line": 311,
+      "snippet": "const channel = supabase.channel(`stream-${streamId}`);"
+    }
+  ]
+}

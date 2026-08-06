@@ -1,0 +1,952 @@
+{
+  "base": "http://127.0.0.1:5173",
+  "generatedAt": "2026-08-06T23:30:01.624Z",
+  "routeResults": [
+    {
+      "route": "/login",
+      "status": 200,
+      "navMs": 184,
+      "interactiveMs": 686,
+      "pathname": "/login",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 211,
+      "buttonCount": 5,
+      "clickSample": [
+        {
+          "label": "✔️ Iniciar sesión",
+          "ms": 2.700000000069849
+        },
+        {
+          "label": "👤 Crear nueva cuenta",
+          "ms": 1.099999999976717
+        },
+        {
+          "label": "Continuar con Google",
+          "ms": 0.9000000000232831
+        },
+        {
+          "label": "🔑 ¿Olvidaste tu contraseña?",
+          "ms": 0.09999999997671694
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/",
+      "status": 200,
+      "navMs": 185,
+      "interactiveMs": 687,
+      "pathname": "/",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 211,
+      "buttonCount": 5,
+      "clickSample": [
+        {
+          "label": "✔️ Iniciar sesión",
+          "ms": 1.7999999999301508
+        },
+        {
+          "label": "👤 Crear nueva cuenta",
+          "ms": 0.5
+        },
+        {
+          "label": "Continuar con Google",
+          "ms": 0.5
+        },
+        {
+          "label": "🔑 ¿Olvidaste tu contraseña?",
+          "ms": 0
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/home",
+      "status": 200,
+      "navMs": 116,
+      "interactiveMs": 620,
+      "pathname": "/home",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 408,
+      "buttonCount": 6,
+      "clickSample": [
+        {
+          "label": "Fácil",
+          "ms": 0.40000000002328306
+        },
+        {
+          "label": "Difícil",
+          "ms": 0.09999999997671694
+        },
+        {
+          "label": "Muy Difícil",
+          "ms": 0
+        },
+        {
+          "label": "Guardar calificación",
+          "ms": 0.2000000000698492
+        },
+        {
+          "label": "Nueva publicación",
+          "ms": 0
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0
+        }
+      ]
+    },
+    {
+      "route": "/feed",
+      "status": 200,
+      "navMs": 101,
+      "interactiveMs": 604,
+      "pathname": "/feed",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 408,
+      "buttonCount": 6,
+      "clickSample": [
+        {
+          "label": "Fácil",
+          "ms": 0.40000000002328306
+        },
+        {
+          "label": "Difícil",
+          "ms": 0
+        },
+        {
+          "label": "Muy Difícil",
+          "ms": 0.09999999997671694
+        },
+        {
+          "label": "Guardar calificación",
+          "ms": 0
+        },
+        {
+          "label": "Nueva publicación",
+          "ms": 0.09999999997671694
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/videos",
+      "status": 200,
+      "navMs": 100,
+      "interactiveMs": 602,
+      "pathname": "/videos",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 43,
+      "buttonCount": 5,
+      "clickSample": [
+        {
+          "label": "← Atrás",
+          "ms": 0.30000000004656613
+        },
+        {
+          "label": "Para ti",
+          "ms": 0.09999999997671694
+        },
+        {
+          "label": "Siguiendo",
+          "ms": 0.09999999997671694
+        },
+        {
+          "label": "🔴 En Vivo",
+          "ms": 0.10000000009313226
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0
+        }
+      ]
+    },
+    {
+      "route": "/estados",
+      "status": 200,
+      "navMs": 97,
+      "interactiveMs": 599,
+      "pathname": "/estados",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 122,
+      "buttonCount": 2,
+      "clickSample": [
+        {
+          "label": "Publicar",
+          "ms": 0.19999999995343387
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.10000000009313226
+        }
+      ]
+    },
+    {
+      "route": "/subir-historia",
+      "status": 200,
+      "navMs": 91,
+      "interactiveMs": 592,
+      "pathname": "/subir-historia",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 83,
+      "buttonCount": 2,
+      "clickSample": [
+        {
+          "label": "← Volver",
+          "ms": 0.39999999990686774
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.10000000009313226
+        }
+      ]
+    },
+    {
+      "route": "/transmision-en-vivo",
+      "status": 200,
+      "navMs": 96,
+      "interactiveMs": 597,
+      "pathname": "/transmision-en-vivo",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 81,
+      "buttonCount": 1,
+      "clickSample": [
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/marketplace",
+      "status": 200,
+      "navMs": 89,
+      "interactiveMs": 591,
+      "pathname": "/marketplace",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 48,
+      "buttonCount": 3,
+      "clickSample": [
+        {
+          "label": "🔍 Filtros",
+          "ms": 0.2999999999301508
+        },
+        {
+          "label": "➕ Vender",
+          "ms": 0.30000000004656613
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/perfil",
+      "status": 200,
+      "navMs": 16,
+      "interactiveMs": 518,
+      "pathname": "/perfil",
+      "title": "Mi Perfil - FutPro",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": true,
+      "hardFail": false,
+      "rootTextLen": 0,
+      "buttonCount": 0,
+      "clickSample": []
+    },
+    {
+      "route": "/perfil/me",
+      "status": 200,
+      "navMs": 103,
+      "interactiveMs": 605,
+      "pathname": "/perfil/me",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 20,
+      "buttonCount": 1,
+      "clickSample": [
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/perfil-card",
+      "status": 200,
+      "navMs": 100,
+      "interactiveMs": 601,
+      "pathname": "/",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 211,
+      "buttonCount": 5,
+      "clickSample": [
+        {
+          "label": "✔️ Iniciar sesión",
+          "ms": 1.599999999976717
+        },
+        {
+          "label": "👤 Crear nueva cuenta",
+          "ms": 0.30000000004656613
+        },
+        {
+          "label": "Continuar con Google",
+          "ms": 0.40000000002328306
+        },
+        {
+          "label": "🔑 ¿Olvidaste tu contraseña?",
+          "ms": 0
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/editar-perfil",
+      "status": 200,
+      "navMs": 104,
+      "interactiveMs": 606,
+      "pathname": "/editar-perfil",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 25,
+      "buttonCount": 1,
+      "clickSample": [
+        {
+          "label": "Cerrar",
+          "ms": 0
+        }
+      ]
+    },
+    {
+      "route": "/equipos",
+      "status": 200,
+      "navMs": 88,
+      "interactiveMs": 590,
+      "pathname": "/equipos",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 859,
+      "buttonCount": 41,
+      "clickSample": [
+        {
+          "label": "timeout",
+          "ms": 3000
+        }
+      ]
+    },
+    {
+      "route": "/crear-equipo",
+      "status": 0,
+      "navMs": 7,
+      "interactiveMs": null,
+      "blocked": true,
+      "hardFail": true,
+      "error": "net::ERR_ABORTED at http://127.0.0.1:5173/crear-equipo"
+    },
+    {
+      "route": "/torneos",
+      "status": 200,
+      "navMs": 103,
+      "interactiveMs": 606,
+      "pathname": "/torneos",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 214,
+      "buttonCount": 11,
+      "clickSample": [
+        {
+          "label": "Liga FutPro",
+          "ms": 0.2999999999301508
+        },
+        {
+          "label": "Copa Oro",
+          "ms": 0.10000000009313226
+        },
+        {
+          "label": "Supercopa",
+          "ms": 0.09999999997671694
+        },
+        {
+          "label": "Consultar",
+          "ms": 0
+        },
+        {
+          "label": "Actualizar",
+          "ms": 0
+        },
+        {
+          "label": "Ver historial",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/crear-torneo",
+      "status": 200,
+      "navMs": 101,
+      "interactiveMs": 603,
+      "pathname": "/crear-torneo",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 343,
+      "buttonCount": 3,
+      "clickSample": [
+        {
+          "label": "Cancelar",
+          "ms": 0.5
+        },
+        {
+          "label": "Crear Torneo",
+          "ms": 1.3999999999068677
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.10000000009313226
+        }
+      ]
+    },
+    {
+      "route": "/amistoso",
+      "status": 200,
+      "navMs": 100,
+      "interactiveMs": 602,
+      "pathname": "/amistoso",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 691,
+      "buttonCount": 3,
+      "clickSample": [
+        {
+          "label": "Cancelar",
+          "ms": 0.5999999999767169
+        },
+        {
+          "label": "Crear Amistoso",
+          "ms": 1.1000000000931323
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/ranking-equipos",
+      "status": 200,
+      "navMs": 90,
+      "interactiveMs": 594,
+      "pathname": "/ranking-equipos",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 2855,
+      "buttonCount": 1,
+      "clickSample": [
+        {
+          "label": "Cerrar",
+          "ms": 0.19999999995343387
+        }
+      ]
+    },
+    {
+      "route": "/ranking-jugadores",
+      "status": 200,
+      "navMs": 103,
+      "interactiveMs": 605,
+      "pathname": "/ranking-jugadores",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 4559,
+      "buttonCount": 2,
+      "clickSample": [
+        {
+          "label": "Tu posición: #45",
+          "ms": 0.40000000002328306
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0
+        }
+      ]
+    },
+    {
+      "route": "/ranking",
+      "status": 200,
+      "navMs": 92,
+      "interactiveMs": 593,
+      "pathname": "/ranking",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 531,
+      "buttonCount": 4,
+      "clickSample": [
+        {
+          "label": "⚽ Equipos",
+          "ms": 0.30000000004656613
+        },
+        {
+          "label": "⚖️ Árbitros",
+          "ms": 0.09999999997671694
+        },
+        {
+          "label": "🔄 Limpiar Filtros",
+          "ms": 0
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0
+        }
+      ]
+    },
+    {
+      "route": "/chat",
+      "status": 200,
+      "navMs": 122,
+      "interactiveMs": 623,
+      "pathname": "/chat",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 11,
+      "buttonCount": 2,
+      "clickSample": [
+        {
+          "label": "Enviar",
+          "ms": 0.19999999995343387
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0
+        }
+      ]
+    },
+    {
+      "route": "/notificaciones",
+      "status": 200,
+      "navMs": 94,
+      "interactiveMs": 596,
+      "pathname": "/notificaciones",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 90,
+      "buttonCount": 1,
+      "clickSample": [
+        {
+          "label": "Cerrar",
+          "ms": 0.19999999995343387
+        }
+      ]
+    },
+    {
+      "route": "/privacidad",
+      "status": 200,
+      "navMs": 93,
+      "interactiveMs": 596,
+      "pathname": "/privacidad",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 10,
+      "buttonCount": 1,
+      "clickSample": [
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/configuracion",
+      "status": 200,
+      "navMs": 99,
+      "interactiveMs": 600,
+      "pathname": "/configuracion",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 124,
+      "buttonCount": 4,
+      "clickSample": [
+        {
+          "label": "Guardar",
+          "ms": 0.19999999995343387
+        },
+        {
+          "label": "Guardar cambios",
+          "ms": 0.30000000004656613
+        },
+        {
+          "label": "Ver reportes",
+          "ms": 0
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/estadisticas",
+      "status": 200,
+      "navMs": 98,
+      "interactiveMs": 600,
+      "pathname": "/estadisticas",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 26,
+      "buttonCount": 1,
+      "clickSample": [
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/card-fifa",
+      "status": 200,
+      "navMs": 98,
+      "interactiveMs": 600,
+      "pathname": "/card-fifa",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 214,
+      "buttonCount": 3,
+      "clickSample": [
+        {
+          "label": "timeout",
+          "ms": 3000
+        }
+      ]
+    },
+    {
+      "route": "/penaltis",
+      "status": 200,
+      "navMs": 128,
+      "interactiveMs": 631,
+      "pathname": "/penaltis",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 728,
+      "buttonCount": 3,
+      "clickSample": [
+        {
+          "label": "✕",
+          "ms": 0.30000000004656613
+        },
+        {
+          "label": "🚀 Comenzar Juego",
+          "ms": 0.09999999997671694
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    },
+    {
+      "route": "/amigos",
+      "status": 200,
+      "navMs": 104,
+      "interactiveMs": 607,
+      "pathname": "/amigos",
+      "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto",
+      "blocked": false,
+      "hardFail": false,
+      "rootTextLen": 123,
+      "buttonCount": 2,
+      "clickSample": [
+        {
+          "label": "btn",
+          "ms": 0.19999999995343387
+        },
+        {
+          "label": "Cerrar",
+          "ms": 0.09999999997671694
+        }
+      ]
+    }
+  ],
+  "stress": [
+    {
+      "i": 0,
+      "route": "/home",
+      "ms": 246,
+      "pathname": "/home",
+      "pe": "auto",
+      "text": 408,
+      "blocked": false
+    },
+    {
+      "i": 0,
+      "route": "/torneos",
+      "ms": 239,
+      "pathname": "/torneos",
+      "pe": "auto",
+      "text": 214,
+      "blocked": false
+    },
+    {
+      "i": 0,
+      "route": "/equipos",
+      "ms": 243,
+      "pathname": "/equipos",
+      "pe": "auto",
+      "text": 859,
+      "blocked": false
+    },
+    {
+      "i": 0,
+      "route": "/marketplace",
+      "ms": 244,
+      "pathname": "/marketplace",
+      "pe": "auto",
+      "text": 48,
+      "blocked": false
+    },
+    {
+      "i": 0,
+      "route": "/ranking-jugadores",
+      "ms": 248,
+      "pathname": "/ranking-jugadores",
+      "pe": "auto",
+      "text": 4557,
+      "blocked": false
+    },
+    {
+      "i": 0,
+      "route": "/chat",
+      "ms": 256,
+      "pathname": "/chat",
+      "pe": "auto",
+      "text": 11,
+      "blocked": false
+    },
+    {
+      "i": 0,
+      "route": "/privacidad",
+      "ms": 247,
+      "pathname": "/privacidad",
+      "pe": "auto",
+      "text": 10,
+      "blocked": false
+    },
+    {
+      "i": 0,
+      "route": "/videos",
+      "ms": 245,
+      "pathname": "/videos",
+      "pe": "auto",
+      "text": 43,
+      "blocked": false
+    },
+    {
+      "i": 0,
+      "route": "/transmision-en-vivo",
+      "ms": 245,
+      "pathname": "/transmision-en-vivo",
+      "pe": "auto",
+      "text": 81,
+      "blocked": false
+    },
+    {
+      "i": 0,
+      "route": "/crear-torneo",
+      "ms": 246,
+      "pathname": "/crear-torneo",
+      "pe": "auto",
+      "text": 343,
+      "blocked": false
+    },
+    {
+      "i": 1,
+      "route": "/home",
+      "ms": 274,
+      "pathname": "/home",
+      "pe": "auto",
+      "text": 408,
+      "blocked": false
+    },
+    {
+      "i": 1,
+      "route": "/torneos",
+      "ms": 249,
+      "pathname": "/torneos",
+      "pe": "auto",
+      "text": 214,
+      "blocked": false
+    },
+    {
+      "i": 1,
+      "route": "/equipos",
+      "ms": 246,
+      "pathname": "/equipos",
+      "pe": "auto",
+      "text": 859,
+      "blocked": false
+    },
+    {
+      "i": 1,
+      "route": "/marketplace",
+      "ms": 246,
+      "pathname": "/marketplace",
+      "pe": "auto",
+      "text": 48,
+      "blocked": false
+    },
+    {
+      "i": 1,
+      "route": "/ranking-jugadores",
+      "ms": 246,
+      "pathname": "/ranking-jugadores",
+      "pe": "auto",
+      "text": 4552,
+      "blocked": false
+    },
+    {
+      "i": 1,
+      "route": "/chat",
+      "ms": 245,
+      "pathname": "/chat",
+      "pe": "auto",
+      "text": 11,
+      "blocked": false
+    },
+    {
+      "i": 1,
+      "route": "/privacidad",
+      "ms": 251,
+      "pathname": "/privacidad",
+      "pe": "auto",
+      "text": 10,
+      "blocked": false
+    },
+    {
+      "i": 1,
+      "route": "/videos",
+      "ms": 272,
+      "pathname": "/videos",
+      "pe": "auto",
+      "text": 43,
+      "blocked": false
+    },
+    {
+      "i": 1,
+      "route": "/transmision-en-vivo",
+      "ms": 246,
+      "pathname": "/transmision-en-vivo",
+      "pe": "auto",
+      "text": 81,
+      "blocked": false
+    },
+    {
+      "i": 1,
+      "route": "/crear-torneo",
+      "ms": 244,
+      "pathname": "/crear-torneo",
+      "pe": "auto",
+      "text": 343,
+      "blocked": false
+    }
+  ]
+}

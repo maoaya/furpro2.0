@@ -1,0 +1,3811 @@
+{
+  "note": "Inventario estático de call-sites. Duraciones/runtime en FASE4_SUPABASE_RUNTIME.",
+  "totalCallSites": 611,
+  "byName": {
+    "from:usuarios": 53,
+    "from:users": 39,
+    "from:teams": 32,
+    "from:carfutpro": 30,
+    "from:posts": 20,
+    "from:tournaments": 19,
+    "from:live_streams": 17,
+    "from:tournament_matches": 14,
+    "from:friends": 12,
+    "from:notifications": 11,
+    "from:penalty_matches": 11,
+    "from:team_invitations": 10,
+    "from:stories": 10,
+    "from:tournament_referees": 10,
+    "from:matches": 9,
+    "from:team_members": 8,
+    "from:tournament_notifications": 8,
+    "from:partidos": 8,
+    "from:comments": 7,
+    "from:followers": 7,
+    "from:tournament_invitations": 7,
+    "from:media": 7,
+    "from:user_stories": 7,
+    "from:post_likes": 7,
+    "from:contenido": 6,
+    "from:avatars": 6,
+    "from:reportes": 6,
+    "from:torneos": 6,
+    "from:analytics_events": 6,
+    "from:equipos": 5,
+    "from:team_lineups": 5,
+    "from:likes": 5,
+    "from:publicaciones": 5,
+    "from:notificaciones": 5,
+    "from:user_achievements": 5,
+    "from:arbitros": 5,
+    "from:mensajes": 4,
+    "from:friend_requests": 4,
+    "from:chat_messages": 4,
+    "from:logros_equipo": 4,
+    "from:feed": 4,
+    "from:pagos": 4,
+    "from:rankings": 4,
+    "from:marketplace": 4,
+    "from:match_participations": 4,
+    "from:post_comments": 4,
+    "from:tournament_referee_reports": 4,
+    "from:intentos_login": 4,
+    "from:user_activities": 3,
+    "from:tournament_teams": 3,
+    "from:chat_conversations": 3,
+    "from:tournament_registrations": 3,
+    "from:team_rosters": 3,
+    "from:invitations": 3,
+    "from:tarjetas_fifa": 3,
+    "from:recuperacion_contrasena": 3,
+    "from:tournament_group_teams": 3,
+    "from:tournament_player_stats": 3,
+    "from:stream_comments": 3,
+    "from:team-logos": 2,
+    "from:post-media": 2,
+    "from:statuses": 2,
+    "from:valoraciones": 2,
+    "from:promociones": 2,
+    "from:products": 2,
+    "from:live_stream_comments": 2,
+    "from:logros": 2,
+    "from:reportes_moderacion": 2,
+    "rpc:update_group_standings": 2,
+    "from:disciplinary_sanctions": 2,
+    "from:soporte": 2,
+    "from:tournament_groups": 2,
+    "from:configuracion": 2,
+    "from:chat_groups": 2,
+    "from:messages": 2,
+    "from:user_points": 2,
+    "from:amigos": 2,
+    "from:penalty_player_stats": 2,
+    "from:usuarios_bloqueados": 2,
+    "from:fotos_fingerprint": 2,
+    "from:story_views": 2,
+    "from:dominios": 2,
+    "from:formularios": 2,
+    "rpc:get_user_activity_stats": 1,
+    "rpc:get_admin_stats": 1,
+    "from:available_players_for_convocation": 1,
+    "from:jugadores_equipos": 1,
+    "from:referees": 1,
+    "rpc:run_sql": 1,
+    "from:post_moments": 1,
+    "from:push_tokens": 1,
+    "rpc:join_team": 1,
+    "rpc:register_team_tournament": 1,
+    "rpc:agregar_puntos_jugador": 1,
+    "from:suggestions": 1,
+    "from:profiles": 1,
+    "from:follows": 1,
+    "rpc:obtener_estado_sistema": 1,
+    "rpc:verificar_rls_activo": 1,
+    "from:status_comments": 1,
+    "rpc:obtener_ranking_usuarios": 1,
+    "from:historial_equipo": 1,
+    "from:api.friends": 1,
+    "from:live_stream_likes": 1,
+    "from:sesiones": 1,
+    "from:organizadores": 1,
+    "from:progreso": 1,
+    "from:jugadores": 1,
+    "from:reportes_generales": 1,
+    "from:transmisiones": 1,
+    "from:tournament_inscriptions": 1,
+    "rpc:increment_post_view": 1,
+    "from:auditoria": 1,
+    "from:user_locations": 1,
+    "from:marketplace_orders": 1,
+    "from:user_cards": 1,
+    "from:group_locations": 1,
+    "rpc:add_user_points": 1,
+    "from:calificaciones_arbitro": 1,
+    "rpc:agregar_puntos_card": 1,
+    "from:card_puntos_historial": 1,
+    "rpc:aplicar_sancion": 1,
+    "from:contenido_revisar": 1,
+    "rpc:puede_usuario_postear": 1,
+    "rpc:obtener_sanciones_activas": 1,
+    "from:reportes_contenido": 1,
+    "from:apelaciones_sancion": 1,
+    "from:config_moderacion": 1,
+    "from:referee_ratings": 1,
+    "from:blocks": 1,
+    "rpc:escanear_palabras_prohibidas": 1,
+    "from:contenido_inapropiado": 1,
+    "from:reportes_usuarios": 1,
+    "rpc:clean_expired_stories": 1,
+    "from:tournament_brackets": 1,
+    "from:api.user_activities": 1,
+    "from:api.usuarios": 1
+  },
+  "rows": [
+    {
+      "type": "from",
+      "name": "user_activities",
+      "file": "src/components/AdminDashboard.jsx",
+      "line": 40
+    },
+    {
+      "type": "rpc",
+      "name": "get_user_activity_stats",
+      "file": "src/components/AdminDashboard.jsx",
+      "line": 87
+    },
+    {
+      "type": "rpc",
+      "name": "get_admin_stats",
+      "file": "src/components/AdminPanelPage.js",
+      "line": 15
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/components/AgregarUsuarioButton.js",
+      "line": 21
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/components/AuthCallback.jsx",
+      "line": 47
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/components/BuscadorAvanzado.jsx",
+      "line": 29
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/components/BuscadorAvanzado.jsx",
+      "line": 46
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/components/BuscadorAvanzado.jsx",
+      "line": 63
+    },
+    {
+      "type": "from",
+      "name": "comments",
+      "file": "src/components/CommentsModal.jsx",
+      "line": 42
+    },
+    {
+      "type": "from",
+      "name": "comments",
+      "file": "src/components/CommentsModal.jsx",
+      "line": 82
+    },
+    {
+      "type": "from",
+      "name": "comments",
+      "file": "src/components/CommentsModal.jsx",
+      "line": 106
+    },
+    {
+      "type": "from",
+      "name": "comments",
+      "file": "src/components/CommentsModal.jsx",
+      "line": 123
+    },
+    {
+      "type": "from",
+      "name": "available_players_for_convocation",
+      "file": "src/components/ConvocarJugadores.jsx",
+      "line": 48
+    },
+    {
+      "type": "from",
+      "name": "team_invitations",
+      "file": "src/components/ConvocarJugadores.jsx",
+      "line": 103
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/components/CrearTorneoMejorado.jsx",
+      "line": 49
+    },
+    {
+      "type": "from",
+      "name": "contenido",
+      "file": "src/components/HistoriasComponent.jsx",
+      "line": 60
+    },
+    {
+      "type": "from",
+      "name": "contenido",
+      "file": "src/components/HistoriasComponent.jsx",
+      "line": 69
+    },
+    {
+      "type": "from",
+      "name": "stories",
+      "file": "src/components/HistoriasComponent.jsx",
+      "line": 74
+    },
+    {
+      "type": "from",
+      "name": "equipos",
+      "file": "src/components/MiEquipoMejorado.jsx",
+      "line": 63
+    },
+    {
+      "type": "from",
+      "name": "jugadores_equipos",
+      "file": "src/components/MiEquipoMejorado.jsx",
+      "line": 77
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/components/PostCard.jsx",
+      "line": 23
+    },
+    {
+      "type": "from",
+      "name": "referees",
+      "file": "src/components/RankingMejorado.jsx",
+      "line": 35
+    },
+    {
+      "type": "rpc",
+      "name": "run_sql",
+      "file": "src/components/SQLEditor.js",
+      "line": 16
+    },
+    {
+      "type": "from",
+      "name": "team_members",
+      "file": "src/components/SeleccionarAlineacion.jsx",
+      "line": 48
+    },
+    {
+      "type": "from",
+      "name": "team_lineups",
+      "file": "src/components/SeleccionarAlineacion.jsx",
+      "line": 81
+    },
+    {
+      "type": "from",
+      "name": "team_lineups",
+      "file": "src/components/SeleccionarAlineacion.jsx",
+      "line": 135
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/components/TopNavBar.jsx",
+      "line": 23
+    },
+    {
+      "type": "from",
+      "name": "contenido",
+      "file": "src/components/UploadContenidoComponent.jsx",
+      "line": 73
+    },
+    {
+      "type": "from",
+      "name": "contenido",
+      "file": "src/components/UploadContenidoComponent.jsx",
+      "line": 81
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/components/UploadContenidoComponent.jsx",
+      "line": 84
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/components/UploadContenidoComponent.jsx",
+      "line": 106
+    },
+    {
+      "type": "from",
+      "name": "post_moments",
+      "file": "src/components/UploadContenidoComponent.jsx",
+      "line": 136
+    },
+    {
+      "type": "from",
+      "name": "notifications",
+      "file": "src/config/Database.js",
+      "line": 24
+    },
+    {
+      "type": "from",
+      "name": "notifications",
+      "file": "src/config/Database.js",
+      "line": 35
+    },
+    {
+      "type": "from",
+      "name": "followers",
+      "file": "src/config/supabase.js",
+      "line": 79
+    },
+    {
+      "type": "from",
+      "name": "followers",
+      "file": "src/config/supabase.js",
+      "line": 88
+    },
+    {
+      "type": "from",
+      "name": "followers",
+      "file": "src/config/supabase.js",
+      "line": 97
+    },
+    {
+      "type": "from",
+      "name": "followers",
+      "file": "src/config/supabase.js",
+      "line": 108
+    },
+    {
+      "type": "from",
+      "name": "followers",
+      "file": "src/config/supabase.js",
+      "line": 116
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/config/supabase.js",
+      "line": 128
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/config/supabase.js",
+      "line": 138
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/config/supabase.js",
+      "line": 150
+    },
+    {
+      "type": "from",
+      "name": "avatars",
+      "file": "src/config/supabase.js",
+      "line": 162
+    },
+    {
+      "type": "from",
+      "name": "avatars",
+      "file": "src/config/supabase.js",
+      "line": 164
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/config/supabase.js",
+      "line": 174
+    },
+    {
+      "type": "from",
+      "name": "push_tokens",
+      "file": "src/config/supabase.js",
+      "line": 186
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/config/supabase.js",
+      "line": 207
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/config/supabase.js",
+      "line": 224
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/config/supabase.js",
+      "line": 233
+    },
+    {
+      "type": "rpc",
+      "name": "join_team",
+      "file": "src/config/supabase.js",
+      "line": 242
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/config/supabase.js",
+      "line": 250
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/config/supabase.js",
+      "line": 259
+    },
+    {
+      "type": "rpc",
+      "name": "register_team_tournament",
+      "file": "src/config/supabase.js",
+      "line": 275
+    },
+    {
+      "type": "from",
+      "name": "tournament_invitations",
+      "file": "src/config/supabase.js",
+      "line": 286
+    },
+    {
+      "type": "from",
+      "name": "tournament_teams",
+      "file": "src/config/supabase.js",
+      "line": 298
+    },
+    {
+      "type": "from",
+      "name": "tournament_invitations",
+      "file": "src/config/supabase.js",
+      "line": 304
+    },
+    {
+      "type": "from",
+      "name": "tournament_invitations",
+      "file": "src/config/supabase.js",
+      "line": 313
+    },
+    {
+      "type": "from",
+      "name": "matches",
+      "file": "src/config/supabase.js",
+      "line": 323
+    },
+    {
+      "type": "from",
+      "name": "matches",
+      "file": "src/config/supabase.js",
+      "line": 332
+    },
+    {
+      "type": "from",
+      "name": "matches",
+      "file": "src/config/supabase.js",
+      "line": 354
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/config/supabase.js",
+      "line": 371
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/config/supabase.js",
+      "line": 380
+    },
+    {
+      "type": "from",
+      "name": "likes",
+      "file": "src/config/supabase.js",
+      "line": 393
+    },
+    {
+      "type": "from",
+      "name": "likes",
+      "file": "src/config/supabase.js",
+      "line": 402
+    },
+    {
+      "type": "from",
+      "name": "comments",
+      "file": "src/config/supabase.js",
+      "line": 413
+    },
+    {
+      "type": "from",
+      "name": "comments",
+      "file": "src/config/supabase.js",
+      "line": 422
+    },
+    {
+      "type": "from",
+      "name": "notifications",
+      "file": "src/config/supabase.js",
+      "line": 436
+    },
+    {
+      "type": "from",
+      "name": "notifications",
+      "file": "src/config/supabase.js",
+      "line": 445
+    },
+    {
+      "type": "from",
+      "name": "notifications",
+      "file": "src/config/supabase.js",
+      "line": 456
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/config/supabase.js",
+      "line": 465
+    },
+    {
+      "type": "from",
+      "name": "avatars",
+      "file": "src/config/supabase.js",
+      "line": 475
+    },
+    {
+      "type": "from",
+      "name": "avatars",
+      "file": "src/config/supabase.js",
+      "line": 479
+    },
+    {
+      "type": "from",
+      "name": "team-logos",
+      "file": "src/config/supabase.js",
+      "line": 488
+    },
+    {
+      "type": "from",
+      "name": "team-logos",
+      "file": "src/config/supabase.js",
+      "line": 492
+    },
+    {
+      "type": "from",
+      "name": "post-media",
+      "file": "src/config/supabase.js",
+      "line": 501
+    },
+    {
+      "type": "from",
+      "name": "post-media",
+      "file": "src/config/supabase.js",
+      "line": 505
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/context/AuthContext.jsx",
+      "line": 118
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/context/AuthContext.jsx",
+      "line": 138
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/context/AuthContext.jsx",
+      "line": 162
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/context/AuthContext.jsx",
+      "line": 260
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/context/AuthContext.jsx",
+      "line": 299
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/context/AuthContext.jsx",
+      "line": 376
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/context/AuthContext.jsx",
+      "line": 416
+    },
+    {
+      "type": "from",
+      "name": "notifications",
+      "file": "src/context/NotificationsContext.jsx",
+      "line": 15
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/controllers/authController.js",
+      "line": 41
+    },
+    {
+      "type": "from",
+      "name": "mensajes",
+      "file": "src/controllers/authController.js",
+      "line": 68
+    },
+    {
+      "type": "rpc",
+      "name": "agregar_puntos_jugador",
+      "file": "src/hooks/useCardPoints.js",
+      "line": 21
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/hooks/useCardPoints.js",
+      "line": 48
+    },
+    {
+      "type": "from",
+      "name": "suggestions",
+      "file": "src/main.js",
+      "line": 351
+    },
+    {
+      "type": "from",
+      "name": "matches",
+      "file": "src/main.js",
+      "line": 362
+    },
+    {
+      "type": "from",
+      "name": "stories",
+      "file": "src/main.js",
+      "line": 373
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/main.js",
+      "line": 384
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/main.js",
+      "line": 420
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/main.js",
+      "line": 455
+    },
+    {
+      "type": "from",
+      "name": "matches",
+      "file": "src/main.js",
+      "line": 490
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/modules/auth/authController.js",
+      "line": 13
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/modules/auth/authController.js",
+      "line": 17
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/modules/auth/authController.js",
+      "line": 53
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/modules/auth/authController.js",
+      "line": 56
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/modules/auth/authController.js",
+      "line": 82
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/modules/auth/authController.js",
+      "line": 84
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/Amigos.jsx",
+      "line": 45
+    },
+    {
+      "type": "from",
+      "name": "friend_requests",
+      "file": "src/pages/Amigos.jsx",
+      "line": 62
+    },
+    {
+      "type": "from",
+      "name": "profiles",
+      "file": "src/pages/Amigos.jsx",
+      "line": 84
+    },
+    {
+      "type": "from",
+      "name": "friend_requests",
+      "file": "src/pages/Amigos.jsx",
+      "line": 103
+    },
+    {
+      "type": "from",
+      "name": "friend_requests",
+      "file": "src/pages/Amigos.jsx",
+      "line": 122
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/Amigos.jsx",
+      "line": 127
+    },
+    {
+      "type": "from",
+      "name": "friend_requests",
+      "file": "src/pages/Amigos.jsx",
+      "line": 142
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/Amigos.jsx",
+      "line": 151
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/Amigos.jsx",
+      "line": 156
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/Amistoso.jsx",
+      "line": 43
+    },
+    {
+      "type": "from",
+      "name": "matches",
+      "file": "src/pages/Amistoso.jsx",
+      "line": 100
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/ChatInstagram.jsx",
+      "line": 42
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/ChatInstagram.jsx",
+      "line": 52
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/ChatInstagramNew.jsx",
+      "line": 57
+    },
+    {
+      "type": "from",
+      "name": "chat_conversations",
+      "file": "src/pages/ChatInstagramNew.jsx",
+      "line": 75
+    },
+    {
+      "type": "from",
+      "name": "chat_messages",
+      "file": "src/pages/ChatInstagramNew.jsx",
+      "line": 103
+    },
+    {
+      "type": "from",
+      "name": "chat_messages",
+      "file": "src/pages/ChatInstagramNew.jsx",
+      "line": 122
+    },
+    {
+      "type": "from",
+      "name": "chat_messages",
+      "file": "src/pages/ChatInstagramNew.jsx",
+      "line": 136
+    },
+    {
+      "type": "from",
+      "name": "chat_messages",
+      "file": "src/pages/ChatInstagramNew.jsx",
+      "line": 153
+    },
+    {
+      "type": "from",
+      "name": "chat_conversations",
+      "file": "src/pages/ChatInstagramNew.jsx",
+      "line": 175
+    },
+    {
+      "type": "from",
+      "name": "chat_conversations",
+      "file": "src/pages/ChatInstagramNew.jsx",
+      "line": 188
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/ConfiguracionCuenta.jsx",
+      "line": 41
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/ConfiguracionCuenta.jsx",
+      "line": 124
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/ConfiguracionCuenta.jsx",
+      "line": 149
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/ConfiguracionCuenta.jsx",
+      "line": 180
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/ConvocarJugadores.jsx",
+      "line": 77
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/ConvocarJugadores.jsx",
+      "line": 109
+    },
+    {
+      "type": "from",
+      "name": "team_invitations",
+      "file": "src/pages/ConvocarJugadores.jsx",
+      "line": 163
+    },
+    {
+      "type": "from",
+      "name": "media",
+      "file": "src/pages/CrearEquipo.jsx",
+      "line": 90
+    },
+    {
+      "type": "from",
+      "name": "media",
+      "file": "src/pages/CrearEquipo.jsx",
+      "line": 99
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/CrearEquipo.jsx",
+      "line": 218
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/CrearEquipo.jsx",
+      "line": 246
+    },
+    {
+      "type": "from",
+      "name": "media",
+      "file": "src/pages/CrearPublicacion.jsx",
+      "line": 94
+    },
+    {
+      "type": "from",
+      "name": "media",
+      "file": "src/pages/CrearPublicacion.jsx",
+      "line": 101
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/pages/CrearPublicacion.jsx",
+      "line": 109
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/pages/CrearTorneo.jsx",
+      "line": 44
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/pages/CrearTorneoAvanzado.jsx",
+      "line": 74
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/CrearTorneoCompleto.jsx",
+      "line": 128
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/CrearTorneoCompleto.jsx",
+      "line": 143
+    },
+    {
+      "type": "from",
+      "name": "tournament_invitations",
+      "file": "src/pages/CrearTorneoCompleto.jsx",
+      "line": 205
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/CrearTorneoCompleto.jsx",
+      "line": 213
+    },
+    {
+      "type": "from",
+      "name": "tournament_notifications",
+      "file": "src/pages/CrearTorneoCompleto.jsx",
+      "line": 220
+    },
+    {
+      "type": "from",
+      "name": "follows",
+      "file": "src/pages/CrearTorneoCompleto.jsx",
+      "line": 239
+    },
+    {
+      "type": "from",
+      "name": "tournament_notifications",
+      "file": "src/pages/CrearTorneoCompleto.jsx",
+      "line": 253
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/pages/CrearTorneoCompleto.jsx",
+      "line": 276
+    },
+    {
+      "type": "rpc",
+      "name": "obtener_estado_sistema",
+      "file": "src/pages/DiagnosticoFunciones.jsx",
+      "line": 212
+    },
+    {
+      "type": "rpc",
+      "name": "verificar_rls_activo",
+      "file": "src/pages/DiagnosticoFunciones.jsx",
+      "line": 247
+    },
+    {
+      "type": "from",
+      "name": "equipos",
+      "file": "src/pages/EquipoDetallePage.js",
+      "line": 15
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/pages/EquipoDetallePage.js",
+      "line": 16
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/EquipoDetallePage.jsx",
+      "line": 24
+    },
+    {
+      "type": "from",
+      "name": "team_invitations",
+      "file": "src/pages/EquipoDetallePage.jsx",
+      "line": 35
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/EquipoTorneosPage.jsx",
+      "line": 38
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/pages/EquipoTorneosPage.jsx",
+      "line": 53
+    },
+    {
+      "type": "from",
+      "name": "tournament_teams",
+      "file": "src/pages/EquipoTorneosPage.jsx",
+      "line": 63
+    },
+    {
+      "type": "from",
+      "name": "tournament_teams",
+      "file": "src/pages/EquipoTorneosPage.jsx",
+      "line": 84
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/pages/Estadisticas.jsx",
+      "line": 29
+    },
+    {
+      "type": "from",
+      "name": "user_stories",
+      "file": "src/pages/Estados.jsx",
+      "line": 33
+    },
+    {
+      "type": "from",
+      "name": "statuses",
+      "file": "src/pages/Estados.jsx",
+      "line": 56
+    },
+    {
+      "type": "from",
+      "name": "statuses",
+      "file": "src/pages/Estados.jsx",
+      "line": 67
+    },
+    {
+      "type": "from",
+      "name": "status_comments",
+      "file": "src/pages/Estados.jsx",
+      "line": 76
+    },
+    {
+      "type": "from",
+      "name": "publicaciones",
+      "file": "src/pages/FeedPage.jsx",
+      "line": 65
+    },
+    {
+      "type": "rpc",
+      "name": "obtener_ranking_usuarios",
+      "file": "src/pages/FeedPage.jsx",
+      "line": 79
+    },
+    {
+      "type": "from",
+      "name": "valoraciones",
+      "file": "src/pages/FeedPage.jsx",
+      "line": 93
+    },
+    {
+      "type": "from",
+      "name": "valoraciones",
+      "file": "src/pages/FeedPage.jsx",
+      "line": 117
+    },
+    {
+      "type": "from",
+      "name": "publicaciones",
+      "file": "src/pages/FeedPage.jsx",
+      "line": 141
+    },
+    {
+      "type": "from",
+      "name": "publicaciones",
+      "file": "src/pages/FeedPage.jsx",
+      "line": 165
+    },
+    {
+      "type": "from",
+      "name": "publicaciones",
+      "file": "src/pages/FeedPage.jsx",
+      "line": 185
+    },
+    {
+      "type": "from",
+      "name": "publicaciones",
+      "file": "src/pages/FeedPage.jsx",
+      "line": 301
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/FormularioRegistroCompleto.jsx",
+      "line": 301
+    },
+    {
+      "type": "from",
+      "name": "tournament_referees",
+      "file": "src/pages/FormularioRegistroCompleto.jsx",
+      "line": 321
+    },
+    {
+      "type": "from",
+      "name": "historial_equipo",
+      "file": "src/pages/HistorialEquipo.jsx",
+      "line": 19
+    },
+    {
+      "type": "from",
+      "name": "promociones",
+      "file": "src/pages/HistorialPromociones.jsx",
+      "line": 17
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/HomePage.jsx",
+      "line": 183
+    },
+    {
+      "type": "from",
+      "name": "api.friends",
+      "file": "src/pages/HomePage.jsx",
+      "line": 191
+    },
+    {
+      "type": "from",
+      "name": "notifications",
+      "file": "src/pages/HomePage.jsx",
+      "line": 224
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/HomePage.jsx",
+      "line": 245
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/pages/HomePage.jsx",
+      "line": 265
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/HomePage.jsx",
+      "line": 279
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/pages/HomePage.jsx",
+      "line": 294
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/pages/HomePage.jsx",
+      "line": 321
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/HomePage.jsx",
+      "line": 347
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/HomePage.jsx",
+      "line": 361
+    },
+    {
+      "type": "from",
+      "name": "products",
+      "file": "src/pages/HomePage.jsx",
+      "line": 397
+    },
+    {
+      "type": "from",
+      "name": "stories",
+      "file": "src/pages/HomePage.jsx",
+      "line": 510
+    },
+    {
+      "type": "from",
+      "name": "stories",
+      "file": "src/pages/HomePage.jsx",
+      "line": 513
+    },
+    {
+      "type": "from",
+      "name": "user_stories",
+      "file": "src/pages/HomePage.jsx",
+      "line": 514
+    },
+    {
+      "type": "from",
+      "name": "likes",
+      "file": "src/pages/HomePage.jsx",
+      "line": 550
+    },
+    {
+      "type": "from",
+      "name": "likes",
+      "file": "src/pages/HomePage.jsx",
+      "line": 560
+    },
+    {
+      "type": "from",
+      "name": "likes",
+      "file": "src/pages/HomePage.jsx",
+      "line": 564
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/pages/HomePage.jsx",
+      "line": 571
+    },
+    {
+      "type": "from",
+      "name": "comments",
+      "file": "src/pages/HomePage.jsx",
+      "line": 588
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 64
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 83
+    },
+    {
+      "type": "from",
+      "name": "live_stream_comments",
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 96
+    },
+    {
+      "type": "from",
+      "name": "live_stream_likes",
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 116
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 120
+    },
+    {
+      "type": "from",
+      "name": "live_stream_comments",
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 130
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 145
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 191
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/pages/LiveStreamPage.jsx",
+      "line": 273
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/LoginPage.jsx",
+      "line": 50
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/LoginPage.jsx",
+      "line": 138
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/LoginPage.jsx",
+      "line": 144
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/LoginPage.jsx",
+      "line": 185
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/LoginPage.jsx",
+      "line": 221
+    },
+    {
+      "type": "from",
+      "name": "logros_equipo",
+      "file": "src/pages/LogrosEquipoPage.js",
+      "line": 21
+    },
+    {
+      "type": "from",
+      "name": "logros_equipo",
+      "file": "src/pages/LogrosEquipoPage.js",
+      "line": 48
+    },
+    {
+      "type": "from",
+      "name": "logros_equipo",
+      "file": "src/pages/LogrosEquipoPage.js",
+      "line": 68
+    },
+    {
+      "type": "from",
+      "name": "logros_equipo",
+      "file": "src/pages/LogrosEquipoPage.js",
+      "line": 88
+    },
+    {
+      "type": "from",
+      "name": "logros",
+      "file": "src/pages/LogrosPage.js",
+      "line": 14
+    },
+    {
+      "type": "from",
+      "name": "logros",
+      "file": "src/pages/LogrosPage.jsx",
+      "line": 15
+    },
+    {
+      "type": "from",
+      "name": "products",
+      "file": "src/pages/MarketplaceCompleto.jsx",
+      "line": 50
+    },
+    {
+      "type": "from",
+      "name": "media",
+      "file": "src/pages/MediaDetalle.jsx",
+      "line": 18
+    },
+    {
+      "type": "from",
+      "name": "media",
+      "file": "src/pages/MediaDetalle.jsx",
+      "line": 30
+    },
+    {
+      "type": "from",
+      "name": "media",
+      "file": "src/pages/MediaPage.js",
+      "line": 15
+    },
+    {
+      "type": "from",
+      "name": "reportes",
+      "file": "src/pages/ModeracionReportes.jsx",
+      "line": 18
+    },
+    {
+      "type": "from",
+      "name": "reportes",
+      "file": "src/pages/ModeracionReportes.jsx",
+      "line": 30
+    },
+    {
+      "type": "from",
+      "name": "reportes_moderacion",
+      "file": "src/pages/ModerationPage.jsx",
+      "line": 19
+    },
+    {
+      "type": "from",
+      "name": "reportes_moderacion",
+      "file": "src/pages/ModerationPage.jsx",
+      "line": 51
+    },
+    {
+      "type": "from",
+      "name": "feed",
+      "file": "src/pages/NaticoBotonera.jsx",
+      "line": 21
+    },
+    {
+      "type": "from",
+      "name": "feed",
+      "file": "src/pages/NaticoBotonera.jsx",
+      "line": 29
+    },
+    {
+      "type": "from",
+      "name": "feed",
+      "file": "src/pages/NaticoBotonera.jsx",
+      "line": 51
+    },
+    {
+      "type": "from",
+      "name": "notificaciones",
+      "file": "src/pages/NotificacionDetalle.jsx",
+      "line": 18
+    },
+    {
+      "type": "from",
+      "name": "notificaciones",
+      "file": "src/pages/NotificacionDetalle.jsx",
+      "line": 30
+    },
+    {
+      "type": "from",
+      "name": "tournament_notifications",
+      "file": "src/pages/NotificacionesTorneoPage.jsx",
+      "line": 26
+    },
+    {
+      "type": "from",
+      "name": "tournament_notifications",
+      "file": "src/pages/NotificacionesTorneoPage.jsx",
+      "line": 92
+    },
+    {
+      "type": "from",
+      "name": "tournament_notifications",
+      "file": "src/pages/NotificacionesTorneoPage.jsx",
+      "line": 112
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 45
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 59
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 66
+    },
+    {
+      "type": "from",
+      "name": "team_members",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 74
+    },
+    {
+      "type": "from",
+      "name": "team_members",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 80
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 106
+    },
+    {
+      "type": "rpc",
+      "name": "update_group_standings",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 122
+    },
+    {
+      "type": "rpc",
+      "name": "update_group_standings",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 131
+    },
+    {
+      "type": "from",
+      "name": "team_members",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 143
+    },
+    {
+      "type": "from",
+      "name": "team_members",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 144
+    },
+    {
+      "type": "from",
+      "name": "notifications",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 149
+    },
+    {
+      "type": "from",
+      "name": "disciplinary_sanctions",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 177
+    },
+    {
+      "type": "from",
+      "name": "notifications",
+      "file": "src/pages/PartidoArbitroPanel.jsx",
+      "line": 193
+    },
+    {
+      "type": "from",
+      "name": "partidos",
+      "file": "src/pages/PartidoDetalle.jsx",
+      "line": 33
+    },
+    {
+      "type": "from",
+      "name": "partidos",
+      "file": "src/pages/PartidoDetalle.jsx",
+      "line": 43
+    },
+    {
+      "type": "from",
+      "name": "partidos",
+      "file": "src/pages/PartidoDetalle.jsx",
+      "line": 65
+    },
+    {
+      "type": "from",
+      "name": "sesiones",
+      "file": "src/pages/PenaltisPage.js",
+      "line": 40
+    },
+    {
+      "type": "from",
+      "name": "penalty_matches",
+      "file": "src/pages/PenaltyGamePvP.jsx",
+      "line": 52
+    },
+    {
+      "type": "from",
+      "name": "penalty_matches",
+      "file": "src/pages/PenaltyGamePvP.jsx",
+      "line": 119
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/pages/Perfil.jsx",
+      "line": 54
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/Perfil.jsx",
+      "line": 76
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/pages/Perfil.jsx",
+      "line": 82
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/Perfil.jsx",
+      "line": 112
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 81
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 94
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 109
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 115
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 121
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 128
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/pages/PerfilInstagram.jsx",
+      "line": 173
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/PerfilNuevo.jsx",
+      "line": 34
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/PerfilNuevo.jsx",
+      "line": 55
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/PerfilNuevo.jsx",
+      "line": 66
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/pages/PerfilNuevo.jsx",
+      "line": 78
+    },
+    {
+      "type": "from",
+      "name": "post_likes",
+      "file": "src/pages/PerfilNuevo.jsx",
+      "line": 99
+    },
+    {
+      "type": "from",
+      "name": "post_likes",
+      "file": "src/pages/PerfilNuevo.jsx",
+      "line": 106
+    },
+    {
+      "type": "from",
+      "name": "post_likes",
+      "file": "src/pages/PerfilNuevo.jsx",
+      "line": 108
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/PlantillaEquipo.jsx",
+      "line": 120
+    },
+    {
+      "type": "from",
+      "name": "team_lineups",
+      "file": "src/pages/PlantillaEquipo.jsx",
+      "line": 134
+    },
+    {
+      "type": "from",
+      "name": "team_invitations",
+      "file": "src/pages/PlantillaEquipo.jsx",
+      "line": 152
+    },
+    {
+      "type": "from",
+      "name": "team_lineups",
+      "file": "src/pages/PlantillaEquipo.jsx",
+      "line": 172
+    },
+    {
+      "type": "from",
+      "name": "team_lineups",
+      "file": "src/pages/PlantillaEquipo.jsx",
+      "line": 184
+    },
+    {
+      "type": "from",
+      "name": "organizadores",
+      "file": "src/pages/ProgramacionPartidosPage.jsx",
+      "line": 36
+    },
+    {
+      "type": "from",
+      "name": "partidos",
+      "file": "src/pages/ProgramacionPartidosPage.jsx",
+      "line": 44
+    },
+    {
+      "type": "from",
+      "name": "progreso",
+      "file": "src/pages/ProgresoPage.js",
+      "line": 12
+    },
+    {
+      "type": "from",
+      "name": "promociones",
+      "file": "src/pages/PromocionarPost.jsx",
+      "line": 55
+    },
+    {
+      "type": "from",
+      "name": "equipos",
+      "file": "src/pages/RankingEquiposPage.jsx",
+      "line": 35
+    },
+    {
+      "type": "from",
+      "name": "jugadores",
+      "file": "src/pages/RankingJugadoresPage.jsx",
+      "line": 15
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/RegistroPerfil.jsx",
+      "line": 138
+    },
+    {
+      "type": "from",
+      "name": "reportes_generales",
+      "file": "src/pages/ReportesGenerales.jsx",
+      "line": 15
+    },
+    {
+      "type": "from",
+      "name": "reportes",
+      "file": "src/pages/ReportesPage.jsx",
+      "line": 19
+    },
+    {
+      "type": "from",
+      "name": "soporte",
+      "file": "src/pages/SoporteChat.jsx",
+      "line": 18
+    },
+    {
+      "type": "from",
+      "name": "soporte",
+      "file": "src/pages/SoporteChat.jsx",
+      "line": 26
+    },
+    {
+      "type": "from",
+      "name": "transmisiones",
+      "file": "src/pages/StreamingDetalle.jsx",
+      "line": 17
+    },
+    {
+      "type": "from",
+      "name": "contenido",
+      "file": "src/pages/SubirHistoria.jsx",
+      "line": 50
+    },
+    {
+      "type": "from",
+      "name": "contenido",
+      "file": "src/pages/SubirHistoria.jsx",
+      "line": 59
+    },
+    {
+      "type": "from",
+      "name": "stories",
+      "file": "src/pages/SubirHistoria.jsx",
+      "line": 64
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/pages/TorneoDetailPage.jsx",
+      "line": 30
+    },
+    {
+      "type": "from",
+      "name": "tournament_inscriptions",
+      "file": "src/pages/TorneoDetailPage.jsx",
+      "line": 40
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/TorneoDetailPage.jsx",
+      "line": 65
+    },
+    {
+      "type": "from",
+      "name": "tournament_invitations",
+      "file": "src/pages/TorneoDetailPage.jsx",
+      "line": 87
+    },
+    {
+      "type": "from",
+      "name": "notifications",
+      "file": "src/pages/TorneoDetailPage.jsx",
+      "line": 103
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/pages/TorneoDetailPage.jsx",
+      "line": 140
+    },
+    {
+      "type": "from",
+      "name": "tournament_registrations",
+      "file": "src/pages/TorneoDetalleCompleto.jsx",
+      "line": 37
+    },
+    {
+      "type": "from",
+      "name": "disciplinary_sanctions",
+      "file": "src/pages/TorneoDetalleCompleto.jsx",
+      "line": 48
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/TorneoDetalleCompleto.jsx",
+      "line": 76
+    },
+    {
+      "type": "from",
+      "name": "tournament_invitations",
+      "file": "src/pages/TorneoDetalleCompleto.jsx",
+      "line": 95
+    },
+    {
+      "type": "from",
+      "name": "team_members",
+      "file": "src/pages/TorneoDetalleCompleto.jsx",
+      "line": 103
+    },
+    {
+      "type": "from",
+      "name": "notifications",
+      "file": "src/pages/TorneoDetalleCompleto.jsx",
+      "line": 109
+    },
+    {
+      "type": "from",
+      "name": "torneos",
+      "file": "src/pages/TorneoDetallePage.js",
+      "line": 17
+    },
+    {
+      "type": "from",
+      "name": "equipos",
+      "file": "src/pages/TorneoDetallePage.js",
+      "line": 18
+    },
+    {
+      "type": "from",
+      "name": "partidos",
+      "file": "src/pages/TorneoDetallePage.js",
+      "line": 19
+    },
+    {
+      "type": "from",
+      "name": "torneos",
+      "file": "src/pages/TorneoDetallePage.jsx",
+      "line": 18
+    },
+    {
+      "type": "from",
+      "name": "tournament_groups",
+      "file": "src/pages/TorneoStandingsPage.jsx",
+      "line": 41
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/pages/TransmisionEnVivo.jsx",
+      "line": 56
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/pages/TransmisionEnVivo.jsx",
+      "line": 93
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/UsuarioDetallePage.jsx",
+      "line": 19
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/pages/VerMiPlantilla.jsx",
+      "line": 37
+    },
+    {
+      "type": "from",
+      "name": "team_rosters",
+      "file": "src/pages/VerMiPlantilla.jsx",
+      "line": 46
+    },
+    {
+      "type": "from",
+      "name": "friends",
+      "file": "src/pages/VideosFeed.jsx",
+      "line": 43
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/pages/VideosFeed.jsx",
+      "line": 56
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/pages/VideosFeed.jsx",
+      "line": 73
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/pages/VideosFeed.jsx",
+      "line": 113
+    },
+    {
+      "type": "rpc",
+      "name": "increment_post_view",
+      "file": "src/pages/VideosFeed.jsx",
+      "line": 164
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/pages/VideosFeed.jsx",
+      "line": 169
+    },
+    {
+      "type": "from",
+      "name": "auditoria",
+      "file": "src/pages/admin/AdminAuditoriaPage.jsx",
+      "line": 26
+    },
+    {
+      "type": "from",
+      "name": "configuracion",
+      "file": "src/pages/admin/AdminConfigPage.jsx",
+      "line": 22
+    },
+    {
+      "type": "from",
+      "name": "configuracion",
+      "file": "src/pages/admin/AdminConfigPage.jsx",
+      "line": 39
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/admin/AdminEstadisticasPage.jsx",
+      "line": 22
+    },
+    {
+      "type": "from",
+      "name": "pagos",
+      "file": "src/pages/admin/AdminEstadisticasPage.jsx",
+      "line": 23
+    },
+    {
+      "type": "from",
+      "name": "pagos",
+      "file": "src/pages/admin/AdminEstadisticasPage.jsx",
+      "line": 24
+    },
+    {
+      "type": "from",
+      "name": "reportes",
+      "file": "src/pages/admin/AdminEstadisticasPage.jsx",
+      "line": 25
+    },
+    {
+      "type": "from",
+      "name": "notificaciones",
+      "file": "src/pages/admin/AdminNotificacionesPage.jsx",
+      "line": 26
+    },
+    {
+      "type": "from",
+      "name": "notificaciones",
+      "file": "src/pages/admin/AdminNotificacionesPage.jsx",
+      "line": 54
+    },
+    {
+      "type": "from",
+      "name": "pagos",
+      "file": "src/pages/admin/AdminPagosPage.jsx",
+      "line": 26
+    },
+    {
+      "type": "from",
+      "name": "pagos",
+      "file": "src/pages/admin/AdminPagosPage.jsx",
+      "line": 55
+    },
+    {
+      "type": "from",
+      "name": "reportes",
+      "file": "src/pages/admin/AdminReportesPage.jsx",
+      "line": 27
+    },
+    {
+      "type": "from",
+      "name": "reportes",
+      "file": "src/pages/admin/AdminReportesPage.jsx",
+      "line": 57
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/admin/AdminUsersPage.jsx",
+      "line": 27
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/admin/AdminUsersPage.jsx",
+      "line": 51
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/admin/AdminUsersPage.jsx",
+      "line": 54
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/pages/admin/AdminUsersPage.jsx",
+      "line": 57
+    },
+    {
+      "type": "from",
+      "name": "chat_groups",
+      "file": "src/routes/appRoutes.js",
+      "line": 143
+    },
+    {
+      "type": "from",
+      "name": "messages",
+      "file": "src/routes/appRoutes.js",
+      "line": 159
+    },
+    {
+      "type": "from",
+      "name": "user_locations",
+      "file": "src/routes/appRoutes.js",
+      "line": 175
+    },
+    {
+      "type": "from",
+      "name": "rankings",
+      "file": "src/routes/appRoutes.js",
+      "line": 234
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/routes/appRoutes.js",
+      "line": 256
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/routes/appRoutes.js",
+      "line": 294
+    },
+    {
+      "type": "from",
+      "name": "rankings",
+      "file": "src/routes/appRoutes.js",
+      "line": 306
+    },
+    {
+      "type": "from",
+      "name": "rankings",
+      "file": "src/routes/appRoutes.js",
+      "line": 315
+    },
+    {
+      "type": "from",
+      "name": "rankings",
+      "file": "src/routes/appRoutes.js",
+      "line": 325
+    },
+    {
+      "type": "from",
+      "name": "feed",
+      "file": "src/routes/appRoutes.js",
+      "line": 337
+    },
+    {
+      "type": "from",
+      "name": "stories",
+      "file": "src/routes/appRoutes.js",
+      "line": 346
+    },
+    {
+      "type": "from",
+      "name": "stories",
+      "file": "src/routes/appRoutes.js",
+      "line": 355
+    },
+    {
+      "type": "from",
+      "name": "invitations",
+      "file": "src/routes/appRoutes.js",
+      "line": 378
+    },
+    {
+      "type": "from",
+      "name": "invitations",
+      "file": "src/routes/appRoutes.js",
+      "line": 390
+    },
+    {
+      "type": "from",
+      "name": "invitations",
+      "file": "src/routes/appRoutes.js",
+      "line": 402
+    },
+    {
+      "type": "from",
+      "name": "marketplace",
+      "file": "src/routes/appRoutes.js",
+      "line": 417
+    },
+    {
+      "type": "from",
+      "name": "marketplace_orders",
+      "file": "src/routes/appRoutes.js",
+      "line": 429
+    },
+    {
+      "type": "from",
+      "name": "marketplace",
+      "file": "src/routes/appRoutes.js",
+      "line": 445
+    },
+    {
+      "type": "from",
+      "name": "messages",
+      "file": "src/routes/appRoutes.js",
+      "line": 461
+    },
+    {
+      "type": "from",
+      "name": "stories",
+      "file": "src/routes/appRoutes.js",
+      "line": 475
+    },
+    {
+      "type": "from",
+      "name": "user_points",
+      "file": "src/routes/appRoutes.js",
+      "line": 489
+    },
+    {
+      "type": "from",
+      "name": "user_points",
+      "file": "src/routes/appRoutes.js",
+      "line": 501
+    },
+    {
+      "type": "from",
+      "name": "user_cards",
+      "file": "src/routes/appRoutes.js",
+      "line": 513
+    },
+    {
+      "type": "from",
+      "name": "chat_groups",
+      "file": "src/routes/appRoutes.js",
+      "line": 576
+    },
+    {
+      "type": "from",
+      "name": "group_locations",
+      "file": "src/routes/appRoutes.js",
+      "line": 588
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/routes/appRoutes.js",
+      "line": 610
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/scripts/agregarUsuario.js",
+      "line": 23
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AchievementManager.js",
+      "line": 316
+    },
+    {
+      "type": "from",
+      "name": "user_achievements",
+      "file": "src/services/AchievementManager.js",
+      "line": 350
+    },
+    {
+      "type": "rpc",
+      "name": "add_user_points",
+      "file": "src/services/AchievementManager.js",
+      "line": 382
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AchievementManager.js",
+      "line": 399
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AchievementManager.js",
+      "line": 410
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AchievementManager.js",
+      "line": 448
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AchievementManager.js",
+      "line": 478
+    },
+    {
+      "type": "from",
+      "name": "user_achievements",
+      "file": "src/services/AchievementManager.js",
+      "line": 495
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AchievementManager.js",
+      "line": 588
+    },
+    {
+      "type": "from",
+      "name": "user_achievements",
+      "file": "src/services/AchievementManager.js",
+      "line": 611
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AchievementManager.js",
+      "line": 732
+    },
+    {
+      "type": "from",
+      "name": "user_achievements",
+      "file": "src/services/AchievementManager.js",
+      "line": 768
+    },
+    {
+      "type": "from",
+      "name": "user_achievements",
+      "file": "src/services/AchievementManager.js",
+      "line": 772
+    },
+    {
+      "type": "from",
+      "name": "amigos",
+      "file": "src/services/AmigosService.js",
+      "line": 4
+    },
+    {
+      "type": "from",
+      "name": "amigos",
+      "file": "src/services/AmigosService.js",
+      "line": 9
+    },
+    {
+      "type": "from",
+      "name": "analytics_events",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 184
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 204
+    },
+    {
+      "type": "from",
+      "name": "analytics_events",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 211
+    },
+    {
+      "type": "from",
+      "name": "matches",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 218
+    },
+    {
+      "type": "from",
+      "name": "analytics_events",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 246
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 294
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 312
+    },
+    {
+      "type": "from",
+      "name": "matches",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 327
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 343
+    },
+    {
+      "type": "from",
+      "name": "analytics_events",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 359
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 392
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 421
+    },
+    {
+      "type": "from",
+      "name": "analytics_events",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 603
+    },
+    {
+      "type": "from",
+      "name": "analytics_events",
+      "file": "src/services/AnalyticsManager.js",
+      "line": 650
+    },
+    {
+      "type": "from",
+      "name": "arbitros",
+      "file": "src/services/ArbitroManager.js",
+      "line": 22
+    },
+    {
+      "type": "from",
+      "name": "arbitros",
+      "file": "src/services/ArbitroManager.js",
+      "line": 26
+    },
+    {
+      "type": "from",
+      "name": "arbitros",
+      "file": "src/services/ArbitroManager.js",
+      "line": 30
+    },
+    {
+      "type": "from",
+      "name": "arbitros",
+      "file": "src/services/ArbitroManager.js",
+      "line": 34
+    },
+    {
+      "type": "from",
+      "name": "arbitros",
+      "file": "src/services/ArbitroManager.js",
+      "line": 38
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AuthService.js",
+      "line": 51
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/services/AuthService.js",
+      "line": 72
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AuthService.js",
+      "line": 132
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AuthService.js",
+      "line": 287
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AuthService.js",
+      "line": 331
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/AuthService.js",
+      "line": 352
+    },
+    {
+      "type": "from",
+      "name": "calificaciones_arbitro",
+      "file": "src/services/CalificacionArbitroManager.js",
+      "line": 20
+    },
+    {
+      "type": "from",
+      "name": "torneos",
+      "file": "src/services/CalificacionArbitroManager.js",
+      "line": 25
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/services/CardManager.js",
+      "line": 73
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/services/CardManager.js",
+      "line": 133
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/services/CardManager.js",
+      "line": 189
+    },
+    {
+      "type": "rpc",
+      "name": "agregar_puntos_card",
+      "file": "src/services/CardManager.js",
+      "line": 222
+    },
+    {
+      "type": "from",
+      "name": "card_puntos_historial",
+      "file": "src/services/CardManager.js",
+      "line": 293
+    },
+    {
+      "type": "from",
+      "name": "avatars",
+      "file": "src/services/CardManager.js",
+      "line": 346
+    },
+    {
+      "type": "from",
+      "name": "avatars",
+      "file": "src/services/CardManager.js",
+      "line": 359
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/CardService.js",
+      "line": 44
+    },
+    {
+      "type": "from",
+      "name": "partidos",
+      "file": "src/services/CardService.js",
+      "line": 94
+    },
+    {
+      "type": "from",
+      "name": "tarjetas_fifa",
+      "file": "src/services/CardService.js",
+      "line": 177
+    },
+    {
+      "type": "from",
+      "name": "tarjetas_fifa",
+      "file": "src/services/CardService.js",
+      "line": 229
+    },
+    {
+      "type": "from",
+      "name": "tarjetas_fifa",
+      "file": "src/services/CardService.js",
+      "line": 266
+    },
+    {
+      "type": "rpc",
+      "name": "aplicar_sancion",
+      "file": "src/services/ContentModerationService.js",
+      "line": 152
+    },
+    {
+      "type": "from",
+      "name": "contenido_revisar",
+      "file": "src/services/ContentModerationService.js",
+      "line": 176
+    },
+    {
+      "type": "rpc",
+      "name": "puede_usuario_postear",
+      "file": "src/services/ContentModerationService.js",
+      "line": 200
+    },
+    {
+      "type": "rpc",
+      "name": "obtener_sanciones_activas",
+      "file": "src/services/ContentModerationService.js",
+      "line": 217
+    },
+    {
+      "type": "from",
+      "name": "reportes_contenido",
+      "file": "src/services/ContentModerationService.js",
+      "line": 235
+    },
+    {
+      "type": "from",
+      "name": "apelaciones_sancion",
+      "file": "src/services/ContentModerationService.js",
+      "line": 264
+    },
+    {
+      "type": "from",
+      "name": "config_moderacion",
+      "file": "src/services/ContentModerationService.js",
+      "line": 344
+    },
+    {
+      "type": "from",
+      "name": "equipos",
+      "file": "src/services/EquipoService.js",
+      "line": 4
+    },
+    {
+      "type": "from",
+      "name": "team_invitations",
+      "file": "src/services/InvitacionesService.js",
+      "line": 11
+    },
+    {
+      "type": "from",
+      "name": "team_invitations",
+      "file": "src/services/InvitacionesService.js",
+      "line": 42
+    },
+    {
+      "type": "from",
+      "name": "team_invitations",
+      "file": "src/services/InvitacionesService.js",
+      "line": 51
+    },
+    {
+      "type": "from",
+      "name": "team_rosters",
+      "file": "src/services/InvitacionesService.js",
+      "line": 59
+    },
+    {
+      "type": "from",
+      "name": "team_invitations",
+      "file": "src/services/InvitacionesService.js",
+      "line": 85
+    },
+    {
+      "type": "from",
+      "name": "team_invitations",
+      "file": "src/services/InvitacionesService.js",
+      "line": 103
+    },
+    {
+      "type": "from",
+      "name": "team_invitations",
+      "file": "src/services/InvitacionesService.js",
+      "line": 121
+    },
+    {
+      "type": "from",
+      "name": "team_rosters",
+      "file": "src/services/InvitacionesService.js",
+      "line": 148
+    },
+    {
+      "type": "from",
+      "name": "marketplace",
+      "file": "src/services/MarketplaceService.js",
+      "line": 4
+    },
+    {
+      "type": "from",
+      "name": "marketplace",
+      "file": "src/services/MarketplaceService.js",
+      "line": 9
+    },
+    {
+      "type": "from",
+      "name": "match_participations",
+      "file": "src/services/MatchParticipationService.js",
+      "line": 18
+    },
+    {
+      "type": "from",
+      "name": "match_participations",
+      "file": "src/services/MatchParticipationService.js",
+      "line": 68
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/MatchParticipationService.js",
+      "line": 96
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/MatchParticipationService.js",
+      "line": 107
+    },
+    {
+      "type": "from",
+      "name": "match_participations",
+      "file": "src/services/MatchParticipationService.js",
+      "line": 130
+    },
+    {
+      "type": "from",
+      "name": "match_participations",
+      "file": "src/services/MatchParticipationService.js",
+      "line": 165
+    },
+    {
+      "type": "from",
+      "name": "notificaciones",
+      "file": "src/services/NotificacionesService.js",
+      "line": 4
+    },
+    {
+      "type": "from",
+      "name": "partidos",
+      "file": "src/services/PartidoManager.js",
+      "line": 7
+    },
+    {
+      "type": "from",
+      "name": "partidos",
+      "file": "src/services/PartidoService.js",
+      "line": 4
+    },
+    {
+      "type": "from",
+      "name": "penalty_matches",
+      "file": "src/services/PenaltyService.js",
+      "line": 17
+    },
+    {
+      "type": "from",
+      "name": "penalty_matches",
+      "file": "src/services/PenaltyService.js",
+      "line": 38
+    },
+    {
+      "type": "from",
+      "name": "penalty_matches",
+      "file": "src/services/PenaltyService.js",
+      "line": 59
+    },
+    {
+      "type": "from",
+      "name": "penalty_matches",
+      "file": "src/services/PenaltyService.js",
+      "line": 125
+    },
+    {
+      "type": "from",
+      "name": "penalty_player_stats",
+      "file": "src/services/PenaltyService.js",
+      "line": 140
+    },
+    {
+      "type": "from",
+      "name": "penalty_player_stats",
+      "file": "src/services/PenaltyService.js",
+      "line": 168
+    },
+    {
+      "type": "from",
+      "name": "penalty_matches",
+      "file": "src/services/PenaltyService.js",
+      "line": 192
+    },
+    {
+      "type": "from",
+      "name": "penalty_matches",
+      "file": "src/services/PenaltyService.js",
+      "line": 214
+    },
+    {
+      "type": "from",
+      "name": "penalty_matches",
+      "file": "src/services/PenaltyService.js",
+      "line": 238
+    },
+    {
+      "type": "from",
+      "name": "penalty_matches",
+      "file": "src/services/PenaltyService.js",
+      "line": 248
+    },
+    {
+      "type": "from",
+      "name": "penalty_matches",
+      "file": "src/services/PenaltyService.js",
+      "line": 301
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/services/PostService.js",
+      "line": 15
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/services/PostService.js",
+      "line": 38
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/services/PostService.js",
+      "line": 68
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/services/PostService.js",
+      "line": 97
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/services/PostService.js",
+      "line": 121
+    },
+    {
+      "type": "from",
+      "name": "post_likes",
+      "file": "src/services/PostService.js",
+      "line": 139
+    },
+    {
+      "type": "from",
+      "name": "post_likes",
+      "file": "src/services/PostService.js",
+      "line": 160
+    },
+    {
+      "type": "from",
+      "name": "post_likes",
+      "file": "src/services/PostService.js",
+      "line": 179
+    },
+    {
+      "type": "from",
+      "name": "post_comments",
+      "file": "src/services/PostService.js",
+      "line": 198
+    },
+    {
+      "type": "from",
+      "name": "post_comments",
+      "file": "src/services/PostService.js",
+      "line": 220
+    },
+    {
+      "type": "from",
+      "name": "post_comments",
+      "file": "src/services/PostService.js",
+      "line": 240
+    },
+    {
+      "type": "from",
+      "name": "post_likes",
+      "file": "src/services/PostService.js",
+      "line": 258
+    },
+    {
+      "type": "from",
+      "name": "post_comments",
+      "file": "src/services/PostService.js",
+      "line": 263
+    },
+    {
+      "type": "from",
+      "name": "followers",
+      "file": "src/services/ProfileManager.js",
+      "line": 21
+    },
+    {
+      "type": "from",
+      "name": "followers",
+      "file": "src/services/ProfileManager.js",
+      "line": 33
+    },
+    {
+      "type": "from",
+      "name": "tournament_referees",
+      "file": "src/services/RefereeService.js",
+      "line": 13
+    },
+    {
+      "type": "from",
+      "name": "tournament_referees",
+      "file": "src/services/RefereeService.js",
+      "line": 34
+    },
+    {
+      "type": "from",
+      "name": "tournament_referees",
+      "file": "src/services/RefereeService.js",
+      "line": 61
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/RefereeService.js",
+      "line": 102
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/RefereeService.js",
+      "line": 143
+    },
+    {
+      "type": "from",
+      "name": "tournament_referee_reports",
+      "file": "src/services/RefereeService.js",
+      "line": 159
+    },
+    {
+      "type": "from",
+      "name": "tournament_referee_reports",
+      "file": "src/services/RefereeService.js",
+      "line": 187
+    },
+    {
+      "type": "from",
+      "name": "tournament_referees",
+      "file": "src/services/RefereeService.js",
+      "line": 210
+    },
+    {
+      "type": "from",
+      "name": "tournament_referee_reports",
+      "file": "src/services/RefereeService.js",
+      "line": 226
+    },
+    {
+      "type": "from",
+      "name": "tournament_referee_reports",
+      "file": "src/services/RefereeService.js",
+      "line": 232
+    },
+    {
+      "type": "from",
+      "name": "tournament_referees",
+      "file": "src/services/RefereeService.js",
+      "line": 246
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/RefereeService.js",
+      "line": 270
+    },
+    {
+      "type": "from",
+      "name": "tournament_referees",
+      "file": "src/services/RefereeService.js",
+      "line": 282
+    },
+    {
+      "type": "from",
+      "name": "tournament_referees",
+      "file": "src/services/RefereeService.js",
+      "line": 297
+    },
+    {
+      "type": "from",
+      "name": "referee_ratings",
+      "file": "src/services/RefereeService.js",
+      "line": 309
+    },
+    {
+      "type": "from",
+      "name": "tournament_referees",
+      "file": "src/services/RefereeService.js",
+      "line": 319
+    },
+    {
+      "type": "from",
+      "name": "tournament_referees",
+      "file": "src/services/RefereeService.js",
+      "line": 338
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/SearchManager.js",
+      "line": 103
+    },
+    {
+      "type": "from",
+      "name": "blocks",
+      "file": "src/services/SearchManager.js",
+      "line": 153
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/services/SearchManager.js",
+      "line": 166
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/services/SearchManager.js",
+      "line": 201
+    },
+    {
+      "type": "from",
+      "name": "posts",
+      "file": "src/services/SearchManager.js",
+      "line": 237
+    },
+    {
+      "type": "from",
+      "name": "matches",
+      "file": "src/services/SearchManager.js",
+      "line": 271
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/SearchManager.js",
+      "line": 575
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/services/SearchManager.js",
+      "line": 607
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/services/SearchManager.js",
+      "line": 635
+    },
+    {
+      "type": "from",
+      "name": "usuarios_bloqueados",
+      "file": "src/services/SecurityService.js",
+      "line": 14
+    },
+    {
+      "type": "from",
+      "name": "intentos_login",
+      "file": "src/services/SecurityService.js",
+      "line": 35
+    },
+    {
+      "type": "from",
+      "name": "intentos_login",
+      "file": "src/services/SecurityService.js",
+      "line": 63
+    },
+    {
+      "type": "from",
+      "name": "intentos_login",
+      "file": "src/services/SecurityService.js",
+      "line": 73
+    },
+    {
+      "type": "from",
+      "name": "intentos_login",
+      "file": "src/services/SecurityService.js",
+      "line": 98
+    },
+    {
+      "type": "from",
+      "name": "carfutpro",
+      "file": "src/services/SecurityService.js",
+      "line": 113
+    },
+    {
+      "type": "from",
+      "name": "fotos_fingerprint",
+      "file": "src/services/SecurityService.js",
+      "line": 154
+    },
+    {
+      "type": "from",
+      "name": "fotos_fingerprint",
+      "file": "src/services/SecurityService.js",
+      "line": 171
+    },
+    {
+      "type": "rpc",
+      "name": "escanear_palabras_prohibidas",
+      "file": "src/services/SecurityService.js",
+      "line": 189
+    },
+    {
+      "type": "from",
+      "name": "contenido_inapropiado",
+      "file": "src/services/SecurityService.js",
+      "line": 222
+    },
+    {
+      "type": "from",
+      "name": "reportes_usuarios",
+      "file": "src/services/SecurityService.js",
+      "line": 242
+    },
+    {
+      "type": "from",
+      "name": "recuperacion_contrasena",
+      "file": "src/services/SecurityService.js",
+      "line": 270
+    },
+    {
+      "type": "from",
+      "name": "recuperacion_contrasena",
+      "file": "src/services/SecurityService.js",
+      "line": 293
+    },
+    {
+      "type": "from",
+      "name": "recuperacion_contrasena",
+      "file": "src/services/SecurityService.js",
+      "line": 318
+    },
+    {
+      "type": "from",
+      "name": "usuarios_bloqueados",
+      "file": "src/services/SecurityService.js",
+      "line": 346
+    },
+    {
+      "type": "from",
+      "name": "user_stories",
+      "file": "src/services/StoryService.js",
+      "line": 18
+    },
+    {
+      "type": "from",
+      "name": "user_stories",
+      "file": "src/services/StoryService.js",
+      "line": 41
+    },
+    {
+      "type": "from",
+      "name": "user_stories",
+      "file": "src/services/StoryService.js",
+      "line": 61
+    },
+    {
+      "type": "from",
+      "name": "story_views",
+      "file": "src/services/StoryService.js",
+      "line": 88
+    },
+    {
+      "type": "from",
+      "name": "story_views",
+      "file": "src/services/StoryService.js",
+      "line": 109
+    },
+    {
+      "type": "from",
+      "name": "user_stories",
+      "file": "src/services/StoryService.js",
+      "line": 129
+    },
+    {
+      "type": "from",
+      "name": "stories",
+      "file": "src/services/StoryService.js",
+      "line": 149
+    },
+    {
+      "type": "from",
+      "name": "stories",
+      "file": "src/services/StoryService.js",
+      "line": 158
+    },
+    {
+      "type": "rpc",
+      "name": "clean_expired_stories",
+      "file": "src/services/StoryService.js",
+      "line": 174
+    },
+    {
+      "type": "from",
+      "name": "user_stories",
+      "file": "src/services/StoryService.js",
+      "line": 190
+    },
+    {
+      "type": "from",
+      "name": "team_members",
+      "file": "src/services/TeamStatsService.js",
+      "line": 19
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/services/TeamStatsService.js",
+      "line": 41
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/services/TeamStatsService.js",
+      "line": 68
+    },
+    {
+      "type": "from",
+      "name": "team_members",
+      "file": "src/services/TeamStatsService.js",
+      "line": 127
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/services/TeamStatsService.js",
+      "line": 185
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/services/TeamStatsService.js",
+      "line": 219
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/services/TeamStatsService.js",
+      "line": 238
+    },
+    {
+      "type": "from",
+      "name": "teams",
+      "file": "src/services/TeamStatsService.js",
+      "line": 249
+    },
+    {
+      "type": "from",
+      "name": "torneos",
+      "file": "src/services/TournamentManager.js",
+      "line": 627
+    },
+    {
+      "type": "from",
+      "name": "torneos",
+      "file": "src/services/TournamentManager.js",
+      "line": 635
+    },
+    {
+      "type": "from",
+      "name": "torneos",
+      "file": "src/services/TournamentManager.js",
+      "line": 644
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/services/TournamentService.js",
+      "line": 13
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/services/TournamentService.js",
+      "line": 27
+    },
+    {
+      "type": "from",
+      "name": "tournament_registrations",
+      "file": "src/services/TournamentService.js",
+      "line": 54
+    },
+    {
+      "type": "from",
+      "name": "tournament_invitations",
+      "file": "src/services/TournamentService.js",
+      "line": 74
+    },
+    {
+      "type": "from",
+      "name": "tournament_registrations",
+      "file": "src/services/TournamentService.js",
+      "line": 93
+    },
+    {
+      "type": "from",
+      "name": "tournament_groups",
+      "file": "src/services/TournamentService.js",
+      "line": 110
+    },
+    {
+      "type": "from",
+      "name": "tournament_group_teams",
+      "file": "src/services/TournamentService.js",
+      "line": 137
+    },
+    {
+      "type": "from",
+      "name": "tournament_group_teams",
+      "file": "src/services/TournamentService.js",
+      "line": 150
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/TournamentService.js",
+      "line": 166
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/TournamentService.js",
+      "line": 194
+    },
+    {
+      "type": "from",
+      "name": "tournament_notifications",
+      "file": "src/services/TournamentService.js",
+      "line": 206
+    },
+    {
+      "type": "from",
+      "name": "tournament_player_stats",
+      "file": "src/services/TournamentService.js",
+      "line": 222
+    },
+    {
+      "type": "from",
+      "name": "tournament_player_stats",
+      "file": "src/services/TournamentService.js",
+      "line": 240
+    },
+    {
+      "type": "from",
+      "name": "tournament_player_stats",
+      "file": "src/services/TournamentService.js",
+      "line": 255
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/TournamentService.js",
+      "line": 269
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/services/TournamentService.js",
+      "line": 277
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/TournamentService.js",
+      "line": 295
+    },
+    {
+      "type": "from",
+      "name": "tournament_notifications",
+      "file": "src/services/TournamentService.js",
+      "line": 313
+    },
+    {
+      "type": "from",
+      "name": "tournament_notifications",
+      "file": "src/services/TournamentService.js",
+      "line": 328
+    },
+    {
+      "type": "from",
+      "name": "tournament_brackets",
+      "file": "src/services/TournamentService.js",
+      "line": 343
+    },
+    {
+      "type": "from",
+      "name": "tournament_group_teams",
+      "file": "src/services/TournamentService.js",
+      "line": 363
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/TournamentService.js",
+      "line": 390
+    },
+    {
+      "type": "from",
+      "name": "api.user_activities",
+      "file": "src/services/UserActivityTracker.js",
+      "line": 316
+    },
+    {
+      "type": "from",
+      "name": "user_activities",
+      "file": "src/services/UserActivityTracker.js",
+      "line": 331
+    },
+    {
+      "type": "from",
+      "name": "user_activities",
+      "file": "src/services/UserActivityTracker.js",
+      "line": 501
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/UserService.js",
+      "line": 12
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/UserService.js",
+      "line": 57
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/UserService.js",
+      "line": 80
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/UserService.js",
+      "line": 157
+    },
+    {
+      "type": "from",
+      "name": "dominios",
+      "file": "src/services/ValidadorWebService.js",
+      "line": 10
+    },
+    {
+      "type": "from",
+      "name": "dominios",
+      "file": "src/services/ValidadorWebService.js",
+      "line": 20
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/ValidadorWebService.js",
+      "line": 29
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/ValidadorWebService.js",
+      "line": 39
+    },
+    {
+      "type": "from",
+      "name": "formularios",
+      "file": "src/services/ValidadorWebService.js",
+      "line": 48
+    },
+    {
+      "type": "from",
+      "name": "formularios",
+      "file": "src/services/ValidadorWebService.js",
+      "line": 55
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/conexionEfectiva.js",
+      "line": 101
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/conexionEfectiva.js",
+      "line": 155
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/conexionEfectiva.js",
+      "line": 187
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/conexionEfectiva.js",
+      "line": 215
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/conexionEfectiva.js",
+      "line": 274
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/conexionEfectiva.js",
+      "line": 303
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/flujoCompletoRegistro.js",
+      "line": 77
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/flujoCompletoRegistro.js",
+      "line": 87
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/flujoCompletoRegistro.js",
+      "line": 100
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/flujoCompletoRegistro.js",
+      "line": 153
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/streamingService.js",
+      "line": 27
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/services/streamingService.js",
+      "line": 42
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/streamingService.js",
+      "line": 66
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/services/streamingService.js",
+      "line": 79
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/services/streamingService.js",
+      "line": 97
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/streamingService.js",
+      "line": 129
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/services/streamingService.js",
+      "line": 158
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/services/streamingService.js",
+      "line": 167
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/services/streamingService.js",
+      "line": 181
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/services/streamingService.js",
+      "line": 190
+    },
+    {
+      "type": "from",
+      "name": "tournament_matches",
+      "file": "src/services/streamingService.js",
+      "line": 204
+    },
+    {
+      "type": "from",
+      "name": "tournaments",
+      "file": "src/services/streamingService.js",
+      "line": 212
+    },
+    {
+      "type": "from",
+      "name": "stream_comments",
+      "file": "src/services/streamingService.js",
+      "line": 233
+    },
+    {
+      "type": "from",
+      "name": "stream_comments",
+      "file": "src/services/streamingService.js",
+      "line": 257
+    },
+    {
+      "type": "from",
+      "name": "live_streams",
+      "file": "src/services/streamingService.js",
+      "line": 335
+    },
+    {
+      "type": "from",
+      "name": "stream_comments",
+      "file": "src/services/streamingService.js",
+      "line": 341
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/usuarioService.js",
+      "line": 7
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/usuarioService.js",
+      "line": 13
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/usuarioService.js",
+      "line": 19
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/usuarioService.js",
+      "line": 25
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/usuarioService.js",
+      "line": 31
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/services/usuarioService.js",
+      "line": 37
+    },
+    {
+      "type": "from",
+      "name": "mensajes",
+      "file": "src/services/usuarioService.js",
+      "line": 43
+    },
+    {
+      "type": "from",
+      "name": "mensajes",
+      "file": "src/services/usuarioService.js",
+      "line": 52
+    },
+    {
+      "type": "from",
+      "name": "mensajes",
+      "file": "src/services/usuarioService.js",
+      "line": 58
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/utils/AuthCallback.js",
+      "line": 36
+    },
+    {
+      "type": "from",
+      "name": "users",
+      "file": "src/utils/AuthCallback.js",
+      "line": 90
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/authFlowManager.js",
+      "line": 93
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/authFlowManager.js",
+      "line": 118
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/authUtils.js",
+      "line": 255
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/diagnosticoRegistro.js",
+      "line": 39
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/diagnosticoRegistro.js",
+      "line": 114
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/registroCompleto.js",
+      "line": 168
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/registroCompleto.js",
+      "line": 179
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/registroCompleto.js",
+      "line": 195
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/registroCompleto.js",
+      "line": 216
+    },
+    {
+      "type": "from",
+      "name": "api.usuarios",
+      "file": "src/utils/registroCompleto.js",
+      "line": 316
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/testRegistroSimple.js",
+      "line": 36
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/testRegistroSimple.js",
+      "line": 113
+    },
+    {
+      "type": "from",
+      "name": "usuarios",
+      "file": "src/utils/testRegistroSimple.js",
+      "line": 170
+    }
+  ]
+}

@@ -1,0 +1,2743 @@
+{
+  "pageErrors": [],
+  "consoleErrors": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "ts": 1786058973831
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058973884
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058973896
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058974540
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058974550
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058975141
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058975155
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058975181
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058975211
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058975741
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058975751
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058975776
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058975805
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058976343
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058976353
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058976950
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058976959
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058977542
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058977551
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058978147
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058978157
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058978737
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058978752
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 400 ()",
+      "ts": 1786058978768
+    },
+    {
+      "type": "error",
+      "text": "Error cargando productos: JSHandle@object",
+      "ts": 1786058978768
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 400 ()",
+      "ts": 1786058978793
+    },
+    {
+      "type": "error",
+      "text": "Error cargando productos: JSHandle@object",
+      "ts": 1786058978795
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058979862
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058979871
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058980468
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058980478
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058981076
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058981085
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058981667
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058981677
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058985283
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058985292
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058985904
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058985915
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058986501
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058986508
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058986520
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058986537
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058987104
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058987104
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058987730
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058987730
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058988299
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058988307
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058988346
+    },
+    {
+      "type": "error",
+      "text": "Error loading rankings: JSHandle@object",
+      "ts": 1786058988347
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058988375
+    },
+    {
+      "type": "error",
+      "text": "Error loading rankings: JSHandle@object",
+      "ts": 1786058988375
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058988929
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058988938
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058989518
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058989527
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058990116
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058990124
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058990722
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058990730
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058991321
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058991346
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058991924
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058991932
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058995555
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058995565
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058996164
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058996172
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058996775
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058996784
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058996784
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058996811
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058997004
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058997009
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058997244
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058997252
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058997488
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058997498
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 400 ()",
+      "ts": 1786058997506
+    },
+    {
+      "type": "error",
+      "text": "Error cargando productos: JSHandle@object",
+      "ts": 1786058997506
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 400 ()",
+      "ts": 1786058997532
+    },
+    {
+      "type": "error",
+      "text": "Error cargando productos: JSHandle@object",
+      "ts": 1786058997532
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058997753
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058997755
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058997992
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058998000
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058998237
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058998246
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058998482
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058998492
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058998728
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058998737
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058998983
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058998992
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058999252
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058999260
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058999273
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058999289
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058999505
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058999507
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058999742
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058999751
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058999990
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058999998
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 400 ()",
+      "ts": 1786059000061
+    },
+    {
+      "type": "error",
+      "text": "Error cargando productos: JSHandle@object",
+      "ts": 1786059000061
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059000258
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059000259
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059000481
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059000489
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059000730
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059000740
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059001005
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059001015
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059001252
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059001262
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059001504
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786059001511
+    }
+  ],
+  "consoleWarnings": [],
+  "supabaseHttpErrors": [
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058973884
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058973896
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058974540
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058974550
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058975141
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058975155
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/valoraciones?select=*",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058975181
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/valoraciones?select=*",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058975211
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058975741
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058975751
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/valoraciones?select=*",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058975776
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/valoraciones?select=*",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058975805
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058976343
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058976353
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058976950
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058976959
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058977542
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058977551
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058978147
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058978157
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058978737
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058978752
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/products?select=*%2Cseller%3Acarfutpro%21seller_id%28nombre%2Capellido%2Cavatar_url%29&is_active=eq.true&order=created_at.desc&limit=100",
+      "status": 400,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058978768
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/products?select=*%2Cseller%3Acarfutpro%21seller_id%28nombre%2Capellido%2Cavatar_url%29&is_active=eq.true&order=created_at.desc&limit=100",
+      "status": 400,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058978793
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058979862
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058979871
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058980468
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058980478
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058981076
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058981085
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058981667
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058981677
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058985283
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058985292
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058985904
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058985915
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058986501
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058986508
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/teams?select=id%2Cname&order=name.asc",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058986520
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/teams?select=id%2Cname&order=name.asc",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058986537
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058987103
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058987104
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058987730
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058987730
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058988299
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058988307
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/tournaments?select=*&status=neq.draft&order=tournament_start.asc",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058988346
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/tournaments?select=*&status=neq.draft&order=tournament_start.asc",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058988375
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058988928
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058988938
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058989518
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058989527
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058990116
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058990124
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058990722
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058990730
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058991321
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058991346
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058991924
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058991932
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058995555
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058995565
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058996164
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058996172
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058996775
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/valoraciones?select=*",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058996784
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058996784
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/valoraciones?select=*",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058996811
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058997004
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058997009
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058997244
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058997252
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058997488
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058997498
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/products?select=*%2Cseller%3Acarfutpro%21seller_id%28nombre%2Capellido%2Cavatar_url%29&is_active=eq.true&order=created_at.desc&limit=100",
+      "status": 400,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058997506
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/products?select=*%2Cseller%3Acarfutpro%21seller_id%28nombre%2Capellido%2Cavatar_url%29&is_active=eq.true&order=created_at.desc&limit=100",
+      "status": 400,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058997531
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058997753
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058997755
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058997991
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058998000
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058998236
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058998246
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058998482
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058998492
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058998728
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058998737
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058998983
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058998992
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058999252
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058999260
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/valoraciones?select=*",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058999273
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/valoraciones?select=*",
+      "status": 404,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058999289
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058999505
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058999507
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058999742
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058999751
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058999990
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786058999998
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/products?select=*%2Cseller%3Acarfutpro%21seller_id%28nombre%2Capellido%2Cavatar_url%29&is_active=eq.true&order=created_at.desc&limit=100",
+      "status": 400,
+      "ct": "application/json; charset=utf-8",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059000061
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059000258
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059000259
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059000481
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059000489
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059000730
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059000739
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059001005
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059001015
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059001252
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059001262
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059001504
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/health",
+      "status": 401,
+      "ct": "",
+      "resourceType": "fetch",
+      "fromCache": false,
+      "ts": 1786059001510
+    }
+  ],
+  "consoleSample": [
+    {
+      "type": "log",
+      "text": "🔥 Navegación ultra-robusta inicializada",
+      "ts": 1786058973613
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "ts": 1786058973646
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "ts": 1786058973657
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+      "ts": 1786058973770
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058973774
+    },
+    {
+      "type": "log",
+      "text": "🔗 Inicializando Supabase Client...",
+      "ts": 1786058973774
+    },
+    {
+      "type": "log",
+      "text": "📍 URL: https://qqrxetxcglwrejtblwut.supabase.co",
+      "ts": 1786058973774
+    },
+    {
+      "type": "log",
+      "text": "🔑 Key configurada: SÍ",
+      "ts": 1786058973774
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058973776
+    },
+    {
+      "type": "log",
+      "text": "🔥 UserActivityTracker iniciado - Modo Red Social",
+      "ts": 1786058973776
+    },
+    {
+      "type": "log",
+      "text": "🚀 FutPro iniciando con tracking automático activado...",
+      "ts": 1786058973783
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.",
+      "ts": 1786058973824
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.",
+      "ts": 1786058973825
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058973825
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058973826
+    },
+    {
+      "type": "log",
+      "text": "🔔 Service Worker registrado http://127.0.0.1:5173/",
+      "ts": 1786058973826
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058973828
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058973830
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058973830
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058973831
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "ts": 1786058973831
+    },
+    {
+      "type": "log",
+      "text": "🔄 Auth State Change: INITIAL_SESSION",
+      "ts": 1786058973832
+    },
+    {
+      "type": "log",
+      "text": "🔄 Cambio en autenticación: INITIAL_SESSION ",
+      "ts": 1786058973833
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058973884
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058973884
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058973896
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058973896
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+      "ts": 1786058973906
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058974293
+    },
+    {
+      "type": "log",
+      "text": "🔐 Iniciando OAuth con Google...",
+      "ts": 1786058974293
+    },
+    {
+      "type": "log",
+      "text": "🌍 Intentando detectar ubicación por IP...",
+      "ts": 1786058974296
+    },
+    {
+      "type": "log",
+      "text": "✅ Datos guardados para OAuth",
+      "ts": 1786058974296
+    },
+    {
+      "type": "log",
+      "text": "🌍 Intentando detectar ubicación por IP...",
+      "ts": 1786058974296
+    },
+    {
+      "type": "log",
+      "text": "✅ Datos guardados para OAuth",
+      "ts": 1786058974297
+    },
+    {
+      "type": "log",
+      "text": "📱 Acción tracked: auth_login JSHandle@object",
+      "ts": 1786058974297
+    },
+    {
+      "type": "log",
+      "text": "💾 Procesando 1 acciones...",
+      "ts": 1786058974297
+    },
+    {
+      "type": "log",
+      "text": "🔥 Navegación ultra-robusta inicializada",
+      "ts": 1786058974328
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "ts": 1786058974348
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "ts": 1786058974372
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+      "ts": 1786058974477
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058974479
+    },
+    {
+      "type": "log",
+      "text": "🔗 Inicializando Supabase Client...",
+      "ts": 1786058974479
+    },
+    {
+      "type": "log",
+      "text": "📍 URL: https://qqrxetxcglwrejtblwut.supabase.co",
+      "ts": 1786058974479
+    },
+    {
+      "type": "log",
+      "text": "🔑 Key configurada: SÍ",
+      "ts": 1786058974479
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058974479
+    },
+    {
+      "type": "log",
+      "text": "🔥 UserActivityTracker iniciado - Modo Red Social",
+      "ts": 1786058974479
+    },
+    {
+      "type": "log",
+      "text": "📦 Cargadas 1 acciones pendientes",
+      "ts": 1786058974479
+    },
+    {
+      "type": "log",
+      "text": "🚀 FutPro iniciando con tracking automático activado...",
+      "ts": 1786058974483
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.",
+      "ts": 1786058974517
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.",
+      "ts": 1786058974517
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058974517
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058974518
+    },
+    {
+      "type": "log",
+      "text": "🔔 Service Worker registrado http://127.0.0.1:5173/",
+      "ts": 1786058974518
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058974518
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058974518
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058974519
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058974519
+    },
+    {
+      "type": "log",
+      "text": "🔄 Auth State Change: INITIAL_SESSION",
+      "ts": 1786058974519
+    },
+    {
+      "type": "log",
+      "text": "🔄 Cambio en autenticación: INITIAL_SESSION ",
+      "ts": 1786058974520
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058974540
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058974540
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058974550
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058974550
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+      "ts": 1786058974643
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058974990
+    },
+    {
+      "type": "log",
+      "text": "🔐 Iniciando OAuth con Google...",
+      "ts": 1786058974990
+    },
+    {
+      "type": "log",
+      "text": "🌍 Intentando detectar ubicación por IP...",
+      "ts": 1786058974992
+    },
+    {
+      "type": "log",
+      "text": "✅ Datos guardados para OAuth",
+      "ts": 1786058974992
+    },
+    {
+      "type": "log",
+      "text": "🌍 Intentando detectar ubicación por IP...",
+      "ts": 1786058974992
+    },
+    {
+      "type": "log",
+      "text": "✅ Datos guardados para OAuth",
+      "ts": 1786058974993
+    },
+    {
+      "type": "log",
+      "text": "💾 Procesando 1 acciones...",
+      "ts": 1786058974993
+    },
+    {
+      "type": "log",
+      "text": "📱 Acción tracked: auth_login JSHandle@object",
+      "ts": 1786058974993
+    },
+    {
+      "type": "log",
+      "text": "💾 Procesando 1 acciones...",
+      "ts": 1786058974993
+    },
+    {
+      "type": "log",
+      "text": "🔥 Navegación ultra-robusta inicializada",
+      "ts": 1786058975019
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "ts": 1786058975029
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "ts": 1786058975047
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+      "ts": 1786058975104
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058975106
+    },
+    {
+      "type": "log",
+      "text": "🔗 Inicializando Supabase Client...",
+      "ts": 1786058975106
+    },
+    {
+      "type": "log",
+      "text": "📍 URL: https://qqrxetxcglwrejtblwut.supabase.co",
+      "ts": 1786058975106
+    },
+    {
+      "type": "log",
+      "text": "🔑 Key configurada: SÍ",
+      "ts": 1786058975106
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058975106
+    },
+    {
+      "type": "log",
+      "text": "🔥 UserActivityTracker iniciado - Modo Red Social",
+      "ts": 1786058975106
+    },
+    {
+      "type": "log",
+      "text": "📦 Cargadas 1 acciones pendientes",
+      "ts": 1786058975106
+    },
+    {
+      "type": "log",
+      "text": "🚀 FutPro iniciando con tracking automático activado...",
+      "ts": 1786058975109
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.",
+      "ts": 1786058975122
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.",
+      "ts": 1786058975122
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058975122
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058975122
+    },
+    {
+      "type": "log",
+      "text": "🔔 Service Worker registrado http://127.0.0.1:5173/",
+      "ts": 1786058975123
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058975123
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058975123
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058975124
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058975124
+    },
+    {
+      "type": "log",
+      "text": "🔄 Auth State Change: INITIAL_SESSION",
+      "ts": 1786058975126
+    },
+    {
+      "type": "log",
+      "text": "🔄 Cambio en autenticación: INITIAL_SESSION ",
+      "ts": 1786058975127
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058975141
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058975141
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058975155
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058975156
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058975181
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058975211
+    },
+    {
+      "type": "log",
+      "text": "💾 Procesando 1 acciones...",
+      "ts": 1786058975620
+    },
+    {
+      "type": "log",
+      "text": "🔥 Navegación ultra-robusta inicializada",
+      "ts": 1786058975632
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "ts": 1786058975642
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "ts": 1786058975654
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+      "ts": 1786058975712
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058975713
+    },
+    {
+      "type": "log",
+      "text": "🔗 Inicializando Supabase Client...",
+      "ts": 1786058975713
+    },
+    {
+      "type": "log",
+      "text": "📍 URL: https://qqrxetxcglwrejtblwut.supabase.co",
+      "ts": 1786058975713
+    },
+    {
+      "type": "log",
+      "text": "🔑 Key configurada: SÍ",
+      "ts": 1786058975713
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058975714
+    },
+    {
+      "type": "log",
+      "text": "🔥 UserActivityTracker iniciado - Modo Red Social",
+      "ts": 1786058975714
+    },
+    {
+      "type": "log",
+      "text": "📦 Cargadas 1 acciones pendientes",
+      "ts": 1786058975714
+    },
+    {
+      "type": "log",
+      "text": "🚀 FutPro iniciando con tracking automático activado...",
+      "ts": 1786058975717
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.",
+      "ts": 1786058975730
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.",
+      "ts": 1786058975731
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058975731
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058975731
+    },
+    {
+      "type": "log",
+      "text": "🔔 Service Worker registrado http://127.0.0.1:5173/",
+      "ts": 1786058975732
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058975732
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058975733
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058975733
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058975733
+    },
+    {
+      "type": "log",
+      "text": "🔄 Auth State Change: INITIAL_SESSION",
+      "ts": 1786058975735
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058975741
+    },
+    {
+      "type": "log",
+      "text": "🔄 Cambio en autenticación: INITIAL_SESSION ",
+      "ts": 1786058975741
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058975743
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058975751
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058975751
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058975776
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "ts": 1786058975805
+    },
+    {
+      "type": "log",
+      "text": "💾 Procesando 1 acciones...",
+      "ts": 1786058976227
+    },
+    {
+      "type": "log",
+      "text": "🔥 Navegación ultra-robusta inicializada",
+      "ts": 1786058976238
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "ts": 1786058976247
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "ts": 1786058976247
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+      "ts": 1786058976316
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058976319
+    },
+    {
+      "type": "log",
+      "text": "🔗 Inicializando Supabase Client...",
+      "ts": 1786058976319
+    },
+    {
+      "type": "log",
+      "text": "📍 URL: https://qqrxetxcglwrejtblwut.supabase.co",
+      "ts": 1786058976319
+    },
+    {
+      "type": "log",
+      "text": "🔑 Key configurada: SÍ",
+      "ts": 1786058976319
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058976319
+    },
+    {
+      "type": "log",
+      "text": "🔥 UserActivityTracker iniciado - Modo Red Social",
+      "ts": 1786058976319
+    },
+    {
+      "type": "log",
+      "text": "📦 Cargadas 1 acciones pendientes",
+      "ts": 1786058976319
+    },
+    {
+      "type": "log",
+      "text": "🚀 FutPro iniciando con tracking automático activado...",
+      "ts": 1786058976322
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.",
+      "ts": 1786058976334
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.",
+      "ts": 1786058976334
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058976334
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058976334
+    },
+    {
+      "type": "log",
+      "text": "🔔 Service Worker registrado http://127.0.0.1:5173/",
+      "ts": 1786058976335
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058976338
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058976339
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058976339
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058976340
+    },
+    {
+      "type": "log",
+      "text": "🔄 Auth State Change: INITIAL_SESSION",
+      "ts": 1786058976340
+    },
+    {
+      "type": "log",
+      "text": "🔄 Cambio en autenticación: INITIAL_SESSION ",
+      "ts": 1786058976340
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058976343
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058976344
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058976353
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058976353
+    },
+    {
+      "type": "log",
+      "text": "💾 Procesando 1 acciones...",
+      "ts": 1786058976830
+    },
+    {
+      "type": "log",
+      "text": "🔥 Navegación ultra-robusta inicializada",
+      "ts": 1786058976840
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "ts": 1786058976850
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "ts": 1786058976857
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+      "ts": 1786058976919
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058976921
+    },
+    {
+      "type": "log",
+      "text": "🔗 Inicializando Supabase Client...",
+      "ts": 1786058976921
+    },
+    {
+      "type": "log",
+      "text": "📍 URL: https://qqrxetxcglwrejtblwut.supabase.co",
+      "ts": 1786058976921
+    },
+    {
+      "type": "log",
+      "text": "🔑 Key configurada: SÍ",
+      "ts": 1786058976921
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058976921
+    },
+    {
+      "type": "log",
+      "text": "🔥 UserActivityTracker iniciado - Modo Red Social",
+      "ts": 1786058976921
+    },
+    {
+      "type": "log",
+      "text": "📦 Cargadas 1 acciones pendientes",
+      "ts": 1786058976921
+    },
+    {
+      "type": "log",
+      "text": "🚀 FutPro iniciando con tracking automático activado...",
+      "ts": 1786058976925
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.",
+      "ts": 1786058976938
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.",
+      "ts": 1786058976938
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058976938
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058976939
+    },
+    {
+      "type": "log",
+      "text": "🔔 Service Worker registrado http://127.0.0.1:5173/",
+      "ts": 1786058976940
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058976941
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058976941
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058976941
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058976942
+    },
+    {
+      "type": "log",
+      "text": "🔄 Auth State Change: INITIAL_SESSION",
+      "ts": 1786058976942
+    },
+    {
+      "type": "log",
+      "text": "🔄 Cambio en autenticación: INITIAL_SESSION ",
+      "ts": 1786058976942
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058976950
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058976952
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058976959
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058976959
+    },
+    {
+      "type": "log",
+      "text": "💾 Procesando 1 acciones...",
+      "ts": 1786058977431
+    },
+    {
+      "type": "log",
+      "text": "🔥 Navegación ultra-robusta inicializada",
+      "ts": 1786058977440
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "ts": 1786058977454
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "ts": 1786058977457
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+      "ts": 1786058977515
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058977516
+    },
+    {
+      "type": "log",
+      "text": "🔗 Inicializando Supabase Client...",
+      "ts": 1786058977516
+    },
+    {
+      "type": "log",
+      "text": "📍 URL: https://qqrxetxcglwrejtblwut.supabase.co",
+      "ts": 1786058977516
+    },
+    {
+      "type": "log",
+      "text": "🔑 Key configurada: SÍ",
+      "ts": 1786058977516
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058977516
+    },
+    {
+      "type": "log",
+      "text": "🔥 UserActivityTracker iniciado - Modo Red Social",
+      "ts": 1786058977517
+    },
+    {
+      "type": "log",
+      "text": "📦 Cargadas 1 acciones pendientes",
+      "ts": 1786058977517
+    },
+    {
+      "type": "log",
+      "text": "🚀 FutPro iniciando con tracking automático activado...",
+      "ts": 1786058977520
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.",
+      "ts": 1786058977532
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.",
+      "ts": 1786058977532
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058977532
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058977532
+    },
+    {
+      "type": "log",
+      "text": "🔔 Service Worker registrado http://127.0.0.1:5173/",
+      "ts": 1786058977532
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058977533
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058977533
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058977535
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058977535
+    },
+    {
+      "type": "log",
+      "text": "🔄 Auth State Change: INITIAL_SESSION",
+      "ts": 1786058977542
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058977542
+    },
+    {
+      "type": "log",
+      "text": "🔄 Cambio en autenticación: INITIAL_SESSION ",
+      "ts": 1786058977542
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058977542
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058977551
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058977551
+    },
+    {
+      "type": "log",
+      "text": "💾 Procesando 1 acciones...",
+      "ts": 1786058978030
+    },
+    {
+      "type": "log",
+      "text": "🔥 Navegación ultra-robusta inicializada",
+      "ts": 1786058978040
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "ts": 1786058978050
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "ts": 1786058978059
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+      "ts": 1786058978116
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058978118
+    },
+    {
+      "type": "log",
+      "text": "🔗 Inicializando Supabase Client...",
+      "ts": 1786058978118
+    },
+    {
+      "type": "log",
+      "text": "📍 URL: https://qqrxetxcglwrejtblwut.supabase.co",
+      "ts": 1786058978118
+    },
+    {
+      "type": "log",
+      "text": "🔑 Key configurada: SÍ",
+      "ts": 1786058978118
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058978118
+    },
+    {
+      "type": "log",
+      "text": "🔥 UserActivityTracker iniciado - Modo Red Social",
+      "ts": 1786058978118
+    },
+    {
+      "type": "log",
+      "text": "📦 Cargadas 1 acciones pendientes",
+      "ts": 1786058978118
+    },
+    {
+      "type": "log",
+      "text": "🚀 FutPro iniciando con tracking automático activado...",
+      "ts": 1786058978121
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.",
+      "ts": 1786058978132
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.",
+      "ts": 1786058978132
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058978132
+    },
+    {
+      "type": "log",
+      "text": "🔄 AuthContext: Inicializando autenticación...",
+      "ts": 1786058978133
+    },
+    {
+      "type": "log",
+      "text": "🔔 Service Worker registrado http://127.0.0.1:5173/",
+      "ts": 1786058978133
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058978135
+    },
+    {
+      "type": "log",
+      "text": "[toast:info] Las notificaciones están deshabilitadas. Puedes habilitarlas en la configuración del navegador.",
+      "ts": 1786058978135
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058978135
+    },
+    {
+      "type": "warn",
+      "text": "Database adapter sin getUserNotifications; se omite carga inicial.",
+      "ts": 1786058978135
+    },
+    {
+      "type": "log",
+      "text": "🔄 Auth State Change: INITIAL_SESSION",
+      "ts": 1786058978135
+    },
+    {
+      "type": "log",
+      "text": "🔄 Cambio en autenticación: INITIAL_SESSION ",
+      "ts": 1786058978137
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058978147
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058978148
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 ()",
+      "ts": 1786058978157
+    },
+    {
+      "type": "log",
+      "text": "❌ No hay sesión activa",
+      "ts": 1786058978157
+    },
+    {
+      "type": "log",
+      "text": "💾 Procesando 1 acciones...",
+      "ts": 1786058978626
+    },
+    {
+      "type": "log",
+      "text": "🔥 Navegación ultra-robusta inicializada",
+      "ts": 1786058978635
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "ts": 1786058978643
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "ts": 1786058978652
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+      "ts": 1786058978707
+    },
+    {
+      "type": "log",
+      "text": "🌍 Entorno detectado: JSHandle@object",
+      "ts": 1786058978709
+    }
+  ]
+}
