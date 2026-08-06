@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
+import { useAuth } from '../context/AuthContext';
 
 const SHARED_STORAGE_KEY = 'futpro_shared_moments';
 
 export default function PerfilInstagram() {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState(null);
+  // FP-AUTH-002: sin getSession local
+  const { user: currentUser } = useAuth();
   const [profileUser, setProfileUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [followers, setFollowers] = useState([]);
@@ -18,15 +20,16 @@ export default function PerfilInstagram() {
   const [showFollowingModal, setShowFollowingModal] = useState(false);
   const [sharedMoments, setSharedMoments] = useState([]);
 
+  // FP-MEM-001: listeners/channels con cleanup estable (misma ref en remove)
   useEffect(() => {
-    loadCurrentUser();
     loadProfileData();
     loadSharedMoments();
-    // Forzar recarga de posts tras publicar
-    window.addEventListener('futpro_post_created', () => {
+
+    const onPostCreated = () => {
       loadProfileData();
       loadSharedMoments();
-    });
+    };
+    window.addEventListener('futpro_post_created', onPostCreated);
 
     const onStorage = (e) => {
       if (e.key === SHARED_STORAGE_KEY) {
@@ -35,40 +38,34 @@ export default function PerfilInstagram() {
     };
     window.addEventListener('storage', onStorage);
 
-    // Suscribirse a cambios en friends (followers/following)
     const channelFriends = supabase
-      .channel('friends:profile')
+      .channel(`friends:profile:${userId || 'me'}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friends' }, () => {
         loadProfileData();
       })
       .subscribe();
 
-    // Suscribirse a cambios en posts del usuario
     const channelPosts = supabase
-      .channel('posts:profile')
+      .channel(`posts:profile:${userId || 'me'}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
         loadProfilePosts();
       })
       .subscribe();
 
     return () => {
-      channelFriends.unsubscribe();
-      channelPosts.unsubscribe();
+      try { supabase.removeChannel(channelFriends); } catch { channelFriends.unsubscribe?.(); }
+      try { supabase.removeChannel(channelPosts); } catch { channelPosts.unsubscribe?.(); }
       window.removeEventListener('storage', onStorage);
-      window.removeEventListener('futpro_post_created', loadProfileData);
+      window.removeEventListener('futpro_post_created', onPostCreated);
     };
-  }, [userId, currentUser]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- evita churn por currentUser object
+  }, [userId, currentUser?.id]);
 
   useEffect(() => {
     if (activeTab === 'posts') {
       loadSharedMoments();
     }
   }, [activeTab]);
-
-  const loadCurrentUser = async () => {
-    const { data } = await supabase.auth.getSession();
-    setCurrentUser(data?.session?.user);
-  };
 
   const loadProfileData = async () => {
     try {

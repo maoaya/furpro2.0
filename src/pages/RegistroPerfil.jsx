@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import supabase from '../supabaseClient';
+import { useAuth } from '../context/AuthContext';
 
 const gold = '#FFD700';
 
@@ -14,6 +15,8 @@ const NIVELES = ['Principiante','Intermedio','Avanzado','Élite'];
 export default function RegistroPerfil() {
   const navigate = useNavigate();
   const location = useLocation();
+  // FP-AUTH-002: sin getSession local (AuthContext es fuente de verdad)
+  const { user } = useAuth();
 
   const draftInicial = useMemo(() => {
     try {
@@ -77,14 +80,13 @@ export default function RegistroPerfil() {
     // Esfuerzo best-effort a Firebase
     (async () => {
       try {
-        const { data } = await supabase.auth.getSession();
-        const uid = data?.session?.user?.id || 'pending';
+        const uid = user?.id || 'pending';
         const { database } = await import('../config/firebase.js');
         const { ref, set } = await import('firebase/database');
         await set(ref(database, `autosave/carfutpro/${uid}`), draft);
       } catch {}
     })();
-  }, [nombre, apellido, ciudad, pais, posicion, nivel, equipo, avatar, categoria, edad, peso, pie, estatura]);
+  }, [nombre, apellido, ciudad, pais, posicion, nivel, equipo, avatar, categoria, edad, peso, pie, estatura, user?.id]);
 
   const continuar = async () => {
     setMsg('');
@@ -95,8 +97,7 @@ export default function RegistroPerfil() {
         setLoading(false);
         return;
       }
-      const { data: sessionRes } = await supabase.auth.getSession();
-      const userId = sessionRes?.session?.user?.id;
+      const userId = user?.id;
       if (!userId) {
         setMsg('Tu cuenta está creada. Inicia sesión para finalizar y crear tu perfil.');
         // Guardar intención de post-login
@@ -106,7 +107,7 @@ export default function RegistroPerfil() {
       }
 
       // Fallback de avatar si el campo está vacío: toma foto de Google o pravatar
-      const avatarFallback = avatar || sessionRes?.session?.user?.user_metadata?.avatar_url || sessionRes?.session?.user?.user_metadata?.picture || (userId ? `https://i.pravatar.cc/300?u=${userId}` : '');
+      const avatarFallback = avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || (userId ? `https://i.pravatar.cc/300?u=${userId}` : '');
 
       // Crear/actualizar registro en Supabase
       const payload = {

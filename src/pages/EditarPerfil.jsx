@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { UserService } from '../services/UserService';
-import { supabase } from '../config/supabase';
+import { useAuth } from '../context/AuthContext';
+
 export default function EditarPerfil() {
+  // FP-AUTH-002: sin getSession local
+  const { user, loading: authLoading } = useAuth();
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
   const [nombre, setNombre] = useState('');
@@ -11,9 +14,9 @@ export default function EditarPerfil() {
   const [msg, setMsg] = useState('');
 
   useEffect(() => {
+    if (authLoading) return;
     async function fetchPerfil() {
-      const { data: session } = await supabase.auth.getSession();
-      const userId = session?.session?.user?.id;
+      const userId = user?.id;
       if (userId) {
         const perfilData = await UserService.getUserProfile(userId);
         setPerfil(perfilData);
@@ -25,7 +28,7 @@ export default function EditarPerfil() {
       setLoading(false);
     }
     fetchPerfil();
-  }, []);
+  }, [user?.id, authLoading]);
 
   const handleGuardar = async (e) => {
     e.preventDefault();

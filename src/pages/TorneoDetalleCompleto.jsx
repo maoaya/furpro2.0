@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
 import * as TournamentService from '../services/TournamentService';
+import { useAuth } from '../context/AuthContext';
 
 export default function TorneoDetalleCompleto() {
   const { torneoId } = useParams();
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  // FP-AUTH-002: sin getUser local
+  const { user } = useAuth();
   const [tournament, setTournament] = useState(null);
   const [teams, setTeams] = useState([]);
   const [matches, setMatches] = useState([]);
@@ -20,14 +22,12 @@ export default function TorneoDetalleCompleto() {
 
   useEffect(() => {
     loadData();
-    subscribeToUpdates();
+    // FP-MEM-001: cleanup del channel (antes se descartaba el return)
+    return subscribeToUpdates();
   }, [torneoId]);
 
   const loadData = async () => {
     try {
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-      setUser(currentUser);
-
       // Cargar torneo
       const tournamentData = await TournamentService.getTournamentById(torneoId);
       setTournament(tournamentData);

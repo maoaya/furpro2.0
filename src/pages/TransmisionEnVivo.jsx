@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../config/supabaseClient';
+import { useAuth } from '../context/AuthContext';
 
 export default function TransmisionEnVivo() {
+  // FP-AUTH-002: sin getUser local
+  const { user } = useAuth();
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamTitle, setStreamTitle] = useState('');
   const [streamUrl, setStreamUrl] = useState('');
@@ -11,6 +14,7 @@ export default function TransmisionEnVivo() {
   const [streamId, setStreamId] = useState(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
+  const channelRef = useRef(null);
 
   useEffect(() => {
     return () => {
@@ -47,7 +51,6 @@ export default function TransmisionEnVivo() {
     if (!cameraStarted) return;
 
     try {
-      const user = (await supabase.auth.getUser()).data.user;
       if (!user) throw new Error('Usuario no autenticado');
 
       const newStreamId = `stream_${Date.now()}`;
@@ -68,13 +71,14 @@ export default function TransmisionEnVivo() {
       setStreamId(newStreamId);
       setIsStreaming(true);
 
-      // Suscribirse a actualizaciones de viewers
+      // Suscribirse a actualizaciones de viewers (FP-MEM-001: guardar ref para removeChannel)
       const channel = supabase.channel(`stream-${newStreamId}`)
         .on('presence', { event: 'sync' }, () => {
           const state = channel.presenceState();
           setViewerCount(Object.keys(state).length);
         })
         .subscribe();
+      channelRef.current = channel;
 
     } catch (error) {
       console.error('Error al iniciar transmisión:', error);
@@ -87,6 +91,11 @@ export default function TransmisionEnVivo() {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
+    }
+
+    if (channelRef.current) {
+      try { supabase.removeChannel(channelRef.current); } catch { channelRef.current.unsubscribe?.(); }
+      channelRef.current = null;
     }
 
     if (streamId) {

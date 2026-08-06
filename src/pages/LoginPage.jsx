@@ -8,7 +8,8 @@ import { getConfig } from '../config/environment';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  // FP-AUTH-002: sesión desde AuthContext (sin getSession local)
+  const { login, user, loading: authLoading } = useAuth();
   const gold = '#FFD700';
   const black = '#222';
 
@@ -27,18 +28,13 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
 
   /**
-   * Detectar redirección OAuth desde callback
+   * Detectar redirección OAuth desde callback (usa user de AuthContext)
    */
   useEffect(() => {
-    const checkOAuthRedirect = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        console.log('✅ Sesión OAuth detectada, verificando perfil...');
-        await redirectBasedOnProfile(session.user);
-      }
-    };
-    checkOAuthRedirect();
-  }, []);
+    if (authLoading || !user) return;
+    console.log('✅ Sesión OAuth detectada, verificando perfil...');
+    redirectBasedOnProfile(user);
+  }, [user?.id, authLoading]);
 
   /**
    * Redirección inteligente basada en estado del perfil

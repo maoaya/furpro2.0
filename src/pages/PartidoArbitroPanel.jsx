@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
 import * as TournamentService from '../services/TournamentService';
+import { useAuth } from '../context/AuthContext';
 
 export default function PartidoArbitroPanel() {
   const { partidoId } = useParams();
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  // FP-AUTH-002: sin getUser local
+  const { user } = useAuth();
   const [match, setMatch] = useState(null);
   const [tournament, setTournament] = useState(null);
   const [homeTeam, setHomeTeam] = useState(null);
@@ -37,9 +39,6 @@ export default function PartidoArbitroPanel() {
 
   const loadData = async () => {
     try {
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-      setUser(currentUser);
-
       // Cargar partido
       const { data: matchData, error: matchError } = await supabase
         .from('tournament_matches')

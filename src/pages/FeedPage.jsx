@@ -6,6 +6,7 @@ import RankingUsuarios from '../components/RankingUsuarios';
 import FormNuevaPublicacion from '../components/FormNuevaPublicacion';
 import ListaPublicaciones from '../components/ListaPublicaciones';
 import ModalDetallePublicacion from '../components/ModalDetallePublicacion';
+import { useAuth } from '../context/AuthContext';
 import {
   disableOnSchemaError,
   isRpcDisabled,
@@ -15,8 +16,8 @@ import {
 } from '../utils/schemaCompatibilityGate.js';
 
 export default function FeedPage() {
-  // Estados principales
-  const [user, setUser] = useState(null);
+  // FP-AUTH-002: fuente de verdad = AuthContext (sin getUser/getSession local)
+  const { user } = useAuth();
   const [ranking, setRanking] = useState([]);
   const [usuarioTipo, setUsuarioTipo] = useState('todos');
   const [demoValoracion, setDemoValoracion] = useState(0);
@@ -34,19 +35,8 @@ export default function FeedPage() {
   // El estado 'nuevo' ahora se maneja en FormNuevaPublicacion
   const [detalle, setDetalle] = useState(null);
 
-  // Cargar usuario y datos al montar
+  // Cargar datos al montar (usuario viene de useAuth)
   useEffect(() => {
-    async function fetchUser() {
-      let currentUser = null;
-      if (supabase.auth.getUser) {
-        const { data } = await supabase.auth.getUser();
-        currentUser = data?.user || null;
-      } else if (supabase.auth.user) {
-        currentUser = supabase.auth.user();
-      }
-      setUser(currentUser);
-    }
-    fetchUser();
     cargarPublicaciones();
     cargarRanking();
     cargarEstadisticas();

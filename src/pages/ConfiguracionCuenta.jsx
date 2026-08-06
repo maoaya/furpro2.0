@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
+import { useAuth } from '../context/AuthContext';
 
 const ConfiguracionCuenta = () => {
   const navigate = useNavigate();
+  // FP-AUTH-002: sin getUser local
+  const { user, loading: authLoading } = useAuth();
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(false);
   const [mensaje, setMensaje] = useState('');
@@ -26,12 +29,12 @@ const ConfiguracionCuenta = () => {
   });
 
   useEffect(() => {
+    if (authLoading) return;
     cargarUsuario();
-  }, []);
+  }, [user?.id, authLoading]);
 
   const cargarUsuario = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         navigate('/');
         return;

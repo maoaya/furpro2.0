@@ -1,29 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../config/supabase';
+import { useAuth } from '../context/AuthContext';
 
 export default function RankingJugadoresCompleto() {
   const navigate = useNavigate();
+  // FP-AUTH-002: sin getSession local
+  const { user: currentUser } = useAuth();
   const [jugadores, setJugadores] = useState([]);
   const [filteredJugadores, setFilteredJugadores] = useState([]);
   const [categoria, setCategoria] = useState('todos');
   const [ordenarPor, setOrdenarPor] = useState('ovr');
-  const [currentUser, setCurrentUser] = useState(null);
   const [myPosition, setMyPosition] = useState(null);
 
   useEffect(() => {
-    loadCurrentUser();
     loadRanking();
   }, []);
 
   useEffect(() => {
     filterAndSortJugadores();
   }, [jugadores, categoria, ordenarPor]);
-
-  const loadCurrentUser = async () => {
-    const { data } = await supabase.auth.getSession();
-    setCurrentUser(data?.session?.user);
-  };
 
   const loadRanking = () => {
     // Stub: Datos de ejemplo (100 jugadores)
