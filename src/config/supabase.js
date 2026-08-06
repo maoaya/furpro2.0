@@ -25,36 +25,62 @@ export function getEnv(key, fallback = '') {
   return viteVal || nodeVal || winVal || fallback;
 }
 
-// Pequeña utilidad para detectar si el endpoint de Supabase está alcanzable desde el cliente.
-// Evita tormentas de errores cuando hay problemas de DNS/red del usuario.
+// FP-AUTH-001: NUNCA usar /auth/v1/health (responde 401 y spamea la consola).
+// Probe REST con anon key + caché TTL + dedupe in-flight.
+const ONLINE_TTL_MS = 60_000;
+let onlineCache = { value: null, checkedAt: 0 };
+let onlineInflight = null;
+
 export async function detectSupabaseOnline(timeoutMs = 4000) {
-  try {
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), timeoutMs);
-    // health endpoint público (puede devolver opaque en no-cors, nos basta que no explote)
-    const base = (SUPABASE_URL || '').replace(/\/$/, '');
-    const url = `${base}/auth/v1/health`;
-    await fetch(url, { 
-      method: 'GET', 
-      mode: 'no-cors', 
-      signal: controller.signal,
-      // NO enviar credenciales para evitar 401
-      credentials: 'omit'
-    });
-    clearTimeout(t);
-    if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = true;
-    return true;
-  } catch (err) {
-    // Silenciar errores 401/403 - no son críticos para health check
-    if (typeof window !== 'undefined') {
-      window.__SUPABASE_ONLINE__ = false;
-      // Solo log en development para debugging
-      if (__env.isDevelopment) {
-        console.debug('Health check fallido (no crítico):', err.message);
-      }
-    }
-    return false;
+  const now = Date.now();
+  if (onlineCache.value !== null && (now - onlineCache.checkedAt) < ONLINE_TTL_MS) {
+    if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = onlineCache.value;
+    return onlineCache.value;
   }
+  if (onlineInflight) return onlineInflight;
+
+  onlineInflight = (async () => {
+    const base = (SUPABASE_URL || '').replace(/\/$/, '');
+    const anonKey = __env.supabaseAnonKey || '';
+    if (!base) {
+      onlineCache = { value: false, checkedAt: Date.now() };
+      onlineInflight = null;
+      if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = false;
+      return false;
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      // HEAD a REST: cualquier status < 500 implica red/host alcanzable (sin ruido 401 de auth health).
+      const res = await fetch(`${base}/rest/v1/`, {
+        method: 'HEAD',
+        signal: controller.signal,
+        credentials: 'omit',
+        headers: anonKey
+          ? { apikey: anonKey, Authorization: `Bearer ${anonKey}` }
+          : {},
+      });
+      const online = Number.isFinite(res.status) && res.status > 0 && res.status < 500;
+      onlineCache = { value: online, checkedAt: Date.now() };
+      if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = online;
+      return online;
+    } catch (err) {
+      onlineCache = { value: false, checkedAt: Date.now() };
+      if (typeof window !== 'undefined') {
+        window.__SUPABASE_ONLINE__ = false;
+        if (__env.isDevelopment) {
+          console.debug('Supabase reachability probe failed (non-critical):', err?.message || err);
+        }
+      }
+      return false;
+    } finally {
+      clearTimeout(timer);
+      onlineInflight = null;
+    }
+  })();
+
+  return onlineInflight;
 }
 
 // 🔐 Configuración de autenticación

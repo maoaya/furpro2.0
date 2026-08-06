@@ -1,0 +1,167 @@
+{
+  "issue": "FP-AUTH-001",
+  "generatedAt": "2026-08-06T23:41:37.686Z",
+  "base": "http://127.0.0.1:5173",
+  "criteria": {
+    "healthCallsMax": 1,
+    "health401Max": 0
+  },
+  "metrics": {
+    "healthCalls": 0,
+    "health401": 0,
+    "restRootProbes": 11,
+    "routesOk": 10,
+    "routesTotal": 10
+  },
+  "pass": true,
+  "routeResults": [
+    {
+      "route": "/login",
+      "status": 200,
+      "ms": 706,
+      "pathname": "/login",
+      "rootTextLen": 211,
+      "onlineFlag": true,
+      "hardFail": false
+    },
+    {
+      "route": "/home",
+      "status": 200,
+      "ms": 627,
+      "pathname": "/home",
+      "rootTextLen": 408,
+      "onlineFlag": true,
+      "hardFail": false
+    },
+    {
+      "route": "/torneos",
+      "status": 200,
+      "ms": 604,
+      "pathname": "/torneos",
+      "rootTextLen": 214,
+      "onlineFlag": true,
+      "hardFail": false
+    },
+    {
+      "route": "/equipos",
+      "status": 200,
+      "ms": 600,
+      "pathname": "/equipos",
+      "rootTextLen": 859,
+      "onlineFlag": true,
+      "hardFail": false
+    },
+    {
+      "route": "/marketplace",
+      "status": 200,
+      "ms": 598,
+      "pathname": "/marketplace",
+      "rootTextLen": 48,
+      "onlineFlag": true,
+      "hardFail": false
+    },
+    {
+      "route": "/ranking-jugadores",
+      "status": 200,
+      "ms": 630,
+      "pathname": "/ranking-jugadores",
+      "rootTextLen": 4552,
+      "onlineFlag": true,
+      "hardFail": false
+    },
+    {
+      "route": "/chat",
+      "status": 200,
+      "ms": 618,
+      "pathname": "/chat",
+      "rootTextLen": 11,
+      "onlineFlag": true,
+      "hardFail": false
+    },
+    {
+      "route": "/privacidad",
+      "status": 200,
+      "ms": 590,
+      "pathname": "/privacidad",
+      "rootTextLen": 10,
+      "onlineFlag": true,
+      "hardFail": false
+    },
+    {
+      "route": "/videos",
+      "status": 200,
+      "ms": 588,
+      "pathname": "/videos",
+      "rootTextLen": 43,
+      "onlineFlag": true,
+      "hardFail": false
+    },
+    {
+      "route": "/crear-torneo",
+      "status": 200,
+      "ms": 601,
+      "pathname": "/crear-torneo",
+      "rootTextLen": 343,
+      "onlineFlag": true,
+      "hardFail": false
+    }
+  ],
+  "healthSample": [],
+  "restRootSample": [
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/",
+      "status": 200,
+      "ts": 1786059691796
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/",
+      "status": 401,
+      "ts": 1786059691807
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/",
+      "status": 401,
+      "ts": 1786059692410
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/",
+      "status": 401,
+      "ts": 1786059692980
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/",
+      "status": 401,
+      "ts": 1786059693577
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/",
+      "status": 401,
+      "ts": 1786059694185
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/",
+      "status": 401,
+      "ts": 1786059694838
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/",
+      "status": 401,
+      "ts": 1786059695424
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/",
+      "status": 401,
+      "ts": 1786059696015
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/",
+      "status": 401,
+      "ts": 1786059696602
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/",
+      "status": 401,
+      "ts": 1786059697212
+    }
+  ]
+}
