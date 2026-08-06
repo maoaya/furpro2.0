@@ -32,7 +32,10 @@ export default function CommentsModal({ postId, isOpen, onClose }) {
       })
       .subscribe();
 
-    return () => channel.unsubscribe();
+    // FP-MEM-001
+    return () => {
+      try { supabase.removeChannel(channel); } catch { channel.unsubscribe?.(); }
+    };
   }, [isOpen, postId]);
 
   async function cargarComentarios() {

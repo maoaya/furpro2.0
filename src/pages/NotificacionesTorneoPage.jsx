@@ -12,10 +12,10 @@ export default function NotificacionesTorneoPage() {
   const [selectedCategory, setSelectedCategory] = useState('all'); // all, invitation, match, result, suspension, update
 
   useEffect(() => {
-    if (user?.id) {
-      fetchNotifications();
-      subscribeToNotifications();
-    }
+    if (!user?.id) return undefined;
+    fetchNotifications();
+    // FP-MEM-001: usar cleanup del subscribe
+    return subscribeToNotifications();
   }, [user?.id]);
 
   const fetchNotifications = async () => {

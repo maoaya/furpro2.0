@@ -25,8 +25,9 @@ export class AnalyticsManager {
     }
 
     initializeAnalytics() {
-        // Configurar flush automático
-        setInterval(() => {
+        // FP-MEM-001: guardar handles para poder destruir
+        if (this._flushIntervalId) clearInterval(this._flushIntervalId);
+        this._flushIntervalId = setInterval(() => {
             this.flushEvents();
         }, this.flushInterval);
 
@@ -38,24 +39,34 @@ export class AnalyticsManager {
     }
 
     setupGlobalTracking() {
-        // Track clicks
-        document.addEventListener('click', (e) => {
+        // Bound handlers para removeEventListener
+        this._onClick = (e) => {
             this.trackUserInteraction('click', {
                 element: e.target.tagName,
                 className: e.target.className,
                 id: e.target.id
             });
-        });
-
-        // Track time on page
-        let pageStartTime = Date.now();
-        window.addEventListener('beforeunload', () => {
-            const timeSpent = Date.now() - pageStartTime;
+        };
+        this._pageStartTime = Date.now();
+        this._onBeforeUnload = () => {
+            const timeSpent = Date.now() - this._pageStartTime;
             this.trackEvent('page_time', {
                 duration: timeSpent,
                 page: window.location.pathname
             });
-        });
+        };
+
+        document.addEventListener('click', this._onClick);
+        window.addEventListener('beforeunload', this._onBeforeUnload);
+    }
+
+    destroy() {
+        if (this._flushIntervalId) {
+            clearInterval(this._flushIntervalId);
+            this._flushIntervalId = null;
+        }
+        if (this._onClick) document.removeEventListener('click', this._onClick);
+        if (this._onBeforeUnload) window.removeEventListener('beforeunload', this._onBeforeUnload);
     }
 
     /**

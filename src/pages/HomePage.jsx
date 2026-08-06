@@ -167,12 +167,13 @@ export default function HomePage() {
 
     // Suscripciones específicas de posts/likes/comments permanecen; notificaciones se manejan en Provider
 
+    // FP-MEM-001: removeChannel en unmount
     return () => {
-      channelPosts.unsubscribe();
-      channelLikes.unsubscribe();
-      channelComments.unsubscribe();
+      try { supabase.removeChannel(channelPosts); } catch { channelPosts.unsubscribe?.(); }
+      try { supabase.removeChannel(channelLikes); } catch { channelLikes.unsubscribe?.(); }
+      try { supabase.removeChannel(channelComments); } catch { channelComments.unsubscribe?.(); }
     };
-  }, [user, navigate]);
+  }, [user?.id, navigate]);
 
   async function cargarFollowers() {
     try {

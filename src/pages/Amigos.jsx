@@ -33,11 +33,12 @@ const Amigos = () => {
       )
       .subscribe();
 
+    // FP-MEM-001
     return () => {
-      channel.unsubscribe();
-      channelFriends.unsubscribe();
+      try { supabase.removeChannel(channel); } catch { channel.unsubscribe?.(); }
+      try { supabase.removeChannel(channelFriends); } catch { channelFriends.unsubscribe?.(); }
     };
-  }, [user]);
+  }, [user?.id, user?.email]);
 
   const cargarAmigos = async () => {
     if (!user) return;

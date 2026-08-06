@@ -36,7 +36,10 @@ export default function MarketplaceCompleto() {
       })
       .subscribe();
 
-    return () => channel.unsubscribe();
+    // FP-MEM-001
+    return () => {
+      try { supabase.removeChannel(channel); } catch { channel.unsubscribe?.(); }
+    };
   }, []);
 
   useEffect(() => {

@@ -21,10 +21,11 @@ const Estados = () => {
       )
       .subscribe();
 
+    // FP-MEM-001
     return () => {
-      channel.unsubscribe();
+      try { supabase.removeChannel(channel); } catch { channel.unsubscribe?.(); }
     };
-  }, [user]);
+  }, [user?.id]);
 
   const cargarEstados = async () => {
     if (!user) return;

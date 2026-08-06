@@ -11,6 +11,7 @@ class AutoSaveService {
     this.queue = [];
     this.isProcessing = false;
     this.lastSave = null;
+    this._intervalId = null;
     
     // Iniciar auto-guardado automático
     this.startAutoSave();
@@ -44,13 +45,22 @@ class AutoSaveService {
    * Iniciar proceso automático
    */
   startAutoSave() {
-    setInterval(() => {
+    // FP-MEM-001: un solo interval; evitar fugas al re-iniciar
+    if (this._intervalId) clearInterval(this._intervalId);
+    this._intervalId = setInterval(() => {
       if (this.queue.length > 0 && !this.isProcessing) {
         this.processBatch();
       }
     }, this.saveInterval);
     
     console.log('✅ AutoSave: Iniciado (cada 3s)');
+  }
+
+  stopAutoSave() {
+    if (this._intervalId) {
+      clearInterval(this._intervalId);
+      this._intervalId = null;
+    }
   }
 
   /**

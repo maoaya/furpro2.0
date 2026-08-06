@@ -28,9 +28,13 @@ export default function Perfil() {
     loadUserData();
     loadStats();
     loadContent();
-    // Realtime counters for followers/following
+  }, [user?.id, activeTab]);
+
+  // FP-MEM-001: channel independiente del tab (evita resubscribe churn)
+  useEffect(() => {
+    if (!user?.email) return undefined;
     const channelFriends = supabase
-      .channel('perfil:friends')
+      .channel(`perfil:friends:${user.id || user.email}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'friends' }, (payload) => {
         const f = payload.new
         if (!f) return
@@ -43,8 +47,10 @@ export default function Perfil() {
       })
       .subscribe()
 
-    return () => { channelFriends.unsubscribe() }
-  }, [user, activeTab]);
+    return () => {
+      try { supabase.removeChannel(channelFriends); } catch { channelFriends.unsubscribe?.(); }
+    }
+  }, [user?.id, user?.email]);
 
   const loadUserData = async () => {
     if (!user?.email) return;

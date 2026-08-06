@@ -13,17 +13,16 @@ export default function TorneoStandingsPage() {
   const [tournament, setTournament] = useState(null);
 
   useEffect(() => {
-    if (tournamentId) {
-      fetchTournamentData();
-      fetchGroups();
-      subscribeToStandings();
-    }
+    if (!tournamentId) return;
+    fetchTournamentData();
+    fetchGroups();
   }, [tournamentId]);
 
   useEffect(() => {
-    if (selectedGroup) {
-      fetchStandings(selectedGroup);
-    }
+    if (!selectedGroup) return undefined;
+    fetchStandings(selectedGroup);
+    // FP-MEM-001: canal ligado a selectedGroup + cleanup
+    return subscribeToStandings();
   }, [selectedGroup]);
 
   const fetchTournamentData = async () => {

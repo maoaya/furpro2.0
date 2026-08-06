@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { supabase } from '../lib/supabase'
 import { NotificationManager } from '../services/NotificationManager'
 import { useAuth } from './AuthContext'
+import { cleanupRealtimeChannels } from '../utils/realtimeCleanup'
 
 const NotificationsContext = createContext(null)
 
@@ -106,15 +107,17 @@ export function NotificationsProvider({ children }) {
       })
       .subscribe()
 
-    return () => {
-      channelFriends.unsubscribe()
-      channelLikes.unsubscribe()
-      channelComments.unsubscribe()
-      channelInvites.unsubscribe()
-      channelTournaments.unsubscribe()
-      channelMatches.unsubscribe()
-    }
-  }, [user, nm])
+    // FP-MEM-001: removeChannel libera topic/socket (unsubscribe solo deja de emitir)
+    return cleanupRealtimeChannels(
+      supabase,
+      channelFriends,
+      channelLikes,
+      channelComments,
+      channelInvites,
+      channelTournaments,
+      channelMatches
+    )
+  }, [user?.id, nm])
 
   const markAllRead = () => setUnread(0)
   const value = useMemo(() => ({ items, unread, markAllRead }), [items, unread])

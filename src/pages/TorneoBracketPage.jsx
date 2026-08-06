@@ -13,11 +13,11 @@ export default function TorneoBracketPage() {
   const [rounds, setRounds] = useState([]);
 
   useEffect(() => {
-    if (tournamentId) {
-      fetchTournamentData();
-      fetchBrackets();
-      subscribeToUpdates();
-    }
+    if (!tournamentId) return undefined;
+    fetchTournamentData();
+    fetchBrackets();
+    // FP-MEM-001: usar el cleanup que devuelve subscribeToUpdates
+    return subscribeToUpdates();
   }, [tournamentId]);
 
   const fetchTournamentData = async () => {
