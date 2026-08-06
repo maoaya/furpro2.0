@@ -1,0 +1,115 @@
+{
+  "issue": "FP-SB-001",
+  "generatedAt": "2026-08-06T23:45:23.812Z",
+  "base": "http://127.0.0.1:5173",
+  "pass": true,
+  "metrics": {
+    "products400_pass1": 0,
+    "products400_pass2": 0,
+    "valoraciones404_pass1": 1,
+    "valoraciones404_pass2": 0,
+    "pass1Errors": 4,
+    "pass2Errors": 0
+  },
+  "routes1": [
+    {
+      "route": "/marketplace",
+      "ms": 897,
+      "path": "/marketplace",
+      "text": 53,
+      "gate": "{\"tables\":[\"products\"],\"rpcs\":[]}"
+    },
+    {
+      "route": "/feed",
+      "ms": 848,
+      "path": "/feed",
+      "text": 408,
+      "gate": "{\"tables\":[\"products\",\"valoraciones\"],\"rpcs\":[]}"
+    },
+    {
+      "route": "/home",
+      "ms": 812,
+      "path": "/home",
+      "text": 408,
+      "gate": "{\"tables\":[\"products\",\"valoraciones\"],\"rpcs\":[]}"
+    },
+    {
+      "route": "/ranking",
+      "ms": 800,
+      "path": "/ranking",
+      "text": 531,
+      "gate": "{\"tables\":[\"products\",\"valoraciones\",\"tournaments\",\"referees\"],\"rpcs\":[]}"
+    },
+    {
+      "route": "/ranking-jugadores",
+      "ms": 804,
+      "path": "/ranking-jugadores",
+      "text": 4554,
+      "gate": "{\"tables\":[\"products\",\"valoraciones\",\"tournaments\",\"referees\"],\"rpcs\":[]}"
+    }
+  ],
+  "routes2": [
+    {
+      "route": "/marketplace",
+      "ms": 803,
+      "path": "/marketplace",
+      "text": 56,
+      "gate": "{\"tables\":[\"products\",\"valoraciones\",\"tournaments\",\"referees\"],\"rpcs\":[]}"
+    },
+    {
+      "route": "/feed",
+      "ms": 800,
+      "path": "/feed",
+      "text": 408,
+      "gate": "{\"tables\":[\"products\",\"valoraciones\",\"tournaments\",\"referees\"],\"rpcs\":[]}"
+    },
+    {
+      "route": "/home",
+      "ms": 805,
+      "path": "/home",
+      "text": 408,
+      "gate": "{\"tables\":[\"products\",\"valoraciones\",\"tournaments\",\"referees\"],\"rpcs\":[]}"
+    },
+    {
+      "route": "/ranking",
+      "ms": 798,
+      "path": "/ranking",
+      "text": 531,
+      "gate": "{\"tables\":[\"products\",\"valoraciones\",\"tournaments\",\"referees\"],\"rpcs\":[]}"
+    },
+    {
+      "route": "/ranking-jugadores",
+      "ms": 805,
+      "path": "/ranking-jugadores",
+      "text": 4546,
+      "gate": "{\"tables\":[\"products\",\"valoraciones\",\"tournaments\",\"referees\"],\"rpcs\":[]}"
+    }
+  ],
+  "pass1": [
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/products",
+      "status": 404,
+      "kind": null,
+      "ts": 1786059915931
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/valoraciones",
+      "status": 404,
+      "kind": "valoraciones404",
+      "ts": 1786059916767
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/tournaments",
+      "status": 404,
+      "kind": "tournaments404",
+      "ts": 1786059918341
+    },
+    {
+      "url": "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/referees",
+      "status": 404,
+      "kind": "refereesSchema",
+      "ts": 1786059918369
+    }
+  ],
+  "pass2": []
+}

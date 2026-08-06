@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
+import {
+  disableOnSchemaError,
+  isTableDisabled,
+  withTableProbe,
+} from '../utils/schemaCompatibilityGate.js';
 
 export default function MarketplaceCompleto() {
   const navigate = useNavigate();
@@ -17,10 +22,12 @@ export default function MarketplaceCompleto() {
   const [userLat, setUserLat] = useState(null);
   const [userLon, setUserLon] = useState(null);
   const [distanciaMax, setDistanciaMax] = useState(100); // km
+  const [loadError, setLoadError] = useState('');
 
+  // FP-SB-001: canal realtime una sola vez (antes se recreaba en cada filtro → spam 400).
   useEffect(() => {
-    loadProductos();
     obtenerUbicacionUsuario();
+    if (isTableDisabled('products')) return undefined;
 
     const channel = supabase
       .channel('marketplace:all')
@@ -30,6 +37,10 @@ export default function MarketplaceCompleto() {
       .subscribe();
 
     return () => channel.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    loadProductos();
   }, [search, precioMin, precioMax, categoria, ciudad, ordenar]);
 
   const obtenerUbicacionUsuario = () => {
@@ -45,47 +56,64 @@ export default function MarketplaceCompleto() {
   };
 
   const loadProductos = async () => {
+    // FP-SB-001: no reintentar products si el schema ya falló en esta sesión.
+    if (isTableDisabled('products')) {
+      setProductos([]);
+      setLoadError('Marketplace no disponible (schema).');
+      return;
+    }
     try {
-      let query = supabase
-        .from('products')
-        .select('*, seller:carfutpro!seller_id(nombre, apellido, avatar_url)')
-        .eq('is_active', true);
+      setLoadError('');
+      const probe = await withTableProbe('products', async () => {
+        // Select simple: el embed carfutpro!seller_id provocaba 400 repetidos.
+        let query = supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true);
 
-      // Filtros de búsqueda
-      if (search.trim()) {
-        query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,category.ilike.%${search}%`);
-      }
-      if (categoria !== 'todos') {
-        query = query.eq('category', categoria);
-      }
-      if (ciudad.trim()) {
-        query = query.ilike('city', `%${ciudad}%`);
-      }
-      if (precioMin > 0) {
-        query = query.gte('price', precioMin);
-      }
-      if (precioMax < 10000) {
-        query = query.lte('price', precioMax);
-      }
+        if (search.trim()) {
+          query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,category.ilike.%${search}%`);
+        }
+        if (categoria !== 'todos') {
+          query = query.eq('category', categoria);
+        }
+        if (ciudad.trim()) {
+          query = query.ilike('city', `%${ciudad}%`);
+        }
+        if (precioMin > 0) {
+          query = query.gte('price', precioMin);
+        }
+        if (precioMax < 10000) {
+          query = query.lte('price', precioMax);
+        }
 
-      // Ordenamiento
-      switch (ordenar) {
-        case 'precio-bajo':
-          query = query.order('price', { ascending: true });
-          break;
-        case 'precio-alto':
-          query = query.order('price', { ascending: false });
-          break;
-        case 'popularidad':
-          query = query.order('views', { ascending: false });
-          break;
-        case 'recientes':
-        default:
-          query = query.order('created_at', { ascending: false });
-      }
+        switch (ordenar) {
+          case 'precio-bajo':
+            query = query.order('price', { ascending: true });
+            break;
+          case 'precio-alto':
+            query = query.order('price', { ascending: false });
+            break;
+          case 'popularidad':
+            query = query.order('views', { ascending: false });
+            break;
+          case 'recientes':
+          default:
+            query = query.order('created_at', { ascending: false });
+        }
 
-      const { data, error } = await query.limit(100);
-      if (error) throw error;
+        const { data, error } = await query.limit(100);
+        if (error) disableOnSchemaError(error, { table: 'products' });
+        return { data, error };
+      });
+
+      if (probe?.skipped) {
+        setProductos([]);
+        setLoadError('Marketplace no disponible (schema).');
+        return;
+      }
+      if (probe?.error) throw probe.error;
+      const data = probe?.data;
 
       // Calcular distancia si hay ubicación del usuario
       let formatted = (data || []).map(item => ({
@@ -98,8 +126,8 @@ export default function MarketplaceCompleto() {
         ubicacion: item.location || item.city || 'Ubicación no especificada',
         ciudad: item.city,
         vendedor: {
-          nombre: item.seller?.nombre ? `${item.seller.nombre} ${item.seller.apellido || ''}`.trim() : 'Vendedor',
-          avatar: item.seller?.avatar_url || '👤',
+          nombre: item.seller_name || item.vendedor_nombre || 'Vendedor',
+          avatar: item.seller_avatar || '👤',
           rating: 4.5
         },
         fecha: new Date(item.created_at),
@@ -132,8 +160,10 @@ export default function MarketplaceCompleto() {
 
       setProductos(formatted);
     } catch (err) {
-      console.error('Error cargando productos:', err);
+      disableOnSchemaError(err, { table: 'products' });
+      console.error('Error cargando productos:', err?.message || err);
       setProductos([]);
+      setLoadError('No se pudieron cargar productos.');
     }
   };
 
@@ -291,7 +321,7 @@ export default function MarketplaceCompleto() {
 
       {filteredProductos.length === 0 && (
         <div style={styles.empty}>
-          <p>No se encontraron productos</p>
+          <p>{loadError || 'No se encontraron productos'}</p>
         </div>
       )}
 

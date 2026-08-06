@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { getAvailableTournaments } from '../services/TournamentService';
 import { supabase } from '../config/supabase';
+import {
+  disableOnSchemaError,
+  isTableDisabled,
+  withTableProbe,
+} from '../utils/schemaCompatibilityGate.js';
 import './RankingMejorado.css';
 
 export function RankingMejorado() {
@@ -26,19 +31,28 @@ export function RankingMejorado() {
   const loadRankings = async () => {
     try {
       setLoading(true);
-      // Obtener todos los rankings
+      // Obtener todos los rankings (TournamentService ya aplica schema-gate).
       const data = await getAvailableTournaments();
-      setRankings(data || []);
-      
-      // Obtener árbitros disponibles
-      const { data: refData, error } = await supabase
-        .from('referees')
-        .select('*')
-        .eq('is_available', true);
-      
-      setReferees(refData || []);
+      setRankings(Array.isArray(data) ? data : []);
+
+      if (!isTableDisabled('referees')) {
+        const refProbe = await withTableProbe('referees', async () => {
+          const { data: refData, error } = await supabase
+            .from('referees')
+            .select('*')
+            .eq('is_available', true);
+          if (error) disableOnSchemaError(error, { table: 'referees' });
+          return { data: refData, error };
+        });
+        setReferees(refProbe?.skipped || refProbe?.error ? [] : (refProbe?.data || []));
+      } else {
+        setReferees([]);
+      }
     } catch (error) {
-      console.error('Error loading rankings:', error);
+      disableOnSchemaError(error, { table: 'tournaments' });
+      console.error('Error loading rankings:', error?.message || error);
+      setRankings([]);
+      setReferees([]);
     } finally {
       setLoading(false);
     }

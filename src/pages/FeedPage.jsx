@@ -6,6 +6,13 @@ import RankingUsuarios from '../components/RankingUsuarios';
 import FormNuevaPublicacion from '../components/FormNuevaPublicacion';
 import ListaPublicaciones from '../components/ListaPublicaciones';
 import ModalDetallePublicacion from '../components/ModalDetallePublicacion';
+import {
+  disableOnSchemaError,
+  isRpcDisabled,
+  isTableDisabled,
+  withRpcProbe,
+  withTableProbe,
+} from '../utils/schemaCompatibilityGate.js';
 
 export default function FeedPage() {
   // Estados principales
@@ -75,35 +82,54 @@ export default function FeedPage() {
 
   // Cargar ranking de usuarios por valoración promedio
   async function cargarRanking() {
+    if (isRpcDisabled('obtener_ranking_usuarios')) {
+      setRanking([]);
+      return;
+    }
     try {
-      const { data, error } = await supabase.rpc('obtener_ranking_usuarios');
-      if (error) {
+      const result = await withRpcProbe('obtener_ranking_usuarios', async () => {
+        const { data, error } = await supabase.rpc('obtener_ranking_usuarios');
+        if (error) disableOnSchemaError(error, { rpc: 'obtener_ranking_usuarios' });
+        return { data, error };
+      });
+      if (result?.skipped || result?.error) {
         setRanking([]);
       } else {
-        setRanking(data);
+        setRanking(result?.data || []);
       }
-    } catch {
+    } catch (err) {
+      disableOnSchemaError(err, { rpc: 'obtener_ranking_usuarios' });
       setRanking([]);
     }
   }
 
   // Cargar estadísticas de valoraciones y dificultad
   async function cargarEstadisticas() {
+    // FP-SB-001: valoraciones 404 → no spamear en cada visita al feed.
+    if (isTableDisabled('valoraciones')) {
+      setEstadisticas(null);
+      return;
+    }
     try {
-      const { data, error } = await supabase.from('valoraciones').select('*');
-      if (error) {
+      const result = await withTableProbe('valoraciones', async () => {
+        const { data, error } = await supabase.from('valoraciones').select('*');
+        if (error) disableOnSchemaError(error, { table: 'valoraciones' });
+        return { data, error };
+      });
+      if (result?.skipped || result?.error || !result?.data) {
         setEstadisticas(null);
         return;
       }
       // Agrupar por usuario
       const stats = {};
-      data.forEach(v => {
+      result.data.forEach(v => {
         if (!stats[v.usuario]) stats[v.usuario] = { valoraciones: [], dificultades: [] };
         stats[v.usuario].valoraciones.push(v.valoracion);
         stats[v.usuario].dificultades.push(v.dificultad);
       });
       setEstadisticas(stats);
-    } catch {
+    } catch (err) {
+      disableOnSchemaError(err, { table: 'valoraciones' });
       setEstadisticas(null);
     }
   }
@@ -111,13 +137,20 @@ export default function FeedPage() {
   // Guardar demo de valoración
   async function guardarDemo() {
     if (!usuarioTipo || demoValoracion === 0 || demoDificultad === 0) return;
+    if (isTableDisabled('valoraciones')) {
+      setError('Valoraciones no disponibles (schema).');
+      return;
+    }
     setLoading(true);
     setDemoGuardado(false);
     try {
       const { error } = await supabase.from('valoraciones').insert([
         { usuario: usuarioTipo, valoracion: demoValoracion, dificultad: demoDificultad }
       ]);
-      if (error) throw error;
+      if (error) {
+        disableOnSchemaError(error, { table: 'valoraciones' });
+        throw error;
+      }
       setDemoGuardado(true);
       cargarRanking();
       cargarEstadisticas();

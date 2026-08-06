@@ -393,6 +393,10 @@ export default function HomePage() {
 
       // Cargar productos destacados y agregarlos arriba de sugeridos
       try {
+        const { isTableDisabled, disableOnSchemaError } = await import('../utils/schemaCompatibilityGate.js');
+        if (isTableDisabled('products')) {
+          // FP-SB-001: no reintentar products tras schema drift.
+        } else {
         const { data: productsData, error: prodError } = await supabase
           .from('products')
           .select('*')
@@ -401,6 +405,7 @@ export default function HomePage() {
           .limit(6);
 
         if (prodError) {
+          disableOnSchemaError(prodError, { table: 'products' });
           console.warn('⚠️ Error cargando productos:', prodError.message);
         } else if (productsData && productsData.length > 0) {
           const productPosts = productsData.map(prod => ({
@@ -421,6 +426,7 @@ export default function HomePage() {
             productId: prod.id
           }));
           setSuggestedPosts(prev => [...productPosts, ...prev]);
+        }
         }
       } catch (prodErr) {
         console.error('❌ Error procesando productos:', prodErr);

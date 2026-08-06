@@ -1,4 +1,9 @@
 import { supabase } from '../config/supabase';
+import {
+  disableOnSchemaError,
+  isTableDisabled,
+  withTableProbe,
+} from '../utils/schemaCompatibilityGate.js';
 
 /**
  * 🏆 FUNCIONES PARA SISTEMA DE TORNEOS
@@ -9,13 +14,17 @@ import { supabase } from '../config/supabase';
  * Obtener torneo por ID con datos completos
  */
 export async function getTournamentById(tournamentId) {
+  if (isTableDisabled('tournaments')) return null;
   const { data, error } = await supabase
     .from('tournaments')
     .select('*')
     .eq('id', tournamentId)
     .single();
 
-  if (error) throw error;
+  if (error) {
+    disableOnSchemaError(error, { table: 'tournaments' });
+    throw error;
+  }
   return data;
 }
 
@@ -23,27 +32,35 @@ export async function getTournamentById(tournamentId) {
  * Obtener todos los torneos disponibles (públicos)
  */
 export async function getAvailableTournaments(filters = {}) {
-  let query = supabase
-    .from('tournaments')
-    .select('*')
-    .neq('status', 'draft')
-    .order('tournament_start', { ascending: true });
+  // FP-SB-001: no reintentar tournaments tras 404/schema drift.
+  if (isTableDisabled('tournaments')) return [];
 
-  if (filters.category) {
-    query = query.eq('category', filters.category);
-  }
+  const probe = await withTableProbe('tournaments', async () => {
+    let query = supabase
+      .from('tournaments')
+      .select('*')
+      .neq('status', 'draft')
+      .order('tournament_start', { ascending: true });
 
-  if (filters.city) {
-    query = query.eq('city', filters.city);
-  }
+    if (filters.category) {
+      query = query.eq('category', filters.category);
+    }
 
-  if (filters.status) {
-    query = query.eq('status', filters.status);
-  }
+    if (filters.city) {
+      query = query.eq('city', filters.city);
+    }
 
-  const { data, error } = await query;
-  if (error) throw error;
-  return data;
+    if (filters.status) {
+      query = query.eq('status', filters.status);
+    }
+
+    const { data, error } = await query;
+    if (error) disableOnSchemaError(error, { table: 'tournaments' });
+    return { data, error };
+  });
+
+  if (probe?.skipped || probe?.error) return [];
+  return probe?.data || [];
 }
 
 /**

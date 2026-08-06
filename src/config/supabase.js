@@ -42,42 +42,15 @@ export async function detectSupabaseOnline(timeoutMs = 4000) {
   onlineInflight = (async () => {
     const base = (SUPABASE_URL || '').replace(/\/$/, '');
     const anonKey = __env.supabaseAnonKey || '';
-    if (!base) {
-      onlineCache = { value: false, checkedAt: Date.now() };
-      onlineInflight = null;
-      if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = false;
-      return false;
-    }
-
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-    try {
-      // HEAD a REST: cualquier status < 500 implica red/host alcanzable (sin ruido 401 de auth health).
-      const res = await fetch(`${base}/rest/v1/`, {
-        method: 'HEAD',
-        signal: controller.signal,
-        credentials: 'omit',
-        headers: anonKey
-          ? { apikey: anonKey, Authorization: `Bearer ${anonKey}` }
-          : {},
-      });
-      const online = Number.isFinite(res.status) && res.status > 0 && res.status < 500;
-      onlineCache = { value: online, checkedAt: Date.now() };
-      if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = online;
-      return online;
-    } catch (err) {
-      onlineCache = { value: false, checkedAt: Date.now() };
-      if (typeof window !== 'undefined') {
-        window.__SUPABASE_ONLINE__ = false;
-        if (__env.isDevelopment) {
-          console.debug('Supabase reachability probe failed (non-critical):', err?.message || err);
-        }
-      }
-      return false;
-    } finally {
-      clearTimeout(timer);
-      onlineInflight = null;
-    }
+    // Sin probe de red: HEAD /rest/v1/ devolvía 401 y ensuciaba consola.
+    // Si hay URL + anon key, AuthContext puede intentar getSession con seguridad.
+    const online = Boolean(base && anonKey);
+    onlineCache = { value: online, checkedAt: Date.now() };
+    onlineInflight = null;
+    if (typeof window !== 'undefined') window.__SUPABASE_ONLINE__ = online;
+    // timeoutMs reservado por firma pública (compat).
+    void timeoutMs;
+    return online;
   })();
 
   return onlineInflight;
