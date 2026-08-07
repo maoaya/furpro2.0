@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
 import './CrearTorneoMejorado.css';
 
 export function CrearTorneoMejorado() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -59,29 +61,16 @@ export function CrearTorneoMejorado() {
           evaluation_type: formData.tipoDeEvaluacion,
           is_live_required: formData.requiereTransmision,
           status: 'draft'
-        }]);
+        }])
+        .select();
 
       if (error) throw error;
 
+      const newId = data?.[0]?.id;
       setSuccess(true);
-      setStep(1);
-      setFormData({
-        nombre: '',
-        descripcion: '',
-        fechaInicio: '',
-        fechaFin: '',
-        tipoTorneo: 'leagues',
-        categoria: '',
-        maximoEquipos: 8,
-        maximoGrupos: 2,
-        tipoDeEvaluacion: 'points',
-        requiereTransmision: false,
-        utilizarArbitros: false,
-        numeroArbitrosRequeridos: 1,
-        terminosAceptados: false
-      });
-
-      setTimeout(() => setSuccess(false), 3000);
+      // Nav inmediata al panel del torneo
+      if (newId) navigate(`/torneo/${newId}`, { replace: true });
+      else navigate('/torneos', { replace: true });
     } catch (err) {
       setError(err.message || 'Error al crear el torneo');
     } finally {

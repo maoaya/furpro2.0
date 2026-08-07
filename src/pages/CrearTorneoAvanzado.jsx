@@ -98,10 +98,8 @@ export default function CrearTorneoAvanzado() {
 
       if (insertErr) throw insertErr;
 
-      setSuccess('✅ ¡Torneo creado exitosamente!');
-      setTimeout(() => {
-        navigate(`/torneo/${tournament[0].id}`);
-      }, 1500);
+      setSuccess('✅ ¡Torneo creado!');
+      navigate(`/torneo/${tournament[0].id}`, { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {

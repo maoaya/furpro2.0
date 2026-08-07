@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { NotificacionesService } from '../services/NotificacionesService';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationsContext';
+import NotificationItem from '../components/NotificationItem';
 
 const gold = '#FFD700';
 
@@ -94,26 +95,11 @@ export default function Notificaciones() {
           </div>
         )}
         {list.map((n) => (
-          <article
+          <NotificationItem
             key={n.id || `${n.title}-${n.timestamp || n.created_at}`}
-            style={{
-              background: n.read ? '#1b1b1b' : '#232323',
-              border: `1px solid ${n.read ? '#333' : gold}`,
-              borderRadius: 10,
-              padding: 14,
-            }}
-          >
-            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-              <span style={{ fontSize: 20 }}>{n.icon || '🔔'}</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 800, color: gold }}>{n.title || n.type}</div>
-                <div style={{ color: '#ddd', fontSize: 14, marginTop: 4 }}>{n.body || n.mensaje}</div>
-                <div style={{ color: '#777', fontSize: 11, marginTop: 6 }}>
-                  {new Date(n.timestamp || n.created_at || Date.now()).toLocaleString('es-ES')}
-                </div>
-              </div>
-            </div>
-          </article>
+            notification={n}
+            userId={user?.id}
+          />
         ))}
       </div>
     </div>

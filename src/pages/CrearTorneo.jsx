@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, startTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../config/supabase';
@@ -60,10 +60,13 @@ export default function CrearTorneo() {
 
       if (supabaseError) throw supabaseError;
 
-      setSuccess('¡Torneo creado exitosamente!');
-      setTimeout(() => {
-        navigate('/torneos');
-      }, 2000);
+      const newId = data?.[0]?.id;
+      setSuccess('¡Torneo creado!');
+      // Nav inmediata al panel del torneo (sin setTimeout)
+      startTransition(() => {
+        if (newId) navigate(`/torneo/${newId}`, { replace: true });
+        else navigate('/torneos', { replace: true });
+      });
     } catch (err) {
       console.error('Error creando torneo:', err);
       setError('Error al crear el torneo. Intenta nuevamente.');

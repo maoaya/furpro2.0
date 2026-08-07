@@ -40,18 +40,39 @@ export async function eliminarUsuario(id) {
 }
 
 export async function obtenerMensajesConversacion(usuarioA, usuarioB) {
-  const { data, error } = await supabase.from('mensajes')
-    .select('*')
-    .or(`(user_id.eq.${usuarioA},destinatario_id.eq.${usuarioB}),(user_id.eq.${usuarioB},destinatario_id.eq.${usuarioA})`)
-    .order('created_at', { ascending: true });
+  const { safeSelect } = await import('../utils/safeSelect.js');
+  const { data, error } = await safeSelect(
+    supabase,
+    'mensajes',
+    ['*', 'id,user_id,destinatario_id,texto,contenido,created_at'],
+    (q) =>
+      q
+        .or(`(user_id.eq.${usuarioA},destinatario_id.eq.${usuarioB}),(user_id.eq.${usuarioB},destinatario_id.eq.${usuarioA}),(remitente.eq.${usuarioA},destinatario.eq.${usuarioB}),(remitente.eq.${usuarioB},destinatario.eq.${usuarioA})`)
+        .order('created_at', { ascending: true })
+  );
   if (error) return [];
-  return data;
+  return data || [];
 }
 
 export async function obtenerMensajesUsuario(usuarioId) {
-  const { data, error } = await supabase.from('mensajes').select('*').or(`user_id.eq.${usuarioId},destinatario_id.eq.${usuarioId}`);
+  const { safeSelect } = await import('../utils/safeSelect.js');
+  const { data, error } = await safeSelect(
+    supabase,
+    'mensajes',
+    [
+      'conversacion_id,chat_id,remitente,destinatario,contenido,created_at',
+      'id,remitente,destinatario,contenido,created_at',
+      'id,user_id,destinatario_id,texto,created_at',
+      '*',
+    ],
+    (q) =>
+      q
+        .or(`user_id.eq.${usuarioId},destinatario_id.eq.${usuarioId},destinatario.eq.${usuarioId},remitente.eq.${usuarioId}`)
+        .order('created_at', { ascending: false })
+        .limit(50)
+  );
   if (error) return [];
-  return data;
+  return data || [];
 }
 
 export async function marcarMensajeLeido(mensajeId) {

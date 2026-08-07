@@ -203,7 +203,7 @@ export default function CrearEquipo() {
       return;
     }
 
-    let equipoCreado = false;
+    let createdTeamId = null;
     try {
       // 1. Subir logo si existe
       let logoUrl = null;
@@ -237,10 +237,15 @@ export default function CrearEquipo() {
         return;
       }
 
-      equipoCreado = true;
-      setSuccess('Equipo creado, finalizando...');
-      // 3. Crear la card del equipo en carfutpro
-      if (teamData && teamData[0]) {
+      createdTeamId = teamData?.[0]?.id || null;
+      // Nav inmediata al panel — card se crea en background
+      setSuccess('✅ ¡Equipo creado!');
+      setLoading(false);
+      if (createdTeamId) navigate(`/mi-equipo/${createdTeamId}`, { replace: true });
+      else navigate('/equipos', { replace: true });
+
+      // 3. Card del equipo (no bloquea el panel)
+      if (createdTeamId) {
         try {
           const { error: cardError } = await supabase
             .from('carfutpro')
@@ -256,7 +261,7 @@ export default function CrearEquipo() {
               photo_url: logoUrl,
               avatar_url: logoUrl,
               es_equipo: true,
-              team_id: teamData[0].id
+              team_id: createdTeamId
             }]);
           if (cardError) {
             console.warn('Error creando card:', cardError);
@@ -269,14 +274,7 @@ export default function CrearEquipo() {
       console.error('Error creando equipo:', err);
       setError('Error al crear el equipo. Intenta nuevamente.');
       setSuccess('');
-    } finally {
       setLoading(false);
-      if (equipoCreado) {
-        setSuccess('✅ ¡Equipo creado exitosamente!');
-        setTimeout(() => {
-          navigate('/equipos');
-        }, 1500);
-      }
     }
   };
 

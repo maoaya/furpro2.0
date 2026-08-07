@@ -320,10 +320,9 @@ export default function CrearTorneoCompleto() {
       // Notificar a fans cercanos
       await notifyNearbyFans(tournamentData.id);
 
-      setSuccess('✅ ¡Torneo creado exitosamente!');
-      setTimeout(() => {
-        navigate(`/torneo/${tournamentData.id}`);
-      }, 2000);
+      setSuccess('✅ ¡Torneo creado!');
+      // Nav inmediata al panel del torneo
+      navigate(`/torneo/${tournamentData.id}`, { replace: true });
     } catch (err) {
       console.error('Error creando torneo:', err);
       setError('Error al crear el torneo. Intenta nuevamente.');
