@@ -135,18 +135,17 @@ export default function HomePage() {
   const [mercadoUnavailable, setMercadoUnavailable] = useState(false);
   // Notificaciones: solo App-level NotificationsProvider (sin nest)
 
-  // Cargar posts y followers al montar
+  // Mercado visible también para guest; posts/realtime solo con sesión
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
+    loadMercadoFichajes();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return undefined;
 
     cargarFollowers();
     loadPosts();
-    loadMercadoFichajes();
 
-    // Suscribirse a cambios en realtime
     const channelPosts = supabase
       .channel('posts:all')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
@@ -168,15 +167,12 @@ export default function HomePage() {
       })
       .subscribe();
 
-    // Suscripciones específicas de posts/likes/comments permanecen; notificaciones se manejan en Provider
-
-    // FP-MEM-001: removeChannel en unmount
     return () => {
       try { supabase.removeChannel(channelPosts); } catch { channelPosts.unsubscribe?.(); }
       try { supabase.removeChannel(channelLikes); } catch { channelLikes.unsubscribe?.(); }
       try { supabase.removeChannel(channelComments); } catch { channelComments.unsubscribe?.(); }
     };
-  }, [user?.id, navigate]);
+  }, [user?.id]);
 
   async function cargarFollowers() {
     try {

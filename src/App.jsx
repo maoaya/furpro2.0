@@ -88,7 +88,7 @@ function LazyPage({ children }) {
 }
 
 function RootRoute() {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) {
     return (
@@ -98,11 +98,8 @@ function RootRoute() {
     );
   }
 
-  if (user && user.email) {
-    return withLayout(<HomePage />);
-  }
-
-  return <LoginPage />;
+  // Home siempre (guest ve mercado + CTA login; sesión ve feed completo)
+  return withLayout(<HomePage />);
 }
 
 /** Prefetch de chunks críticos en idle para nav percibida ~instantánea */
