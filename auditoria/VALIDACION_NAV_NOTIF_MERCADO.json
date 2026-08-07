@@ -1,0 +1,80 @@
+{
+  "pass": true,
+  "navPass": true,
+  "notifPass": true,
+  "mercadoPass": true,
+  "bundlePass": true,
+  "spaAvgMs": 85.5,
+  "spaP95Ms": 87,
+  "appChunkKb": 195.3,
+  "home": {
+    "pathname": "/",
+    "hasMercado": true,
+    "hasNotifBell": false,
+    "rootTextLen": 257,
+    "preview": "FP\nFutPro\nBienvenido de vuelta\nIniciar sesión\nLucia\nMateo\nSofia\nLeo FC\n📸 Contenido\n_\n×\n📷 Foto (Galería)\n🎥 Video (Galería)\n📖 Historia\nMercado de fichajes\nOfertas y productos destacados\nVer mercado\n"
+  },
+  "market": {
+    "pathname": "/marketplace",
+    "rootTextLen": 56,
+    "ok": true
+  },
+  "notif": {
+    "pathname": "/notificaciones",
+    "hasHeading": true,
+    "rootTextLen": 66,
+    "showsListOrEmpty": true
+  },
+  "nav": [
+    {
+      "route": "/",
+      "ms": 91,
+      "pathname": "/",
+      "rootTextLen": 257
+    },
+    {
+      "route": "/marketplace",
+      "ms": 85,
+      "pathname": "/marketplace",
+      "rootTextLen": 56
+    },
+    {
+      "route": "/mercado",
+      "ms": 83,
+      "pathname": "/mercado",
+      "rootTextLen": 56
+    },
+    {
+      "route": "/notificaciones",
+      "ms": 84,
+      "pathname": "/notificaciones",
+      "rootTextLen": 66
+    },
+    {
+      "route": "/videos",
+      "ms": 85,
+      "pathname": "/videos",
+      "rootTextLen": 43
+    },
+    {
+      "route": "/chat",
+      "ms": 84,
+      "pathname": "/chat",
+      "rootTextLen": 11
+    },
+    {
+      "route": "/feed",
+      "ms": 87,
+      "pathname": "/feed",
+      "rootTextLen": 408
+    },
+    {
+      "route": "/",
+      "ms": 85,
+      "pathname": "/",
+      "rootTextLen": 257
+    }
+  ],
+  "note": "SPA ms incluye sleep 80ms de estabilización; objetivo percibido: client nav sin full reload.",
+  "generatedAt": "2026-08-07T00:03:41.689Z"
+}
