@@ -85,13 +85,14 @@ function RootRoute() {
     );
   }
   
-  // Si hay usuario, mostrar HomePage con layout
+  // Si hay usuario, mostrar HomePage React (NO homepage-instagram.html — residual viejo)
   if (user && user.email) {
     return <MainLayout><HomePage /></MainLayout>;
   }
-  
-  // Si no hay usuario, mostrar LoginPage
-  return <LoginPage />;
+
+  // Login/registro canónico del producto (backup pre-limpieza 4d64150):
+  // AuthPageUnificada — NO el LoginPage simple que reemplazó al flujo real.
+  return <AuthPageUnificada />;
 }
 
 export default function App() {
@@ -100,10 +101,13 @@ export default function App() {
       <NotificationsProvider>
         <Router>
           <Routes>
-            {/* 🔐 RUTAS DE AUTENTICACIÓN - SIN LAYOUT */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/registro" element={<FormularioRegistroCompleto />} />
-            <Route path="/auth" element={<LoginPage />} />
+            {/* 🔐 RUTAS DE AUTENTICACIÓN — AuthPageUnificada (flujo real, no LoginPage residual) */}
+            <Route path="/login" element={<AuthPageUnificada />} />
+            <Route path="/registro" element={<AuthPageUnificada />} />
+            <Route path="/auth" element={<AuthPageUnificada />} />
+            <Route path="/registro-google" element={<AuthPageUnificada />} />
+            <Route path="/registro-facebook" element={<AuthPageUnificada />} />
+            <Route path="/registro-email" element={<AuthPageUnificada />} />
             <Route path="/registro-nuevo" element={<FormularioRegistroCompleto />} />
             <Route path="/registro-perfil" element={<RegistroPerfil />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
