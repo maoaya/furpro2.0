@@ -52,7 +52,6 @@ import Logros from './pages/Logros';
 import EstadisticasAvanzadasPage from './pages/EstadisticasAvanzadasPage';
 import SeccionPlaceholder from './pages/SeccionPlaceholder';
 import RegistroPerfil from './pages/RegistroPerfil';
-import LoginPage from './pages/LoginPage';
 import DiagnosticoFunciones from './pages/DiagnosticoFunciones';
 import MisInvitaciones from './pages/MisInvitaciones';
 import ConvocarJugadores from './pages/ConvocarJugadores';
