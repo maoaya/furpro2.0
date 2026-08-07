@@ -44,6 +44,7 @@ import BuscarRanking from './pages/BuscarRanking';
 import Soporte from './pages/Soporte';
 import Privacidad from './pages/Privacidad';
 import ConfiguracionPage from './pages/ConfiguracionPage';
+import HomePage from './pages/HomePage';
 import PerfilCard from './pages/PerfilCard';
 import SeleccionCategoria from './pages/SeleccionCategoria';
 import FormularioRegistroCompleto from './pages/FormularioRegistroCompleto';
@@ -84,20 +85,12 @@ function RootRoute() {
     );
   }
   
-  // Home canónico del producto: public/homepage-instagram.html
-  // (NO el HomePage React con stories demo / mercado guest — eso no es el diseño creado)
+  // Si hay usuario, mostrar HomePage con layout
   if (user && user.email) {
-    if (typeof window !== 'undefined' && !window.location.pathname.includes('homepage-instagram')) {
-      window.location.replace('/homepage-instagram.html');
-      return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#0a0a0a' }}>
-          <div style={{ color: '#FFD700', fontSize: '24px', fontWeight: 'bold' }}>Cargando Home…</div>
-        </div>
-      );
-    }
+    return <MainLayout><HomePage /></MainLayout>;
   }
-
-  // Sin sesión → Login (nunca un Home guest rediseñado)
+  
+  // Si no hay usuario, mostrar LoginPage
   return <LoginPage />;
 }
 

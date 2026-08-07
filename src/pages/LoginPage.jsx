@@ -65,12 +65,11 @@ export default function LoginPage() {
         return;
       }
 
-      console.log('✅ Perfil completo, redirigiendo a homepage-instagram...');
-      // Home real del producto (HTML), no FeedPage ni HomePage React demo
-      window.location.href = '/homepage-instagram.html';
+      console.log('✅ Perfil completo, redirigiendo a inicio...');
+      navigate('/home');
     } catch (error) {
       console.error('Error verificando perfil:', error);
-      window.location.href = '/homepage-instagram.html';
+      navigate('/home'); // Fallback
     }
   };
 
