@@ -1,29 +1,26 @@
-# Restaurar login real — AuthPageUnificada
+# Restaurar login real — ZONA PRO / AuthPageUnificada
 
-## Qué pasó
+## Qué pasó (grave)
 
-1. Ayer 19:03 el agente metió un Home guest falso (PR #7) — cerrado, no en master.
-2. Luego se apuntó mal a `homepage-instagram.html` (diseño ~10 meses) — error, revertido.
-3. El login cableado en master era `LoginPage` (simple, Jan 2026), **no** el flujo de autenticación del producto.
-
-## Evidencia del login correcto
-
-En backup `4d64150` (antes de “limpieza de duplicados”):
-
-| Ruta | Componente |
-|---|---|
-| `/login`, `/registro`, `/auth` | **`AuthPageUnificada`** |
-| `/registro-google|facebook|email` | **`AuthPageUnificada`** |
-
-`LoginPage` y `homepage-instagram.html` son residuos / simplificaciones posteriores.
+1. Agentes trabajaron sobre **`github.com/maoaya/furpro2.0`**, un árbol **más viejo / incompleto** respecto a la app Windows moderna (`AppStateProvider`, `Torneos.jsx` grande, etc.).
+2. Se reactivó por error el residuo **`homepage-instagram.html`** (diseño ~10 meses) — **revertido / cerrado** (PR #10).
+3. El login cableado no era el de producto (**ZONA PRO** de la foto).
 
 ## Este fix
 
-- `/` sin sesión → `AuthPageUnificada`
-- `/login`, `/auth`, `/registro` (+ variantes OAuth) → `AuthPageUnificada`
-- Con sesión → `HomePage` React (sin HTML Instagram)
-- Post-auth sigue yendo a `/home` (no al HTML viejo)
+| Ítem | Acción |
+|---|---|
+| Login `/`, `/login`, `/auth`, `/registro` | `AuthPageUnificada` con UI **ZONA PRO** (foto) |
+| `homepage-instagram.html`, `perfil*.html` | Movidos a `legacy-html-stubs/` (no runtime) |
+| Vite | Plugin `fp-spa-route-priority` bloquea stubs HTML |
+| Post-auth | `/home` React (`HomePage` / `FeedPage`) — **nunca** el HTML Instagram |
 
-## Nota
+## Tu app Windows (consola 400/503)
 
-Si tu app local (Windows) tiene más pantallas (`AppStateProvider`, Torneos completo, etc.) que **no están en este GitHub**, hay que subir ese árbol; este repo no las contiene.
+Los stack traces con `AppStateProvider`, `NotificationItem.jsx`, `futproMetricsBridge.js`, `Torneos.jsx:2117` **no existen en este repo GitHub**.  
+Para que los agentes no vuelvan a tocar el árbol equivocado: **sube/pushea ese proyecto real** a GitHub (o apunta el cloud agent a ese remoto).
+
+## Validación
+
+- `/login` muestra **ZONA PRO**, Gmail, Continuar con Google, Crear usuario
+- `/homepage-instagram.html` no sirve el HTML viejo (cae a SPA)

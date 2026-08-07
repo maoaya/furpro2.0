@@ -456,52 +456,107 @@ const AuthPageUnificada = () => {
     }
   };
 
+  // Pantalla de acceso ZONA PRO (diseño producto — no LoginPage/Instagram residual)
+  const gold = '#FFC107';
+  const shellBg = {
+    minHeight: '100vh',
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '24px 16px',
+    fontFamily: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',
+    overflow: 'hidden',
+    background:
+      'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(255,180,0,0.35) 0%, transparent 55%),' +
+      'linear-gradient(180deg, #0a0a0a 0%, #121212 40%, #0a0a0a 100%)',
+  };
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #1a1a1a 0%, #333 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px',
-      fontFamily: 'Arial, sans-serif'
-    }}>
+    <div style={shellBg}>
+      {/* Plano visual full-bleed (camisetas / trofeo) — atmósfera, no card suelta */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage:
+            'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.72) 45%, rgba(0,0,0,0.88) 100%),' +
+            'url(https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1600&q=80)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+          filter: 'saturate(0.85) contrast(1.05)',
+          zIndex: 0,
+        }}
+      />
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          left: '50%',
+          bottom: '-8%',
+          transform: 'translateX(-50%)',
+          width: '70vmin',
+          height: '40vmin',
+          background: 'radial-gradient(ellipse at center, rgba(255,193,7,0.45) 0%, transparent 70%)',
+          filter: 'blur(8px)',
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}
+      />
+
       <div style={{
-        background: '#222',
-        borderRadius: '12px',
-        padding: '40px',
+        position: 'relative',
+        zIndex: 2,
+        background: 'rgba(12, 12, 12, 0.82)',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+        borderRadius: 18,
+        padding: '36px 28px 28px',
         width: '100%',
-        maxWidth: '450px',
-        border: '2px solid #FFD700',
-        boxShadow: '0 8px 32px rgba(255, 215, 0, 0.1)'
+        maxWidth: 400,
+        border: `1px solid ${gold}66`,
+        boxShadow: '0 24px 60px rgba(0,0,0,0.65)',
       }}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <h1 style={{ 
-            color: '#FFD700', 
-            fontSize: '32px', 
-            fontWeight: 'bold',
-            margin: '0 0 10px 0'
+        {/* Brand hero — ZONA PRO */}
+        <div style={{ textAlign: 'center', marginBottom: 22 }}>
+          <h1 style={{
+            color: gold,
+            fontSize: 'clamp(2rem, 6vw, 2.6rem)',
+            fontWeight: 900,
+            letterSpacing: '0.06em',
+            margin: '0 0 12px 0',
+            textTransform: 'uppercase',
+            lineHeight: 1.05,
           }}>
-            ⚽ FutPro
+            ZONA PRO
           </h1>
-          <h2 style={{ 
-            color: '#FFD700', 
-            fontSize: '24px',
-            margin: '0 0 10px 0'
-          }}>
-            {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
-          </h2>
+          {!isLogin ? (
+            <h2 style={{ color: gold, fontSize: 18, margin: 0, fontWeight: 700 }}>Crear cuenta</h2>
+          ) : (
+            <p style={{
+              color: 'rgba(255,255,255,0.88)',
+              fontSize: 13,
+              margin: 0,
+              lineHeight: 1.45,
+              maxWidth: 300,
+              marginInline: 'auto',
+            }}>
+              Solo usuarios registrados. Si aún no tienes cuenta, crea tu usuario.
+            </p>
+          )}
         </div>
 
-        {/* Mensajes */}
         {error && (
           <div style={{
-            background: '#F44336',
+            background: 'rgba(244,67,54,0.2)',
+            border: '1px solid #F44336',
+            color: '#ffcdd2',
             padding: '12px',
-            borderRadius: '6px',
-            marginBottom: '20px',
-            textAlign: 'center'
+            borderRadius: 10,
+            marginBottom: 16,
+            textAlign: 'center',
+            fontSize: 13,
           }}>
             {error}
           </div>
@@ -509,194 +564,146 @@ const AuthPageUnificada = () => {
 
         {success && (
           <div style={{
-            background: '#4CAF50',
-            color: 'white',
+            background: 'rgba(76,175,80,0.2)',
+            border: '1px solid #4CAF50',
+            color: '#c8e6c9',
             padding: '12px',
-            borderRadius: '6px',
-            marginBottom: '20px',
-            textAlign: 'center'
+            borderRadius: 10,
+            marginBottom: 16,
+            textAlign: 'center',
+            fontSize: 13,
           }}>
             {success}
           </div>
         )}
 
-        {/* Formulario de LOGIN/REGISTRO - Siempre visible */}
         {isLogin ? (
-          /* MODO LOGIN */
-          <form onSubmit={handleEmailLogin}>
-            {/* Botón para ir a registro */}
-            <div style={{textAlign:'center', marginBottom:16}}>
-              <button type="button" onClick={()=>setIsLogin(false)} style={{background:'#FFD700',color:'#222',border:'none',borderRadius:8,padding:'8px 20px',fontWeight:'bold',cursor:'pointer'}}>Crear cuenta nueva</button>
-            </div>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
+          /* MODO LOGIN — layout ZONA PRO (foto producto) */
+          <div>
+            <label
+              htmlFor="zona-pro-email"
               style={{
-                width: '100%',
-                padding: '14px',
-                marginBottom: '16px',
-                background: '#333',
-                border: '1px solid #555',
-                borderRadius: '8px',
-                color: 'white',
-                fontSize: '16px'
-              }}
-            />
-
-            <input
-              type="password"
-              name="password"
-              placeholder="Contraseña"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-              style={{
-                width: '100%',
-                padding: '14px',
-                marginBottom: '12px',
-                background: '#333',
-                border: '1px solid #555',
-                borderRadius: '8px',
-                color: 'white',
-                fontSize: '16px'
-              }}
-            />
-
-            <div style={{ textAlign: 'right', marginBottom: '20px' }}>
-              <a 
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setError('Funcionalidad próximamente');
-                }}
-                style={{ 
-                  color: '#FFD700', 
-                  fontSize: '14px', 
-                  textDecoration: 'none' 
-                }}
-              >
-                ¿Olvidaste tu contraseña?
-              </a>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: '100%',
-                padding: '14px',
-                background: loading ? '#999' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                color: '#222',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1,
-                marginBottom: '20px'
+                display: 'block',
+                color: gold,
+                fontSize: 11,
+                fontWeight: 800,
+                letterSpacing: '0.12em',
+                marginBottom: 8,
+                textTransform: 'uppercase',
               }}
             >
-              {loading ? '⏳ Iniciando sesión...' : '🔐 Iniciar Sesión'}
-            </button>
+              Gmail
+            </label>
+            <input
+              id="zona-pro-email"
+              type="email"
+              name="email"
+              placeholder="tuemail@gmail.com"
+              value={formData.email}
+              onChange={handleInputChange}
+              autoComplete="email"
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+                padding: '14px 16px',
+                marginBottom: 18,
+                background: '#141414',
+                border: `1.5px solid ${gold}`,
+                borderRadius: 12,
+                color: '#fff',
+                fontSize: 15,
+                outline: 'none',
+              }}
+            />
 
-            {/* Divisor */}
-            <div style={{
-              textAlign: 'center',
-              color: '#999',
-              margin: '20px 0',
-              position: 'relative',
-              fontSize: '14px'
-            }}>
-              <span style={{ background: '#222', padding: '0 15px', position: 'relative', zIndex: 1 }}>
-                O continúa con
-              </span>
-              <div style={{
-                position: 'absolute',
-                top: '50%',
-                left: 0,
-                right: 0,
-                height: '1px',
-                background: '#555'
-              }} />
-            </div>
-
-            {/* Botones OAuth */}
             <button
               type="button"
               onClick={handleGoogleAuth}
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '12px',
-                marginBottom: '10px',
-                background: '#db4437',
-                color: 'white',
+                padding: '14px 16px',
+                marginBottom: 12,
+                background: gold,
+                color: '#0a0a0a',
                 border: 'none',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontWeight: 'bold',
+                borderRadius: 12,
+                fontSize: 16,
+                fontWeight: 800,
                 cursor: loading ? 'not-allowed' : 'pointer',
                 opacity: loading ? 0.7 : 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px'
               }}
             >
-              🔐 Google
+              {loading ? 'Conectando…' : 'Continuar con Google'}
             </button>
 
             <button
               type="button"
-              onClick={handleFacebookAuth}
+              onClick={() => {
+                setIsLogin(false);
+                setError('');
+                setSuccess('');
+              }}
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '12px',
-                background: '#3b5998',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontWeight: 'bold',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px',
-                marginBottom: '20px'
+                padding: '14px 16px',
+                background: 'transparent',
+                color: gold,
+                border: `1.5px solid ${gold}`,
+                borderRadius: 12,
+                fontSize: 16,
+                fontWeight: 700,
+                cursor: 'pointer',
               }}
             >
-              📘 Facebook
+              Crear usuario
             </button>
 
-            {/* Link a registro */}
-            <div style={{ textAlign: 'center', marginTop: '20px' }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsLogin(false);
-                  setError('');
-                  setSuccess('');
-                }}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: '#FFD700',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  textDecoration: 'none'
-                }}
-              >
-                ¿No tienes cuenta? <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>Crea tu cuenta</span>
-              </button>
-            </div>
-          </form>
+            {/* Acceso email/password opcional (no en hero de la foto; colapsado) */}
+            <details style={{ marginTop: 18, color: '#888' }}>
+              <summary style={{ cursor: 'pointer', fontSize: 12, color: '#aaa' }}>
+                Entrar con email y contraseña
+              </summary>
+              <form onSubmit={handleEmailLogin} style={{ marginTop: 12 }}>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Contraseña"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                  style={{
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    padding: '12px 14px',
+                    marginBottom: 10,
+                    background: '#141414',
+                    border: '1px solid #444',
+                    borderRadius: 10,
+                    color: '#fff',
+                    fontSize: 14,
+                  }}
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: 'transparent',
+                    color: gold,
+                    border: `1px solid ${gold}88`,
+                    borderRadius: 10,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Iniciar sesión
+                </button>
+              </form>
+            </details>
+          </div>
         ) : (
           /* MODO REGISTRO - Solo cuando el usuario lo solicita */
 

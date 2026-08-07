@@ -1,0 +1,44 @@
+{
+  "pass": true,
+  "loginPass": true,
+  "stubQuarantined": true,
+  "checks": [
+    {
+      "route": "/",
+      "pathname": "/",
+      "hasZonaPro": true,
+      "hasGoogle": true,
+      "hasCrear": true,
+      "hasGmail": true,
+      "hasInstagramHome": false,
+      "preview": "ZONA PRO\n\nSolo usuarios registrados. Si aún no tienes cuenta, crea tu usuario.\n\nGMAIL\nContinuar con GoogleCrear usuario\nEntrar con email y contraseña"
+    },
+    {
+      "route": "/login",
+      "pathname": "/login",
+      "hasZonaPro": true,
+      "hasGoogle": true,
+      "hasCrear": true,
+      "hasGmail": true,
+      "hasInstagramHome": false,
+      "preview": "ZONA PRO\n\nSolo usuarios registrados. Si aún no tienes cuenta, crea tu usuario.\n\nGMAIL\nContinuar con GoogleCrear usuario\nEntrar con email y contraseña"
+    },
+    {
+      "route": "/auth",
+      "pathname": "/auth",
+      "hasZonaPro": true,
+      "hasGoogle": true,
+      "hasCrear": true,
+      "hasGmail": true,
+      "hasInstagramHome": false,
+      "preview": "ZONA PRO\n\nSolo usuarios registrados. Si aún no tienes cuenta, crea tu usuario.\n\nGMAIL\nContinuar con GoogleCrear usuario\nEntrar con email y contraseña"
+    }
+  ],
+  "stub": {
+    "pathname": "/homepage-instagram.html",
+    "title": "FutPro 2.0 - Plataforma de Gestión Deportiva",
+    "hasRoot": true,
+    "text": "404 - P�gina no encontrada"
+  },
+  "generatedAt": "2026-08-07T22:34:40.887Z"
+}

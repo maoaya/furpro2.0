@@ -29,7 +29,26 @@ export default defineConfig(({ command, mode }) => {
           }
         }
       },
-      react()
+      react(),
+      // SPA gana sobre HTML residual (homepage-instagram, perfil.html, etc.)
+      {
+        name: 'fp-spa-route-priority',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            const url = req.url || '';
+            const pathOnly = url.split('?')[0];
+            // Nunca servir stubs HTML viejos como rutas de producto
+            if (
+              /homepage-instagram/i.test(pathOnly) ||
+              /perfil-instagram\.html$/i.test(pathOnly) ||
+              pathOnly === '/perfil.html'
+            ) {
+              req.url = '/index.html';
+            }
+            next();
+          });
+        },
+      },
     ],
     root: './',
     esbuild: {
