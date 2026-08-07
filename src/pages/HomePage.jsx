@@ -2,16 +2,13 @@ import React, { useMemo, useState, useEffect, useRef } from 'react';
 import FutproLogo from '../components/FutproLogo.jsx';
 import TournamentInviteBanner from '../components/TournamentInviteBanner.jsx';
 import NotificationsBell from '../components/NotificationsBell.jsx';
-import { NotificationsProvider } from '../context/NotificationsContext.jsx';
-import NotificationsEnableButton from '../components/NotificationsEnableButton.jsx';
 import CommentsModal from '../components/CommentsModal.jsx';
 import MenuHamburguesa from '../components/MenuHamburguesa.jsx';
-import BottomNavBar from '../components/BottomNavBar.jsx';
 import UploadContenidoComponent from '../components/UploadContenidoComponent.jsx';
 import PostCard from '../components/PostCard.jsx';
+import HomeMercadoFichajes from '../components/HomeMercadoFichajes.jsx';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
-import { NotificationManager } from '../services/NotificationManager';
 import { useAuth } from '../context/AuthContext';
 import { StoryService } from '../services/StoryService.js';
 import { PostService } from '../services/PostService.js';
@@ -40,7 +37,8 @@ const menuItemsList = (actions) => ([
   { key: 'notificaciones', label: '🔔 Notificaciones', action: actions.verNotificaciones },
   { key: 'chat', label: '💬 Chat', action: actions.abrirChat },
   { key: 'videos', label: '🎥 Videos', action: actions.verVideos },
-  { key: 'marketplace', label: '🏪 Marketplace', action: actions.abrirMarketplace },
+  { key: 'marketplace', label: '🏪 Mercado de fichajes', action: actions.abrirMarketplace },
+  { key: 'mercado', label: '🔄 Mercado (/mercado)', action: actions.abrirMercado },
   { key: 'estados', label: '📋 Estados', action: actions.verEstados },
   { key: 'seguidores', label: '👫 Seguidores', action: actions.verAmigos },
   { key: 'vivo', label: '📡 Transmitir en Vivo', action: actions.abrirTransmisionEnVivo },
@@ -73,6 +71,7 @@ const createMenuActions = (navigate) => ({
   abrirChat: () => navigate('/chat'),
   verVideos: () => navigate('/videos'),
   abrirMarketplace: () => navigate('/marketplace'),
+  abrirMercado: () => navigate('/mercado'),
   verEstados: () => navigate('/estados'),
   verAmigos: () => navigate('/amigos'),
   abrirTransmisionEnVivo: () => navigate('/transmision-en-vivo'),
@@ -131,7 +130,10 @@ export default function HomePage() {
   const [storyTournament, setStoryTournament] = useState('');
   const fileInputRef = useRef(null);
   const [menuHamburguesaOpen, setMenuHamburguesaOpen] = useState(false);
-  // Realtime y notificaciones consolidadas en NotificationsProvider
+  const [mercadoProductos, setMercadoProductos] = useState([]);
+  const [mercadoLoading, setMercadoLoading] = useState(true);
+  const [mercadoUnavailable, setMercadoUnavailable] = useState(false);
+  // Notificaciones: solo App-level NotificationsProvider (sin nest)
 
   // Cargar posts y followers al montar
   useEffect(() => {
@@ -142,6 +144,7 @@ export default function HomePage() {
 
     cargarFollowers();
     loadPosts();
+    loadMercadoFichajes();
 
     // Suscribirse a cambios en realtime
     const channelPosts = supabase
@@ -391,53 +394,51 @@ export default function HomePage() {
 
       setPosts(formatted);
       setSuggestedPosts(formatted);
-
-      // Cargar productos destacados y agregarlos arriba de sugeridos
-      try {
-        const { isTableDisabled, disableOnSchemaError } = await import('../utils/schemaCompatibilityGate.js');
-        if (isTableDisabled('products')) {
-          // FP-SB-001: no reintentar products tras schema drift.
-        } else {
-        const { data: productsData, error: prodError } = await supabase
-          .from('products')
-          .select('*')
-          .eq('is_active', true)
-          .order('views', { ascending: false })
-          .limit(6);
-
-        if (prodError) {
-          disableOnSchemaError(prodError, { table: 'products' });
-          console.warn('⚠️ Error cargando productos:', prodError.message);
-        } else if (productsData && productsData.length > 0) {
-          const productPosts = productsData.map(prod => ({
-            id: `product-${prod.id}`,
-            user: 'Marketplace',
-            avatar: 'https://via.placeholder.com/90',
-            image: prod.images?.[0] || 'https://via.placeholder.com/400',
-            title: prod.title,
-            description: `💰 $${prod.price} ${prod.currency || 'USD'} • ${prod.category || 'Producto'}`,
-            likes: prod.favorites || 0,
-            comments: 0,
-            views: prod.views || 0,
-            ubicacion: prod.location || '—',
-            tags: ['marketplace', prod.category || 'producto'],
-            user_id: prod.seller_id,
-            created_at: prod.created_at,
-            isProduct: true,
-            productId: prod.id
-          }));
-          setSuggestedPosts(prev => [...productPosts, ...prev]);
-        }
-        }
-      } catch (prodErr) {
-        console.error('❌ Error procesando productos:', prodErr);
-      }
     } catch (err) {
       console.error('❌ Error inesperado cargando posts:', err);
       setPosts([]);
       setSuggestedPosts([]);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadMercadoFichajes() {
+    setMercadoLoading(true);
+    setMercadoUnavailable(false);
+    try {
+      const {
+        isTableDisabled,
+        disableOnSchemaError,
+        withTableProbe,
+      } = await import('../utils/schemaCompatibilityGate.js');
+      if (isTableDisabled('products')) {
+        setMercadoProductos([]);
+        setMercadoUnavailable(true);
+        return;
+      }
+      const result = await withTableProbe('products', async () => {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(8);
+        if (error) disableOnSchemaError(error, { table: 'products' });
+        return { data, error };
+      });
+      if (result?.skipped || result?.error) {
+        setMercadoProductos([]);
+        setMercadoUnavailable(true);
+        return;
+      }
+      setMercadoProductos(result?.data || []);
+    } catch (err) {
+      console.warn('Mercado fichajes:', err?.message || err);
+      setMercadoProductos([]);
+      setMercadoUnavailable(true);
+    } finally {
+      setMercadoLoading(false);
     }
   }
 
@@ -655,7 +656,6 @@ export default function HomePage() {
   });
 
   return (
-    <NotificationsProvider>
     <div style={{ background: 'radial-gradient(circle at 20% 20%, rgba(255,215,0,0.08), transparent 30%), radial-gradient(circle at 80% 10%, rgba(255,215,0,0.06), transparent 30%), #0a0a0a', color: gold, minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
       <header style={{
         background: 'linear-gradient(120deg,#0b0b0b 0%, #151515 60%, #0b0b0b 100%)',
@@ -796,6 +796,13 @@ export default function HomePage() {
           <UploadContenidoComponent />
         </div>
 
+        {/* Mercado de fichajes — visible en homepage */}
+        <HomeMercadoFichajes
+          productos={mercadoProductos}
+          loading={mercadoLoading}
+          schemaUnavailable={mercadoUnavailable}
+        />
+
         {/* Invitaciones a torneos */}
         <TournamentInviteBanner />
         {/* Posts de usuarios seguidos */}
@@ -868,16 +875,15 @@ export default function HomePage() {
         onClose={() => setSelectedPostForComments(null)}
       />
 
-      <BottomNavBar />
+      {/* BottomNav vive en MainLayout — evita doble barra */}
 
       <button
         onClick={() => navigate('/crear-publicacion')}
-        style={{ position: 'fixed', right: 20, bottom: 70, width: 56, height: 56, borderRadius: '50%', background: gold, color: black, fontWeight: 800, border: 'none', boxShadow: '0 6px 18px rgba(0,0,0,0.4)', fontSize: '32px' }}
+        style={{ position: 'fixed', right: 20, bottom: 90, width: 56, height: 56, borderRadius: '50%', background: gold, color: black, fontWeight: 800, border: 'none', boxShadow: '0 6px 18px rgba(0,0,0,0.4)', fontSize: '32px' }}
         title="Crear publicación"
       >
         📸
       </button>
     </div>
-    </NotificationsProvider>
   );
 }

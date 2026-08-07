@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 
 // Estilos globales
 import './styles/tailwind.css';
@@ -10,13 +9,7 @@ import './styles/responsive.css';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
 
-// Auth y UI
-import { AuthProvider } from './context/AuthContext';
-
-// 🔥 INICIALIZAR TRACKING AUTOMÁTICO
-import './trackingInit.js';
-
-console.log('🚀 FutPro iniciando con tracking automático activado...');
+console.log('🚀 FutPro iniciando...');
 
 const container = document.getElementById('root');
 
@@ -27,7 +20,7 @@ async function bootstrap() {
   }
 
   try {
-    // Usar App.jsx como punto de entrada principal para la SPA
+    // Carga dinámica de App — permite code-splitting (sin force-import estático)
     const mod = await import('./App.jsx');
     const App = mod.default;
 
@@ -40,13 +33,22 @@ async function bootstrap() {
       </React.StrictMode>
     );
 
-    // Registrar Service Worker para futuras push notifications
+    // Tracking diferido: no bloquea primer paint / nav
+    const deferTracking = () => {
+      import('./trackingInit.js').catch(() => {});
+    };
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(deferTracking, { timeout: 3000 });
+    } else {
+      setTimeout(deferTracking, 1500);
+    }
+
     if ('serviceWorker' in navigator) {
       try {
-        const reg = await navigator.serviceWorker.register('/service-worker.js')
-        console.log('🔔 Service Worker registrado', reg.scope)
+        const reg = await navigator.serviceWorker.register('/service-worker.js');
+        console.log('🔔 Service Worker registrado', reg.scope);
       } catch (swErr) {
-        console.warn('SW no registrado:', swErr?.message || swErr)
+        console.warn('SW no registrado:', swErr?.message || swErr);
       }
     }
   } catch (err) {
@@ -55,15 +57,12 @@ async function bootstrap() {
       const overlay = document.getElementById('error-overlay');
       const content = document.getElementById('error-content');
       if (overlay && content) {
+        overlay.display = 'block';
         overlay.style.display = 'block';
         content.textContent = err && err.stack ? err.stack : String(err);
       }
-    } catch (e) { /* ignore */ }
+    } catch { /* ignore */ }
   }
 }
 
 bootstrap();
-
-// Import estático para forzar a Vite a incluir todos los módulos de la app en el build
-import './App.jsx';
-import './App.jsx';

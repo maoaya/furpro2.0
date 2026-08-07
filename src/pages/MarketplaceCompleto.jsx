@@ -29,9 +29,10 @@ export default function MarketplaceCompleto() {
     obtenerUbicacionUsuario();
     if (isTableDisabled('products')) return undefined;
 
+    // Schema alineado al cliente REST (public) — api.products nunca recibía eventos
     const channel = supabase
       .channel('marketplace:all')
-      .on('postgres_changes', { event: '*', schema: 'api', table: 'products' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
         loadProductos();
       })
       .subscribe();

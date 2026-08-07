@@ -23,38 +23,45 @@ export class NotificationManager {
             ACHIEVEMENT: 'achievement'
         };
 
-        this.init();
+        // Init diferido: no bloquear mount ni forzar socket.io sin backend
+        this._destroyed = false;
+        if (typeof requestIdleCallback === 'function') {
+            requestIdleCallback(() => this.init(), { timeout: 4000 });
+        } else {
+            setTimeout(() => this.init(), 1500);
+        }
     }
 
     // Inicializar gestor de notificaciones
     async init() {
+        if (this._destroyed || this._initialized) return;
+        this._initialized = true;
         try {
-            // Verificar soporte del navegador
             if (!('Notification' in window)) {
                 console.warn('Este navegador no soporta notificaciones');
                 return;
             }
 
-            // Verificar service worker
             if ('serviceWorker' in navigator) {
-                this.serviceWorkerRegistration = await navigator.serviceWorker.ready;
+                try {
+                    this.serviceWorkerRegistration = await navigator.serviceWorker.ready;
+                } catch { /* optional */ }
             }
 
-            // Solicitar permisos
-            await this.requestPermission();
+            // No pedir permiso agresivamente en boot — solo leer estado
+            this.isPermissionGranted = Notification.permission === 'granted';
 
-            // Configurar socket para notificaciones en tiempo real
-            this.initializeSocket();
+            // Socket.io solo si hay endpoint real configurado
+            const socketUrl = window.__ENV?.NOTIFICATIONS_SOCKET_URL;
+            if (socketUrl) {
+                this.initializeSocket(socketUrl);
+            }
 
-                // Cargar notificaciones pendientes (si el adaptador expone el método)
-                if (this.database?.getUserNotifications) {
-                    await this.loadPendingNotifications();
-                } else {
-                    console.warn('Database adapter sin getUserNotifications; se omite carga inicial.');
-                }
+            if (this.database?.getUserNotifications) {
+                await this.loadPendingNotifications();
+            }
 
-            // Configurar suscripción push
-            if (this.isPermissionGranted) {
+            if (this.isPermissionGranted && this.vapidPublicKey) {
                 await this.setupPushSubscription();
             }
 
@@ -63,12 +70,29 @@ export class NotificationManager {
         }
     }
 
+    destroy() {
+        this._destroyed = true;
+        try {
+            this.socket?.disconnect?.();
+        } catch { /* noop */ }
+        this.socket = null;
+    }
+
     // Configurar socket para notificaciones
-    initializeSocket() {
-        this.socket = io('/notifications');
-        
+    initializeSocket(url = '/notifications') {
+        try {
+            this.socket = io(url, { autoConnect: true, reconnection: false, timeout: 2000 });
+        } catch (e) {
+            console.warn('Socket notificaciones no disponible:', e?.message || e);
+            return;
+        }
+
         this.socket.on('connect', () => {
             console.log('Conectado al servidor de notificaciones');
+        });
+
+        this.socket.on('connect_error', () => {
+            try { this.socket?.disconnect?.(); } catch { /* noop */ }
         });
 
         this.socket.on('notification', (notification) => {
@@ -426,26 +450,38 @@ export class NotificationManager {
 
     // Obtener título de notificación
     getNotificationTitle(type, data) {
-        switch (type) {
+        // Acepta clave ('LIKE') o valor ('like')
+        const t = this.notificationTypes[type] || type;
+        switch (t) {
             case this.notificationTypes.LIKE:
-                return `A ${data.userName} le gustó tu publicación`;
+            case 'LIKE':
+                return `A ${data.userName || 'alguien'} le gustó tu publicación`;
             case this.notificationTypes.COMMENT:
-                return `${data.userName} comentó tu publicación`;
+            case 'COMMENT':
+                return `${data.userName || 'Alguien'} comentó tu publicación`;
             case this.notificationTypes.FOLLOW:
-                return `${data.userName} te está siguiendo`;
+            case 'FOLLOW':
+                return `${data.userName || data.followerEmail || 'Alguien'} te está siguiendo`;
             case this.notificationTypes.MENTION:
-                return `${data.userName} te mencionó`;
+            case 'MENTION':
+                return `${data.userName || 'Alguien'} te mencionó`;
             case this.notificationTypes.MESSAGE:
-                return `Mensaje de ${data.senderName}`;
+            case 'MESSAGE':
+                return `Mensaje de ${data.senderName || 'usuario'}`;
             case this.notificationTypes.TOURNAMENT:
-                return `Nuevo torneo: ${data.tournamentName}`;
+            case 'TOURNAMENT':
+                return `Nuevo torneo: ${data.tournamentName || data.name || ''}`;
             case this.notificationTypes.TEAM_INVITE:
-                return `Invitación al equipo ${data.teamName}`;
+            case 'TEAM_INVITE':
+                return `Invitación al equipo ${data.teamName || ''}`.trim();
             case this.notificationTypes.STREAM:
-                return `${data.streamerName} está transmitiendo`;
+            case 'STREAM':
+                return `${data.streamerName || 'Alguien'} está transmitiendo`;
             case this.notificationTypes.MATCH:
-                return `Partido: ${data.teamA} vs ${data.teamB}`;
+            case 'MATCH':
+                return data.teamA ? `Partido: ${data.teamA} vs ${data.teamB}` : 'Nuevo partido';
             case this.notificationTypes.ACHIEVEMENT:
+            case 'ACHIEVEMENT':
                 return `¡Logro desbloqueado!`;
             default:
                 return 'Nueva notificación';
@@ -454,11 +490,14 @@ export class NotificationManager {
 
     // Obtener cuerpo de notificación
     getNotificationBody(type, data) {
-        switch (type) {
+        const t = this.notificationTypes[type] || type;
+        switch (t) {
             case this.notificationTypes.LIKE:
+            case 'LIKE':
                 return 'Haz clic para ver la publicación';
             case this.notificationTypes.COMMENT:
-                return data.commentPreview || 'Haz clic para ver el comentario';
+            case 'COMMENT':
+                return data.commentPreview || data.content || 'Haz clic para ver el comentario';
             case this.notificationTypes.FOLLOW:
                 return 'Haz clic para ver su perfil';
             case this.notificationTypes.MENTION:

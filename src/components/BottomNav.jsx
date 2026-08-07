@@ -1,17 +1,25 @@
-
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { startTransition } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const navItems = [
-  { label: 'Inicio', path: '/', icon: '🏠' },
-  { label: 'Market', path: '/marketplace', icon: '🛍️' },
-  { label: 'Videos', path: '/videos', icon: '🎥' },
-  { label: 'Alertas', path: '/notificaciones', icon: '🔔' },
-  { label: 'Chat', path: '/chat', icon: '💬' }
+  { label: 'Inicio', path: '/', icon: '🏠', prefetch: null },
+  { label: 'Mercado', path: '/marketplace', icon: '🛍️', prefetch: () => import('../pages/MarketplaceCompleto') },
+  { label: 'Videos', path: '/videos', icon: '🎥', prefetch: () => import('../pages/VideosFeed') },
+  { label: 'Alertas', path: '/notificaciones', icon: '🔔', prefetch: null },
+  { label: 'Chat', path: '/chat', icon: '💬', prefetch: () => import('../pages/Chat') },
 ];
 
 export default function BottomNav() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const go = (path) => {
+    // Nav client-side con transición — mantiene UI responsive
+    startTransition(() => {
+      navigate(path);
+    });
+  };
+
   return (
     <nav style={{
       position: 'fixed',
@@ -27,40 +35,45 @@ export default function BottomNav() {
       boxShadow: '0 -2px 12px rgba(255,215,0,0.2)',
       zIndex: 100,
     }}>
-      {navItems.map(item => (
-        <Link
-          key={item.path}
-          to={item.path}
-          style={{
-            textDecoration: 'none',
-            color: location.pathname === item.path ? '#FFD700' : '#999',
-            background: 'transparent',
-            borderRadius: 16,
-            padding: '8px 12px',
-            fontSize: 14,
-            fontWeight: location.pathname === item.path ? 'bold' : 'normal',
-            boxShadow: 'none',
-            transition: 'all 0.2s',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 2,
-          }}
-          onMouseEnter={(e) => {
-            if (location.pathname !== item.path) {
-              e.currentTarget.style.color = '#FFD700';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (location.pathname !== item.path) {
-              e.currentTarget.style.color = '#999';
-            }
-          }}
-        >
-          <span style={{ fontSize: '1.5rem' }}>{item.icon}</span>
-          <span style={{ fontSize: '0.7rem' }}>{item.label}</span>
-        </Link>
-      ))}
+      {navItems.map(item => {
+        const active =
+          location.pathname === item.path ||
+          (item.path === '/marketplace' && location.pathname.startsWith('/mercado'));
+        return (
+          <Link
+            key={item.path}
+            to={item.path}
+            onClick={(e) => {
+              e.preventDefault();
+              go(item.path);
+            }}
+            onMouseEnter={() => {
+              try { item.prefetch?.(); } catch { /* noop */ }
+            }}
+            onTouchStart={() => {
+              try { item.prefetch?.(); } catch { /* noop */ }
+            }}
+            style={{
+              textDecoration: 'none',
+              color: active ? '#FFD700' : '#999',
+              background: 'transparent',
+              borderRadius: 16,
+              padding: '8px 12px',
+              fontSize: 14,
+              fontWeight: active ? 'bold' : 'normal',
+              boxShadow: 'none',
+              transition: 'color 0.12s',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 2,
+            }}
+          >
+            <span style={{ fontSize: '1.5rem' }}>{item.icon}</span>
+            <span style={{ fontSize: '0.7rem' }}>{item.label}</span>
+          </Link>
+        );
+      })}
     </nav>
   );
 }
