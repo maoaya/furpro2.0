@@ -44,7 +44,6 @@ import BuscarRanking from './pages/BuscarRanking';
 import Soporte from './pages/Soporte';
 import Privacidad from './pages/Privacidad';
 import ConfiguracionPage from './pages/ConfiguracionPage';
-import HomePage from './pages/HomePage';
 import PerfilCard from './pages/PerfilCard';
 import SeleccionCategoria from './pages/SeleccionCategoria';
 import FormularioRegistroCompleto from './pages/FormularioRegistroCompleto';
