@@ -542,7 +542,7 @@ const PerfilCard = () => {
 
       <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'center' }}>
         <button
-          onClick={() => navigate('/home')}
+          onClick={() => { window.location.href = '/homepage-instagram.html'; }}
           style={{
             background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
             color: '#000',

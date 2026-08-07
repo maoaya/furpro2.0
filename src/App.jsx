@@ -85,12 +85,20 @@ function RootRoute() {
     );
   }
   
-  // Si hay usuario, mostrar HomePage con layout
+  // Home canónico del producto: public/homepage-instagram.html
+  // (NO el HomePage React con stories demo / mercado guest — eso no es el diseño creado)
   if (user && user.email) {
-    return <MainLayout><HomePage /></MainLayout>;
+    if (typeof window !== 'undefined' && !window.location.pathname.includes('homepage-instagram')) {
+      window.location.replace('/homepage-instagram.html');
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#0a0a0a' }}>
+          <div style={{ color: '#FFD700', fontSize: '24px', fontWeight: 'bold' }}>Cargando Home…</div>
+        </div>
+      );
+    }
   }
-  
-  // Si no hay usuario, mostrar LoginPage
+
+  // Sin sesión → Login (nunca un Home guest rediseñado)
   return <LoginPage />;
 }
 
