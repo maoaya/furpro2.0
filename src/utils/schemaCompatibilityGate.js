@@ -40,18 +40,36 @@ const disabledRpcs = new Set(readStore().rpcs);
 
 const persist = () => writeStore(disabledTables, disabledRpcs);
 
+export const isMissingRelationError = (error) => {
+  if (!error) return false;
+  const code = String(error?.code || '');
+  const msg = String(error?.message || error?.details || error?.hint || '').toLowerCase();
+  if (code === '42P01' || code === 'PGRST205') return true;
+  // PostgREST: relation "schema.table" does not exist
+  if (msg.includes('relation') && msg.includes('does not exist')) return true;
+  if (msg.includes('not find the table') || msg.includes('could not find the table')) return true;
+  return false;
+};
+
+export const isMissingColumnError = (error) => {
+  if (!error) return false;
+  const code = String(error?.code || '');
+  const msg = String(error?.message || error?.details || error?.hint || '').toLowerCase();
+  if (code === '42703' || code === 'PGRST204') return true;
+  if (msg.includes('column') && (msg.includes('does not exist') || msg.includes('could not find'))) return true;
+  return false;
+};
+
 export const isSchemaError = (error) => {
   if (!error) return false;
   const status = Number(error?.status || error?.statusCode || 0);
   const code = String(error?.code || '');
   const msg = String(error?.message || error?.details || error?.hint || '').toLowerCase();
+  if (isMissingRelationError(error) || isMissingColumnError(error)) return true;
   if (status === 404 || status === 400) return true;
   if (code === '404' || code === '400') return true;
   if (
-    code === '42P01'
-    || code === 'PGRST205'
-    || code === 'PGRST200'
-    || code === 'PGRST204'
+    code === 'PGRST200'
     || code === 'PGRST201'
     || code === 'PGRST202'
   ) {
@@ -62,7 +80,6 @@ export const isSchemaError = (error) => {
     || msg.includes('could not find')
     || msg.includes('relationship')
     || msg.includes('schema cache')
-    || msg.includes('not find the table')
     || msg.includes('failed to parse')
     || msg.includes('foreign key')
   ) {
@@ -97,11 +114,22 @@ export const markRpcDisabled = (rpcName, reason = '') => {
   return true;
 };
 
-/** Marca tabla/RPC si el error es de schema; devuelve true si quedó deshabilitado o ya lo estaba. */
+/**
+ * Marca tabla/RPC si el error es de schema.
+ * Importante: un 42703 (columna) NO debe apagar la tabla entera — solo relación inexistente.
+ */
 export const disableOnSchemaError = (error, { table, rpc } = {}) => {
   if (!isSchemaError(error)) return false;
-  if (table) markTableDisabled(table, error?.message || error);
-  if (rpc) markRpcDisabled(rpc, error?.message || error);
+  if (rpc) {
+    // RPC ausente / firma incorrecta → gate
+    markRpcDisabled(rpc, error?.message || error);
+  }
+  if (table) {
+    if (isMissingColumnError(error) && !isMissingRelationError(error)) {
+      return false;
+    }
+    markTableDisabled(table, error?.message || error);
+  }
   return true;
 };
 

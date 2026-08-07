@@ -41,14 +41,31 @@ export async function eliminarUsuario(id) {
 
 export async function obtenerMensajesConversacion(usuarioA, usuarioB) {
   const { safeSelect } = await import('../utils/safeSelect.js');
+  // public.mensajes: remitente + usuario_id (no destinatario)
   const { data, error } = await safeSelect(
     supabase,
     'mensajes',
-    ['*', 'id,user_id,destinatario_id,texto,contenido,created_at'],
-    (q) =>
-      q
-        .or(`(user_id.eq.${usuarioA},destinatario_id.eq.${usuarioB}),(user_id.eq.${usuarioB},destinatario_id.eq.${usuarioA}),(remitente.eq.${usuarioA},destinatario.eq.${usuarioB}),(remitente.eq.${usuarioB},destinatario.eq.${usuarioA})`)
-        .order('created_at', { ascending: true })
+    [
+      'id,contenido,mensaje,remitente,usuario_id,chat_id,conversacion_id,created_at',
+      'id,contenido,remitente,usuario_id,created_at',
+      '*',
+    ],
+    (q) => q.order('created_at', { ascending: true }),
+    {
+      filterCandidates: [
+        (q) =>
+          q
+            .or(
+              `and(remitente.eq.${usuarioA},usuario_id.eq.${usuarioB}),and(remitente.eq.${usuarioB},usuario_id.eq.${usuarioA})`
+            )
+            .order('created_at', { ascending: true }),
+        (q) =>
+          q
+            .or(`remitente.eq.${usuarioA},remitente.eq.${usuarioB},usuario_id.eq.${usuarioA},usuario_id.eq.${usuarioB}`)
+            .order('created_at', { ascending: true }),
+        (q) => q.order('created_at', { ascending: true }).limit(100),
+      ],
+    }
   );
   if (error) return [];
   return data || [];
@@ -60,16 +77,22 @@ export async function obtenerMensajesUsuario(usuarioId) {
     supabase,
     'mensajes',
     [
-      'conversacion_id,chat_id,remitente,destinatario,contenido,created_at',
-      'id,remitente,destinatario,contenido,created_at',
-      'id,user_id,destinatario_id,texto,created_at',
+      'id,contenido,mensaje,remitente,usuario_id,chat_id,conversacion_id,created_at',
+      'id,contenido,remitente,usuario_id,created_at',
       '*',
     ],
-    (q) =>
-      q
-        .or(`user_id.eq.${usuarioId},destinatario_id.eq.${usuarioId},destinatario.eq.${usuarioId},remitente.eq.${usuarioId}`)
-        .order('created_at', { ascending: false })
-        .limit(50)
+    (q) => q.order('created_at', { ascending: false }).limit(50),
+    {
+      filterCandidates: [
+        (q) =>
+          q
+            .or(`remitente.eq.${usuarioId},usuario_id.eq.${usuarioId}`)
+            .order('created_at', { ascending: false })
+            .limit(50),
+        (q) => q.eq('usuario_id', usuarioId).order('created_at', { ascending: false }).limit(50),
+        (q) => q.eq('remitente', usuarioId).order('created_at', { ascending: false }).limit(50),
+      ],
+    }
   );
   if (error) return [];
   return data || [];

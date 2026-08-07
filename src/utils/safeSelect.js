@@ -2,15 +2,23 @@
  * Select progresivo ante 400/PGRST204 (columnas inexistentes).
  * Evita spam de Bad Request cuando el schema diverge.
  */
-import { disableOnSchemaError, isSchemaError, isTableDisabled, markTableDisabled } from './schemaCompatibilityGate.js';
+import {
+  disableOnSchemaError,
+  isMissingColumnError,
+  isMissingRelationError,
+  isSchemaError,
+  isTableDisabled,
+  markTableDisabled,
+} from './schemaCompatibilityGate.js';
 
 /**
  * @param {import('@supabase/supabase-js').SupabaseClient} client
  * @param {string} table
  * @param {string[]} selectCandidates - de más específico a más seguro ('*' al final)
  * @param {(q: any) => any} applyFilters - recibe el builder tras .from().select()
+ * @param {{ filterCandidates?: Array<(q: any) => any> }} [options]
  */
-export async function safeSelect(client, table, selectCandidates, applyFilters = (q) => q) {
+export async function safeSelect(client, table, selectCandidates, applyFilters = (q) => q, options = {}) {
   if (isTableDisabled(table)) {
     return { data: null, error: { message: `table disabled: ${table}`, code: 'SCHEMA_GATE' }, skipped: true };
   }
@@ -19,34 +27,39 @@ export async function safeSelect(client, table, selectCandidates, applyFilters =
     ? selectCandidates
     : ['*'];
 
+  const filterFns = Array.isArray(options.filterCandidates) && options.filterCandidates.length
+    ? options.filterCandidates
+    : [applyFilters];
+
   let lastError = null;
-  for (const sel of candidates) {
-    try {
-      let query = client.from(table).select(sel);
-      query = applyFilters(query) || query;
-      const { data, error } = await query;
-      if (!error) return { data, error: null, selectUsed: sel };
+  for (const filterFn of filterFns) {
+    for (const sel of candidates) {
+      try {
+        let query = client.from(table).select(sel);
+        query = (typeof filterFn === 'function' ? filterFn(query) : query) || query;
+        const { data, error } = await query;
+        if (!error) return { data, error: null, selectUsed: sel };
 
-      lastError = error;
-      // Columna/relación inválida → probar siguiente select; tabla inexistente → gate
-      const msg = String(error.message || '').toLowerCase();
-      const columnIssue =
-        isSchemaError(error) &&
-        (msg.includes('column') ||
-          msg.includes('could not find') ||
-          msg.includes('pgrst204') ||
-          String(error.code || '') === 'PGRST204' ||
-          String(error.code || '') === '42703');
+        lastError = error;
 
-      if (columnIssue && sel !== '*') continue;
+        if (isMissingRelationError(error)) {
+          markTableDisabled(table, error?.message || error);
+          return { data: null, error, selectUsed: sel, skipped: true };
+        }
 
-      disableOnSchemaError(error, { table });
-      return { data: null, error, selectUsed: sel };
-    } catch (e) {
-      lastError = e;
-      if (isSchemaError(e)) {
-        markTableDisabled(table, e?.message || e);
-        return { data: null, error: e, skipped: true };
+        // Columna/filtro inválido → probar siguiente combinación; no apagar tabla
+        if (isMissingColumnError(error) || isSchemaError(error)) {
+          continue;
+        }
+
+        return { data: null, error, selectUsed: sel };
+      } catch (e) {
+        lastError = e;
+        if (isMissingRelationError(e)) {
+          markTableDisabled(table, e?.message || e);
+          return { data: null, error: e, skipped: true };
+        }
+        if (isSchemaError(e)) continue;
       }
     }
   }
@@ -56,7 +69,8 @@ export async function safeSelect(client, table, selectCandidates, applyFilters =
 }
 
 /**
- * RPC con gate: no reintentar tras 404/400/503 schema/network permanente.
+ * RPC con gate: no reintentar tras 404/400 schema permanente.
+ * NETWORK_ERROR/503 no marca gate permanente (un intento soft).
  */
 export async function safeRpc(client, rpcName, args = {}) {
   const { isRpcDisabled, markRpcDisabled, withRpcProbe, disableOnSchemaError: disable } = await import('./schemaCompatibilityGate.js');
@@ -68,10 +82,11 @@ export async function safeRpc(client, rpcName, args = {}) {
       const { data, error } = await client.rpc(rpcName, args);
       if (error) {
         const status = Number(error.status || error.statusCode || 0);
-        // 503/network: no gate permanente; schema sí
-        if (status === 503 || String(error.code || '') === 'NETWORK_ERROR') {
+        const code = String(error.code || '');
+        if (status === 503 || code === 'NETWORK_ERROR') {
           return { data: null, error };
         }
+        // PGRST202 / 404 función → gate RPC
         disable(error, { rpc: rpcName });
       }
       return { data, error };

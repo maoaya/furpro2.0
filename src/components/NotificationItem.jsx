@@ -3,9 +3,11 @@ import { supabase } from '../config/supabase';
 import { safeSelect } from '../utils/safeSelect.js';
 import { isTableDisabled } from '../utils/schemaCompatibilityGate.js';
 
+const MESSAGE_TYPES = new Set(['message', 'mensaje', 'chat', 'dm', 'MESSAGE', 'MENSAJE']);
+
 /**
  * Item de notificación — preview de último mensaje sin spamear 400.
- * Columnas legacy/modernas se prueban en cascada (destinatario vs destinatario_id, etc.).
+ * Schema real (public.mensajes): remitente/usuario_id (NO destinatario).
  */
 export default function NotificationItem({ notification, userId }) {
   const [preview, setPreview] = useState('');
@@ -13,44 +15,45 @@ export default function NotificationItem({ notification, userId }) {
 
   useEffect(() => {
     const uid = userId || notification?.user_id || notification?.destinatario;
-    if (!uid || isTableDisabled('mensajes')) return undefined;
+    const type = notification?.type || notification?.tipo || '';
+    const wantsPreview =
+      MESSAGE_TYPES.has(type) ||
+      Boolean(notification?.chat_id || notification?.conversacion_id);
+
+    if (!uid || !wantsPreview || isTableDisabled('mensajes')) return undefined;
 
     let cancelled = false;
     (async () => {
       setLoading(true);
-      // Selects de más específico → más seguro (el 400 del log usaba columnas mixto)
       const result = await safeSelect(
         supabase,
         'mensajes',
         [
-          'conversacion_id,chat_id,remitente,destinatario,contenido,created_at',
-          'id,remitente,destinatario,contenido,created_at',
-          'id,user_id,destinatario_id,texto,created_at',
+          'id,contenido,mensaje,remitente,usuario_id,chat_id,conversacion_id,created_at',
+          'id,contenido,remitente,usuario_id,created_at',
           'id,contenido,created_at',
           '*',
         ],
-        (q) => {
-          // Intentar filtro por destinatario; si el select no tiene esa col, el gate cae al siguiente
-          try {
-            return q
-              .or(`destinatario.eq.${uid},destinatario_id.eq.${uid},user_id.eq.${uid}`)
-              .order('created_at', { ascending: false })
-              .limit(1);
-          } catch {
-            return q.order('created_at', { ascending: false }).limit(1);
-          }
+        (q) => q.order('created_at', { ascending: false }).limit(1),
+        {
+          filterCandidates: [
+            (q) => q.or(`remitente.eq.${uid},usuario_id.eq.${uid}`).order('created_at', { ascending: false }).limit(1),
+            (q) => q.eq('usuario_id', uid).order('created_at', { ascending: false }).limit(1),
+            (q) => q.eq('remitente', uid).order('created_at', { ascending: false }).limit(1),
+            (q) => q.order('created_at', { ascending: false }).limit(1),
+          ],
         }
       );
 
       if (cancelled) return;
       const row = Array.isArray(result.data) ? result.data[0] : null;
-      const text = row?.contenido || row?.texto || row?.body || '';
+      const text = row?.contenido || row?.mensaje || row?.texto || row?.body || '';
       setPreview(text ? String(text).slice(0, 100) : '');
       setLoading(false);
     })();
 
     return () => { cancelled = true; };
-  }, [notification?.id, userId, notification?.user_id, notification?.destinatario]);
+  }, [notification?.id, notification?.type, notification?.tipo, notification?.chat_id, notification?.conversacion_id, userId, notification?.user_id, notification?.destinatario]);
 
   const title = notification?.title || notification?.titulo || notification?.type || 'Notificación';
   const body = notification?.body || notification?.mensaje || preview || '';

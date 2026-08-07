@@ -10,9 +10,52 @@ export default defineConfig(({ command, mode }) => {
   return {
     plugins: [
       // FP-NAV-001: stubs HTML en raíz (p.ej. perfil.html) no deben secuestrar rutas React.
+      // + soft APIs locales para /api/* y /.netlify/functions/* (evita 404 spam sin netlify dev).
       {
         name: 'fp-spa-route-priority',
         configureServer(server) {
+          const softApi = (req, res, next) => {
+            const raw = req.url || '';
+            const pathname = raw.split('?')[0];
+            const softPaths = new Set([
+              '/api/gestion-torneo',
+              '/api/configurar-jugadores-torneo',
+              '/.netlify/functions/gestion-torneo',
+              '/.netlify/functions/configurar-jugadores-torneo',
+            ]);
+            if (!softPaths.has(pathname)) return next();
+            if (req.method === 'OPTIONS') {
+              res.statusCode = 204;
+              res.setHeader('Access-Control-Allow-Origin', '*');
+              res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+              res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+              res.end();
+              return;
+            }
+            const chunks = [];
+            req.on('data', (c) => chunks.push(c));
+            req.on('end', () => {
+              let body = {};
+              try {
+                const rawBody = Buffer.concat(chunks).toString('utf8');
+                body = rawBody ? JSON.parse(rawBody) : {};
+              } catch {
+                body = {};
+              }
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'application/json');
+              res.setHeader('Access-Control-Allow-Origin', '*');
+              res.end(JSON.stringify({
+                ok: true,
+                soft: true,
+                via: 'vite-dev-stub',
+                path: pathname,
+                torneo_id: body.torneo_id || body.torneoId || body.id || null,
+              }));
+            });
+          };
+
+          server.middlewares.use(softApi);
           server.middlewares.use((req, _res, next) => {
             const raw = req.url || '';
             const pathname = raw.split('?')[0];
