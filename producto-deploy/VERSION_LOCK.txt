@@ -1,5 +1,10 @@
 CANONICAL_PRODUCT=zona-pro
 DEPLOY_META=2026-08-04T21:16:30Z
-SOURCE=Desktop/futpro2.0/dist (deploy zip Netlify)
-DO_NOT_REPLACE_WITH=src/ January 80d7863 Vite tree
+SOURCE_ZIP=deploy-6a7256d5ffd58e44433d5158.zip
+SOURCE=Desktop/futpro2.0/dist (ZIP Netlify del PC)
+BUNDLE=index-DchpCYR3.js
+LOGIN_CHUNK=loginpagesnew-BPP0r_st.js
+DO_NOT_REPLACE_WITH=src/ January 80d7863 Vite tree / Instagram HTML
 SERVE=http://127.0.0.1:4173/
+MANIFEST=producto-deploy/MANIFEST_CANONICO.json
+AUDIT=auditoria/AUDITORIA_CONTEXTO_PRODUCTO_ZONA_PRO.md
