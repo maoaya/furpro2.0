@@ -15,6 +15,9 @@
 
 **El `src/` de enero NO es el producto.** Está marcado legado; Vite/build legacy están bloqueados.
 
+**Cómo trabajar (UI en el PC, no en `src/`):**  
+→ `auditoria/COMO_TRABAJAR_EN_ESTE_PROYECTO.md`
+
 ## Cómo arrancar (siempre)
 
 ```bash
