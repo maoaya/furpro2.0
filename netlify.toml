@@ -1,7 +1,11 @@
-# Zona Pro — publicar deploy del producto (no rebuild de src enero)
+# =============================================================================
+# ZONA PRO — ÚNICA versión de producción
+# publish = producto-deploy (build del dominio / PC). NUNCA rebuild de src/ enero.
+# Ver PRODUCTO_CANONICO.md
+# =============================================================================
 [build]
   publish = "producto-deploy"
-  command = "echo 'Using prebuilt producto-deploy (Zona Pro)'"
+  command = "node scripts/ensure-producto-deploy.mjs"
   ignore = "false"
 
 [build.environment]
