@@ -1,0 +1,221 @@
+⚡ GUÍA RÁPIDA DE EJECUCIÓN - 15 MINUTOS
+=======================================
+
+⏱️ TIEMPO ESTIMADO: 10-15 minutos
+
+════════════════════════════════════════════════════════════════════════════════
+PASO 1: EJECUTAR SQL (3 minutos)
+════════════════════════════════════════════════════════════════════════════════
+
+1. Abrir Supabase Dashboard
+   URL: https://app.supabase.com
+
+2. Seleccionar proyecto futpro
+
+3. Ir a SQL Editor (menú izquierdo)
+
+4. Botón "+ New Query"
+
+5. Copiar contenido de: STREAMING_TABLES.sql
+   (Archivo en raíz del proyecto)
+
+6. Pegar en editor
+
+7. EJECUTAR (botón azul "Run")
+   ⏳ Esperar ~2 segundos
+
+8. ✅ Verificar que veas:
+   - CREATE TABLE live_streams
+   - CREATE TABLE stream_comments
+   - CREATE TABLE stream_reactions
+   - CREATE TABLE stream_events
+   - ALTER TABLE tournament_matches
+
+9. Si vez "Success" en azul = ✅ Éxito
+
+10. Si hay error rojo:
+    └─ Reportar error exacto en logs
+
+════════════════════════════════════════════════════════════════════════════════
+PASO 2: AGREGAR RUTAS (5 minutos)
+════════════════════════════════════════════════════════════════════════════════
+
+1. Encontrar archivo de rutas:
+   Opciones:
+   ├─ src/App.jsx
+   ├─ src/main.jsx
+   ├─ src/pages.jsx
+   ├─ src/routes/index.jsx
+   └─ src/config/routes.js
+   
+   💡 Pista: Buscar "path:" o "Route"
+
+2. Abrir el archivo
+
+3. Buscar donde están las rutas (ej: <Routes> o rutas array)
+
+4. Agregar estas dos líneas:
+
+   OPCIÓN A (Si usa React Router):
+   ─────────────────────────────────
+   {
+     path: '/crear-torneo',
+     element: <CrearTorneoMejorado />
+   },
+   {
+     path: '/ranking',
+     element: <RankingMejorado />
+   }
+
+   OPCIÓN B (Si usa formato diferente):
+   ─────────────────────────────────────
+   <Route path="/crear-torneo" element={<CrearTorneoMejorado />} />
+   <Route path="/ranking" element={<RankingMejorado />} />
+
+5. Agregar imports al tope del archivo:
+   ────────────────────────────────────
+   import CrearTorneoMejorado from './components/CrearTorneoMejorado';
+   import RankingMejorado from './components/RankingMejorado';
+
+6. Guardar archivo (Ctrl+S o Cmd+S)
+
+════════════════════════════════════════════════════════════════════════════════
+PASO 3: TESTING RÁPIDO (5 minutos)
+════════════════════════════════════════════════════════════════════════════════
+
+1. En terminal:
+   npm run build
+   └─ Esperar que compile sin errores
+   └─ Si hay error: revisar sintaxis en rutas
+
+2. En terminal:
+   npm run dev
+   └─ Esperar que inicie servidor (http://localhost:5173 o similar)
+
+3. Abrir navegador:
+   http://localhost:5173/crear-torneo
+   
+   Verificar:
+   ✓ Carga el formulario
+   ✓ Se ve progress bar (4 pasos)
+   ✓ Campos se rellanan normalmente
+   ✓ Botones Siguiente/Atrás funcionan
+
+4. En navegador:
+   http://localhost:5173/ranking
+   
+   Verificar:
+   ✓ Carga tabla de ranking
+   ✓ Aparecen filtros
+   ✓ Tab de árbitros funciona
+   ✓ Tabla es scrolleable
+
+5. ✅ Si todo funciona = Listo para deploy
+
+════════════════════════════════════════════════════════════════════════════════
+PASO 4: DEPLOY A PRODUCCIÓN (2 minutos) - OPCIONAL
+════════════════════════════════════════════════════════════════════════════════
+
+Si está en Netlify:
+
+1. En terminal:
+   git add .
+
+2. En terminal:
+   git commit -m "feat: UX improvements - CrearTorneo, Ranking, Streaming"
+
+3. En terminal:
+   git push origin main
+   └─ Esperar ~2 minutos
+   └─ Netlify auto-deployará
+
+4. Verificar en:
+   https://futpro.vip/crear-torneo
+   https://futpro.vip/ranking
+
+════════════════════════════════════════════════════════════════════════════════
+✅ CHECKLIST DE VERIFICACIÓN
+════════════════════════════════════════════════════════════════════════════════
+
+ANTES DE EJECUTAR:
+□ Tengo acceso a Supabase dashboard
+□ Tengo acceso al repositorio git
+□ Archivo STREAMING_TABLES.sql está disponible
+□ Tengo las rutas correctas identificadas
+
+DESPUÉS DE EJECUTAR SQL:
+□ Las 4 tablas se crearon sin errores
+□ Las columnas se agregaron a tournament_matches
+□ No hay mensajes de error rojos
+
+DESPUÉS DE AGREGAR RUTAS:
+□ Archivo compila sin errores
+□ Routes se agregaron correctamente
+□ Imports están al tope del archivo
+
+DESPUÉS DE TESTING:
+□ /crear-torneo carga correctamente
+□ /ranking carga correctamente
+□ Formularios funcionan
+□ Filtros funcionan
+□ No hay errores en console (F12)
+
+════════════════════════════════════════════════════════════════════════════════
+🆘 TROUBLESHOOTING RÁPIDO
+════════════════════════════════════════════════════════════════════════════════
+
+PROBLEMA: "Tabla ya existe"
+SOLUCIÓN: SQL ya se ejecutó antes, omitir paso 1
+
+PROBLEMA: "Ruta no existe"
+SOLUCIÓN: Verificar que path sea /crear-torneo (sin tilde)
+
+PROBLEMA: "Componente no existe"
+SOLUCIÓN: Verificar que import path sea correcto
+          └─ import CrearTorneoMejorado from './components/CrearTorneoMejorado'
+
+PROBLEMA: "npm run dev no funciona"
+SOLUCIÓN: 
+  └─ npm install (instalar dependencias)
+  └─ npm run dev
+
+PROBLEMA: "Error en Supabase SQL"
+SOLUCIÓN: 
+  └─ Copiar error exacto
+  └─ Verificar que tournament_matches existe
+  └─ Ejecutar SQL en Supabase dashboard nueva query
+
+════════════════════════════════════════════════════════════════════════════════
+📱 VERIFICAR RESPONSIVE (BONUS)
+════════════════════════════════════════════════════════════════════════════════
+
+En navegador, presionar F12 y:
+
+Pantalla 1024px:
+□ CrearTorneo: Steps se ven bien
+□ Ranking: Tabla se adapta
+
+Pantalla 768px:
+□ CrearTorneo: Steps se apilan
+□ Ranking: Cards se ven bien
+
+Pantalla 375px:
+□ CrearTorneo: Mobile first
+□ Ranking: Scroll horizontal de tabla
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 PRÓXIMO PASO DESPUÉS DE ESTO
+════════════════════════════════════════════════════════════════════════════════
+
+Si todo funcionó:
+1. Crear componente MiEquipo (PENDIENTE)
+2. Testing end-to-end
+3. Mejorar visualizaciones de plantillas
+4. Deploy a producción final
+
+════════════════════════════════════════════════════════════════════════════════
+
+⏱️ TIEMPO TOTAL: ~15 minutos
+✅ RESULTADO: 85% de requisitos completados
+
+¡Éxito en la ejecución! 🚀

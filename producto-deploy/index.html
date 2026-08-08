@@ -10,7 +10,7 @@
     <meta http-equiv="Expires" content="0" />
     <meta name="description" content="Zona Pro - Plataforma de gestión deportiva con sistema de cartas, equipos y torneos en tiempo real" />
     <title>Zona Pro - Gestión Deportiva</title>
-    <style>body,html{background-color:#0b0c10;color:#f7f7f2;margin:0}#root{min-height:100vh}</style>
+    <style>html,body,#root{background-color:#0b0c10;color:#f7f7f2;margin:0;min-height:100vh}</style>
     <script>
       (function () {
         // Nunca usar XHR síncrono: con Service Worker puede congelar la app (pantalla negra).
@@ -72,10 +72,13 @@
                 return clearCaches();
               }
 
+              // Drift real: recarga una sola vez, tras marcar seen para no loop/flash infinito.
+              try { sessionStorage.setItem(bustKey, remoteStamp || localStamp); } catch (e) {}
               return clearCaches().then(function () {
                 var url = new URL(window.location.href);
+                if (url.searchParams.get('_asset')) return; // ya intentamos
                 url.searchParams.set('_asset', Date.now().toString(36));
-                window.location.replace(url.toString());
+                window.setTimeout(function () { window.location.replace(url.toString()); }, 50);
               });
             })
             .catch(function () {
@@ -86,9 +89,10 @@
     </script>
     <!-- Google Sign-In Script -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script type="module" crossorigin src="/assets/index-DchpCYR3.js"></script>
+    <script type="module" crossorigin src="/assets/index-zp-nomenu-Hb7k2m.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/vendor-C0jAFBLR.js">
     <link rel="modulepreload" crossorigin href="/assets/supabase-X1tipi0N.js">
+    <link rel="modulepreload" crossorigin href="/assets/loginpagesnew-BPP0r_st.js">
     <link rel="stylesheet" crossorigin href="/assets/index-DoGwQ0mo.css">
   </head>
   <body>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Test Rápido - Botón Crear Usuario</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #1a1a1a;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .test-card {
+            background: #2a2a2a;
+            border: 2px solid #FFD700;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        button {
+            background: #FFD700;
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            width: 100%;
+        }
+        button:hover {
+            background: #fbbf24;
+        }
+        .log {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            height: 200px;
+            overflow-y: scroll;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        .emergency-test {
+            background: #dc2626;
+            color: white;
+        }
+        .emergency-test:hover {
+            background: #b91c1c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test Rápido - Navegación</h1>
+        
+        <div class="test-card">
+            <h3>🚀 Test Inmediato del Botón</h3>
+            <button onclick="testNavigationNow()">Test: Simular Click "Crear Usuario"</button>
+            <button onclick="directRedirect()">Test: Redirección Directa</button>
+            <button onclick="testWithConsole()">Test: Con Logs Detallados</button>
+            <button class="emergency-test" onclick="emergencyRedirect()">🚨 REDIRECCIÓN FORZADA</button>
+        </div>
+
+        <div class="test-card">
+            <h3>📋 Información del Sistema</h3>
+            <button onclick="showSystemInfo()">Ver Info del Sistema</button>
+            <button onclick="testRouterConfig()">Test Configuración Router</button>
+            <button onclick="simulateProduction()">Simular Entorno Producción</button>
+        </div>
+
+        <div class="test-card">
+            <h3>📊 Console Log</h3>
+            <div id="log" class="log"></div>
+            <button onclick="clearLog()">Limpiar Log</button>
+        </div>
+    </div>
+
+    <script>
+        const log = document.getElementById('log');
+
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                info: '#0ff',
+                success: '#0f0', 
+                error: '#f00',
+                warning: '#ff0'
+            };
+            
+            log.innerHTML += `<span style="color: ${colors[type]}">[${timestamp}] ${message}</span><br>`;
+            log.scrollTop = log.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function clearLog() {
+            log.innerHTML = '';
+        }
+
+        // Test 1: Simular click exacto del botón
+        function testNavigationNow() {
+            addLog('🔍 Simulando click exacto del botón "Crear Usuario"...', 'info');
+            
+            try {
+                // Simular exactamente lo que hace el botón
+                addLog('🚀 Navegando a crear usuario completo...', 'info');
+                
+                // Verificar URL actual
+                addLog(`📍 URL actual: ${window.location.href}`, 'info');
+                
+                // Intentar navegación
+                const targetUrl = window.location.origin + '/registro-nuevo';
+                addLog(`🎯 URL objetivo: ${targetUrl}`, 'info');
+                
+                // Usar different methods
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                    addLog('✅ Navegación iniciada con location.href', 'success');
+                }, 1000);
+                
+            } catch (error) {
+                addLog(`❌ Error en navegación: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 2: Redirección directa
+        function directRedirect() {
+            addLog('🔄 Probando redirección directa...', 'info');
+            
+            const urls = [
+                '/registro-nuevo',
+                '/registro-nuevo/',
+                window.location.origin + '/registro-nuevo',
+                'https://futpro.vip/registro-nuevo'
+            ];
+            
+            urls.forEach((url, index) => {
+                addLog(`📍 Opción ${index + 1}: ${url}`, 'info');
+            });
+            
+            // Probar primera opción
+            setTimeout(() => {
+                window.location.href = window.location.origin + '/registro-nuevo';
+                addLog('🚀 Redirigiendo...', 'success');
+            }, 2000);
+        }
+
+        // Test 3: Con logs detallados
+        function testWithConsole() {
+            addLog('📝 Iniciando test con logs detallados...', 'info');
+            
+            // Verificar elementos del DOM
+            addLog('🔍 Verificando elementos DOM...', 'info');
+            
+            // Simular eventos
+            addLog('🖱️ Simulando eventos de mouse...', 'info');
+            
+            // Verificar localStorage
+            const authData = {
+                authCompleted: localStorage.getItem('authCompleted'),
+                loginSuccess: localStorage.getItem('loginSuccess'),
+                session: localStorage.getItem('session'),
+                registroCompleto: localStorage.getItem('registroCompleto')
+            };
+            
+            addLog(`💾 LocalStorage: ${JSON.stringify(authData)}`, 'info');
+            
+            // Verificar errores JavaScript
+            window.addEventListener('error', function(e) {
+                addLog(`💥 Error JS: ${e.message}`, 'error');
+            });
+            
+            // Intentar navegación con timeout
+            setTimeout(() => {
+                try {
+                    addLog('🚀 Ejecutando navigate("/registro-nuevo")...', 'info');
+                    window.location.href = window.location.origin + '/registro-nuevo';
+                    addLog('✅ Comando ejecutado', 'success');
+                } catch (error) {
+                    addLog(`❌ Error: ${error.message}`, 'error');
+                }
+            }, 3000);
+        }
+
+        // Test 4: Redirección de emergencia
+        function emergencyRedirect() {
+            addLog('🚨 EJECUTANDO REDIRECCIÓN DE EMERGENCIA...', 'warning');
+            
+            // Múltiples intentos
+            const methods = [
+                () => window.location.href = '/registro-nuevo',
+                () => window.location.assign('/registro-nuevo'),
+                () => window.location.replace('/registro-nuevo'),
+                () => window.open('/registro-nuevo', '_self'),
+                () => window.location.href = window.location.origin + '/registro-nuevo'
+            ];
+            
+            methods.forEach((method, index) => {
+                setTimeout(() => {
+                    try {
+                        addLog(`🔄 Método ${index + 1}: Ejecutando...`, 'warning');
+                        method();
+                        addLog(`✅ Método ${index + 1}: Ejecutado`, 'success');
+                    } catch (error) {
+                        addLog(`❌ Método ${index + 1}: Error - ${error.message}`, 'error');
+                    }
+                }, index * 2000);
+            });
+        }
+
+        // Info del sistema
+        function showSystemInfo() {
+            addLog('📊 Información del Sistema:', 'info');
+            addLog(`🌐 User Agent: ${navigator.userAgent}`, 'info');
+            addLog(`📱 Platform: ${navigator.platform}`, 'info');
+            addLog(`🔗 URL: ${window.location.href}`, 'info');
+            addLog(`🏠 Origin: ${window.location.origin}`, 'info');
+            addLog(`📍 Pathname: ${window.location.pathname}`, 'info');
+            addLog(`🔍 Search: ${window.location.search}`, 'info');
+            addLog(`#️⃣ Hash: ${window.location.hash}`, 'info');
+            
+            // Verificar React
+            if (typeof window.React !== 'undefined') {
+                addLog('⚛️ React: Detectado', 'success');
+            } else {
+                addLog('⚛️ React: No detectado', 'warning');
+            }
+            
+            // Verificar errores
+            if (window.lastError) {
+                addLog(`💥 Último error: ${window.lastError}`, 'error');
+            }
+        }
+
+        // Test configuración router
+        function testRouterConfig() {
+            addLog('🗺️ Verificando configuración del router...', 'info');
+            
+            // Lista de rutas esperadas
+            const expectedRoutes = [
+                '/',
+                '/login', 
+                '/registro-nuevo',
+                '/home',
+                '/perfil-card',
+                '/auth/callback'
+            ];
+            
+            expectedRoutes.forEach(route => {
+                const fullUrl = window.location.origin + route;
+                
+                fetch(fullUrl, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            addLog(`✅ ${route}: Disponible (${response.status})`, 'success');
+                        } else {
+                            addLog(`⚠️ ${route}: Status ${response.status}`, 'warning');
+                        }
+                    })
+                    .catch(error => {
+                        addLog(`❌ ${route}: Error - ${error.message}`, 'error');
+                    });
+            });
+        }
+
+        // Simular entorno de producción
+        function simulateProduction() {
+            addLog('🏭 Simulando entorno de producción...', 'info');
+            
+            // Verificar si estamos en producción
+            const isProduction = window.location.hostname === 'futpro.vip';
+            addLog(`🔍 En producción: ${isProduction ? 'SÍ' : 'NO'}`, isProduction ? 'success' : 'warning');
+            
+            if (!isProduction) {
+                addLog('⚠️ No estamos en futpro.vip, simulando...', 'warning');
+                
+                // Simular redirección a producción
+                setTimeout(() => {
+                    window.location.href = 'https://futpro.vip/registro-nuevo';
+                    addLog('🚀 Redirigiendo a producción...', 'info');
+                }, 2000);
+            } else {
+                addLog('✅ Ya estamos en producción', 'success');
+                
+                // Test directo en producción
+                setTimeout(() => {
+                    window.location.href = '/registro-nuevo';
+                    addLog('🔄 Navegando en producción...', 'info');
+                }, 1000);
+            }
+        }
+
+        // Capturar errores
+        window.addEventListener('error', function(e) {
+            window.lastError = e.message;
+            addLog(`💥 Error capturado: ${e.message}`, 'error');
+        });
+
+        // Auto-ejecutar test básico
+        window.addEventListener('load', function() {
+            addLog('🚀 Test rápido cargado', 'success');
+            addLog('👆 Haz click en cualquier botón para probar', 'info');
+        });
+    </script>
+</body>
+</html>

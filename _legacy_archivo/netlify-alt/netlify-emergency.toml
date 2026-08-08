@@ -1,0 +1,56 @@
+# Netlify Deploy Emergency Config
+# Configuración de emergencia para resolver ERR_CONNECTION_REFUSED
+
+[build]
+  publish = "dist"
+  command = "npm run build"
+  ignore = "false"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+  SECRETS_SCAN_ENABLED = "false"
+  VITE_AUTO_CONFIRM_SIGNUP = "true"
+  VITE_PRODUCTION_MODE = "true"
+  # Force rebuild
+  NETLIFY_BUILD_ID = "emergency-deploy-2025-10-02"
+
+# Custom domain settings
+[[redirects]]
+  from = "https://futpro.vip/*"
+  to = "https://furpro20.netlify.app/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/auth/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/oauth/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/callback*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Content-Security-Policy = "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; font-src * data:; connect-src *; frame-src *; object-src 'none';"
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+    Access-Control-Allow-Headers = "*"
+
+[functions]
+  directory = "functions"

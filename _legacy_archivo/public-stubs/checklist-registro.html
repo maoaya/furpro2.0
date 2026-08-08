@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checklist Registro FutPro</title>
+  <style>
+    :root{--bg:#0b0b0b;--card:#121212;--gold:#FFD700;--text:#eee;--muted:#aaa}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+    .container{max-width:860px;margin:24px auto;padding:16px}
+    .header{text-align:center;margin-bottom:16px}
+    .header h1{margin:0 0 4px;color:var(--gold)}
+    .card{background:var(--card);border:2px solid var(--gold);border-radius:14px;padding:16px;margin-bottom:16px}
+    .step{display:grid;grid-template-columns:1fr 2fr;gap:12px;align-items:center;margin-bottom:8px}
+    .step h2{margin:0;color:var(--gold)}
+    .list{list-style:none;padding:0;margin:0}
+    .list li{margin:8px 0;padding:8px;border:1px solid #2a2a2a;border-radius:10px;display:flex;gap:8px;align-items:flex-start}
+    .list input[type=checkbox]{transform:scale(1.2);margin-top:2px}
+    .muted{color:var(--muted);font-size:12px}
+    .print{margin-top:16px;text-align:center}
+    .btn{background:linear-gradient(135deg,var(--gold),#ff8c00);border:0;color:#000;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer}
+    @media print{
+      .btn{display:none}
+      .card{break-inside:avoid}
+      body{background:#fff;color:#000}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Checklist de Registro • FutPro</h1>
+      <div class="muted">Imprime esta hoja y marca cada ítem al completar</div>
+    </div>
+
+    <div class="card">
+      <div class="step">
+        <h2>1) Credenciales</h2>
+        <div class="muted">Correo y seguridad</div>
+      </div>
+      <ul class="list">
+        <li><input type="checkbox" /> <label>Email válido (ej. usuario@email.com)</label></li>
+        <li><input type="checkbox" /> <label>Contraseña (mín. 6 caracteres)</label></li>
+        <li><input type="checkbox" /> <label>Confirmar contraseña (coincide)</label></li>
+        <li><input type="checkbox" /> <label>Categoría seleccionada (Infantil Fem./Masc., Fem., Masc.)</label></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="step">
+        <h2>2) Datos personales</h2>
+        <div class="muted">Identidad y contacto</div>
+      </div>
+      <ul class="list">
+        <li><input type="checkbox" /> <label>Nombre</label></li>
+        <li><input type="checkbox" /> <label>Apellido</label></li>
+        <li><input type="checkbox" /> <label>Edad</label></li>
+        <li><input type="checkbox" /> <label>Teléfono</label></li>
+        <li><input type="checkbox" /> <label>País (selector)</label></li>
+        <li><input type="checkbox" /> <label>Ciudad (según país)</label></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="step">
+        <h2>3) Info futbolística</h2>
+        <div class="muted">Juego y rol</div>
+      </div>
+      <ul class="list">
+        <li><input type="checkbox" /> <label>Posición favorita (Portero, Defensa, Lateral, Carrilero, Pivote, Interiores, Enganche, Extremos, Delanteros, Flexible)</label></li>
+        <li><input type="checkbox" /> <label>Nivel de habilidad (Principiante/Intermedio/Avanzado/Élite)</label></li>
+        <li><input type="checkbox" /> <label>Equipo favorito</label></li>
+        <li><input type="checkbox" /> <label>Peso (kg) y Altura (cm)</label></li>
+        <li><input type="checkbox" /> <label>Pie hábil (Derecho/Izquierdo/Ambidiestro)</label></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="step">
+        <h2>4) Disponibilidad</h2>
+        <div class="muted">Cuándo juegas</div>
+      </div>
+      <ul class="list">
+        <li><input type="checkbox" /> <label>Frecuencia (Ocasional/Regular/Frecuente/Intensivo)</label></li>
+        <li><input type="checkbox" /> <label>Horario (Madrugadas/Mañanas/Mediodía/Tardes/Tardes-Noche/Noches/Fines de semana)</label></li>
+        <li><input type="checkbox" /> <label>Objetivos personales</label></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="step">
+        <h2>5) Foto de perfil</h2>
+        <div class="muted">Opcional</div>
+      </div>
+      <ul class="list">
+        <li><input type="checkbox" /> <label>Subiste una foto (JPG/PNG)</label></li>
+        <li><input type="checkbox" /> <label>Vista previa verificada</label></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="step">
+        <h2>6) Finalizar</h2>
+        <div class="muted">Crea tu cuenta</div>
+      </div>
+      <ul class="list">
+        <li><input type="checkbox" /> <label>Crear cuenta con correo y contraseña</label></li>
+        <li><input type="checkbox" /> <label>O continuar con Google (recomendado)</label></li>
+        <li><input type="checkbox" /> <label>Ver Card generada y puntuación</label></li>
+        <li><input type="checkbox" /> <label>Ir al Homepage</label></li>
+      </ul>
+    </div>
+
+    <div class="print">
+      <button class="btn" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+  </div>
+</body>
+</html>

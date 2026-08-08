@@ -1,3 +1,0 @@
- »   Warning: whoami is not a netlify command.
-? Did you mean api (y/N) [25D[25C
- »   Error: Run netlify help for a list of available commands.

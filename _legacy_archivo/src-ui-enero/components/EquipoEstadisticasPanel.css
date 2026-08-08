@@ -1,0 +1,15 @@
+.equipo-estadisticas-panel {
+  background: #232323;
+  color: #FFD700;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  padding: 32px;
+  max-width: 420px;
+  margin: 40px auto;
+  text-align: left;
+  border: 2px solid #FFD700;
+}
+.equipo-estadisticas-panel h3 {
+  text-align: center;
+  margin-bottom: 18px;
+}

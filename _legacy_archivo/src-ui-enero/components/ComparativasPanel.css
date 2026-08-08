@@ -1,0 +1,35 @@
+.comparativas-panel {
+  background: #232323;
+  color: #FFD700;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  padding: 32px;
+  max-width: 600px;
+  margin: 40px auto;
+  text-align: left;
+  border: 2px solid #FFD700;
+}
+.comparativas-panel h3 {
+  text-align: center;
+  margin-bottom: 18px;
+}
+.comparativas-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #181818;
+}
+.comparativas-table th, .comparativas-table td {
+  border: 1px solid #FFD700;
+  padding: 8px 12px;
+  text-align: center;
+}
+.comparativas-table th {
+  background: #FFD700;
+  color: #232323;
+}
+.comparativas-table tr:nth-child(even) {
+  background: #232323;
+}
+.comparativas-table tr:nth-child(odd) {
+  background: #181818;
+}

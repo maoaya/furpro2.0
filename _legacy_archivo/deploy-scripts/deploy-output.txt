@@ -1,0 +1,368 @@
+[project.ts]: detectFrameworks
+[project.ts]: detectBuildSystem
+[project.ts]: detectWorkspaces
+[project.ts]: detectPackageManager
+[project.ts]: detectFrameworksInPath - undefined
+​
+❯ Initial build environment
+config: C:\Users\lenovo\Desktop\futpro2.0\netlify.toml
+context: dev
+cwd: C:\Users\lenovo\Desktop\futpro2.0
+featureFlags: []
+mode: cli
+repositoryRoot: C:\Users\lenovo\Desktop\futpro2.0
+siteId: 74bcadc0-f0f4-493a-8bbb-d73ebed36e85
+​
+❯ UI build settings
+baseRelDir: true
+build:
+  command: npm run build
+  publish: dist
+​
+❯ Resolved build environment
+branch: master
+buildDir: C:\Users\lenovo\Desktop\futpro2.0
+configPath: C:\Users\lenovo\Desktop\futpro2.0\netlify.toml
+context: dev
+env:
+  - NODE_VERSION
+  - NPM_VERSION
+  - NODE_OPTIONS
+  - VITE_NODE_ENV
+  - CI
+  - DISABLE_ESLINT_PLUGIN
+  - GENERATE_SOURCEMAP
+  - SECRETS_SCAN_ENABLED
+  - NETLIFY_SECRETS_SCAN
+  - VITE_AUTO_CONFIRM_SIGNUP
+  - VITE_PRODUCTION_MODE
+  - VITE_TRACKING_ENABLED
+  - VITE_AUTO_SAVE_ENABLED
+  - VITE_SUPABASE_URL
+  - VITE_SUPABASE_ANON_KEY
+  - VITE_GOOGLE_CLIENT_ID
+  - NETLIFY_BUILD_ID
+  - SECRETS_SCAN_OMIT_PATHS
+  - SECRETS_SCAN_OMIT_KEYS
+  - sb_publishable_ogM0DfDZHePZ3FiOmlxpUg_WPURRcKm
+  - sb_secret_2Yeu4eDbNAvfiInTO6XrNw_s5bNOihu
+  - SUPABASE_ANON_KEY
+  - SUPABASE_DATABASE_URL
+  - SUPABASE_JWT_SECRET
+  - SUPABASE_SERVICE_ROLE_KEY
+  - VITE_APP_URL
+  - DEPLOY_ID
+  - BUILD_ID
+  - ACCOUNT_ID
+  - REPOSITORY_URL
+  - NETLIFY_LOCAL
+  - HEAD
+  - COMMIT_REF
+  - CACHED_COMMIT_REF
+  - PULL_REQUEST
+  - LANG
+  - LANGUAGE
+  - LC_ALL
+  - GATSBY_TELEMETRY_DISABLED
+  - NEXT_TELEMETRY_DISABLED
+​
+❯ Resolved config
+build:
+  base: C:\Users\lenovo\Desktop\futpro2.0
+  command: node copy-env.js && npm ci && npm run build
+  commandOrigin: config
+  environment:
+    - NODE_VERSION
+    - NPM_VERSION
+    - NODE_OPTIONS
+    - VITE_NODE_ENV
+    - CI
+    - DISABLE_ESLINT_PLUGIN
+    - GENERATE_SOURCEMAP
+    - SECRETS_SCAN_ENABLED
+    - NETLIFY_SECRETS_SCAN
+    - VITE_AUTO_CONFIRM_SIGNUP
+    - VITE_PRODUCTION_MODE
+    - VITE_TRACKING_ENABLED
+    - VITE_AUTO_SAVE_ENABLED
+    - VITE_SUPABASE_URL
+    - VITE_SUPABASE_ANON_KEY
+    - VITE_GOOGLE_CLIENT_ID
+    - NETLIFY_BUILD_ID
+    - SECRETS_SCAN_OMIT_PATHS
+    - SECRETS_SCAN_OMIT_KEYS
+  ignore: git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':!README.md' ':!*.md'
+  publish: C:\Users\lenovo\Desktop\futpro2.0\dist
+  publishOrigin: config
+functions:
+  "*":
+    external_node_modules:
+      - "@supabase/supabase-js"
+      - firebase
+    node_bundler: esbuild
+functionsDirectory: C:\Users\lenovo\Desktop\futpro2.0\functions
+headers:
+  - for: /*
+    values:
+      Permissions-Policy: camera=(), microphone=(), geolocation=()
+      Referrer-Policy: strict-origin-when-cross-origin
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: DENY
+      X-XSS-Protection: 1; mode=block
+  - for: /auth/*
+    values:
+      Cache-Control: no-cache
+      X-Robots-Tag: noindex
+  - for: /assets/*
+    values:
+      Cache-Control: public, max-age=31536000, immutable
+  - for: /manifest.json
+    values:
+      Cache-Control: public, max-age=0, must-revalidate
+      Content-Type: application/manifest+json
+  - for: /sw.js
+    values:
+      Cache-Control: no-cache
+      Content-Type: application/javascript
+      Service-Worker-Allowed: /
+  - for: /index.html
+    values:
+      Cache-Control: public, max-age=0, must-revalidate
+  - for: /api/*
+    values:
+      Access-Control-Allow-Headers: Content-Type, Authorization
+      Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+      Access-Control-Allow-Origin: https://futpro.vip
+  - for: /*
+    values:
+      Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With
+      Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, PATCH
+      Access-Control-Allow-Origin: "*"
+      Content-Security-Policy: "default-src 'self' 'unsafe-inline' 'unsafe-eval' data:
+        blob: \r
+​
+        \      qqrxetxcglwrejtblwut.supabase.co \r
+​
+        \      *.googleapis.com \r
+​
+        \      *.google.com \r
+​
+        \      *.firebase.com \r
+​
+        \      *.firebaseio.com \r
+​
+        \      futpro.vip \r
+​
+        \      *.netlify.app;\r
+​
+        \      script-src 'self' 'unsafe-inline' 'unsafe-eval' \r
+​
+        \      *.googleapis.com \r
+​
+        \      *.google.com \r
+​
+        \      *.firebase.com;\r
+​
+        \      style-src 'self' 'unsafe-inline' \r
+​
+        \      *.googleapis.com \r
+​
+        \      *.google.com;\r
+​
+        \      img-src 'self' data: blob: \r
+​
+        \      *.supabase.co \r
+​
+        \      *.google.com \r
+​
+        \      *.googleapis.com;\r
+​
+        \      connect-src 'self' \r
+​
+        \      qqrxetxcglwrejtblwut.supabase.co \r
+​
+        \      *.googleapis.com \r
+​
+        \      *.google.com \r
+​
+        \      *.firebase.com \r
+​
+        \      *.firebaseio.com;\r
+​
+        \      font-src 'self' data: \r
+​
+        \      *.googleapis.com \r
+​
+        \      *.google.com;"
+      Permissions-Policy: camera=(), microphone=(), geolocation=()
+      Referrer-Policy: strict-origin-when-cross-origin
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+  - for: /static/*
+    values:
+      Cache-Control: public, max-age=31536000, immutable
+  - for: /*.js
+    values:
+      Cache-Control: public, max-age=300, must-revalidate
+  - for: /*.css
+    values:
+      Cache-Control: public, max-age=300, must-revalidate
+  - for: /*.html
+    values:
+      Cache-Control: public, max-age=0, must-revalidate
+headersOrigin: config
+redirects:
+  - from: /auth
+    status: 200
+    to: /index.html
+  - from: /auth/*
+    status: 200
+    to: /index.html
+  - from: /auth/callback
+    status: 200
+    to: /index.html
+  - from: /oauth/callback
+    status: 200
+    to: /index.html
+  - from: /callback
+    status: 200
+    to: /index.html
+  - from: /login
+    status: 200
+    to: /index.html
+  - from: /login/*
+    status: 200
+    to: /index.html
+  - from: /registro
+    status: 200
+    to: /index.html
+  - from: /registro/*
+    status: 200
+    to: /index.html
+  - from: /registro-completo
+    status: 200
+    to: /index.html
+  - from: /home
+    status: 200
+    to: /index.html
+  - from: /home/*
+    status: 200
+    to: /index.html
+  - from: /inicio
+    status: 200
+    to: /index.html
+  - from: /inicio/*
+    status: 200
+    to: /index.html
+  - from: /dashboard
+    status: 200
+    to: /index.html
+  - from: /dashboard/*
+    status: 200
+    to: /index.html
+  - from: /perfil
+    status: 200
+    to: /index.html
+  - from: /perfil/*
+    status: 200
+    to: /index.html
+  - from: /usuarios
+    status: 200
+    to: /index.html
+  - from: /usuarios/*
+    status: 200
+    to: /index.html
+  - from: /torneos
+    status: 200
+    to: /index.html
+  - from: /torneos/*
+    status: 200
+    to: /index.html
+  - from: /equipos
+    status: 200
+    to: /index.html
+  - from: /equipos/*
+    status: 200
+    to: /index.html
+  - from: /chat
+    status: 200
+    to: /index.html
+  - from: /chat/*
+    status: 200
+    to: /index.html
+  - from: /notificaciones
+    status: 200
+    to: /index.html
+  - from: /notificaciones/*
+    status: 200
+    to: /index.html
+  - from: /validar-usuario
+    status: 200
+    to: /index.html
+  - from: /test
+    status: 200
+    to: /index.html
+  - from: /api/*
+    status: 200
+    to: /api/:splat
+  - force: true
+    from: /auth/*
+    status: 200
+    to: /index.html
+  - force: true
+    from: /oauth/*
+    status: 200
+    to: /index.html
+  - force: true
+    from: /registro*
+    status: 200
+    to: /index.html
+  - force: true
+    from: /formulario-registro*
+    status: 200
+    to: /index.html
+  - from: /api/*
+    status: 200
+    to: /.netlify/functions/:splat
+  - from: /*
+    status: 200
+    to: /index.html
+redirectsOrigin: config
+
+Deploying to Netlify
+────────────────────────────────────────────────────────────────
+
+[32mDeploy path: [39m       C:\Users\lenovo\Desktop\futpro2.0\dist
+[32mFunctions path: [39m    C:\Users\lenovo\Desktop\futpro2.0\.functions-empty
+[32mConfiguration path: [39mC:\Users\lenovo\Desktop\futpro2.0\netlify.toml
+
+[33m⠋[39m Uploading blobs to deploy store...
+
+[32m✔[39m Finished uploading blobs to deploy store
+[33m⠋[39m Hashing files...
+[33m⠋[39m Looking for a functions cache...
+[32m✔[39m Ignored invalid or expired functions cache
+[32m✔[39m Finished hashing 
+[33m⠋[39m CDN diffing files...
+[32m✔[39m CDN requesting 0 files
+[33m⠋[39m Uploading 0 files
+[32m✔[39m Finished uploading 0 assets
+[33m⠋[39m Waiting for deploy to go live...
+[32m✔[39m Deploy is live!
+
+🚀 Deploy complete
+────────────────────────────────────────────────────────────────
+
+╭────────────────────── ⬥  Production deploy is live ⬥  ───────────────────────╮
+│                                                                              │
+│                Deployed to production URL: https://futpro.vip                │
+│                                                                              │
+│                             Unique deploy URL:                               │
+│           https://69194f71114926b79b691ea7--futprovip.netlify.app            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+[32mBuild logs: [39m        https://app.netlify.com/projects/futprovip/deploys/69194f71114926b79b691ea7
+[32mFunction logs: [39m     https://app.netlify.com/projects/futprovip/logs/functions
+[32mEdge function Logs: [39mhttps://app.netlify.com/projects/futprovip/logs/edge-functions

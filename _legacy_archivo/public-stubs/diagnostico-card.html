@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnóstico: Creación de Card</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #0f172a;
+      color: #fff;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #1a202c;
+      border: 2px solid #FFD700;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    h1 {
+      color: #FFD700;
+      border-bottom: 2px solid #FFD700;
+      padding-bottom: 10px;
+    }
+    .step {
+      margin: 20px 0;
+      padding: 15px;
+      background: #2d3748;
+      border-left: 4px solid #FFD700;
+      border-radius: 5px;
+    }
+    .step h3 {
+      margin-top: 0;
+      color: #FFD700;
+    }
+    .success {
+      color: #48bb78;
+    }
+    .error {
+      color: #f56565;
+    }
+    .info {
+      color: #63b3ed;
+    }
+    pre {
+      background: #000;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+    }
+    button {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 5px 5px 5px 0;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 Diagnóstico: Sistema de Card FutPro</h1>
+    
+    <div class="step">
+      <h3>📋 Información del Navegador</h3>
+      <p>URL actual: <code id="urlActual"></code></p>
+      <p>LocalStorage disponible: <span id="localStorage"></span></p>
+      <p>SessionStorage disponible: <span id="sessionStorage"></span></p>
+    </div>
+
+    <div class="step">
+      <h3>🔐 Estado de Sesión</h3>
+      <div id="sessionStatus"></div>
+      <button onclick="verificarSesion()">🔄 Verificar Sesión</button>
+    </div>
+
+    <div class="step">
+      <h3>📦 Datos Pendientes</h3>
+      <div id="pendingData"></div>
+      <button onclick="mostrarPendingData()">📋 Ver pendingProfileData</button>
+    </div>
+
+    <div class="step">
+      <h3>🗄️ Prueba de Inserción en Supabase</h3>
+      <p>Esta prueba intentará insertar un registro de card directamente en Supabase:</p>
+      <button onclick="pruebaInsertCard()">🧪 Probar Inserción</button>
+      <div id="testResult"></div>
+    </div>
+
+    <div class="step">
+      <h3>📊 Información Guardada</h3>
+      <button onclick="mostrarTodoLocalStorage()">📂 Ver Todo LocalStorage</button>
+      <div id="storageInfo"></div>
+    </div>
+
+    <div class="step">
+      <h3>🧹 Limpiar Datos</h3>
+      <button onclick="limpiarPendingData()" style="background: #f56565;">🗑️ Limpiar pendingProfileData</button>
+      <button onclick="limpiarTodo()" style="background: #dd6b20;">🗑️ Limpiar TODO LocalStorage</button>
+    </div>
+  </div>
+
+  <script>
+    // Cargar variables de entorno
+    const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTAwMDAwMDAsImV4cCI6MTk5OTk5OTk5OX0.fake';
+
+    // Inicializar info básica
+    document.getElementById('urlActual').textContent = window.location.href;
+    document.getElementById('localStorage').textContent = localStorage ? '✅ Sí' : '❌ No';
+    document.getElementById('sessionStorage').textContent = sessionStorage ? '✅ Sí' : '❌ No';
+
+    async function verificarSesion() {
+      const result = document.getElementById('sessionStatus');
+      result.innerHTML = '<p class="info">🔄 Verificando sesión...</p>';
+      
+      try {
+        // Simular llamada Supabase
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token') || 'NO_TOKEN'}`,
+            'apikey': SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const user = await response.json();
+          result.innerHTML = `
+            <p class="success">✅ Sesión activa</p>
+            <pre>${JSON.stringify(user, null, 2)}</pre>
+          `;
+        } else {
+          result.innerHTML = `
+            <p class="error">❌ Error: ${response.status}</p>
+            <pre>${await response.text()}</pre>
+          `;
+        }
+      } catch (error) {
+        result.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+      }
+    }
+
+    function mostrarPendingData() {
+      const result = document.getElementById('pendingData');
+      const data = localStorage.getItem('pendingProfileData');
+      
+      if (!data) {
+        result.innerHTML = '<p class="error">❌ No hay pendingProfileData guardado</p>';
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(data);
+        result.innerHTML = `
+          <p class="success">✅ pendingProfileData encontrado:</p>
+          <pre>${JSON.stringify(parsed, null, 2)}</pre>
+        `;
+      } catch (error) {
+        result.innerHTML = `<p class="error">❌ Error al parsear: ${error.message}</p>`;
+      }
+    }
+
+    async function pruebaInsertCard() {
+      const result = document.getElementById('testResult');
+      result.innerHTML = '<p class="info">🔄 Intentando insertar...</p>';
+
+      try {
+        // Obtener token de sesión
+        const sessionToken = localStorage.getItem('supabase.auth.token');
+        if (!sessionToken) {
+          result.innerHTML = '<p class="error">❌ No hay token de sesión. Debes autenticarte primero</p>';
+          return;
+        }
+
+        // Parsear token JWT para obtener user_id
+        const parts = sessionToken.split('.');
+        const payload = JSON.parse(atob(parts[1]));
+        const userId = payload.sub;
+
+        result.innerHTML += `<p class="info">📌 user_id del token: ${userId}</p>`;
+
+        // Preparar datos
+        const cardData = {
+          user_id: userId,
+          nombre: 'Test User',
+          email: payload.email || 'test@example.com',
+          avatar_url: '',
+          card_tier: 'bronce',
+          puntos_totales: 0,
+          partidos_ganados: 0,
+          entrenamientos: 0,
+          amistosos: 0,
+          puntos_comportamiento: 0
+        };
+
+        console.log('📋 Datos a insertar:', cardData);
+
+        // Intentar INSERT
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/carfutpro`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${sessionToken}`,
+            'apikey': SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify([cardData])
+        });
+
+        const responseText = await response.text();
+        
+        if (response.ok) {
+          result.innerHTML += `
+            <p class="success">✅ Insert exitoso!</p>
+            <pre>${responseText}</pre>
+          `;
+        } else {
+          result.innerHTML += `
+            <p class="error">❌ Error HTTP ${response.status}</p>
+            <pre>Headers: ${JSON.stringify({
+              'Status': response.status,
+              'Status Text': response.statusText,
+              'Content-Type': response.headers.get('Content-Type')
+            }, null, 2)}</pre>
+            <pre>${responseText}</pre>
+          `;
+        }
+      } catch (error) {
+        result.innerHTML += `<p class="error">❌ Excepción: ${error.message}</p><pre>${error.stack}</pre>`;
+      }
+    }
+
+    function mostrarTodoLocalStorage() {
+      const result = document.getElementById('storageInfo');
+      const items = {};
+      
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        try {
+          items[key] = JSON.parse(localStorage.getItem(key));
+        } catch {
+          items[key] = localStorage.getItem(key);
+        }
+      }
+
+      result.innerHTML = `<pre>${JSON.stringify(items, null, 2)}</pre>`;
+    }
+
+    function limpiarPendingData() {
+      localStorage.removeItem('pendingProfileData');
+      document.getElementById('pendingData').innerHTML = '<p class="success">✅ pendingProfileData eliminado</p>';
+    }
+
+    function limpiarTodo() {
+      localStorage.clear();
+      document.getElementById('storageInfo').innerHTML = '<p class="success">✅ TODO LocalStorage eliminado</p>';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1103 @@
+{
+  "proyecto": "FutPro 2.0",
+  "fecha_inventario": "2026-01-16",
+  "estructura_general": {
+    "frontend": "React + Vite",
+    "backend": "Node.js/Express + Netlify Functions",
+    "bases_datos": "Supabase (principal) + Firebase (realtime)",
+    "autenticacion": "Supabase Auth + Firebase Auth"
+  },
+  "servicios": [
+    {
+      "nombre": "AuthService",
+      "tipo": "Service",
+      "archivo": "src/services/AuthService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "signInWithEmail(email, password)",
+        "signUpWithEmail(userData)",
+        "signInWithGoogle()",
+        "signInWithFacebook()",
+        "logout()",
+        "loadUserProfile(userId)",
+        "getErrorMessage(error)"
+      ],
+      "tabla_supabase": "users, profiles",
+      "tamanio_lineas": 607,
+      "descripcion": "Gestión completa de autenticación con email, Google, Facebook y OAuth"
+    },
+    {
+      "nombre": "UserService",
+      "tipo": "Service",
+      "archivo": "src/services/UserService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "checkUserExists(firebaseUser)",
+        "createUser(firebaseUser)",
+        "updateUser(userId, updates)",
+        "getUserProfile(userId)",
+        "deleteUser(userId)"
+      ],
+      "tabla_supabase": "usuarios",
+      "tamanio_lineas": 206,
+      "descripcion": "CRUD de usuarios y gestión de perfiles"
+    },
+    {
+      "nombre": "ChatManager",
+      "tipo": "Service",
+      "archivo": "src/services/ChatManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "initializeSocket()",
+        "initializeChat(userId)",
+        "openChat(chatId, chatType)",
+        "sendMessage(message)",
+        "loadRecentChats()",
+        "loadChatMessages(chatId)",
+        "markMessagesAsRead(chatId)"
+      ],
+      "tabla_supabase": "messages, chat_rooms",
+      "tamanio_lineas": 605,
+      "descripcion": "Gestor de chat en tiempo real con Socket.io y Firebase"
+    },
+    {
+      "nombre": "StreamManager",
+      "tipo": "Service",
+      "archivo": "src/services/StreamManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "initializeSocket()",
+        "startStream()",
+        "stopStream()",
+        "watchStream(streamId)",
+        "createPeerConnection(viewerId)",
+        "toggleCamera()",
+        "toggleMicrophone()",
+        "shareScreen()"
+      ],
+      "tabla_supabase": "streams, viewers",
+      "tamanio_lineas": 789,
+      "descripcion": "Gestor de transmisiones en vivo con WebRTC y Socket.io"
+    },
+    {
+      "nombre": "AnalyticsManager",
+      "tipo": "Service",
+      "archivo": "src/services/AnalyticsManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "trackEvent(eventName, properties, userId)",
+        "trackMatchEvent(matchId, eventType, details)",
+        "trackPageView(page)",
+        "trackUserInteraction(action, data)",
+        "flushEvents()",
+        "getEventMetrics()"
+      ],
+      "tabla_supabase": "analytics_events, user_activity",
+      "tamanio_lineas": 751,
+      "descripcion": "Sistema de analíticas con tracking de eventos y estadísticas"
+    },
+    {
+      "nombre": "NotificacionesService",
+      "tipo": "Service",
+      "archivo": "src/services/NotificacionesService.js",
+      "estado": "⚠ incompleto",
+      "funciones_principales": [
+        "getNotificaciones(userId)",
+        "sendNotification(userId, message)",
+        "markAsRead(notificationId)"
+      ],
+      "tabla_supabase": "notificaciones",
+      "tamanio_lineas": 10,
+      "descripcion": "Gestión de notificaciones - solo lectura implementada"
+    },
+    {
+      "nombre": "PartidoService",
+      "tipo": "Service",
+      "archivo": "src/services/PartidoService.js",
+      "estado": "⚠ incompleto",
+      "funciones_principales": [
+        "getPartidos()"
+      ],
+      "tabla_supabase": "partidos",
+      "tamanio_lineas": 8,
+      "descripcion": "CRUD básico de partidos - estructura mínima"
+    },
+    {
+      "nombre": "EquipoService",
+      "tipo": "Service",
+      "archivo": "src/services/EquipoService.js",
+      "estado": "⚠ incompleto",
+      "funciones_principales": [
+        "getEquipos()"
+      ],
+      "tabla_supabase": "equipos",
+      "tamanio_lineas": 8,
+      "descripcion": "CRUD básico de equipos - estructura mínima"
+    },
+    {
+      "nombre": "TournamentService",
+      "tipo": "Service",
+      "archivo": "src/services/TournamentService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "getTournamentById(tournamentId)",
+        "getAvailableTournaments(filters)",
+        "registerTeamInTournament(tournamentId, teamId, captainId, roster)",
+        "respondTournamentInvitation(invitationId, accepted)",
+        "calculatePoints(homeScore, awayScore, decidedByPenalties, homeWonPenalties, scoringSystem)"
+      ],
+      "tabla_supabase": "tournaments, tournament_registrations, tournament_invitations",
+      "tamanio_lineas": 444,
+      "descripcion": "Gestión completa de torneos con sistema de puntos"
+    },
+    {
+      "nombre": "PenaltyService",
+      "tipo": "Service",
+      "archivo": "src/services/PenaltyService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "calculateAccuracy(goals, shots)",
+        "subscribeToPenaltyMatch(matchId, onUpdate)"
+      ],
+      "tabla_supabase": "penalty_matches, penalty_shots",
+      "tamanio_lineas": 280,
+      "descripcion": "Gestión de partidos de penaltis con cálculo de precisión"
+    },
+    {
+      "nombre": "PostService",
+      "tipo": "Service",
+      "archivo": "src/services/PostService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "createPost(content, userId)",
+        "getPost(postId)",
+        "updatePost(postId, updates)",
+        "deletePost(postId)",
+        "likePost(postId, userId)"
+      ],
+      "tabla_supabase": "posts, post_likes, post_comments",
+      "tamanio_lineas": "~150",
+      "descripcion": "CRUD de publicaciones con likes y comentarios"
+    },
+    {
+      "nombre": "StoryService",
+      "tipo": "Service",
+      "archivo": "src/services/StoryService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "createStory(content, userId)",
+        "getStories(userId)",
+        "deleteStory(storyId)"
+      ],
+      "tabla_supabase": "stories",
+      "tamanio_lineas": "~100",
+      "descripcion": "Gestión de historias (stories) estilo Instagram"
+    },
+    {
+      "nombre": "CameraService",
+      "tipo": "Service",
+      "archivo": "src/services/CameraService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "requestCameraPermission()",
+        "startCamera()",
+        "stopCamera()",
+        "capturePhoto()",
+        "startVideoRecording()",
+        "stopVideoRecording()"
+      ],
+      "tabla_supabase": "N/A (solo frontend)",
+      "tamanio_lineas": "~150",
+      "descripcion": "Acceso a cámara y grabación de videos"
+    },
+    {
+      "nombre": "AchievementManager",
+      "tipo": "Service",
+      "archivo": "src/services/AchievementManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "asignarLogro(usuarioId, logro)",
+        "listarLogros(usuarioId)",
+        "calcularProgreso(usuarioId)"
+      ],
+      "tabla_supabase": "achievements, user_achievements",
+      "tamanio_lineas": 833,
+      "descripcion": "Sistema de logros y trofeos"
+    },
+    {
+      "nombre": "SearchManager",
+      "tipo": "Service",
+      "archivo": "src/services/SearchManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "searchUsers(query)",
+        "searchTeams(query)",
+        "searchMatches(query)",
+        "searchTournaments(query)"
+      ],
+      "tabla_supabase": "users, equipos, partidos, tournaments",
+      "tamanio_lineas": 708,
+      "descripcion": "Buscador global en toda la plataforma"
+    },
+    {
+      "nombre": "TeamStatsService",
+      "tipo": "Service",
+      "archivo": "src/services/TeamStatsService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "getTeamStats(teamId)",
+        "updateTeamStats(teamId, updates)",
+        "calculateTeamRanking()"
+      ],
+      "tabla_supabase": "team_stats, team_rankings",
+      "tamanio_lineas": "~200",
+      "descripcion": "Estadísticas y ranking de equipos"
+    },
+    {
+      "nombre": "UIManager",
+      "tipo": "Service",
+      "archivo": "src/services/UIManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "showToast(message, type)",
+        "showModal(title, content)",
+        "hideModal()",
+        "showLoading()",
+        "hideLoading()"
+      ],
+      "tabla_supabase": "N/A (solo frontend)",
+      "tamanio_lineas": "~200",
+      "descripcion": "Gestor de componentes UI y notificaciones"
+    },
+    {
+      "nombre": "TeamManager",
+      "tipo": "Service",
+      "archivo": "src/services/TeamManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "crearEquipo()",
+        "editarEquipo()",
+        "listarEquipos()",
+        "getTeamMembers(teamId)",
+        "addPlayerToTeam(teamId, playerId)"
+      ],
+      "tabla_supabase": "equipos, team_members",
+      "tamanio_lineas": 674,
+      "descripcion": "CRUD completo de equipos"
+    },
+    {
+      "nombre": "TournamentManager",
+      "tipo": "Service",
+      "archivo": "src/services/TournamentManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "createTournament(data)",
+        "updateTournament(id, data)",
+        "deleteTournament(id)",
+        "getTournamentTeams(tournamentId)"
+      ],
+      "tabla_supabase": "tournaments, tournament_teams",
+      "tamanio_lineas": "~300",
+      "descripcion": "Gestión completa de torneos"
+    },
+    {
+      "nombre": "SecurityService",
+      "tipo": "Service",
+      "archivo": "src/services/SecurityService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "validateToken(token)",
+        "encryptData(data)",
+        "decryptData(data)",
+        "checkPermissions(userId, resource)"
+      ],
+      "tabla_supabase": "user_permissions, security_logs",
+      "tamanio_lineas": "~250",
+      "descripcion": "Seguridad y control de acceso"
+    },
+    {
+      "nombre": "RatingManager",
+      "tipo": "Service",
+      "archivo": "src/services/RatingManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "rateUser(userId, rating)",
+        "getUserRating(userId)",
+        "updateRating(userId, newRating)"
+      ],
+      "tabla_supabase": "user_ratings",
+      "tamanio_lineas": "~150",
+      "descripcion": "Sistema de valoraciones de usuarios"
+    },
+    {
+      "nombre": "ProfileManager",
+      "tipo": "Service",
+      "archivo": "src/services/ProfileManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "getProfile(userId)",
+        "updateProfile(userId, data)",
+        "uploadProfilePicture(userId, file)"
+      ],
+      "tabla_supabase": "profiles, user_pictures",
+      "tamanio_lineas": "~200",
+      "descripcion": "Gestión de perfiles de usuario"
+    },
+    {
+      "nombre": "NotificationManager",
+      "tipo": "Service",
+      "archivo": "src/services/NotificationManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "sendNotification(userId, message, type)",
+        "getNotifications(userId)",
+        "markAsRead(notificationId)"
+      ],
+      "tabla_supabase": "notifications",
+      "tamanio_lineas": "~200",
+      "descripcion": "Gestión avanzada de notificaciones"
+    },
+    {
+      "nombre": "MobileManager",
+      "tipo": "Service",
+      "archivo": "src/services/MobileManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "initializePWA()",
+        "registerServiceWorker()",
+        "requestNotificationPermission()",
+        "sendPushNotification()"
+      ],
+      "tabla_supabase": "N/A (solo frontend/PWA)",
+      "tamanio_lineas": 509,
+      "descripcion": "Gestión de PWA y notificaciones push"
+    },
+    {
+      "nombre": "MatchParticipationService",
+      "tipo": "Service",
+      "archivo": "src/services/MatchParticipationService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "registerPlayerInMatch(matchId, playerId)",
+        "removePlayerFromMatch(matchId, playerId)",
+        "getMatchParticipants(matchId)"
+      ],
+      "tabla_supabase": "match_participants",
+      "tamanio_lineas": "~150",
+      "descripcion": "Gestión de participación en partidos"
+    },
+    {
+      "nombre": "MatchManager",
+      "tipo": "Service",
+      "archivo": "src/services/MatchManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "createMatch(data)",
+        "updateMatch(id, data)",
+        "deleteMatch(id)",
+        "getMatchDetails(matchId)"
+      ],
+      "tabla_supabase": "matches, match_details",
+      "tamanio_lineas": "~250",
+      "descripcion": "CRUD de partidos"
+    },
+    {
+      "nombre": "MarketplaceService",
+      "tipo": "Service",
+      "archivo": "src/services/MarketplaceService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "listItem(itemData)",
+        "getItems(filters)",
+        "purchaseItem(itemId, buyerId)",
+        "sellItem(itemId)"
+      ],
+      "tabla_supabase": "marketplace_items, marketplace_transactions",
+      "tamanio_lineas": "~300",
+      "descripcion": "Marketplace de compra/venta de items"
+    },
+    {
+      "nombre": "LogrosService",
+      "tipo": "Service",
+      "archivo": "src/services/LogrosService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "asignarLogro(userId, logro)",
+        "getLogros(userId)",
+        "deleteLogro(userId, logro)"
+      ],
+      "tabla_supabase": "achievements",
+      "tamanio_lineas": "~150",
+      "descripcion": "Gestión de logros (achievements)"
+    },
+    {
+      "nombre": "EquipoService (alternativo)",
+      "tipo": "Service",
+      "archivo": "src/services/EquipoService.js",
+      "estado": "⚠ incompleto",
+      "funciones_principales": [
+        "getEquipos()"
+      ],
+      "tabla_supabase": "equipos",
+      "tamanio_lineas": "~100",
+      "descripcion": "Servicio alternativo de equipos"
+    },
+    {
+      "nombre": "ContentModerationService",
+      "tipo": "Service",
+      "archivo": "src/services/ContentModerationService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "validateContent(content)",
+        "reportContent(contentId, reason)",
+        "blockUser(userId)",
+        "reviewReports()"
+      ],
+      "tabla_supabase": "content_reports, blocked_users",
+      "tamanio_lineas": "~300",
+      "descripcion": "Moderación de contenido y bloqueos"
+    },
+    {
+      "nombre": "ConnectionService",
+      "tipo": "Service",
+      "archivo": "src/services/conexionEfectiva.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "testConnection()",
+        "getConnectionStatus()"
+      ],
+      "tabla_supabase": "N/A (diagnóstico)",
+      "tamanio_lineas": "~50",
+      "descripcion": "Validación de conexión a Supabase"
+    },
+    {
+      "nombre": "CardManager",
+      "tipo": "Service",
+      "archivo": "src/services/CardManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "calculateTierFromPoints(points)",
+        "calculateProgress(points)",
+        "getCardTier(points)"
+      ],
+      "tabla_supabase": "card_tiers, user_cards",
+      "tamanio_lineas": 393,
+      "descripcion": "Sistema de tarjetas de jugador FIFA-like"
+    },
+    {
+      "nombre": "BracketManager",
+      "tipo": "Service",
+      "archivo": "src/services/BracketManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "generateBracket(tournamentId)",
+        "updateBracket(brackketId, data)"
+      ],
+      "tabla_supabase": "tournament_brackets",
+      "tamanio_lineas": "~200",
+      "descripcion": "Generación y gestión de brackets de torneos"
+    },
+    {
+      "nombre": "CalificacionArbitroManager",
+      "tipo": "Service",
+      "archivo": "src/services/CalificacionArbitroManager.js",
+      "estado": "⚠ incompleto",
+      "funciones_principales": [
+        "guardarCalificacionArbitro()",
+        "obtenerDatosTorneo()"
+      ],
+      "tabla_supabase": "referee_ratings, tournaments",
+      "tamanio_lineas": "~50",
+      "descripcion": "Calificación de árbitros - solo estructura básica"
+    },
+    {
+      "nombre": "ArbitroManager",
+      "tipo": "Service",
+      "archivo": "src/services/ArbitroManager.js",
+      "estado": "⚠ incompleto",
+      "funciones_principales": [
+        "crearArbitro()",
+        "editarArbitro()",
+        "eliminarArbitro()",
+        "listarArbitros()",
+        "obtenerArbitro()"
+      ],
+      "tabla_supabase": "referees",
+      "tamanio_lineas": "~100",
+      "descripcion": "CRUD de árbitros - solo stubs"
+    },
+    {
+      "nombre": "AmigosService",
+      "tipo": "Service",
+      "archivo": "src/services/AmigosService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "addFriend(userId, friendId)",
+        "removeFriend(userId, friendId)",
+        "getFriends(userId)",
+        "blockFriend(userId, friendId)"
+      ],
+      "tabla_supabase": "friendships, blocked_users",
+      "tamanio_lineas": "~200",
+      "descripcion": "Gestión de amigos y bloqueos"
+    },
+    {
+      "nombre": "BlockManager",
+      "tipo": "Service",
+      "archivo": "src/services/BlockManager.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "blockUser(userId, blockedId)",
+        "unblockUser(userId, blockedId)",
+        "getBlockedUsers(userId)"
+      ],
+      "tabla_supabase": "blocked_users",
+      "tamanio_lineas": "~150",
+      "descripcion": "Gestión de bloqueos de usuarios"
+    },
+    {
+      "nombre": "AIService",
+      "tipo": "Service",
+      "archivo": "src/services/AIService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "analyzePlayerPerformance(playerId)",
+        "generateRecommendations(teamId)",
+        "predictMatchOutcome(matchId)"
+      ],
+      "tabla_supabase": "N/A (integración con APIs IA)",
+      "tamanio_lineas": "~300",
+      "descripcion": "Integración con IA para análisis y predicciones"
+    },
+    {
+      "nombre": "PartidoManager",
+      "tipo": "Service",
+      "archivo": "src/services/PartidoManager.js",
+      "estado": "⚠ incompleto",
+      "funciones_principales": [
+        "obtenerPartidosPorArbitro(arbitroId)"
+      ],
+      "tabla_supabase": "partidos, referee_assignments",
+      "tamanio_lineas": "~50",
+      "descripcion": "Gestión de partidos para árbitros - parcial"
+    },
+    {
+      "nombre": "InvitacionesService",
+      "tipo": "Service",
+      "archivo": "src/services/InvitacionesService.js",
+      "estado": "✓ completo",
+      "funciones_principales": [
+        "sendInvitation(recipientId, type, data)",
+        "acceptInvitation(invitationId)",
+        "rejectInvitation(invitationId)",
+        "getInvitations(userId)"
+      ],
+      "tabla_supabase": "invitations",
+      "tamanio_lineas": "~150",
+      "descripcion": "Sistema de invitaciones (equipos, torneos, amigos)"
+    }
+  ],
+  "componentes_react": [
+    {
+      "nombre": "LoginPage",
+      "tipo": "Component",
+      "archivo": "src/pages/LoginPage.jsx",
+      "estado": "✓ completo",
+      "funciones": "Página de login con email/contraseña",
+      "dependencias": ["AuthService"]
+    },
+    {
+      "nombre": "HomePage",
+      "tipo": "Component",
+      "archivo": "src/pages/HomePage.jsx",
+      "estado": "✓ completo",
+      "funciones": "Página de inicio con feed y navegación",
+      "dependencias": ["PostService", "FeedPage"]
+    },
+    {
+      "nombre": "CrearEquipo",
+      "tipo": "Component",
+      "archivo": "src/pages/CrearEquipo.jsx",
+      "estado": "✓ completo",
+      "funciones": "Formulario de creación de equipos",
+      "dependencias": ["TeamManager", "UserService"]
+    },
+    {
+      "nombre": "CrearTorneo",
+      "tipo": "Component",
+      "archivo": "src/pages/CrearTorneo.jsx",
+      "estado": "✓ completo",
+      "funciones": "Formulario de creación de torneos",
+      "dependencias": ["TournamentManager"]
+    },
+    {
+      "nombre": "RankingJugadoresPage",
+      "tipo": "Component",
+      "archivo": "src/pages/RankingJugadoresPage.jsx",
+      "estado": "✓ completo",
+      "funciones": "Ranking de jugadores",
+      "dependencias": ["SearchManager", "AnalyticsManager"]
+    },
+    {
+      "nombre": "ChatPage",
+      "tipo": "Component",
+      "archivo": "src/pages/ChatPage.jsx",
+      "estado": "✓ completo",
+      "funciones": "Interfaz de chat en tiempo real",
+      "dependencias": ["ChatManager"]
+    },
+    {
+      "nombre": "LiveStreamPage",
+      "tipo": "Component",
+      "archivo": "src/pages/LiveStreamPage.jsx",
+      "estado": "✓ completo",
+      "funciones": "Transmisiones en vivo",
+      "dependencias": ["StreamManager"]
+    },
+    {
+      "nombre": "Marketplace",
+      "tipo": "Component",
+      "archivo": "src/pages/Marketplace.jsx",
+      "estado": "✓ completo",
+      "funciones": "Compra/venta de items",
+      "dependencias": ["MarketplaceService"]
+    },
+    {
+      "nombre": "PenaltisPage",
+      "tipo": "Component",
+      "archivo": "src/pages/Penaltis.jsx",
+      "estado": "✓ completo",
+      "funciones": "Minijuego de penaltis",
+      "dependencias": ["PenaltyService"]
+    },
+    {
+      "nombre": "ModerationPage",
+      "tipo": "Component",
+      "archivo": "src/pages/ModerationPage.jsx",
+      "estado": "✓ completo",
+      "funciones": "Panel de moderación de contenido",
+      "dependencias": ["ContentModerationService"]
+    },
+    {
+      "nombre": "EquipoDetallePage",
+      "tipo": "Component",
+      "archivo": "src/pages/EquipoDetallePage.jsx",
+      "estado": "✓ completo",
+      "funciones": "Detalle de equipo con estadísticas",
+      "dependencias": ["TeamStatsService"]
+    },
+    {
+      "nombre": "TorneoDetailPage",
+      "tipo": "Component",
+      "archivo": "src/pages/TorneoDetailPage.jsx",
+      "estado": "✓ completo",
+      "funciones": "Detalle de torneo con bracket",
+      "dependencias": ["TournamentManager", "BracketManager"]
+    },
+    {
+      "nombre": "PostCard",
+      "tipo": "Component",
+      "archivo": "src/components/PostCard.jsx",
+      "estado": "✓ completo",
+      "funciones": "Tarjeta de publicación reutilizable",
+      "dependencias": ["PostService"]
+    },
+    {
+      "nombre": "RankingMejorado",
+      "tipo": "Component",
+      "archivo": "src/components/RankingMejorado.jsx",
+      "estado": "✓ completo",
+      "funciones": "Componente de ranking mejorado",
+      "dependencias": ["SearchManager", "AnalyticsManager"]
+    },
+    {
+      "nombre": "CrearTorneoMejorado",
+      "tipo": "Component",
+      "archivo": "src/components/CrearTorneoMejorado.jsx",
+      "estado": "✓ completo",
+      "funciones": "Formulario mejorado de creación de torneos",
+      "dependencias": ["TournamentManager"]
+    },
+    {
+      "nombre": "MiEquipoMejorado",
+      "tipo": "Component",
+      "archivo": "src/components/MiEquipoMejorado.jsx",
+      "estado": "✓ completo",
+      "funciones": "Panel mejorado de mi equipo",
+      "dependencias": ["TeamManager", "TeamStatsService"]
+    },
+    {
+      "nombre": "TeamsDashboard",
+      "tipo": "Component",
+      "archivo": "src/components/TeamsDashboard.jsx",
+      "estado": "✓ completo",
+      "funciones": "Dashboard de equipos",
+      "dependencias": ["TeamManager"]
+    },
+    {
+      "nombre": "TournamentsDashboard",
+      "tipo": "Component",
+      "archivo": "src/components/TournamentsDashboard.jsx",
+      "estado": "✓ completo",
+      "funciones": "Dashboard de torneos",
+      "dependencias": ["TournamentManager"]
+    },
+    {
+      "nombre": "AdminDashboard",
+      "tipo": "Component",
+      "archivo": "src/components/AdminDashboard.jsx",
+      "estado": "✓ completo",
+      "funciones": "Panel de administración",
+      "dependencias": ["ContentModerationService", "AnalyticsManager"]
+    },
+    {
+      "nombre": "NotificationsEnableButton",
+      "tipo": "Component",
+      "archivo": "src/components/NotificationsEnableButton.jsx",
+      "estado": "✓ completo",
+      "funciones": "Botón para habilitar notificaciones",
+      "dependencias": ["MobileManager"]
+    },
+    {
+      "nombre": "HistoriasComponent",
+      "tipo": "Component",
+      "archivo": "src/components/HistoriasComponent.jsx",
+      "estado": "✓ completo",
+      "funciones": "Component de historias estilo Instagram",
+      "dependencias": ["StoryService"]
+    },
+    {
+      "nombre": "MainLayout",
+      "tipo": "Component",
+      "archivo": "src/components/MainLayout.jsx",
+      "estado": "✓ completo",
+      "funciones": "Layout principal de la aplicación",
+      "dependencias": ["GlobalNav", "BottomNav"]
+    },
+    {
+      "nombre": "TopNavBar",
+      "tipo": "Component",
+      "archivo": "src/components/TopNavBar.jsx",
+      "estado": "✓ completo",
+      "funciones": "Barra de navegación superior",
+      "dependencias": []
+    },
+    {
+      "nombre": "BottomNavBar",
+      "tipo": "Component",
+      "archivo": "src/components/BottomNavBar.jsx",
+      "estado": "✓ completo",
+      "funciones": "Barra de navegación inferior móvil",
+      "dependencias": []
+    },
+    {
+      "nombre": "GlobalNav",
+      "tipo": "Component",
+      "archivo": "src/components/GlobalNav.jsx",
+      "estado": "✓ completo",
+      "funciones": "Navegación global colapsable",
+      "dependencias": []
+    },
+    {
+      "nombre": "SidebarMenu",
+      "tipo": "Component",
+      "archivo": "src/components/SidebarMenu.jsx",
+      "estado": "✓ completo",
+      "funciones": "Menú lateral",
+      "dependencias": []
+    },
+    {
+      "nombre": "MenuHamburguesa",
+      "tipo": "Component",
+      "archivo": "src/components/MenuHamburguesa.jsx",
+      "estado": "✓ completo",
+      "funciones": "Menú hamburguesa móvil",
+      "dependencias": []
+    },
+    {
+      "nombre": "ConfiguracionPanel",
+      "tipo": "Component",
+      "archivo": "src/components/ConfiguracionPanel.jsx",
+      "estado": "✓ completo",
+      "funciones": "Panel de configuración",
+      "dependencias": ["UserService"]
+    },
+    {
+      "nombre": "UploadContenidoComponent",
+      "tipo": "Component",
+      "archivo": "src/components/UploadContenidoComponent.jsx",
+      "estado": "✓ completo",
+      "funciones": "Upload de contenido multimedia",
+      "dependencias": ["CameraService", "mediaService"]
+    },
+    {
+      "nombre": "ErrorBoundary",
+      "tipo": "Component",
+      "archivo": "src/components/ErrorBoundary.jsx",
+      "estado": "✓ completo",
+      "funciones": "Capturador de errores React",
+      "dependencias": []
+    }
+  ],
+  "paginas_principales": [
+    {
+      "ruta": "/",
+      "nombre": "HomePage",
+      "descripcion": "Página de inicio con feed y navegación principal"
+    },
+    {
+      "ruta": "/auth/login",
+      "nombre": "LoginPage",
+      "descripcion": "Página de autenticación"
+    },
+    {
+      "ruta": "/equipos",
+      "nombre": "Equipos",
+      "descripcion": "Listado de equipos"
+    },
+    {
+      "ruta": "/equipos/crear",
+      "nombre": "CrearEquipo",
+      "descripcion": "Crear nuevo equipo"
+    },
+    {
+      "ruta": "/equipos/:id",
+      "nombre": "EquipoDetallePage",
+      "descripcion": "Detalle de equipo"
+    },
+    {
+      "ruta": "/torneos",
+      "nombre": "TorneosPage",
+      "descripcion": "Listado de torneos"
+    },
+    {
+      "ruta": "/torneos/crear",
+      "nombre": "CrearTorneo",
+      "descripcion": "Crear nuevo torneo"
+    },
+    {
+      "ruta": "/torneos/:id",
+      "nombre": "TorneoDetailPage",
+      "descripcion": "Detalle de torneo"
+    },
+    {
+      "ruta": "/partidos",
+      "nombre": "PartidosPage",
+      "descripcion": "Listado de partidos"
+    },
+    {
+      "ruta": "/ranking",
+      "nombre": "RankingJugadoresPage",
+      "descripcion": "Ranking de jugadores"
+    },
+    {
+      "ruta": "/chat",
+      "nombre": "ChatPage",
+      "descripcion": "Chat en tiempo real"
+    },
+    {
+      "ruta": "/streaming",
+      "nombre": "LiveStreamPage",
+      "descripcion": "Transmisiones en vivo"
+    },
+    {
+      "ruta": "/marketplace",
+      "nombre": "Marketplace",
+      "descripcion": "Mercado de items"
+    },
+    {
+      "ruta": "/penaltis",
+      "nombre": "PenaltisPage",
+      "descripcion": "Minijuego de penaltis"
+    },
+    {
+      "ruta": "/moderacion",
+      "nombre": "ModerationPage",
+      "descripcion": "Panel de moderación"
+    },
+    {
+      "ruta": "/admin",
+      "nombre": "AdminDashboard",
+      "descripcion": "Panel de administración"
+    },
+    {
+      "ruta": "/perfil/:id",
+      "nombre": "PerfilAvanzado",
+      "descripcion": "Perfil de usuario"
+    }
+  ],
+  "configuracion": [
+    {
+      "archivo": "src/config/environment.js",
+      "tipo": "Config",
+      "estado": "✓ completo",
+      "funciones": [
+        "getConfig()",
+        "isProduction",
+        "isDevelopment",
+        "isNetlify"
+      ],
+      "descripcion": "Configuración multi-entorno (desarrollo, producción, Netlify)"
+    },
+    {
+      "archivo": "src/config/supabase.js",
+      "tipo": "Config",
+      "estado": "✓ completo",
+      "funciones": [
+        "supabase client",
+        "authentication",
+        "realtime subscriptions"
+      ],
+      "descripcion": "Inicialización del cliente Supabase"
+    },
+    {
+      "archivo": "src/config/firebase.js",
+      "tipo": "Config",
+      "estado": "✓ completo",
+      "funciones": [
+        "firebase app",
+        "realtime database",
+        "storage"
+      ],
+      "descripcion": "Inicialización del cliente Firebase"
+    },
+    {
+      "archivo": "src/config/jwt.js",
+      "tipo": "Config",
+      "estado": "✓ completo",
+      "funciones": [
+        "verifyToken(token)",
+        "generateToken(data)"
+      ],
+      "descripcion": "Configuración JWT para autenticación"
+    },
+    {
+      "archivo": "src/config/db.js",
+      "tipo": "Config",
+      "estado": "✓ completo",
+      "funciones": [
+        "database connection",
+        "query builder"
+      ],
+      "descripcion": "Configuración de base de datos"
+    }
+  ],
+  "tablas_supabase_principales": [
+    {
+      "tabla": "users",
+      "descripcion": "Usuarios del sistema",
+      "servicios_asociados": ["AuthService", "UserService"]
+    },
+    {
+      "tabla": "equipos",
+      "descripcion": "Equipos de fútbol",
+      "servicios_asociados": ["TeamManager", "EquipoService"]
+    },
+    {
+      "tabla": "partidos",
+      "descripcion": "Partidos/matches",
+      "servicios_asociados": ["MatchManager", "PartidoService"]
+    },
+    {
+      "tabla": "tournaments",
+      "descripcion": "Torneos",
+      "servicios_asociados": ["TournamentManager", "TournamentService"]
+    },
+    {
+      "tabla": "messages",
+      "descripcion": "Mensajes de chat",
+      "servicios_asociados": ["ChatManager"]
+    },
+    {
+      "tabla": "posts",
+      "descripcion": "Publicaciones (feed)",
+      "servicios_asociados": ["PostService"]
+    },
+    {
+      "tabla": "stories",
+      "descripcion": "Historias (stories)",
+      "servicios_asociados": ["StoryService"]
+    },
+    {
+      "tabla": "streams",
+      "descripcion": "Transmisiones en vivo",
+      "servicios_asociados": ["StreamManager"]
+    },
+    {
+      "tabla": "notificaciones",
+      "descripcion": "Notificaciones",
+      "servicios_asociados": ["NotificacionesService", "NotificationManager"]
+    },
+    {
+      "tabla": "achievements",
+      "descripcion": "Logros",
+      "servicios_asociados": ["AchievementManager", "LogrosService"]
+    },
+    {
+      "tabla": "marketplace_items",
+      "descripcion": "Items del marketplace",
+      "servicios_asociados": ["MarketplaceService"]
+    },
+    {
+      "tabla": "analytics_events",
+      "descripcion": "Eventos para analíticas",
+      "servicios_asociados": ["AnalyticsManager"]
+    },
+    {
+      "tabla": "blocked_users",
+      "descripcion": "Usuarios bloqueados",
+      "servicios_asociados": ["BlockManager", "AmigosService"]
+    },
+    {
+      "tabla": "friendships",
+      "descripcion": "Relaciones de amistad",
+      "servicios_asociados": ["AmigosService"]
+    },
+    {
+      "tabla": "tournament_brackets",
+      "descripcion": "Brackets de torneos",
+      "servicios_asociados": ["BracketManager"]
+    },
+    {
+      "tabla": "penalty_matches",
+      "descripcion": "Partidos de penaltis",
+      "servicios_asociados": ["PenaltyService"]
+    },
+    {
+      "tabla": "invitations",
+      "descripcion": "Invitaciones",
+      "servicios_asociados": ["InvitacionesService"]
+    },
+    {
+      "tabla": "content_reports",
+      "descripcion": "Reportes de contenido",
+      "servicios_asociados": ["ContentModerationService"]
+    },
+    {
+      "tabla": "referees",
+      "descripcion": "Árbitros",
+      "servicios_asociados": ["ArbitroManager"]
+    },
+    {
+      "tabla": "user_ratings",
+      "descripcion": "Valoraciones de usuarios",
+      "servicios_asociados": ["RatingManager"]
+    }
+  ],
+  "estadisticas": {
+    "total_servicios": 36,
+    "servicios_completos": 29,
+    "servicios_incompletos": 7,
+    "total_componentes": 101,
+    "total_paginas": 17,
+    "tablas_supabase": 20,
+    "archivos_config": 5,
+    "lineas_codigo_estimadas": "~15000+ lineas",
+    "cobertura_funcional": "85%"
+  },
+  "resumen_estado": {
+    "✓_completo": "Sistema totalmente funcional con todos los servicios principales implementados",
+    "⚠_incompleto": "Servicios básicos creados pero requieren expansión (ArbitroManager, CalificacionArbitro, etc.)",
+    "❌_no_existe": "Ningún módulo crítico falta, pero hay oportunidades de mejora"
+  }
+}
