@@ -6,11 +6,13 @@
 const BASE = 'https://www.thesportsdb.com/api/v1/json';
 const CACHE_TTL_MS = 10 * 60 * 1000;
 const MAX_CACHE = 200;
-const MIN_GAP_MS = 350;
+const MIN_GAP_MS = 120;
 
 const cache = new Map();
 let lastFetchAt = 0;
 let chain = Promise.resolve();
+let inFlight = 0;
+const MAX_PARALLEL = 3;
 
 function apiKey() {
   const k = String(
@@ -102,7 +104,18 @@ async function fetchSportsDbPath(path) {
     return { ok: true, status: 200, body: data, cached: false };
   };
 
-  const result = chain.then(run, run);
+  const schedule = async () => {
+    while (inFlight >= MAX_PARALLEL) {
+      await sleep(40);
+    }
+    inFlight += 1;
+    try {
+      return await run();
+    } finally {
+      inFlight -= 1;
+    }
+  };
+  const result = chain.then(schedule, schedule);
   chain = result.then(
     () => undefined,
     () => undefined,
