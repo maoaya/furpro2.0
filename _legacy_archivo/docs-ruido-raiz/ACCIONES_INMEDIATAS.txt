@@ -1,0 +1,126 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                   ACCIONES INMEDIATAS REQUERIDAS                          ║
+║                   FutPro 2.0 - Activación de Fixes                        ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+📋 PASO 1: EJECUTAR SQL EN SUPABASE (Solo 1 archivo más)
+════════════════════════════════════════════════════════════════════════════
+
+✅ YA HECHO:
+  - SCHEMA_COMPLETO_FIXES.sql ✓
+  - OPTIMIZACIONES_Y_TRIGGERS.sql ✓
+
+⏳ FALTA UNO:
+  1. Abre: https://supabase.com/dashboard/projects
+  2. Selecciona tu proyecto
+  3. Ve a: SQL Editor
+  4. Abre archivo: STORAGE_BUCKETS.sql (está en raíz del proyecto)
+  5. Copia TODO el contenido
+  6. Pega en SQL Editor de Supabase
+  7. Click "Run"
+  8. Espera: "Success. No rows returned"
+
+════════════════════════════════════════════════════════════════════════════
+
+📦 PASO 2: BUILD COMPLETADO
+════════════════════════════════════════════════════════════════════════════
+
+✅ Build hecho (npm run build)
+✅ 324 módulos compilados
+✅ Dist creado
+✅ Listo para deployment
+
+════════════════════════════════════════════════════════════════════════════
+
+🚀 PASO 3: DEPLOY A PRODUCCIÓN
+════════════════════════════════════════════════════════════════════════════
+
+En terminal:
+  git add .
+  git commit -m "Fix: Correcciones de schema, servicios y componentes"
+  git push origin master
+
+Netlify desplegará automáticamente en ~5-10 minutos
+
+════════════════════════════════════════════════════════════════════════════
+
+✅ VALIDACIÓN FINAL (Cuando todo esté vivo)
+════════════════════════════════════════════════════════════════════════════
+
+Abre https://futpro.vip e intenta:
+
+1. ✅ Crear un post con foto
+   → Debe mostrar tu nombre de usuario
+   
+2. ✅ Subir una historia
+   → Debe aparecer en la sección de stories
+
+3. ✅ Dar like a un post
+   → El contador debe subir
+
+4. ✅ Comentar un post
+   → Debe aparecer el comentario
+
+5. ✅ Tomar foto con cámara
+   → Debe abrir la cámara del dispositivo
+
+════════════════════════════════════════════════════════════════════════════
+
+❌ SI ALGO FALLA:
+
+  Problema: Posts sin nombre de autor
+  Solución: Ejecuta en Supabase SQL Editor:
+    UPDATE usuarios SET nombre = 'Test' WHERE nombre IS NULL;
+
+  Problema: Stories no se guardan
+  Solución: Verifica que ejecutaste STORAGE_BUCKETS.sql
+
+  Problema: Cámara no funciona
+  Solución: Verifica en navegador que des permiso de cámara
+
+  Problema: Error en build
+  Solución: npm install
+           npm run build
+
+════════════════════════════════════════════════════════════════════════════
+
+✉️ RESUMEN DE LO HECHO (Últimas 24h):
+
+✅ 1. Schema creado (9 tablas nuevas)
+✅ 2. Triggers y optimizaciones
+✅ 3. RLS policies mejoradas
+✅ 4. PostCard.jsx corregido (campos de BD)
+✅ 5. HomePage.jsx actualizado (imports correctos)
+✅ 6. StoriesService.js eliminado (duplicado)
+✅ 7. Build completado sin errores
+⏳ 8. Storage buckets SQL (SIGUIENTE)
+⏳ 9. Deploy a producción (DESPUÉS)
+
+════════════════════════════════════════════════════════════════════════════
+
+INSTRUCCIONES DE SUPABASE PASO A PASO:
+
+1. Abre: https://app.supabase.com/
+
+2. Selecciona proyecto FutPro
+
+3. Lado izquierdo → "SQL Editor"
+
+4. Click: "+ New Query"
+
+5. Abre archivo: c:\Users\lenovo\Desktop\futpro2.0\STORAGE_BUCKETS.sql
+
+6. Copia TODO (Ctrl+A, Ctrl+C)
+
+7. En Supabase, pega en SQL Editor (Ctrl+V)
+
+8. Click botón azul "RUN"
+
+9. Espera resultado: "Success"
+
+════════════════════════════════════════════════════════════════════════════
+
+¿Preguntas?
+
+Revisa: GUIA_FINAL_FIXES.md (en raíz del proyecto)
+

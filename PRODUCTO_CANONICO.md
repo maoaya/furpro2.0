@@ -4,17 +4,18 @@
 
 | | |
 |--|--|
-| ZIP vinculado | `auditoria/deploy-6a7256d5ffd58e44433d5158.zip` |
+| ZIP (raíz) | `deploy-6a7256d5ffd58e44433d5158.zip` |
+| ZIP (copia) | `auditoria/deploy-6a7256d5ffd58e44433d5158.zip` |
 | Carpeta publicada | `producto-deploy/` |
-| Origen | Build del PC `Desktop\futpro2.0\dist` (Netlify deploy zip) |
+| Origen | Build del PC `Desktop\futpro2.0\dist` (Netlify deploy zip) — **sin conversión a JSX** |
 | Meta | `futpro-deploy` = `2026-08-04T21:16:30Z` |
-| Bundle | `assets/index-DchpCYR3.js` |
+| Bundle | `assets/index-zp-nomenu-Hb7k2m.js` (mismo ZIP + parches runtime) |
 | Login | `loginpagesnew-BPP0r_st.js` → pantalla **ZONA PRO** |
 | Contexto / auditoría | `auditoria/AUDITORIA_CONTEXTO_PRODUCTO_ZONA_PRO.md` |
 | Lista keep/delete | `auditoria/LISTA_TOTAL_CONSERVAR_ELIMINAR.md` |
 
-**Producto final = este ZIP / `producto-deploy/`.**  
-La UI de enero **ya no está en `src/`** (cuarentena `_legacy_archivo/src-ui-enero/`). No se trabaja ahí.
+**Producto final = este ZIP / `producto-deploy/`.** No hace falta JSX.  
+La UI de enero **ya no está en `src/`** (cuarentena `_legacy_archivo/src-ui-enero/`). Docs ruido y scripts de riesgo están en `_legacy_archivo/`, no en la raíz.
 
 **Cómo trabajar / editar:** → `auditoria/COMO_TRABAJAR_EN_ESTE_PROYECTO.md`  
 **Estado (no dañado):** → `auditoria/ESTADO_SISTEMA.md`  

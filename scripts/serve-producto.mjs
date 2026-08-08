@@ -13,7 +13,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const publish = path.join(root, 'producto-deploy');
 const port = Number(process.env.PORT || 4173);
-const host = process.env.HOST || '127.0.0.1';
+// 0.0.0.0: Cursor Simple Browser / port-forward often cannot reach 127.0.0.1-only binds
+const host = process.env.HOST || '0.0.0.0';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -144,6 +145,10 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`✅ Zona Pro local: http://${host}:${port}/`);
+  // Print localhost URLs so Cursor Desktop auto-detects / port-forwards 4173.
+  // Bind remains 0.0.0.0 (host) so the tunnel can reach the process.
+  console.log(`✅ Zona Pro local: http://127.0.0.1:${port}/`);
+  console.log(`   Local: http://localhost:${port}/`);
+  console.log(`   login: http://localhost:${port}/login`);
   console.log('   proxy: POST /api/zona-pro  → TheSportsDB (sin CORS)');
 });

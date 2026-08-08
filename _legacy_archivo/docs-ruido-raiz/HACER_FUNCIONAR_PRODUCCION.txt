@@ -1,0 +1,224 @@
+════════════════════════════════════════════════════════════════════
+🚀 FUTPRO 2.0 - HACER QUE TODO FUNCIONE (PRODUCCIÓN REAL)
+════════════════════════════════════════════════════════════════════
+
+⏱️  TIEMPO TOTAL: ~20 minutos
+
+════════════════════════════════════════════════════════════════════
+PASO 1: EJECUTAR SQL EN SUPABASE (5 minutos)
+════════════════════════════════════════════════════════════════════
+
+1. Abre en navegador: https://app.supabase.com
+
+2. Selecciona tu proyecto: FutPro (qqrxetxcglwrejtblwut)
+
+3. PRIMERA EJECUCIÓN - Marketplace Setup:
+   ├─ Click: SQL Editor (lado izquierdo)
+   ├─ Click: New Query
+   ├─ Abre archivo: SQL_MARKETPLACE_SETUP.sql
+   ├─ Copia TODO el contenido
+   ├─ Pega en el editor de Supabase
+   ├─ Click: Run (botón azul)
+   ├─ Espera: "Query executed successfully"
+   └─ Verifica: Table Editor → debe aparecer "marketplace_items"
+
+4. SEGUNDA EJECUCIÓN - RLS Policies:
+   ├─ SQL Editor → New Query (otra pestaña)
+   ├─ Abre archivo: SQL_RLS_POLICIES.sql
+   ├─ Copia TODO el contenido
+   ├─ Pega en el nuevo editor
+   ├─ Click: Run
+   ├─ Espera: "Query executed successfully"
+   └─ Verifica: Authentication → Policies → deberían aparecer ~20 políticas
+
+✅ RESULTADO ESPERADO:
+   • marketplace_items tabla creada
+   • 20 políticas RLS configuradas
+   • user_stats view creada
+   • CERO errores
+
+════════════════════════════════════════════════════════════════════
+PASO 2: PUSH A GITHUB (30 segundos)
+════════════════════════════════════════════════════════════════════
+
+Abre Terminal/PowerShell y ejecuta:
+
+  cd c:\Users\lenovo\Desktop\futpro2.0
+  git push origin main
+
+✅ RESULTADO ESPERADO:
+   • Cambios se suben a GitHub
+   • Netlify detecta automáticamente
+   • Auto-build comienza
+
+════════════════════════════════════════════════════════════════════
+PASO 3: ESPERAR DEPLOY EN NETLIFY (3-5 minutos)
+════════════════════════════════════════════════════════════════════
+
+1. Abre: https://app.netlify.com
+
+2. Busca tu sitio: futpro
+
+3. Verifica Deploy:
+   ├─ Status debe cambiar a: "Deploy successful"
+   ├─ Build logs debe mostrar: "✓ built in X seconds"
+   └─ Si falla, revisar logs para errores
+
+✅ RESULTADO ESPERADO:
+   • Deploy successful (color verde)
+   • Tu sitio en línea
+
+════════════════════════════════════════════════════════════════════
+PASO 4: TESTEAR FLUJO COMPLETO (10 minutos)
+════════════════════════════════════════════════════════════════════
+
+Abre navegador: https://futpro.vip
+
+FLUJO A SEGUIR:
+
+1️⃣  SELECCIONAR CATEGORÍA
+    ├─ Página: /seleccionar-categoria
+    ├─ Opción: Elige "Delantero" (o tu categoría)
+    ├─ Button: Click "Continuar"
+    └─ Debe ir a: /formulario-registro
+
+2️⃣  COMPLETAR FORMULARIO
+    ├─ Página: /formulario-registro
+    ├─ Campos:
+    │   • Nombre: Tu nombre
+    │   • Apellido: Tu apellido
+    │   • Email: tu@email.com
+    │   • Password: contraseña123
+    │   • Foto: (opcional) upload o foto Google
+    ├─ Button: Click "Registrarse con Google"
+    └─ Debe redirigir a: Consentimiento de Google
+
+3️⃣  GOOGLE OAUTH
+    ├─ Página: Google Consent Screen
+    ├─ Selecciona tu cuenta Google
+    ├─ Authoriza acceso
+    └─ Debe redirigir a: /auth/callback
+
+4️⃣  AUTH CALLBACK
+    ├─ Página: /auth/callback (puede estar en blanco, es rápido)
+    ├─ Sistema está:
+    │   • Intercambiando código con Google
+    │   • Creando usuario en Supabase
+    │   • Capturando datos
+    └─ Auto-redirige a: /perfil-card
+
+5️⃣  ASIGNACIÓN DE CARD
+    ├─ Página: /perfil-card
+    ├─ Debe mostrar CardFIFA con:
+    │   • Tu foto (Google Avatar)
+    │   • Tu nombre: [nombre] [apellido]
+    │   • Tu categoría: [la que seleccionaste]
+    │   • Stats editable
+    ├─ Buttons disponibles:
+    │   • ⚽ Editar Card
+    │   • 💾 Guardar
+    │   • 🏠 Ir a HomePage
+    └─ Click: "Ir a HomePage"
+
+6️⃣  HOMEPAGE FINAL
+    ├─ Página: / (raíz)
+    ├─ Debe mostrar:
+    │   • 🔖 Sidebar con opciones
+    │   • 📰 Feed Instagram-style
+    │   • 💬 Comentarios (si hay posts)
+    │   • 🏠 Bottom Navigation
+    ├─ Botones funcionales:
+    │   • Posts del día
+    │   • Perfil
+    │   • Marketplace
+    │   • Notificaciones
+    │   • Configuración
+    └─ 🎉 ¡ÉXITO!
+
+✅ RESULTADO ESPERADO:
+   • Todas las páginas cargan sin errores
+   • Flujo funciona de principio a fin
+   • Datos aparecen correctamente
+   • HomePage completamente funcional
+
+════════════════════════════════════════════════════════════════════
+✓ VERIFICACIÓN DE ÉXITO
+════════════════════════════════════════════════════════════════════
+
+✅ BUILD: npm run build compiló exitosamente
+✅ SQL: marketplace_items tabla existe
+✅ SQL: 20 políticas RLS configuradas
+✅ GIT: Push completado a main
+✅ NETLIFY: Deploy successful
+✅ FLUJO: Categoría → Registro → OAuth → Card → HomePage
+✅ HOMEPAGE: Carga sin errores
+✅ DATOS: Se muestran correctamente
+
+════════════════════════════════════════════════════════════════════
+🆘 SI ALGO FALLA
+════════════════════════════════════════════════════════════════════
+
+SQL FALLA EN SUPABASE:
+  • Copiar exactamente TODO el contenido (sin espacios extras)
+  • Verificar que estés en el proyecto correcto
+  • Ver error específico en Supabase console
+  • Si error persiste, revisar sintaxis SQL
+
+BUILD FALLA:
+  • npm run build
+  • Ver output del error
+  • Reportar error específico
+
+DEPLOY FALLA EN NETLIFY:
+  • Ir a: https://app.netlify.com
+  • Buscar sitio: futpro
+  • Click en último deploy
+  • Ver Deploy logs
+  • Buscar línea roja con "ERROR"
+  • Reportar error específico
+
+OAUTH NO FUNCIONA:
+  • Verificar Client ID correcto:
+    760210878835-r15nffmc9ldt4hb1a5k8mvs9dql7pkrf
+  • Verificar Redirect URL en Google Cloud Console:
+    https://futpro.vip/auth/callback
+  • Verificar en Supabase Dashboard → Google Auth habilitado
+
+FLUJO NO FUNCIONA:
+  • Abrir DevTools: F12 → Console
+  • Ver si hay errores rojos
+  • Navegar paso a paso
+  • Reportar en qué paso falla
+
+════════════════════════════════════════════════════════════════════
+✨ RESUMEN FINAL
+════════════════════════════════════════════════════════════════════
+
+ANTES (Estado anterior):
+❌ SQL no ejecutado
+❌ No hay marketplace_items
+❌ No hay RLS policies
+❌ No está en Netlify
+❌ No se ha testeado
+
+AHORA (Después de estos pasos):
+✅ SQL ejecutado en Supabase
+✅ marketplace_items tabla creada
+✅ 20 RLS policies activas
+✅ Deploy en Netlify completo
+✅ Flujo testeado y funcional
+✅ 🎉 PRODUCCIÓN EN VIVO
+
+════════════════════════════════════════════════════════════════════
+📞 SOPORTE
+════════════════════════════════════════════════════════════════════
+
+Si necesitas ayuda con algo:
+  1. Abre QUE_FALTA.md (análisis detallado)
+  2. Revisa la sección "SI ALGO FALLA"
+  3. Verifica los logs (Supabase, Netlify, DevTools)
+  4. Reporta error específico
+
+════════════════════════════════════════════════════════════════════
+🚀 ¡LISTO! TU FUTPRO 2.0 ESTÁ EN PRODUCCIÓN REAL
+════════════════════════════════════════════════════════════════════

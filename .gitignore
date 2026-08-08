@@ -88,3 +88,6 @@ Desktop.ini
 
 # Deploy artifacts (no commit)
 deploy-output.json
+
+.logs/
+

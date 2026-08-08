@@ -16,9 +16,9 @@ const manifestPath = path.join(deployDir, 'MANIFEST_CANONICO.json');
 
 /** Huellas del ZIP canónico (contenido idéntico; nombres con casing Linux). */
 const CRITICAL_SHA256 = {
-  'index.html': '0a1cad71024d3d9b8c7cab428167966807bbc8e62d56091485397224784dae32',
-  'assets/index-DchpCYR3.js': '508808af5e8c5e2076f3c9c17ca77f385223df89332717091e3133a940e0aef2',
-  'assets/loginpagesnew-BPP0r_st.js': '4f8edd111f98c04c8953b94ee165dfb8c4e95eaafac6c15249f48b67254bcf93',
+  'index.html': 'a895f851dd32031989c21785e50435b46c970111631ca774b107450d630c6b78',
+  'assets/index-zp-nomenu-Hb7k2m.js': '8337bb8eb820630f4f675d1995e7004fc203651365ebf55569ddfca23999edc1',
+  'assets/loginpagesnew-BPP0r_st.js': '01ba20ccd7b27bc8bea99f9fa283db18997b03c97598c7743db57c01e6620692',
   'assets/index-DoGwQ0mo.css': '72200c27e811051fd7851e4473dd3987d6655659870b47c993fad8955f66069e',
 };
 
@@ -55,8 +55,8 @@ if (!/futpro-deploy/.test(html)) {
 if (!/2026-08-04T21:16:30Z/.test(html)) {
   fail('meta futpro-deploy distinta del ZIP canónico (2026-08-04T21:16:30Z)');
 }
-if (!/index-DchpCYR3\.js/.test(html)) {
-  fail('index.html no apunta al bundle canónico index-DchpCYR3.js');
+if (!/index-zp-nomenu-Hb7k2m\.js/.test(html)) {
+  fail('index.html no apunta al bundle activo index-zp-nomenu-Hb7k2m.js');
 }
 
 const assetsDir = path.join(deployDir, 'assets');
@@ -68,8 +68,8 @@ if (!hasLogin) {
 if (!assets.includes('loginpagesnew-BPP0r_st.js')) {
   fail('Falta assets/loginpagesnew-BPP0r_st.js (casing Linux del ZIP)');
 }
-if (!assets.includes('index-DchpCYR3.js')) {
-  fail('Falta assets/index-DchpCYR3.js');
+if (!assets.includes('index-zp-nomenu-Hb7k2m.js')) {
+  fail('Falta assets/index-zp-nomenu-Hb7k2m.js');
 }
 
 for (const [rel, expected] of Object.entries(CRITICAL_SHA256)) {

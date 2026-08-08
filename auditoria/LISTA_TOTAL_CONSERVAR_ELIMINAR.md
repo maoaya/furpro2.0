@@ -488,12 +488,16 @@ No son el producto. Se pueden archivar en lote a `_legacy_archivo/docs-ruido-rai
 - [x] Servidor local :4173 respondiendo
 - [ ] **Merge a master**
 - [ ] **Netlify Clear cache & deploy**
-- [ ] (Opcional) archivar los docs ruido de §E
+- [x] Archivar docs ruido de §E → `_legacy_archivo/docs-ruido-raiz/`
+- [x] ZIP también en raíz del repo: `deploy-6a7256d5ffd58e44433d5158.zip`
+- [x] Scripts riesgo/ops archivados → `_legacy_archivo/deploy-riesgo-raiz/` + `ops-ruido-raiz/`
 
 
 ## Actualización 2026-08-08 (orden producto final)
 
 - UI enero movida a `_legacy_archivo/src-ui-enero/` (pages, components, App/main jsx).
 - `src/` activo = backend only.
-- Producto = ZIP `deploy-6a7256d5ffd58e44433d5158` en `producto-deploy/`.
+- Producto = ZIP `deploy-6a7256d5ffd58e44433d5158` en `producto-deploy/` (sin conversión JSX).
+- ZIP físico en raíz + `auditoria/`.
 - Candado: si vuelve `src/pages` o `src/App.jsx`, `npm run check:producto` falla.
+- Docs ruido y scripts de riesgo ya no están en la raíz visible del proyecto.

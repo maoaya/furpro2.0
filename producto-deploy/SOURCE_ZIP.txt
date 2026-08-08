@@ -1,7 +1,2 @@
 ZIP=deploy-6a7256d5ffd58e44433d5158.zip
-UPLOAD=deploy-6a7256d5ffd58e44433d5158_b744.zip
-REPO_COPY=auditoria/deploy-6a7256d5ffd58e44433d5158.zip
-DEPLOY_META=2026-08-04T21:16:30Z
-VERIFIED=sha256 match 59 publishable files (0 mismatches)
-NOTE=ZIP filenames are lowercase on Windows; Linux publish uses mixed-case names from index.html/bundle imports
-EXCLUDE_FROM_PUBLISH=netlify.toml (PC Windows), __tmp_measure_home.js
+SYNC_AT=2026-08-08T17:12:00.021Z
