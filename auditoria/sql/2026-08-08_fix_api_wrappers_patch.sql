@@ -1,152 +1,12 @@
--- Zona Pro / FutPro — fix schema drift causing console 400/404
--- Project: qqrxetxcglwrejtblwut
--- Date: 2026-08-08
---
--- Root causes verified against live REST API:
--- 1) rpc_ranking_equipos → 400: column e.deporte_nombre does not exist (equipos.deporte exists)
--- 2) obtener_sugerencias_usuarios(p_limite,p_usuario) → 400: column am.id does not exist (amistades has no id)
--- 3) fp_obtener_bandeja_chat → 404: function missing
--- 4) mensajes select destinatario → 400: column missing
--- 5) futpro_chat_sessions English columns → 400: legacy Spanish column names only
--- 6) historias?expires_at= → 400: column missing (fecha_vencimiento / expira_en exist)
---
--- Run in Supabase Dashboard → SQL Editor (service role / postgres).
--- Idempotent: safe to re-run.
+-- Patch: finish migration after ERROR 42704 type "public.rpc_ranking_equipos" does not exist
+-- Cause: api wrappers used RETURNS SETOF public.<function_name> (no composite type).
+-- Run this in SQL Editor (no need to re-run the full migration if earlier steps already applied).
 
 BEGIN;
 
--- ---------------------------------------------------------------------------
--- 0) Helpers
--- ---------------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS api;
 
--- ---------------------------------------------------------------------------
--- 1) historias: alias expires_at
--- ---------------------------------------------------------------------------
-ALTER TABLE IF EXISTS public.historias
-  ADD COLUMN IF NOT EXISTS expires_at timestamptz;
-
-UPDATE public.historias
-SET expires_at = COALESCE(expires_at, fecha_vencimiento, expira_en, creado_en + interval '24 hours')
-WHERE expires_at IS NULL
-  AND COALESCE(fecha_vencimiento, expira_en, creado_en) IS NOT NULL;
-
--- Keep expires_at roughly in sync for new rows that only set legacy cols.
-CREATE OR REPLACE FUNCTION public.historias_sync_expires_at()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-BEGIN
-  NEW.expires_at := COALESCE(NEW.expires_at, NEW.fecha_vencimiento, NEW.expira_en, NOW() + interval '24 hours');
-  NEW.fecha_vencimiento := COALESCE(NEW.fecha_vencimiento, NEW.expires_at);
-  NEW.expira_en := COALESCE(NEW.expira_en, NEW.expires_at);
-  RETURN NEW;
-END;
-$$;
-
-DROP TRIGGER IF EXISTS trg_historias_sync_expires_at ON public.historias;
-CREATE TRIGGER trg_historias_sync_expires_at
-BEFORE INSERT OR UPDATE ON public.historias
-FOR EACH ROW EXECUTE PROCEDURE public.historias_sync_expires_at();
-
--- ---------------------------------------------------------------------------
--- 2) mensajes: add destinatario expected by inbox fast-path
--- ---------------------------------------------------------------------------
-ALTER TABLE IF EXISTS public.mensajes
-  ADD COLUMN IF NOT EXISTS destinatario uuid;
-
-CREATE INDEX IF NOT EXISTS idx_mensajes_destinatario
-  ON public.mensajes (destinatario)
-  WHERE destinatario IS NOT NULL;
-
--- ---------------------------------------------------------------------------
--- 3) futpro_chat_sessions: English aliases expected by product bundle
--- ---------------------------------------------------------------------------
-ALTER TABLE IF EXISTS public.futpro_chat_sessions
-  ADD COLUMN IF NOT EXISTS conversation_id uuid,
-  ADD COLUMN IF NOT EXISTS conversation_type text,
-  ADD COLUMN IF NOT EXISTS peer_user_id uuid,
-  ADD COLUMN IF NOT EXISTS product_id uuid,
-  ADD COLUMN IF NOT EXISTS title text,
-  ADD COLUMN IF NOT EXISTS avatar_url text,
-  ADD COLUMN IF NOT EXISTS last_message_text text,
-  ADD COLUMN IF NOT EXISTS owner_id uuid,
-  ADD COLUMN IF NOT EXISTS deleted_at timestamptz,
-  ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now();
-
-UPDATE public.futpro_chat_sessions s
-SET
-  conversation_id = COALESCE(s.conversation_id, s.conversacion_id),
-  peer_user_id = COALESCE(s.peer_user_id, s.peer_id),
-  last_message_text = COALESCE(s.last_message_text, s.last_message),
-  owner_id = COALESCE(s.owner_id, s.usuario_id),
-  conversation_type = COALESCE(
-    s.conversation_type,
-    CASE lower(coalesce(s.tipo, ''))
-      WHEN 'direct' THEN 'direct'
-      WHEN 'directo' THEN 'direct'
-      WHEN 'personal' THEN 'direct'
-      WHEN 'marketplace' THEN 'marketplace'
-      WHEN 'market' THEN 'marketplace'
-      WHEN 'equipo' THEN 'team'
-      WHEN 'team' THEN 'team'
-      WHEN 'torneo' THEN 'tournament'
-      WHEN 'tournament' THEN 'tournament'
-      ELSE NULLIF(lower(coalesce(s.tipo, '')), '')
-    END
-  ),
-  created_at = COALESCE(s.created_at, s.updated_at, now())
-WHERE s.conversation_id IS NULL
-   OR s.peer_user_id IS NULL
-   OR s.owner_id IS NULL
-   OR s.conversation_type IS NULL
-   OR s.last_message_text IS NULL
-   OR s.created_at IS NULL;
-
-CREATE OR REPLACE FUNCTION public.futpro_chat_sessions_sync_aliases()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-BEGIN
-  NEW.conversation_id := COALESCE(NEW.conversation_id, NEW.conversacion_id);
-  NEW.conversacion_id := COALESCE(NEW.conversacion_id, NEW.conversation_id);
-  NEW.peer_user_id := COALESCE(NEW.peer_user_id, NEW.peer_id);
-  NEW.peer_id := COALESCE(NEW.peer_id, NEW.peer_user_id);
-  NEW.owner_id := COALESCE(NEW.owner_id, NEW.usuario_id);
-  NEW.usuario_id := COALESCE(NEW.usuario_id, NEW.owner_id);
-  NEW.last_message_text := COALESCE(NEW.last_message_text, NEW.last_message);
-  NEW.last_message := COALESCE(NEW.last_message, NEW.last_message_text);
-  IF NEW.conversation_type IS NULL AND NEW.tipo IS NOT NULL THEN
-    NEW.conversation_type := CASE lower(NEW.tipo)
-      WHEN 'directo' THEN 'direct'
-      WHEN 'personal' THEN 'direct'
-      WHEN 'market' THEN 'marketplace'
-      WHEN 'equipo' THEN 'team'
-      WHEN 'torneo' THEN 'tournament'
-      ELSE lower(NEW.tipo)
-    END;
-  END IF;
-  IF NEW.tipo IS NULL AND NEW.conversation_type IS NOT NULL THEN
-    NEW.tipo := NEW.conversation_type;
-  END IF;
-  NEW.created_at := COALESCE(NEW.created_at, now());
-  NEW.updated_at := COALESCE(NEW.updated_at, now());
-  RETURN NEW;
-END;
-$$;
-
-DROP TRIGGER IF EXISTS trg_futpro_chat_sessions_sync_aliases ON public.futpro_chat_sessions;
-CREATE TRIGGER trg_futpro_chat_sessions_sync_aliases
-BEFORE INSERT OR UPDATE ON public.futpro_chat_sessions
-FOR EACH ROW EXECUTE PROCEDURE public.futpro_chat_sessions_sync_aliases();
-
-CREATE INDEX IF NOT EXISTS idx_futpro_chat_sessions_owner_id
-  ON public.futpro_chat_sessions (owner_id)
-  WHERE deleted_at IS NULL;
-
--- ---------------------------------------------------------------------------
--- 4) rpc_ranking_equipos — rewrite without equipos.deporte_nombre
--- ---------------------------------------------------------------------------
+-- Ensure public RPCs exist (safe recreate)
 DROP FUNCTION IF EXISTS public.rpc_ranking_equipos();
 DROP FUNCTION IF EXISTS public.rpc_ranking_equipos(text);
 DROP FUNCTION IF EXISTS public.rpc_ranking_equipos(text, text, text, integer, integer);
@@ -215,25 +75,10 @@ AS $$
       AND (p_pais IS NULL OR lower(coalesce(e.pais, '')) = lower(p_pais))
   )
   SELECT
-    r.equipo_id,
-    r.id,
-    r.nombre,
-    r.puntos_card,
-    r.puntos_equipo,
-    r.puntos,
-    r.nivel_card,
-    r.nivel_equipo,
-    r.ranking_position,
-    r.ranking_position AS posicion,
-    r.deporte,
-    r.ciudad,
-    r.pais,
-    r.logo,
-    r.foto_escudo,
-    r.escudo,
-    r.overall,
-    r.victorias,
-    r.partidos_jugados
+    r.equipo_id, r.id, r.nombre, r.puntos_card, r.puntos_equipo, r.puntos,
+    r.nivel_card, r.nivel_equipo, r.ranking_position, r.ranking_position AS posicion,
+    r.deporte, r.ciudad, r.pais, r.logo, r.foto_escudo, r.escudo,
+    r.overall, r.victorias, r.partidos_jugados
   FROM ranked r
   ORDER BY r.puntos_card DESC, r.nombre ASC
   LIMIT GREATEST(1, LEAST(COALESCE(p_limit, 100), 500))
@@ -242,9 +87,6 @@ $$;
 
 GRANT EXECUTE ON FUNCTION public.rpc_ranking_equipos(text, text, text, integer, integer) TO anon, authenticated, service_role;
 
--- ---------------------------------------------------------------------------
--- 5) obtener_sugerencias_usuarios — no amistades.id
--- ---------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS public.obtener_sugerencias_usuarios();
 DROP FUNCTION IF EXISTS public.obtener_sugerencias_usuarios(integer);
 DROP FUNCTION IF EXISTS public.obtener_sugerencias_usuarios(integer, uuid);
@@ -310,9 +152,6 @@ $$;
 
 GRANT EXECUTE ON FUNCTION public.obtener_sugerencias_usuarios(integer, uuid) TO anon, authenticated, service_role;
 
--- ---------------------------------------------------------------------------
--- 6) fp_obtener_bandeja_chat — missing RPC (404)
--- ---------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.fp_obtener_bandeja_chat(
   p_usuario_id uuid DEFAULT NULL
 )
@@ -446,41 +285,11 @@ $$;
 
 GRANT EXECUTE ON FUNCTION public.fp_obtener_bandeja_chat(uuid) TO anon, authenticated, service_role;
 
--- ---------------------------------------------------------------------------
--- 7) api schema mirrors (publishable key defaults to api for some paths)
--- ---------------------------------------------------------------------------
-DO $$
-BEGIN
-  -- Compatible views for REST when Accept-Profile: api
-  EXECUTE $v$
-    CREATE OR REPLACE VIEW api.mensajes AS
-    SELECT * FROM public.mensajes
-  $v$;
-EXCEPTION WHEN OTHERS THEN
-  RAISE NOTICE 'api.mensajes view skipped: %', SQLERRM;
-END $$;
+-- api wrappers with explicit RETURNS TABLE (no SETOF function-name)
+DROP FUNCTION IF EXISTS api.rpc_ranking_equipos(text, text, text, integer, integer);
+DROP FUNCTION IF EXISTS api.obtener_sugerencias_usuarios(integer, uuid);
+DROP FUNCTION IF EXISTS api.fp_obtener_bandeja_chat(uuid);
 
-DO $$
-BEGIN
-  EXECUTE $v$
-    CREATE OR REPLACE VIEW api.futpro_chat_sessions AS
-    SELECT * FROM public.futpro_chat_sessions
-  $v$;
-EXCEPTION WHEN OTHERS THEN
-  RAISE NOTICE 'api.futpro_chat_sessions view skipped: %', SQLERRM;
-END $$;
-
-DO $$
-BEGIN
-  EXECUTE $v$
-    CREATE OR REPLACE VIEW api.historias AS
-    SELECT * FROM public.historias
-  $v$;
-EXCEPTION WHEN OTHERS THEN
-  RAISE NOTICE 'api.historias view skipped: %', SQLERRM;
-END $$;
-
--- Expose RPCs under api schema as thin wrappers (PostgREST looks at api first for publishable key)
 CREATE OR REPLACE FUNCTION api.fp_obtener_bandeja_chat(p_usuario_id uuid DEFAULT NULL)
 RETURNS jsonb
 LANGUAGE sql
@@ -553,8 +362,6 @@ $$;
 GRANT EXECUTE ON FUNCTION api.fp_obtener_bandeja_chat(uuid) TO anon, authenticated, service_role;
 GRANT EXECUTE ON FUNCTION api.rpc_ranking_equipos(text, text, text, integer, integer) TO anon, authenticated, service_role;
 GRANT EXECUTE ON FUNCTION api.obtener_sugerencias_usuarios(integer, uuid) TO anon, authenticated, service_role;
-
-GRANT SELECT ON ALL TABLES IN SCHEMA api TO anon, authenticated, service_role;
 
 NOTIFY pgrst, 'reload schema';
 

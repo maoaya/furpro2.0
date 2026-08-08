@@ -71,7 +71,17 @@ CREATE OR REPLACE FUNCTION api.obtener_sugerencias_usuarios(
   p_limite integer DEFAULT 24,
   p_usuario uuid DEFAULT NULL
 )
-RETURNS SETOF public.obtener_sugerencias_usuarios
+RETURNS TABLE (
+  id uuid,
+  usuario_id uuid,
+  auth_user_id uuid,
+  nombre text,
+  apellido text,
+  foto_perfil text,
+  ciudad text,
+  pais text,
+  display_name text
+)
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
