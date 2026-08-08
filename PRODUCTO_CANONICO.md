@@ -1,5 +1,9 @@
 # Versión canónica del sistema — Zona Pro
 
+> **Raíz de trabajo:** este repo (`furpro2.0`).  
+> **Orden de uso:** `TRABAJAR_AQUI.md` → `auditoria/COMO_TRABAJAR_EN_ESTE_PROYECTO.md`.  
+> Enero no es producto y no se restaura.
+
 ## Esta es LA versión del producto
 
 | | |
