@@ -13,10 +13,10 @@
 | Contexto / auditoría | `auditoria/AUDITORIA_CONTEXTO_PRODUCTO_ZONA_PRO.md` |
 | Lista keep/delete | `auditoria/LISTA_TOTAL_CONSERVAR_ELIMINAR.md` |
 
-**El `src/` de enero NO es el producto.** Está marcado legado; Vite/build legacy están bloqueados.
+**Producto final = este ZIP / `producto-deploy/`.**  
+La UI de enero **ya no está en `src/`** (cuarentena `_legacy_archivo/src-ui-enero/`). No se trabaja ahí.
 
-**Cómo trabajar (UI en el PC, no en `src/`):**  
-→ `auditoria/COMO_TRABAJAR_EN_ESTE_PROYECTO.md`
+**Cómo trabajar:** → `auditoria/COMO_TRABAJAR_EN_ESTE_PROYECTO.md`
 
 ## Cómo arrancar (siempre)
 

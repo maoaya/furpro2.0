@@ -113,6 +113,14 @@ for (const bad of ['netlify-emergency.toml', 'netlify.deploy-local.toml']) {
   }
 }
 
+
+// Candado: la UI de enero no debe volver al árbol activo
+for (const badUi of ['src/pages', 'src/components', 'src/App.jsx', 'src/main.jsx', 'src/index.jsx']) {
+  if (fs.existsSync(path.join(root, badUi))) {
+    fail(`${badUi} volvió al árbol activo (UI enero). Debe estar en _legacy_archivo/src-ui-enero/. Producto = producto-deploy/ (ZIP).`);
+  }
+}
+
 ok('producto-deploy = ZIP deploy-6a7256d5ffd58e44433d5158 (Zona Pro)');
 ok('netlify.toml publica producto-deploy');
 ok('candados anti-Vite/Instagram/dist OK');

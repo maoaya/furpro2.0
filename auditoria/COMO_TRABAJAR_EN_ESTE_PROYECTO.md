@@ -1,109 +1,70 @@
-# Cómo trabajar en este proyecto (sin tocar enero)
+# Cómo trabajar — el producto final es el ZIP
 
-**Regla de oro:** el producto es el ZIP / `producto-deploy/`.  
-El `src/` de enero **no sirve**, **no se edita como UI** y **no se buildea**.
-
----
-
-## 1. Qué es cada cosa
-
-| Pieza | Dónde | Para qué |
-|---|---|---|
-| **UI que corre** | `producto-deploy/` (= ZIP `deploy-6a7256…`) | Lo único que se sirve en `:4173` y Netlify |
-| **Fuente bueno** | PC: `Desktop\futpro2.0` | Donde sí editas JSX/CSS/lógica de pantalla |
-| **Este GitHub `src/`** | `src/` | Legado enero — **no trabajar UI aquí** |
-| **Backend / SQL** | `server.js`, `functions/`, `supabase/`, algunos módulos en `src/` no-UI | Sí se puede tocar en este repo |
+**Orden clara:**  
+`deploy-6a7256d5ffd58e44433d5158` / `producto-deploy/` = **el sistema**.  
+La UI de **enero ya no está en el árbol activo** (fue a `_legacy_archivo/src-ui-enero/`). **No se trabaja ahí.**
 
 ---
 
-## 2. Flujo diario correcto
+## Producto final (único)
 
-### A) Ver / probar la app (este repo o cloud)
-
-```bash
-npm run check:producto
-npm start
-```
-
-Abre: http://127.0.0.1:4173/login  
-
-No uses Vite. No uses puerto 5173. No abras JSX de `src/pages`.
-
-### B) Cambiar pantallas / login / torneos / diseño (UI)
-
-1. En el **PC**, abre el proyecto bueno: `Desktop\futpro2.0`
-2. Edita ahí (ese sí tiene los JSX de Zona Pro / `loginpagesnew`, etc.)
-3. Prueba en local del PC (`npm run dev` **del PC**, no el de este repo)
-4. Cuando esté bien:
-
-```bat
-cd Desktop\futpro2.0
-npm run build
-```
-
-5. Trae el `dist` (o el ZIP de Netlify deploy) a este repo y sincroniza:
-
-```bash
-# copia el zip a auditoria/ o pásale la ruta
-node scripts/sync-producto-from-zip.mjs ruta\al\nuevo.zip
-npm run check:producto
-git add producto-deploy auditoria
-git commit -m "producto: actualizar Zona Pro desde dist PC"
-git push
-```
-
-6. Netlify: **Clear cache and deploy** (publish ya apunta a `producto-deploy`)
-
-### C) Cambiar API / Supabase / functions (este repo)
-
-Sí puedes trabajar aquí:
-
-- `functions/`
-- `supabase/`
-- `server.js` / backend
-- scripts de migración
-
-No mezcles eso con “arreglar Home/login editando `src/pages`”.
-
----
-
-## 3. Qué NO hacer (rompe el sistema otra vez)
-
-| Prohibido | Por qué |
+| Qué | Dónde |
 |---|---|
-| Editar `src/pages/*.jsx` como si fuera Zona Pro | Es enero; no es el ZIP |
-| `npm run dev:legacy-src` / Vite en este repo | Bloqueado a propósito |
-| `npm run build` esperando regenerar UI | Aquí no rebuild del producto |
-| Restaurar `_legacy_archivo/` | Vuelve Instagram / Vite / TOML malos |
-| Usar el `netlify.toml` **dentro** del ZIP | Tiene rutas Windows + `publish=dist` |
-| Pedir a un agente “arregla el login en src/” | Reescribe el impostor |
+| ZIP | `auditoria/deploy-6a7256d5ffd58e44433d5158.zip` |
+| App publicada | `producto-deploy/` |
+| Login | http://127.0.0.1:4173/login → **ZONA PRO** (`loginpagesnew`) |
+| Candado | `npm run check:producto` (hashes SHA256) |
+
+```bash
+npm start
+# → http://127.0.0.1:4173/login
+```
 
 ---
 
-## 4. Si quieres que los JSX vivan en GitHub
+## Qué hay en `src/` ahora
 
-Hoy **no están**. El ZIP solo trae JS compilado.
-
-Opciones (elige una, no mezcles):
-
-1. **Recomendada ahora:** seguir el flujo PC → build → `sync-producto-from-zip` (arriba).
-2. **Más adelante:** copiar el fuente de `Desktop\futpro2.0` a una carpeta nueva (`src-zona-pro/`), apuntar Vite **solo** ahí, y dejar `src/` enero archivado o borrado.  
-   **Nunca** “arreglar” el `src/` actual para que parezca el producto.
+Solo **backend/API** (`main/`, `modules/`, `routes/`, `controllers/`, …).  
+**Cero** `pages/`, `components/`, `App.jsx`, `main.jsx`.  
+Si vuelven, `check:producto` **falla a propósito**.
 
 ---
 
-## 5. Checklist mental antes de tocar código
+## Cómo cambiar la UI (pantallas)
 
-1. ¿Es cambio de **pantalla/UI**? → PC `futpro2.0` → build → sync ZIP.  
-2. ¿Es cambio de **API/SQL**? → este repo (`functions` / `supabase` / server).  
-3. ¿Estoy en `src/pages` o `LoginPage.jsx`? → **parar**; no es el producto.  
-4. ¿`npm start` abre `:4173` con login **ZONA PRO**? → vas bien.
+Los JSX reales del producto **no viven en este repo** (el ZIP es compilado).  
+Se editan en el PC donde se generó el build:
+
+1. PC: `Desktop\futpro2.0` → editar → `npm run build`
+2. Traer ZIP/`dist` a este repo:
+
+```bash
+node scripts/sync-producto-from-zip.mjs ruta/al.zip
+npm run check:producto
+git add producto-deploy auditoria && git commit && git push
+```
+
+3. Netlify: **Clear cache and deploy** (`publish = producto-deploy`)
 
 ---
 
-## 6. Enlaces
+## Cómo cambiar API / SQL
 
-- Producto canónico: `../PRODUCTO_CANONICO.md`
-- JSX vs ZIP: `./JSX_VS_ZIP_CANONICO.md`
-- Lista keep/delete: `./LISTA_TOTAL_CONSERVAR_ELIMINAR.md`
-- Auditoría: `./AUDITORIA_CONTEXTO_PRODUCTO_ZONA_PRO.md`
+Sí, en este repo: `functions/`, `supabase/`, `server.js`, `src/main`, etc.  
+Sin tocar UI de enero ni restaurar `_legacy_archivo/`.
+
+---
+
+## Prohibido
+
+- Restaurar `_legacy_archivo/src-ui-enero/` a `src/`
+- Vite / puerto 5173 / `build:legacy-src`
+- Usar el `netlify.toml` de dentro del ZIP (Windows)
+- Tratar docs/HTML viejos como la app
+
+---
+
+## Estado del sistema (no dañado)
+
+El producto ZIP sigue con hashes canónicos y responde en `:4173`.  
+Lo que se eliminó del flujo activo es el **impostor de enero**, no Zona Pro.

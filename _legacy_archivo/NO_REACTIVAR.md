@@ -20,3 +20,5 @@ Fue movido aquí para que jamás vuelva a publicarse ni a servirse como la app.
 
 | `basura-raiz/` | Archivos basura con nombres rotos (`console.log(...)`, `vite`, `{`, etc.) |
 | `deploy-manual/` | Carpeta de deploy manual que no es producto-deploy |
+
+| `src-ui-enero/` | **Toda** la UI JSX/páginas/componentes de enero. NO es Zona Pro. Producto = `producto-deploy/` (ZIP). |

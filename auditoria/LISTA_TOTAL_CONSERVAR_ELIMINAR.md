@@ -489,3 +489,11 @@ No son el producto. Se pueden archivar en lote a `_legacy_archivo/docs-ruido-rai
 - [ ] **Merge a master**
 - [ ] **Netlify Clear cache & deploy**
 - [ ] (Opcional) archivar los docs ruido de §E
+
+
+## Actualización 2026-08-08 (orden producto final)
+
+- UI enero movida a `_legacy_archivo/src-ui-enero/` (pages, components, App/main jsx).
+- `src/` activo = backend only.
+- Producto = ZIP `deploy-6a7256d5ffd58e44433d5158` en `producto-deploy/`.
+- Candado: si vuelve `src/pages` o `src/App.jsx`, `npm run check:producto` falla.
