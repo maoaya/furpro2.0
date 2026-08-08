@@ -1,5 +1,9 @@
 # Versión canónica del sistema — Zona Pro
 
+> Auditoría completa (qué conservar / eliminar / por qué falló):  
+> **`auditoria/AUDITORIA_CONTEXTO_PRODUCTO_ZONA_PRO.md`**  
+> Impostores cuarentenados: **`_legacy_archivo/`** (ver `NO_REACTIVAR.md`)
+
 ## Esta es LA versión del producto
 
 | | |
@@ -8,9 +12,9 @@
 | Origen | Build del dominio / Netlify / PC (`Desktop\futpro2.0\dist`) |
 | Meta | `futpro-deploy` = `2026-08-04T21:16:30Z` |
 | Login | `loginpagesnew` → pantalla **ZONA PRO** |
-| Commit base | `f65394f`+ en `master` |
+| Commit base | `f65394f`+ / `6f3af13`+ en `master` |
 
-**El `src/` de enero NO es el producto.** Queda solo como legado; no se publica ni se sirve por defecto.
+**El `src/` de enero NO es el producto.** La entrada Vite, HTML Instagram, TOML `publish=dist` y demos están en `_legacy_archivo/` para que no vuelvan.
 
 ## Cómo arrancar (siempre)
 
