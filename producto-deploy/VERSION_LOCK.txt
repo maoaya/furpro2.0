@@ -1,5 +1,5 @@
 PRODUCT=Zona Pro
 ZIP=deploy-6a7256d5ffd58e44433d5158.zip
 BUNDLE=assets/index-zp-nomenu-Hb7k2m.js
-SYNC=2026-08-08T17:12:00Z
-NOTE=ZIP canónico + parches runtime (menú/feedback/realtime). Sin conversión JSX.
+SYNC=2026-08-08T17:26:01Z
+NOTE=Sin UI Cargando. Prefetch silencioso + fondo oscuro + bfcache soft.

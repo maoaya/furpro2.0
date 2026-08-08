@@ -16,8 +16,8 @@ const manifestPath = path.join(deployDir, 'MANIFEST_CANONICO.json');
 
 /** Huellas del ZIP canónico (contenido idéntico; nombres con casing Linux). */
 const CRITICAL_SHA256 = {
-  'index.html': 'a895f851dd32031989c21785e50435b46c970111631ca774b107450d630c6b78',
-  'assets/index-zp-nomenu-Hb7k2m.js': '8337bb8eb820630f4f675d1995e7004fc203651365ebf55569ddfca23999edc1',
+  'index.html': 'ace966d63b58bead6fe87614bd59684bb0f028bce6da4dca4ecc85a59ba1e63e',
+  'assets/index-zp-nomenu-Hb7k2m.js': 'c03b843e445d78f1b932286e0a7a55607315d05198919713aaf091b154d94d32',
   'assets/loginpagesnew-BPP0r_st.js': '01ba20ccd7b27bc8bea99f9fa283db18997b03c97598c7743db57c01e6620692',
   'assets/index-DoGwQ0mo.css': '72200c27e811051fd7851e4473dd3987d6655659870b47c993fad8955f66069e',
 };

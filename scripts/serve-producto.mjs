@@ -146,9 +146,11 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(port, host, () => {
   // Print localhost URLs so Cursor Desktop auto-detects / port-forwards 4173.
-  // Bind remains 0.0.0.0 (host) so the tunnel can reach the process.
-  console.log(`✅ Zona Pro local: http://127.0.0.1:${port}/`);
+  // Bind remains 0.0.0.0 (host) so Simple Browser / tuneles externos alcancen el proceso.
+  console.log(`✅ Zona Pro escuchando en ${host}:${port} (externo OK)`);
+  console.log(`   Local: http://127.0.0.1:${port}/`);
   console.log(`   Local: http://localhost:${port}/`);
-  console.log(`   login: http://localhost:${port}/login`);
+  console.log(`   login: http://127.0.0.1:${port}/login`);
   console.log('   proxy: POST /api/zona-pro  → TheSportsDB (sin CORS)');
+  console.log('   Tip: en Cursor, Ports → Forward 4173 (o Simple Browser a esa URL).');
 });
