@@ -1,0 +1,204 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    CHECKLIST DE VERIFICACIÓN RÁPIDA                        ║
+║                           FutPro 2.0 - Fixes                              ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ VERIFICACIÓN DE ARCHIVOS CORREGI DOS
+
+  ✓ src/components/PostCard.jsx
+    - Usar post.usuarios.nombre ✓
+    - Usar post.content (no description) ✓
+    - Usar post.image_url (no media_url) ✓
+    - Usar post.usuarios.avatar_url ✓
+
+  ✓ src/pages/HomePage.jsx
+    - Import StoryService ✓
+    - Import PostService ✓
+    - Usa tabla "user_stories" (no "stories") ✓
+
+  ✓ src/services/PostService.js
+    - Método createPost() ✓
+    - Método getUserPosts() ✓
+    - Método likePost() ✓
+    - Inserta en tabla "posts" ✓
+
+  ✓ src/services/StoryService.js
+    - Método createStory() ✓
+    - Método getUserStories() ✓
+    - Inserta en tabla "user_stories" ✓
+    - TTL 24h automático ✓
+
+  ✓ src/services/CameraService.js
+    - Método requestCameraAccess() ✓
+    - Método capturePhoto() ✓
+    - Método startVideoRecording() ✓
+
+  ✗ src/services/StoriesService.js
+    - ELIMINADO (duplicado) ✓
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ VERIFICACIÓN DE SQL
+
+  ✓ SCHEMA_COMPLETO_FIXES.sql
+    - Tabla posts ✓
+    - Tabla post_comments ✓
+    - Tabla post_likes ✓
+    - Tabla user_stories ✓
+    - Tabla story_views ✓
+    - Tabla tournaments ✓
+    - Tabla teams ✓
+    - Tabla team_members ✓
+    - Tabla penalty_shootouts ✓
+    - Columnas en usuarios ✓
+    - Funciones ✓
+    - Índices ✓
+    - Estado: YA EJECUTADO ✓
+
+  ✓ OPTIMIZACIONES_Y_TRIGGERS.sql
+    - Trigger sync_user_profile ✓
+    - Índices adicionales ✓
+    - Vista v_feed_posts ✓
+    - Función get_user_stats ✓
+    - RLS policies mejoradas ✓
+    - Estado: YA EJECUTADO ✓
+
+  ⏳ STORAGE_BUCKETS.sql
+    - Bucket posts ✓
+    - Bucket stories ✓
+    - Bucket avatars ✓
+    - RLS policies storage ✓
+    - Estado: PENDIENTE → PRÓXIMO PASO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ VERIFICACIÓN DE BUILD
+
+  ✓ npm run build completado
+  ✓ 324 módulos compilados
+  ✓ Dist creado en ./dist
+  ✓ Sin errores críticos
+  ✓ Sin warnings fatales
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⏳ PRÓXIMAS ACCIONES (EN ORDEN)
+
+  1️⃣ Ejecutar STORAGE_BUCKETS.sql
+     └─ Ubicación: c:\Users\lenovo\Desktop\futpro2.0\STORAGE_BUCKETS.sql
+     └─ Dónde: https://supabase.com/dashboard → SQL Editor
+     └─ Tiempo: ~2 minutos
+     └─ Resultado esperado: "Success. No rows returned"
+
+  2️⃣ Deploy a producción
+     └─ Comando:
+        git add .
+        git commit -m "Fix: Correcciones de schema y servicios"
+        git push origin master
+     └─ Tiempo: ~10 minutos
+     └─ Resultado: Deploy automático en Netlify
+
+  3️⃣ Validación en vivo
+     └─ URL: https://futpro.vip
+     └─ Test 1: Crear post → Ver nombre de autor ✓
+     └─ Test 2: Subir historia → Ver en feed ✓
+     └─ Test 3: Dar like → Contador sube ✓
+     └─ Test 4: Comentar → Ver comentario ✓
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔍 VALIDACIÓN DE FUNCIONALIDAD EN SUPABASE (Después de ejecutar SQL)
+
+  En Supabase SQL Editor, verifica que existan:
+
+  1. Tablas:
+     SELECT tablename FROM pg_tables WHERE schemaname='public';
+     Busca: posts, post_comments, post_likes, user_stories, story_views
+
+  2. Buckets:
+     SELECT name FROM storage.buckets;
+     Busca: posts, stories, avatars
+
+  3. Funciones:
+     SELECT routine_name FROM information_schema.routines 
+     WHERE routine_schema='public';
+     Busca: get_post_stats, get_user_posts, clean_expired_stories
+
+  4. Índices:
+     SELECT indexname FROM pg_indexes WHERE schemaname='public';
+     Busca: idx_posts_user_id, idx_post_likes_post_id, etc.
+
+  5. Policies:
+     SELECT policyname FROM pg_policies WHERE tablename='posts';
+     Busca: posts_select, posts_insert, posts_update, posts_delete
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ SI ALGO FALLA - SOLUCIONES RÁPIDAS
+
+  Error: "ERROR: relation \"posts\" does not exist"
+  Solución: No ejecutaste SCHEMA_COMPLETO_FIXES.sql aún
+  Acción: Ejecútalo primero
+
+  Error: "ERROR: policy \"posts_select\" already exists"
+  Solución: Las políticas ya existen de un intento anterior
+  Acción: El SQL ya está idempotente, solo ejecuta nuevamente
+
+  Error: "bucket does not exist"
+  Solución: No ejecutaste STORAGE_BUCKETS.sql
+  Acción: Ejecútalo
+
+  Error: "No rows returned" en SQL
+  Significa: ✅ Éxito! Es el resultado esperado
+  Acción: Continúa con el siguiente paso
+
+  Error: Post sin nombre de autor
+  Solución: usuarios table sin nombre poblado
+  Acción: En Supabase:
+          UPDATE usuarios SET nombre = 'Test User' WHERE nombre IS NULL;
+
+  Error: Historia no se guarda
+  Solución: Falta el trigger de sincronización
+  Acción: Verifica que ejecutaste OPTIMIZACIONES_Y_TRIGGERS.sql
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 PROGRESO GENERAL
+
+  Problemas identificados:     7/7  ✓
+  Archivos corregidos:         6/6  ✓
+  SQL ejecutados:              2/3  ✓ (Falta STORAGE_BUCKETS.sql)
+  Build completado:            ✓
+  Ready for production:         85% (Falta SQL + deploy)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 DOCUMENTACIÓN ADJUNTA
+
+  - GUIA_FINAL_FIXES.md (Guía completa paso a paso)
+  - RESUMEN_CORRECCIONES_COMPLETO.txt (Resumen detallado)
+  - ACCIONES_INMEDIATAS.txt (Acciones requeridas)
+  - Este archivo (Checklist rápida)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 OBJETIVO FINAL
+
+Después de ejecutar STORAGE_BUCKETS.sql y hacer deploy:
+
+✅ Usuarios pueden crear posts con foto/video
+✅ Posts muestran nombre y apellido del autor
+✅ Usuarios pueden subir historias (24h expiry)
+✅ Cámara funciona para capturar contenido
+✅ Todo tiene RLS seguro
+✅ Queries optimizadas con índices
+✅ Sistema 100% funcional
+
+════════════════════════════════════════════════════════════════════════════════
+
+Última actualización: 16 de enero de 2026
+Compilado por: AI Agent
+Versión: FutPro 2.0 - Complete Fixes
+

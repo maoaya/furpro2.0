@@ -1,0 +1,519 @@
+/* 🏆 RANKING MEJORADO - ESTILOS */
+
+.ranking-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.ranking-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+  animation: slideDown 0.5s ease-out;
+}
+
+.ranking-header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.ranking-header p {
+  font-size: 1.1rem;
+  margin-top: 10px;
+  opacity: 0.95;
+}
+
+/* Loading State */
+.ranking-loading {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Tabs */
+.ranking-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.tab {
+  padding: 12px 24px;
+  background: transparent;
+  border: 2px solid transparent;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tab.active {
+  background: white;
+  color: #667eea;
+  border-color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Filtros */
+.filters-section {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  animation: slideDown 0.4s ease-out;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.filter-group input,
+.filter-group select {
+  padding: 10px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-reset {
+  padding: 10px 20px;
+  background: #f5222d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-end;
+  margin-top: auto;
+}
+
+.btn-reset:hover {
+  background: #d9181c;
+  transform: translateY(-2px);
+}
+
+/* Ranking Table */
+.ranking-table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  animation: fadeIn 0.4s ease-out;
+  overflow-x: auto;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.ranking-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.ranking-table thead tr th {
+  padding: 15px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.ranking-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+.ranking-table tbody tr:hover {
+  background: #f5f7fa;
+  box-shadow: inset 0 0 10px rgba(102, 126, 234, 0.05);
+}
+
+.ranking-table tbody tr.leader {
+  background: linear-gradient(135deg, #fff9e6 0%, #ffe6e6 100%);
+  font-weight: 600;
+}
+
+.ranking-table tbody tr.leader .position-badge {
+  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+  color: white;
+}
+
+.ranking-table td {
+  padding: 12px 10px;
+}
+
+/* Column Styles */
+.col-position {
+  text-align: center;
+}
+
+.position-badge {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background: #e0e0e0;
+  color: #333;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.col-team {
+  min-width: 200px;
+}
+
+.team-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.team-info img {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.col-category {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.col-stats {
+  text-align: center;
+  font-weight: 500;
+  color: #333;
+}
+
+.col-stats.wins {
+  color: #52c41a;
+}
+
+.col-stats.draws {
+  color: #faad14;
+}
+
+.col-stats.losses {
+  color: #f5222d;
+}
+
+.col-stats.dg {
+  font-weight: 600;
+}
+
+.dg .positive {
+  color: #52c41a;
+}
+
+.dg .negative {
+  color: #f5222d;
+}
+
+.col-points {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #667eea;
+}
+
+.col-trend {
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.no-results {
+  text-align: center;
+  color: #999;
+  padding: 40px 20px !important;
+  font-size: 1.1rem;
+}
+
+/* Legend */
+.ranking-legend {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.legend-item {
+  display: flex;
+  gap: 8px;
+}
+
+.legend-label {
+  font-weight: 600;
+  color: #333;
+  min-width: 35px;
+}
+
+/* Referees Section */
+.referees-section {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.referees-section h2 {
+  color: #333;
+  margin-bottom: 25px;
+  font-size: 1.6rem;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 15px;
+}
+
+.referees-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.referee-card {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.referee-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border-color: #667eea;
+}
+
+.referee-header {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.referee-header img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.referee-info h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.referee-info .certification {
+  margin: 5px 0 0 0;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.referee-stats {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.stat .label {
+  color: #666;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.stat .value {
+  color: #333;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.stat .value.available {
+  color: #52c41a;
+}
+
+.stat .value.unavailable {
+  color: #f5222d;
+}
+
+.stat .value.stars {
+  font-size: 1.2rem;
+}
+
+.btn-view-profile {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-view-profile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.no-referees {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 1.1rem;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .ranking-table thead {
+    font-size: 0.85rem;
+  }
+
+  .ranking-table td {
+    padding: 10px 6px;
+  }
+
+  .col-team {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ranking-container {
+    padding: 10px;
+  }
+
+  .ranking-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .filters-section {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-reset {
+    align-self: stretch;
+  }
+
+  .ranking-table {
+    font-size: 0.8rem;
+  }
+
+  .ranking-table thead {
+    font-size: 0.7rem;
+  }
+
+  .ranking-table td,
+  .ranking-table th {
+    padding: 8px 4px;
+  }
+
+  .col-team {
+    min-width: 100px;
+  }
+
+  .team-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .team-info img {
+    display: none;
+  }
+
+  .ranking-legend {
+    grid-template-columns: repeat(2, 1fr);
+    font-size: 0.75rem;
+  }
+
+  .referees-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4 Pasos Críticos - Dashboard Implementación</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
+            color: #eee;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #FFD700; text-align: center; margin-bottom: 10px; font-size: 40px; }
+        .subtitle { text-align: center; color: #aaa; margin-bottom: 30px; font-size: 16px; }
+        .progress-bar {
+            background: #222;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            border: 1px solid #FFD700;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            height: 100%;
+            width: 75%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid #FFD700;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+        .card:hover { transform: translateY(-4px); }
+        .card.pending { border-color: #FFA500; }
+        .card.done { border-color: #4ade80; }
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: #FFD700;
+            color: #000;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        .step-number.done {
+            background: #4ade80;
+        }
+        .step-number.pending {
+            background: #FFA500;
+        }
+        h2 { color: #FFD700; font-size: 24px; margin-bottom: 12px; }
+        .status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        .status.done {
+            background: #4ade80;
+            color: #000;
+        }
+        .status.pending {
+            background: #FFA500;
+            color: #000;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-weight: bold;
+        }
+        .code-block {
+            background: #000;
+            border: 1px solid #FFD700;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 12px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #4ade80;
+            overflow-x: auto;
+        }
+        .action {
+            background: #FFD700;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 16px;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        .action:hover { transform: scale(1.02); }
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+            margin: 30px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #FFD700;
+        }
+        .timeline-item {
+            position: relative;
+            padding: 20px 0 20px 60px;
+            border-bottom: 1px solid #333;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 28px;
+            width: 24px;
+            height: 24px;
+            background: #FFD700;
+            border-radius: 50%;
+        }
+        .timeline-item.done::before {
+            background: #4ade80;
+        }
+        .timeline-item.pending::before {
+            background: #FFA500;
+        }
+        .file-box {
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid #FFD700;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 12px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .checkbox {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #FFD700;
+            border-radius: 3px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .checkbox.checked {
+            background: #4ade80;
+            border-color: #4ade80;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #FFD700;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 28px;
+            color: #FFD700;
+            font-weight: bold;
+        }
+        .stat-label {
+            color: #aaa;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 4 PASOS CRÍTICOS</h1>
+        <p class="subtitle">Implementación completa de Marketplace, RLS, Feed Filtrado y Modal de Comentarios</p>
+
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Crear tabla</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Configurar RLS</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Filtrar Feed</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Modal Comentarios</div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline">
+            <div class="timeline-item pending">
+                <h3 style="color: #FFA500; margin-bottom: 8px;">🔴 PASO 1: Crear tabla marketplace_items</h3>
+                <p style="color: #aaa; font-size: 14px; margin-bottom: 12px;">Ejecutar SQL en Supabase Dashboard</p>
+                <div class="file-box">Archivo: SQL_MARKETPLACE_SETUP.sql</div>
+                <div style="color: #ddd; font-size: 13px; margin-top: 12px;">
+                    <p><strong>Acciones:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>Abre Supabase Dashboard → SQL Editor</li>
+                        <li>Copia contenido del archivo SQL_MARKETPLACE_SETUP.sql</li>
+                        <li>Presiona Run</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(255, 165, 0, 0.1); border-left: 3px solid #FFA500; padding: 12px; margin-top: 12px; border-radius: 4px;">
+                    <strong>⏱️ Tiempo:</strong> ~2 minutos
+                </div>
+            </div>
+
+            <div class="timeline-item pending">
+                <h3 style="color: #FFA500; margin-bottom: 8px;">🔴 PASO 2: Configurar RLS Policies</h3>
+                <p style="color: #aaa; font-size: 14px; margin-bottom: 12px;">Habilitar Row Level Security en Supabase</p>
+                <div class="file-box">Archivo: SQL_RLS_POLICIES.sql</div>
+                <div style="color: #ddd; font-size: 13px; margin-top: 12px;">
+                    <p><strong>Configurará:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>posts: SELECT público, INSERT/UPDATE/DELETE solo propietario</li>
+                        <li>likes: SELECT público, INSERT/DELETE solo usuario</li>
+                        <li>comments: SELECT público, INSERT/UPDATE/DELETE usuario</li>
+                        <li>friends: SELECT usuarios involucrados, INSERT/DELETE usuarios</li>
+                        <li>marketplace_items: SELECT activos, WRITE solo vendedor</li>
+                        <li>users: SELECT público, UPDATE solo usuario</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(255, 165, 0, 0.1); border-left: 3px solid #FFA500; padding: 12px; margin-top: 12px; border-radius: 4px;">
+                    <strong>⏱️ Tiempo:</strong> ~2 minutos
+                </div>
+            </div>
+
+            <div class="timeline-item done">
+                <h3 style="color: #4ade80; margin-bottom: 8px;">✅ PASO 3: Filtrar HomePage por Followers</h3>
+                <p style="color: #aaa; font-size: 14px; margin-bottom: 12px;">Ya implementado en el código</p>
+                <div class="file-box">Archivo: src/pages/HomePage.jsx</div>
+                <div style="color: #ddd; font-size: 13px; margin-top: 12px;">
+                    <p><strong>Cambios:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>✅ Nueva función cargarFollowers()</li>
+                        <li>✅ Cargar lista de usuarios que sigues</li>
+                        <li>✅ Filtrar posts: seguidos vs sugerencias</li>
+                        <li>✅2 secciones en main: Seguidos + Descubre nuevos</li>
+                        <li>✅ Estilos diferenciados (gold vs naranja)</li>
+                        <li>✅ Contadores dinámicos</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(74, 222, 128, 0.1); border-left: 3px solid #4ade80; padding: 12px; margin-top: 12px; border-radius: 4px;">
+                    <strong>Estado:</strong> ✅ COMPLETADO
+                </div>
+            </div>
+
+            <div class="timeline-item done">
+                <h3 style="color: #4ade80; margin-bottom: 8px;">✅ PASO 4: Modal Completo de Comentarios</h3>
+                <p style="color: #aaa; font-size: 14px; margin-bottom: 12px;">Ya implementado en el código</p>
+                <div class="file-box">Archivo: src/components/CommentsModal.jsx (NUEVO)</div>
+                <div style="color: #ddd; font-size: 13px; margin-top: 12px;">
+                    <p><strong>Características:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>✅ Modal popup con header y close button</li>
+                        <li>✅ Lista de comentarios con avatar y fecha</li>
+                        <li>✅ Respuestas (replies) anidadas</li>
+                        <li>✅ Botón responder bajo cada comentario</li>
+                        <li>✅ Input expandible para respuestas</li>
+                        <li>✅ Eliminar propio comentario</li>
+                        <li>✅ Realtime subscription (postgres_changes)</li>
+                        <li>✅ Presionar Enter para enviar</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(74, 222, 128, 0.1); border-left: 3px solid #4ade80; padding: 12px; margin-top: 12px; border-radius: 4px;">
+                    <strong>Estado:</strong> ✅ COMPLETADO
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid de Pasos -->
+        <div style="margin-top: 40px; margin-bottom: 40px;">
+            <h2 style="margin-bottom: 20px;">📋 Detalles por Paso</h2>
+            <div class="grid">
+                <!-- PASO 1 -->
+                <div class="card pending">
+                    <div class="step-number pending">1</div>
+                    <h2>marketplace_items</h2>
+                    <span class="status pending">⏳ PENDIENTE</span>
+                    <div style="color: #aaa; font-size: 13px; margin-bottom: 16px;">Crear tabla en Supabase</div>
+                    
+                    <h3 style="color: #FFB347; margin-top: 16px;">SQL a ejecutar:</h3>
+                    <div class="code-block">
+CREATE TABLE marketplace_items (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  seller_id UUID NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  price DECIMAL(10, 2),
+  category TEXT,
+  image_url TEXT,
+  location TEXT,
+  stock INTEGER,
+  created_at TIMESTAMP DEFAULT NOW()
+)
+                    </div>
+
+                    <h3 style="color: #FFB347; margin-top: 16px;">Campos creados:</h3>
+                    <ul class="feature-list">
+                        <li>id, seller_id, title</li>
+                        <li>description, price, category</li>
+                        <li>image_url, location, stock</li>
+                        <li>seller_name, contact info</li>
+                        <li>Índices + triggers</li>
+                        <li>Realtime habilitado</li>
+                    </ul>
+                </div>
+
+                <!-- PASO 2 -->
+                <div class="card pending">
+                    <div class="step-number pending">2</div>
+                    <h2>RLS Policies</h2>
+                    <span class="status pending">⏳ PENDIENTE</span>
+                    <div style="color: #aaa; font-size: 13px; margin-bottom: 16px;">Configurar Row Level Security</div>
+                    
+                    <h3 style="color: #FFB347; margin-top: 16px;">Tablas protegidas:</h3>
+                    <ul class="feature-list">
+                        <li>posts (4 políticas)</li>
+                        <li>likes (3 políticas)</li>
+                        <li>comments (4 políticas)</li>
+                        <li>friends (2 políticas)</li>
+                        <li>marketplace_items (4)</li>
+                        <li>users (2 políticas)</li>
+                    </ul>
+
+                    <h3 style="color: #FFB347; margin-top: 16px;">Total: 20 políticas</h3>
+                    <p style="font-size: 12px; color: #aaa;">Protege: lectura, inserción, actualización, eliminación</p>
+                </div>
+
+                <!-- PASO 3 -->
+                <div class="card done">
+                    <div class="step-number done">3</div>
+                    <h2>Feed Filtrado</h2>
+                    <span class="status done">✅ COMPLETADO</span>
+                    <div style="color: #aaa; font-size: 13px; margin-bottom: 16px;">HomePage muestra posts filtrados</div>
+                    
+                    <h3 style="color: #4ade80; margin-top: 16px;">Estructura:</h3>
+                    <ul class="feature-list">
+                        <li>Sección 1: Posts de seguidos</li>
+                        <li>Sección 2: Descubre nuevos</li>
+                        <li>Estilos diferenciados</li>
+                        <li>Contadores dinámicos</li>
+                        <li>Realtime en ambas</li>
+                    </ul>
+
+                    <div class="code-block" style="margin-top: 12px;">
+// Archivo: src/pages/HomePage.jsx
+// Funciones: cargarFollowers(), cargarPosts()
+// Estado: followedUsers, suggestedPosts
+                    </div>
+                </div>
+
+                <!-- PASO 4 -->
+                <div class="card done">
+                    <div class="step-number done">4</div>
+                    <h2>Modal Comentarios</h2>
+                    <span class="status done">✅ COMPLETADO</span>
+                    <div style="color: #aaa; font-size: 13px; margin-bottom: 16px;">Componente nuevo e integrado</div>
+                    
+                    <h3 style="color: #4ade80; margin-top: 16px;">Características:</h3>
+                    <ul class="feature-list">
+                        <li>Modal popup completo</li>
+                        <li>Comentarios + respuestas</li>
+                        <li>Agregar comentarios</li>
+                        <li>Responder comentarios</li>
+                        <li>Eliminar propios</li>
+                        <li>Realtime actualización</li>
+                    </ul>
+
+                    <div class="code-block" style="margin-top: 12px;">
+// Archivo: src/components/CommentsModal.jsx
+// Integración en: HomePage.jsx línea 3
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Próximos Pasos -->
+        <div style="background: rgba(0,0,0,0.4); border: 2px solid #FFD700; border-radius: 12px; padding: 24px; margin-bottom: 40px;">
+            <h2 style="margin-bottom: 20px;">📋 Checklist de Validación</h2>
+            
+            <h3 style="color: #FFB347; margin-bottom: 12px;">Después de ejecutar SQL:</h3>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <div class="checkbox"></div>
+                <span>Tabla marketplace_items existe en Table Editor</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <div class="checkbox"></div>
+                <span>Todos los campos están presentes</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <div class="checkbox"></div>
+                <span>Realtime Replication habilitado</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                <div class="checkbox"></div>
+                <span>20 políticas RLS aparecen en Authentication tab</span>
+            </div>
+
+            <h3 style="color: #FFB347; margin-bottom: 12px;">En la aplicación (npm run dev):</h3>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <div class="checkbox"></div>
+                <span>HomePage carga sin errores</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <div class="checkbox"></div>
+                <span>Posts divididos en 2 secciones (seguidos + sugerencias)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <div class="checkbox"></div>
+                <span>Click en 💬 abre CommentsModal</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="checkbox"></div>
+                <span>Puedes agregar comentarios y respuestas</span>
+            </div>
+        </div>
+
+        <!-- Archivos Creados -->
+        <div style="background: rgba(0,0,0,0.4); border: 2px solid #FFD700; border-radius: 12px; padding: 24px; margin-bottom: 40px;">
+            <h2 style="margin-bottom: 20px;">📁 Archivos Involucrados</h2>
+            
+            <div style="display: grid; gap: 12px;">
+                <div style="background: rgba(255, 215, 0, 0.05); border-left: 3px solid #FFD700; padding: 12px; border-radius: 4px;">
+                    <div style="font-weight: bold; color: #FFD700;">SQL_MARKETPLACE_SETUP.sql</div>
+                    <div style="color: #aaa; font-size: 12px;">Crear tabla marketplace_items con índices y triggers</div>
+                </div>
+                <div style="background: rgba(255, 215, 0, 0.05); border-left: 3px solid #FFD700; padding: 12px; border-radius: 4px;">
+                    <div style="font-weight: bold; color: #FFD700;">SQL_RLS_POLICIES.sql</div>
+                    <div style="color: #aaa; font-size: 12px;">20 políticas de Row Level Security para 6 tablas</div>
+                </div>
+                <div style="background: rgba(74, 222, 128, 0.05); border-left: 3px solid #4ade80; padding: 12px; border-radius: 4px;">
+                    <div style="font-weight: bold; color: #4ade80;">src/pages/HomePage.jsx</div>
+                    <div style="color: #aaa; font-size: 12px;">Modificado: cargarFollowers(), filtro by followed users, sugerencias</div>
+                </div>
+                <div style="background: rgba(74, 222, 128, 0.05); border-left: 3px solid #4ade80; padding: 12px; border-radius: 4px;">
+                    <div style="font-weight: bold; color: #4ade80;">src/components/CommentsModal.jsx</div>
+                    <div style="color: #aaa; font-size: 12px;">NUEVO: Modal completo con comentarios + respuestas + realtime</div>
+                </div>
+                <div style="background: rgba(255, 215, 0, 0.05); border-left: 3px solid #FFD700; padding: 12px; border-radius: 4px;">
+                    <div style="font-weight: bold; color: #FFD700;">GUIA_IMPLEMENTACION_4_PASOS.md</div>
+                    <div style="color: #aaa; font-size: 12px;">Instrucciones detalladas para cada paso + checklist</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 20px; border-top: 1px solid #FFD700;">
+            <p style="color: #aaa; margin-bottom: 10px;">Estado General: 2/4 pasos completados ✅ | 2/4 pasos pendientes ⏳</p>
+            <p style="color: #FFD700; font-weight: bold;">Próximo: Ejecutar SQL en Supabase Dashboard</p>
+            <p style="color: #888; font-size: 12px; margin-top: 10px;">Tiempo estimado total: 5-10 minutos</p>
+        </div>
+    </div>
+</body>
+</html>

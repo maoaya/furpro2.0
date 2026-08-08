@@ -1,0 +1,28 @@
+# Minimal Netlify config for local direct deploy of prebuilt dist
+[build]
+  publish = "dist"
+# No build.command here on purpose to prevent local Netlify Build
+
+# Keep essential redirects for SPA
+[[redirects]]
+  from = "/auth/*"
+  to = "/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/oauth/*"
+  to = "/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/formulario-registro*"
+  to = "/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

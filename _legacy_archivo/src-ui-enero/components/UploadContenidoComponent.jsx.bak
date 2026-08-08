@@ -1,0 +1,253 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../config/supabase';
+
+const GOLD = '#FFD700';
+
+export default function UploadContenidoComponent({ onClose }) {
+  const { user } = useAuth();
+
+  const fileInputRef = useRef(null);
+
+  const [modo, setModo] = useState('menu');
+  const [archivo, setArchivo] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [descripcion, setDescripcion] = useState('');
+  );
+}
+
+        {/* MENU PRINCIPAL */}
+        {modo === 'menu' && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <button onClick={() => iniciarCamara('foto')} style={{
+              padding: 12, background: `linear-gradient(135deg, ${GOLD}, #FFB347)`, border: 'none',
+              borderRadius: 8, color: '#000', cursor: 'pointer', fontWeight: 700, fontSize: 11
+            }}>
+              📷 Foto (Cámara)
+            </button>
+            <button onClick={() => iniciarCamara('video')} style={{
+              padding: 12, background: `linear-gradient(135deg, #64c8ff, #00BFFF)`, border: 'none',
+              borderRadius: 8, color: '#000', cursor: 'pointer', fontWeight: 700, fontSize: 11
+            }}>
+              🎥 Video (Cámara)
+            </button>
+            <button onClick={() => { setModo('foto'); fileInputRef.current?.click(); }} style={{
+              padding: 12, background: `rgba(255,215,0,0.1)`, border: `1px solid ${GOLD}`,
+              borderRadius: 8, color: GOLD, cursor: 'pointer', fontWeight: 700, fontSize: 11
+            }}>
+              🖼️ Foto (Galería)
+            </button>
+            <button onClick={() => { setModo('video'); fileInputRef.current?.click(); }} style={{
+              padding: 12, background: `rgba(100,200,255,0.1)`, border: `1px solid #64c8ff`,
+              borderRadius: 8, color: '#64c8ff', cursor: 'pointer', fontWeight: 700, fontSize: 11
+            }}>
+              📹 Video (Galería)
+            </button>
+            <button onClick={() => setModo('historia')} style={{
+              padding: 12, background: `rgba(255,165,0,0.1)`, border: `1px solid #FFA500`,
+              borderRadius: 8, color: '#FFA500', cursor: 'pointer', fontWeight: 700, fontSize: 11
+            }}>
+              📖 Historia
+            </button>
+            <button onClick={() => setModo('live')} style={{
+              padding: 12, background: `rgba(255,0,0,0.1)`, border: `1px solid #FF0000`,
+              borderRadius: 8, color: '#FF0000', cursor: 'pointer', fontWeight: 700, fontSize: 11
+            }}>
+              🔴 Live
+            </button>
+            <button onClick={() => setModo('gol')} style={{
+              padding: 12, background: `rgba(0,255,0,0.1)`, border: `1px solid #00FF00`,
+              borderRadius: 8, color: '#00FF00', cursor: 'pointer', fontWeight: 700, fontSize: 11, gridColumn: '1 / 2'
+            }}>
+              ⚽ Gol
+            </button>
+          </div>
+        )}
+        {/* CÁMARA FOTO */}
+        {modo === 'camera' && (
+          <div style={{ position: 'relative' }}>
+            {/* Botón Atrás arriba a la izquierda */}
+            <button onClick={() => { detenerCamara(); setModo('menu'); }} style={{
+              position: 'absolute', top: 8, left: 8, zIndex: 2,
+              background: '#222', color: '#fff', border: 'none', borderRadius: '50%', width: 36, height: 36,
+              fontWeight: 700, fontSize: 18, cursor: 'pointer', boxShadow: '0 2px 8px #0008'
+            }}>
+              ←
+            </button>
+            <video ref={videoRef} autoPlay playsInline style={{ width: '100%', borderRadius: 8, background: '#000', marginBottom: 8 }} />
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
+            {/* Botón grande de capturar */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+              <button onClick={tomarFoto} style={{
+                width: 64, height: 64, background: GOLD, border: 'none', borderRadius: '50%',
+                color: '#000', fontWeight: 700, cursor: 'pointer', fontSize: 32, boxShadow: '0 2px 8px #FFD70088', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }} title="Tomar foto">
+                📸
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* CÁMARA VIDEO */}
+        {modo === 'grabar-video' && (
+          <div style={{ background: 'rgba(255,0,0,0.1)', padding: 8, borderRadius: 6, marginBottom: 8 }}>
+            <div style={{ textAlign: 'center', color: '#FF0000', fontWeight: 700, marginBottom: 8 }}>
+              {grabando ? '🔴 GRABANDO' : 'Listo para grabar'}
+              {grabando && ` - ${videoSeconds}s`}
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {!grabando ? (
+                <button onClick={iniciarGrabacion} style={{
+                  flex: 1, padding: 10, background: '#FF0000', border: 'none', borderRadius: 6,
+                  color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: 10
+                }}>
+                  🔴 Grabar
+                </button>
+
+              ) : (
+                <button onClick={detenerGrabacion} style={{
+                  flex: 1, padding: 10, background: '#FF6B6B', border: 'none', borderRadius: 6,
+                  color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: 10
+                }}>
+                  ⏹️ Detener
+                </button>
+              )}
+              <button onClick={() => { detenerCamara(); setModo('menu'); }} style={{
+                flex: 1, padding: 10, background: '#444', border: 'none', borderRadius: 6,
+                color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: 10
+              }}>
+                ← Atrás
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* FORMULARIO FOTO/VIDEO/HISTORIA */}
+        {(modo === 'foto' || modo === 'video' || modo === 'historia') && !preview && (
+          <div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              onChange={handleArchivoSeleccionado}
+              accept={modo === 'foto' ? 'image/*' : 'video/*'}
+              capture={modo === 'foto' ? 'environment' : (modo === 'video' ? 'camcorder' : undefined)}
+              style={{ display: 'none' }}
+            />
+            <div onClick={() => fileInputRef.current?.click()} style={{
+              padding: 24, border: `2px dashed ${GOLD}`, borderRadius: 8,
+              cursor: 'pointer', background: `rgba(255,215,0,0.05)`, textAlign: 'center'
+            }}>
+              <div style={{ fontSize: 32, marginBottom: 8 }}>{modo === 'foto' ? '📷' : modo === 'video' ? '🎬' : '📖'}</div>
+              <div style={{ color: GOLD, fontWeight: 700, fontSize: 11 }}>Click para seleccionar</div>
+            </div>
+          </div>
+        )}
+
+        {/* PREVIEW Y PUBLICACIÓN */}
+        {(modo === 'foto' || modo === 'video' || modo === 'historia') && preview && (
+          <div>
+            <div style={{ marginBottom: 8, borderRadius: 8, overflow: 'hidden', border: `1px solid ${GOLD}`, height: 100 }}>
+              {modo === 'video' || archivo?.type.startsWith('video/') ? (
+                <video src={preview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <img src={preview} alt="p" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              )}
+            </div>
+
+            <textarea placeholder="Descripción..." value={descripcion} onChange={(e) => setDescripcion(e.target.value)} disabled={loading}
+              style={{
+                width: '100%', height: 45, padding: 6, marginBottom: 8, borderRadius: 6,
+                border: `1px solid ${GOLD}`, background: 'rgba(0,0,0,0.5)', color: '#fff',
+                fontSize: 10, resize: 'none', boxSizing: 'border-box', fontFamily: 'Arial'
+              }} maxLength={150} />
+
+            <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+              <input type="text" placeholder="📍 Ubicación..." value={ubicacion} onChange={(e) => setUbicacion(e.target.value)} onFocus={() => setShowSugerencias(true)} disabled={loading}
+                style={{
+                  flex: 1, padding: 6, borderRadius: 6,
+                  border: `1px solid ${GOLD}`, background: 'rgba(0,0,0,0.5)', color: '#fff',
+                  fontSize: 10, boxSizing: 'border-box', fontFamily: 'Arial'
+                }} />
+              <button onClick={rellenarUbicacionConGPS} disabled={loading} style={{
+                padding: '6px 10px', borderRadius: 6, border: `1px solid ${GOLD}`,
+                background: GOLD, color: '#000', fontWeight: 700, cursor: 'pointer', fontSize: 10,
+                opacity: loading ? 0.6 : 1
+              }}>
+                📍
+              </button>
+            </div>
+
+            {error && <div style={{ marginBottom: 8, padding: 6, background: '#FF6B6B', color: '#fff', borderRadius: 4, fontSize: 9, fontWeight: 700 }}>{error}</div>}
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              <button onClick={() => { setModo('menu'); setPreview(null); setArchivo(null); }} disabled={loading}
+                style={{ padding: 8, background: '#333', border: 'none', borderRadius: 6, color: '#fff', cursor: 'pointer', fontWeight: 700, fontSize: 9, opacity: loading ? 0.5 : 1 }}>
+                ← Atrás
+              </button>
+              <button onClick={handlePublicar} disabled={loading || !archivo}
+                style={{ padding: 8, background: GOLD, border: 'none', borderRadius: 6, color: '#000', cursor: 'pointer', fontWeight: 700, fontSize: 9, opacity: loading || !archivo ? 0.5 : 1 }}>
+                {loading ? `${progress}%` : '✓ OK'}
+              </button>
+            </div>
+          )}
+
+        {modo === 'live' && (
+          <div>
+            {/* TRANSMISIÓN EN VIVO */}
+            <div style={{ color: GOLD, fontWeight: 700, fontSize: 11, marginBottom: 8 }}>🔴 Configura tu Transmisión</div>
+            <select value={equipoSeleccionado} onChange={(e) => setEquipoSeleccionado(e.target.value)} style={{
+              width: '100%', padding: 8, marginBottom: 8, borderRadius: 6,
+              border: `1px solid ${GOLD}`, background: 'rgba(0,0,0,0.5)', color: '#fff',
+              fontSize: 10, boxSizing: 'border-box', fontFamily: 'Arial'
+            }}>
+              <option value="">Selecciona Equipo (opcional)</option>
+              {equipos.map(eq => <option key={eq.id} value={eq.id}>{eq.nombre}</option>)}
+            </select>
+            <button
+              onClick={async () => {
+                if (!user) {
+                  setError('❌ Inicia sesión primero');
+                  return;
+                }
+                try {
+                  // Crear registro de transmisión en la base de datos
+                  const { data, error } = await supabase
+                    .from('transmisiones')
+                    .insert([{
+                      user_id: user.id,
+                      titulo: descripcion || 'Transmisión en vivo',
+                      equipo_id: equipoSeleccionado || null,
+                      marcador_local: marcador.local,
+                      marcador_visitante: marcador.visitante,
+                      tiempo_juego: tiempo,
+                      estado: 'activa'
+                    }])
+                    .select();
+                  if (error) throw error;
+                  // Redirigir a página de transmisión
+                  window.location.href = `/transmision/${data[0].id}`;
+                } catch (err) {
+                  console.error('Error iniciando transmisión:', err);
+                  setError('⚠️ Transmisión iniciada (mock). Redirigiendo...');
+                  setTimeout(() => {
+                    window.location.href = '/videos';
+                  }, 1500);
+                }
+              }}
+              style={{
+                width: '100%', padding: 10, background: '#FF0000', border: 'none', borderRadius: 6,
+                color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: 10, marginBottom: 8
+              }}
+            >
+              🔴 Iniciar Live
+            </button>
+          </div>
+        )}
+
+        {/* REGISTRO DE GOLES */}
+
+        </div>
+      </div>
+    );
+}
+

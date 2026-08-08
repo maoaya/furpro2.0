@@ -1,5 +1,6 @@
-name: Deploy to Netlify (futpro.vip)
+name: Deploy to Netlify (Zona Pro / producto-deploy)
 
+# Despliega SOLO producto-deploy. Nunca reconstruye el src/ de enero.
 on:
   workflow_dispatch:
 
@@ -8,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  deploy-producto:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,22 +18,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
-      - name: Install dependencies (clean)
-        run: npm ci
-
-      - name: Build
-        env:
-          # Variables mínimas para que el registro funcione en el build
-          VITE_SUPABASE_URL: https://qqrxetxcglwrejtblwut.supabase.co
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-        run: npm run build
+      - name: Validar producto canónico
+        run: node scripts/ensure-producto-deploy.mjs
 
       - name: Install Netlify CLI
         run: npm install -g netlify-cli
 
-      - name: Deploy to Netlify (prod)
+      - name: Deploy producto-deploy a producción
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        run: netlify deploy --prod --dir=dist --site=${{ secrets.NETLIFY_SITE_ID }}
+        run: netlify deploy --prod --dir=producto-deploy --site=${{ secrets.NETLIFY_SITE_ID }}

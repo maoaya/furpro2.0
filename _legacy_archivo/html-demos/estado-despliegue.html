@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado del Despliegue - FutPro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #FFD700;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            border: 2px solid #FFD700;
+            border-radius: 20px;
+            padding: 30px;
+        }
+        h1 { color: #FFD700; text-align: center; }
+        .status-box {
+            border: 2px solid;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success { border-color: #44ff44; background: #1a4a1a; }
+        .warning { border-color: #ffaa44; background: #4a4a1a; }
+        .error { border-color: #ff4444; background: #4a1a1a; }
+        .info { border-color: #4444ff; background: #1a1a4a; }
+        button {
+            background: #FFD700;
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover { background: #FFA500; }
+        .commit-info {
+            background: #333;
+            border: 1px solid #FFD700;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: monospace;
+            margin: 15px 0;
+        }
+        .countdown {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Estado del Despliegue OAuth Fix</h1>
+        
+        <div class="status-box success">
+            <h3>✅ Cambios Subidos a GitHub</h3>
+            <div class="commit-info">
+                <strong>Commit:</strong> 18422fd<br>
+                <strong>Mensaje:</strong> OAuth configuration and registration flow complete - Ready for Netlify deploy<br>
+                <strong>Hora:</strong> <span id="commitTime"></span><br>
+                <strong>Estado:</strong> ✅ Pushed to origin/master
+            </div>
+        </div>
+
+        <div id="deployStatus" class="status-box warning">
+            <h3>⏳ Esperando Despliegue Automático</h3>
+            <p>Netlify debería detectar los cambios y iniciar el despliegue automáticamente...</p>
+            <div class="countdown" id="countdown">Verificando en: <span id="timer">60</span>s</div>
+        </div>
+
+        <div class="status-box info">
+            <h3>📋 Acciones Disponibles</h3>
+            <button onclick="checkNetlifyDeploy()">🔍 Verificar Despliegue</button>
+            <button onclick="openNetlifyDashboard()">📊 Abrir Netlify Dashboard</button>
+            <button onclick="testProductionSite()">🧪 Probar Sitio</button>
+            <button onclick="openGitHubRepo()">📁 Ver Repositorio</button>
+        </div>
+
+        <div class="status-box">
+            <h3>🎯 Después del Despliegue</h3>
+            <ol>
+                <li>Esperar 5 minutos para propagación completa</li>
+                <li>Ir a <a href="https://futpro.vip/" target="_blank" style="color: #FFD700;">https://futpro.vip/</a></li>
+                <li>Probar "Continuar con Google"</li>
+                <li>Verificar que no hay errores OAuth</li>
+            </ol>
+        </div>
+
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        // Establecer hora del commit
+        document.getElementById('commitTime').textContent = new Date().toLocaleString();
+
+        // Countdown para verificación
+        let timeLeft = 60;
+        const timer = document.getElementById('timer');
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timer.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                document.getElementById('countdown').innerHTML = '🔍 <strong>¡Tiempo de verificar!</strong>';
+                checkNetlifyDeploy();
+            }
+        }, 1000);
+
+        function checkNetlifyDeploy() {
+            const deployStatus = document.getElementById('deployStatus');
+            deployStatus.className = 'status-box info';
+            deployStatus.innerHTML = `
+                <h3>🔍 Verificando Estado del Despliegue</h3>
+                <p>Comprobando si Netlify ha detectado los cambios...</p>
+                <p><strong>Próximo paso:</strong> Revisar manualmente en Netlify Dashboard</p>
+            `;
+        }
+
+        function openNetlifyDashboard() {
+            window.open('https://app.netlify.com/sites/futprovip/deploys', '_blank');
+        }
+
+        function testProductionSite() {
+            const testResults = document.getElementById('testResults');
+            testResults.innerHTML = `
+                <div class="status-box warning">
+                    <h3>🧪 Iniciando Prueba</h3>
+                    <p>Abriendo futpro.vip para probar OAuth...</p>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                window.open('https://futpro.vip/', '_blank');
+            }, 1000);
+        }
+
+        function openGitHubRepo() {
+            window.open('https://github.com/maoaya/furpro2.0/commits/master', '_blank');
+        }
+
+        // Simulación de actualización de estado
+        setTimeout(() => {
+            const deployStatus = document.getElementById('deployStatus');
+            deployStatus.className = 'status-box success';
+            deployStatus.innerHTML = `
+                <h3>🚀 Despliegue en Progreso</h3>
+                <p>Netlify está procesando los cambios. El despliegue debería completarse en 2-3 minutos.</p>
+                <p><strong>Estado estimado:</strong> Building...</p>
+            `;
+        }, 30000); // Después de 30 segundos
+
+        setTimeout(() => {
+            const deployStatus = document.getElementById('deployStatus');
+            deployStatus.className = 'status-box success';
+            deployStatus.innerHTML = `
+                <h3>✅ Despliegue Completado (Estimado)</h3>
+                <p>El despliegue debería estar completo. ¡Es hora de probar OAuth!</p>
+                <p><strong>Estado:</strong> Ready to test</p>
+            `;
+        }, 180000); // Después de 3 minutos
+    </script>
+</body>
+</html>

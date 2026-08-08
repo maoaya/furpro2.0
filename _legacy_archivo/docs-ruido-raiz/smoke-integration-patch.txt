@@ -1,0 +1,23 @@
+# Smoke test integration for deploy-validated.ps1
+# Add this code after line 315 (after the documentation section and before the closing brace)
+
+    # Ejecutar smoke test automáticamente
+    Write-Host '=================================' -ForegroundColor Cyan
+    Write-Host 'Ejecutando smoke test...' -ForegroundColor Cyan
+    Write-Host '=================================' -ForegroundColor Cyan
+    $smokeScript = Join-Path (Get-Location) 'deploy-smoke.ps1'
+    if (Test-Path $smokeScript) {
+        try {
+            & powershell -NoProfile -ExecutionPolicy Bypass -File $smokeScript -Site $deployUrl
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host 'Smoke test: PASS' -ForegroundColor Green
+            } else {
+                Write-Host 'Smoke test: FAIL (revisar smoke-report.json)' -ForegroundColor Yellow
+            }
+        } catch {
+            Write-Host "Smoke test: ERROR ($_)" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host 'Smoke test: SKIP (deploy-smoke.ps1 no encontrado)' -ForegroundColor DarkGray
+    }
+    Write-Host ''

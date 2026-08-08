@@ -1,0 +1,1132 @@
+{
+  "meta": {
+    "product": "Zona Pro",
+    "deploy_dir": "producto-deploy/",
+    "zip": "deploy-6a7256d5ffd58e44433d5158.zip",
+    "deploy_meta_html": "2026-08-04T21:16:30Z",
+    "bundle_entry": "index-",
+    "purpose": "Mapear JS del deploy → JSX esperado del PC Desktop\\futpro2.0 para depurar duplicados/no-producto"
+  },
+  "totals": {
+    "files_in_producto_deploy": 63,
+    "js_chunks": 40,
+    "css_chunks": 3,
+    "expected_jsx_from_chunks": 32
+  },
+  "index_html_assets": [
+    "index-",
+    "index-DoGwQ0mo.css",
+    "index-zp-nomenu-Hb7k2m.js",
+    "loginpagesnew-BPP0r_st.js",
+    "supabase-X1tipi0N.js",
+    "vendor-C0jAFBLR.js"
+  ],
+  "debug_jsx_refs_in_bundles": [
+    "loginpagesnew.jsx"
+  ],
+  "jsx_string_hints_in_bundles": [
+    "PartidosEnVivo.jsx",
+    "loginpagesnew.jsx",
+    "nl.jsx"
+  ],
+  "chunks": [
+    {
+      "file": "assets/AceptarTorneo-BxYPrUpU.js",
+      "chunk_base": "AceptarTorneo",
+      "kind": "js",
+      "bytes": 11794,
+      "expected_source": "AceptarTorneo.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/BuscarJugadoresPage-Ba1XA4PN.js",
+      "chunk_base": "BuscarJugadoresPage",
+      "kind": "js",
+      "bytes": 13494,
+      "expected_source": "BuscarJugadoresPage.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/BuscarUsuariosPage-CXPLZjs9.js",
+      "chunk_base": "BuscarUsuariosPage",
+      "kind": "js",
+      "bytes": 43105,
+      "expected_source": "BuscarUsuariosPage.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/CardEquipo-C2LerRC4.js",
+      "chunk_base": "CardEquipo",
+      "kind": "js",
+      "bytes": 6903,
+      "expected_source": "CardEquipo.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/CardFIFA-JTvbNZ_5.js",
+      "chunk_base": "CardFIFA",
+      "kind": "js",
+      "bytes": 4157,
+      "expected_source": "CardFIFA.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/ChatEquipoPage-CFKmchnx.js",
+      "chunk_base": "ChatEquipoPage",
+      "kind": "js",
+      "bytes": 7881,
+      "expected_source": "ChatEquipoPage.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/ChatTorneo-BB__Aj4H.js",
+      "chunk_base": "ChatTorneo",
+      "kind": "js",
+      "bytes": 39406,
+      "expected_source": "ChatTorneo.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/ChatTorneoPage-xTsKPQN4.js",
+      "chunk_base": "ChatTorneoPage",
+      "kind": "js",
+      "bytes": 3673,
+      "expected_source": "ChatTorneoPage.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/CrearTorneo-DQgvw16o.css",
+      "chunk_base": "CrearTorneo",
+      "kind": "css",
+      "bytes": 264,
+      "expected_source": null
+    },
+    {
+      "file": "assets/CrearTorneo-DemyjbvC.js",
+      "chunk_base": "CrearTorneo",
+      "kind": "js",
+      "bytes": 24068,
+      "expected_source": "CrearTorneo.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/EjerciciosPage-oJUR2TWm.js",
+      "chunk_base": "EjerciciosPage",
+      "kind": "js",
+      "bytes": 2727,
+      "expected_source": "EjerciciosPage.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/EquipoMenu-3er0hKt5.js",
+      "chunk_base": "EquipoMenu",
+      "kind": "js",
+      "bytes": 7117,
+      "expected_source": "EquipoMenu.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/EquiposPage-DCtRuFCl.js",
+      "chunk_base": "EquiposPage",
+      "kind": "js",
+      "bytes": 12183,
+      "expected_source": "EquiposPage.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/FansEquipo-CQreWqVL.js",
+      "chunk_base": "FansEquipo",
+      "kind": "js",
+      "bytes": 3789,
+      "expected_source": "FansEquipo.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/FormularioRegistroCompleto-DOQtZrac.css",
+      "chunk_base": "FormularioRegistroCompleto",
+      "kind": "css",
+      "bytes": 2514,
+      "expected_source": null
+    },
+    {
+      "file": "assets/FormularioRegistroCompleto-DdkqOvO-.js",
+      "chunk_base": "FormularioRegistroCompleto",
+      "kind": "js",
+      "bytes": 39565,
+      "expected_source": "FormularioRegistroCompleto.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/InvitacionesEquipo-B93K5ESN.js",
+      "chunk_base": "InvitacionesEquipo",
+      "kind": "js",
+      "bytes": 11591,
+      "expected_source": "InvitacionesEquipo.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/LiveStreamPages-CMpvrrul.js",
+      "chunk_base": "LiveStreamPages",
+      "kind": "js",
+      "bytes": 12512,
+      "expected_source": "LiveStreamPages.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/MisTorneos-C8CdB6gS.js",
+      "chunk_base": "MisTorneos",
+      "kind": "js",
+      "bytes": 16336,
+      "expected_source": "MisTorneos.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/NotFoundPage-DV9Nnc7S.js",
+      "chunk_base": "NotFoundPage",
+      "kind": "js",
+      "bytes": 1874,
+      "expected_source": "NotFoundPage.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/PanelArbitro-DFMVAGW1.js",
+      "chunk_base": "PanelArbitro",
+      "kind": "js",
+      "bytes": 14245,
+      "expected_source": "PanelArbitro.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/PermisosEquipo-CifQVO7h.js",
+      "chunk_base": "PermisosEquipo",
+      "kind": "js",
+      "bytes": 15259,
+      "expected_source": "PermisosEquipo.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/PlantillaEquipo-SlBwgJbY.js",
+      "chunk_base": "PlantillaEquipo",
+      "kind": "js",
+      "bytes": 23499,
+      "expected_source": "PlantillaEquipo.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/Privacidad-DZu-TL35.js",
+      "chunk_base": "Privacidad",
+      "kind": "js",
+      "bytes": 3546,
+      "expected_source": "Privacidad.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/QADashboard-BkVKSD_a.js",
+      "chunk_base": "QADashboard",
+      "kind": "js",
+      "bytes": 7458,
+      "expected_source": "QADashboard.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/RegistroEntryRoute-CfFUwRAD.js",
+      "chunk_base": "RegistroEntryRoute",
+      "kind": "js",
+      "bytes": 737,
+      "expected_source": "RegistroEntryRoute.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/SeguirTorneosPage-CgH_lYdI.js",
+      "chunk_base": "SeguirTorneosPage",
+      "kind": "js",
+      "bytes": 78784,
+      "expected_source": "SeguirTorneosPage.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/SoportePage-Cxbv8t2b.js",
+      "chunk_base": "SoportePage",
+      "kind": "js",
+      "bytes": 3803,
+      "expected_source": "SoportePage.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/StoriesPage-H_ulay3n.js",
+      "chunk_base": "StoriesPage",
+      "kind": "js",
+      "bytes": 31639,
+      "expected_source": "StoriesPage.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/VerEquipos-Cce5zEuy.js",
+      "chunk_base": "VerEquipos",
+      "kind": "js",
+      "bytes": 437,
+      "expected_source": "VerEquipos.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/VideoFeed-AcKtyNgF.js",
+      "chunk_base": "VideoFeed",
+      "kind": "js",
+      "bytes": 10435,
+      "expected_source": "VideoFeed.jsx",
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/framePipeline.worker-CLc9_q77.js",
+      "chunk_base": "framePipeline.worker-CLc9_q77",
+      "kind": "js",
+      "bytes": 5831,
+      "expected_source": null
+    },
+    {
+      "file": "assets/futpro-fifa-card-frame.png",
+      "chunk_base": "futpro-fifa-card-frame",
+      "kind": "other",
+      "bytes": 179170,
+      "expected_source": null
+    },
+    {
+      "file": "assets/homeSearchUsersRpc-TzKRV4NH.js",
+      "chunk_base": "homeSearchUsersRpc",
+      "kind": "js",
+      "bytes": 3900,
+      "expected_source": "homeSearchUsersRpc.js"
+    },
+    {
+      "file": "assets/index-DoGwQ0mo.css",
+      "chunk_base": "index",
+      "kind": "css",
+      "bytes": 124173,
+      "expected_source": null
+    },
+    {
+      "file": "assets/index-zp-nomenu-Hb7k2m.js",
+      "chunk_base": "index",
+      "kind": "js",
+      "bytes": 4377835,
+      "expected_source": null
+    },
+    {
+      "file": "assets/loginpagesnew-BPP0r_st.js",
+      "chunk_base": "loginpagesnew",
+      "kind": "js",
+      "bytes": 9744,
+      "expected_source": "loginpagesnew.jsx",
+      "debug_jsx": [
+        "loginpagesnew.jsx"
+      ],
+      "source_kind": "ui-jsx"
+    },
+    {
+      "file": "assets/notification-fallback-zona-pro.png",
+      "chunk_base": "notification-fallback-zona-pro",
+      "kind": "other",
+      "bytes": 90301,
+      "expected_source": null
+    },
+    {
+      "file": "assets/perfilpro-fifa-template.png",
+      "chunk_base": "perfilpro-fifa-template",
+      "kind": "other",
+      "bytes": 190223,
+      "expected_source": null
+    },
+    {
+      "file": "assets/seguirTorneosTabCache-D0oCVdgm.js",
+      "chunk_base": "seguirTorneosTabCache",
+      "kind": "js",
+      "bytes": 2937,
+      "expected_source": "seguirTorneosTabCache.js",
+      "source_kind": "service"
+    },
+    {
+      "file": "assets/supabase-X1tipi0N.js",
+      "chunk_base": "supabase",
+      "kind": "js",
+      "bytes": 190809,
+      "expected_source": null
+    },
+    {
+      "file": "assets/userContentLoadFunctions-BnpMKj8T.js",
+      "chunk_base": "userContentLoadFunctions",
+      "kind": "js",
+      "bytes": 17886,
+      "expected_source": "userContentLoadFunctions.js"
+    },
+    {
+      "file": "assets/vendor-C0jAFBLR.js",
+      "chunk_base": "vendor",
+      "kind": "js",
+      "bytes": 1010624,
+      "expected_source": null
+    },
+    {
+      "file": "assets/videoPrefetch.worker-DM62tp9J.js",
+      "chunk_base": "videoPrefetch.worker-DM62tp9J",
+      "kind": "js",
+      "bytes": 807,
+      "expected_source": null
+    },
+    {
+      "file": "assets/worldTopLeagues-CdiL4QUm.js",
+      "chunk_base": "worldTopLeagues",
+      "kind": "js",
+      "bytes": 3702,
+      "expected_source": "worldTopLeagues.js"
+    },
+    {
+      "file": "assets/zonaProTorneoPublishService-Dc9cOp9L.js",
+      "chunk_base": "zonaProTorneoPublishService",
+      "kind": "js",
+      "bytes": 4554,
+      "expected_source": "zonaProTorneoPublishService.js",
+      "source_kind": "service"
+    }
+  ],
+  "all_files": [
+    {
+      "path": "MANIFEST_CANONICO.json",
+      "bytes": 27119,
+      "sha256": "318d5980fdd33b133daa8f424e851a7064814ff0637ee3b8a85995da7b2fc54a",
+      "ext": ".json"
+    },
+    {
+      "path": "README_PRODUCTO.txt",
+      "bytes": 48,
+      "sha256": "65271202b4711bdd26fc99723d185d8060e42e51b71ed55c86783c8e527d27f2",
+      "ext": ".txt"
+    },
+    {
+      "path": "SOURCE_ZIP.txt",
+      "bytes": 73,
+      "sha256": "35a07fa123ac74826d1de21cacffdfe81c7014816f63764bf446d741e1c51d0b",
+      "ext": ".txt"
+    },
+    {
+      "path": "VERSION_LOCK.txt",
+      "bytes": 196,
+      "sha256": "71d954345a444b4c0aaeca9509b3e55c6cbc2ac03b9b5a2322decf07f01ea3cc",
+      "ext": ".txt"
+    },
+    {
+      "path": "assets/AceptarTorneo-BxYPrUpU.js",
+      "bytes": 11794,
+      "sha256": "28af5d198b7e1e830b75874cc693add83d905e916a5cda25eebbc63221276c8f",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/BuscarJugadoresPage-Ba1XA4PN.js",
+      "bytes": 13494,
+      "sha256": "e73aeada6b32c0a527be9f5c6c1c2f8a89e56b61768220c4c57d18ef9ff4dcee",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/BuscarUsuariosPage-CXPLZjs9.js",
+      "bytes": 43105,
+      "sha256": "87f86d1577dbd21e18768926cd79b3ea99776e486470c81939c9c7a9d91a05c8",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/CardEquipo-C2LerRC4.js",
+      "bytes": 6903,
+      "sha256": "60c58214d9f39921e907191876902b97d6bb7674e89f3e246dab0d99f3d547c0",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/CardFIFA-JTvbNZ_5.js",
+      "bytes": 4157,
+      "sha256": "655b8ff7a4acfaadae7d325838e6532702a1b87a7cb45fd00d95e320c9fabd83",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/ChatEquipoPage-CFKmchnx.js",
+      "bytes": 7881,
+      "sha256": "4c05e5edad0bac882e54b236d5039b945fb13a561f5ef4bd3e360d4bd7e75d0e",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/ChatTorneo-BB__Aj4H.js",
+      "bytes": 39406,
+      "sha256": "a7a3df100d23eccbebeca077e6c4836b64bfcc802aa17063d7ff95367ad51f1d",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/ChatTorneoPage-xTsKPQN4.js",
+      "bytes": 3673,
+      "sha256": "83c5647e7f3348a367cd5735432de0ce10ae439ee6feddd974da680a4e1cace4",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/CrearTorneo-DQgvw16o.css",
+      "bytes": 264,
+      "sha256": "2c5b6c89f277a17b7d6d6e2caee86e54bbd5a76efcc47fe0de0d8e42f54bb4e6",
+      "ext": ".css"
+    },
+    {
+      "path": "assets/CrearTorneo-DemyjbvC.js",
+      "bytes": 24068,
+      "sha256": "3faee407f9b92d71d107b520b83ffa46926293d4c7b22a3baac9d3a2fa59a874",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/EjerciciosPage-oJUR2TWm.js",
+      "bytes": 2727,
+      "sha256": "7b1525dbf33ab870c4d084d525fc63bb3b30080fa53006c181af2d1784c33ca2",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/EquipoMenu-3er0hKt5.js",
+      "bytes": 7117,
+      "sha256": "2ddf3277b9d60538626809f226946050e089005e003faaa2fb08f93e112bcda4",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/EquiposPage-DCtRuFCl.js",
+      "bytes": 12183,
+      "sha256": "ce05409051db9a446f76253edb24c66a8c2e7a5e23538ce14e5c9645c1220eeb",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/FansEquipo-CQreWqVL.js",
+      "bytes": 3789,
+      "sha256": "a05b2fe1abcbd3d7c09ddc36698582c13d6d74161e0f98adb0722a8ebf3a325f",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/FormularioRegistroCompleto-DOQtZrac.css",
+      "bytes": 2514,
+      "sha256": "b5a8644c57c643d9598be13dc9263c7e47d469546bdedb679974c0952915d6ad",
+      "ext": ".css"
+    },
+    {
+      "path": "assets/FormularioRegistroCompleto-DdkqOvO-.js",
+      "bytes": 39565,
+      "sha256": "98432131b188ad9b7a729068d3c9eb3c1ee0e169a3301d4051b85ac2354800e5",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/InvitacionesEquipo-B93K5ESN.js",
+      "bytes": 11591,
+      "sha256": "13d126ae4989f3d91c6b9a7deb98a4eddb0ed358a1081da52db59254dfbe8652",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/LiveStreamPages-CMpvrrul.js",
+      "bytes": 12512,
+      "sha256": "406449471ef9d8770cabec27ea647f1f1695ddbd8b00874c63ec69c1887241c2",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/MisTorneos-C8CdB6gS.js",
+      "bytes": 16336,
+      "sha256": "3e726698f642bf005f47e2c9bff9533a0c3921a0cbb6f6201e7f5a41de695d35",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/NotFoundPage-DV9Nnc7S.js",
+      "bytes": 1874,
+      "sha256": "52d71727d92cfaf45a3c6a7cbb7a919f817d95d88a6c4442c2d7d6748ac4b6d9",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/PanelArbitro-DFMVAGW1.js",
+      "bytes": 14245,
+      "sha256": "96bec8db52dd7e34bd8237476b2c7c397f7accaaddba7a651a4b02591e78465b",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/PermisosEquipo-CifQVO7h.js",
+      "bytes": 15259,
+      "sha256": "b35e736fcb04e7d66dac6933649d60128521125ded2e96594a9ba17431100b78",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/PlantillaEquipo-SlBwgJbY.js",
+      "bytes": 23499,
+      "sha256": "7b126ae5c75c0178800299786435155e22ec35b57eb28ebf143b002895351d89",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/Privacidad-DZu-TL35.js",
+      "bytes": 3546,
+      "sha256": "3a5b506c7ae372ad355f9faf6fe8ded065625a33f2e8ef9b9c34f5620e2e7b75",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/QADashboard-BkVKSD_a.js",
+      "bytes": 7458,
+      "sha256": "bb9387781e8d6553fd5c5c92e9c49576858af26240bfdee8506d5a5bf286d3d2",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/RegistroEntryRoute-CfFUwRAD.js",
+      "bytes": 737,
+      "sha256": "ce6bfd006b3d56649f86996eb27d30a095d2bbf032a4d7038e4e990a461fb2ba",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/SeguirTorneosPage-CgH_lYdI.js",
+      "bytes": 78784,
+      "sha256": "afa5651e004905f4fd6a46f85f7c98a638e43c6d86a4861a451ee80e2b4f9139",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/SoportePage-Cxbv8t2b.js",
+      "bytes": 3803,
+      "sha256": "30b117d486e54b4507bc0881c999e4583ddd8b867308aecfa9ad51c5e6048fed",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/StoriesPage-H_ulay3n.js",
+      "bytes": 31639,
+      "sha256": "e243f4bd77a15444847f5f8563d2fa4360500bd4aefd4107d84b05cb20141b0a",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/VerEquipos-Cce5zEuy.js",
+      "bytes": 437,
+      "sha256": "8fb790276b89917500862e953f749881beb7d40cb6d06b46dd145b1911343019",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/VideoFeed-AcKtyNgF.js",
+      "bytes": 10435,
+      "sha256": "8e766d5a097fd83279caf8697dba48c2d36523f8c8db88776d9f6a458389e7c6",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/framePipeline.worker-CLc9_q77.js",
+      "bytes": 5831,
+      "sha256": "69eff8821a7c0b8bb39c03798a17a85ed3a089a73e398505cb087211830087c4",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/futpro-fifa-card-frame.png",
+      "bytes": 179170,
+      "sha256": "fc1b26ce13d39f8ae7a050e8be215e9d98c242a9ca561ce1c828ab728550c72f",
+      "ext": ".png"
+    },
+    {
+      "path": "assets/homeSearchUsersRpc-TzKRV4NH.js",
+      "bytes": 3900,
+      "sha256": "03b391eee4a43d49182c1b92e59ca6d7d8cc7c4cf0f5fb8ed1f74a6b204e65af",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/index-DoGwQ0mo.css",
+      "bytes": 124173,
+      "sha256": "72200c27e811051fd7851e4473dd3987d6655659870b47c993fad8955f66069e",
+      "ext": ".css"
+    },
+    {
+      "path": "assets/index-zp-nomenu-Hb7k2m.js",
+      "bytes": 4377835,
+      "sha256": "c03b843e445d78f1b932286e0a7a55607315d05198919713aaf091b154d94d32",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/loginpagesnew-BPP0r_st.js",
+      "bytes": 9744,
+      "sha256": "01ba20ccd7b27bc8bea99f9fa283db18997b03c97598c7743db57c01e6620692",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/notification-fallback-zona-pro.png",
+      "bytes": 90301,
+      "sha256": "b1349559a412f5f164f68e7039b1115167502e6c00b4bb84cdbb211b82f64395",
+      "ext": ".png"
+    },
+    {
+      "path": "assets/perfilpro-fifa-template.png",
+      "bytes": 190223,
+      "sha256": "fe48962c6124f47243ec7879e35362c74d24d95af6ab36f138693e4b99bf3258",
+      "ext": ".png"
+    },
+    {
+      "path": "assets/seguirTorneosTabCache-D0oCVdgm.js",
+      "bytes": 2937,
+      "sha256": "f50607e3a595985420f86e5c3de8c4cdcb4917176096c0b49883f96b1c718c97",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/sprites/keeper-dive-left.svg",
+      "bytes": 674,
+      "sha256": "c9b0359a38dbbb9e33cf388b5063157d2cc4f0d8fb78418881cc4dea3095477e",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/keeper-dive-right.svg",
+      "bytes": 688,
+      "sha256": "cc0fd9c19ff1fda95093ac23f8aa1830cd8e80ac4a04060cef47ae8e8e385d22",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/keeper-dive-up.svg",
+      "bytes": 653,
+      "sha256": "07055c42ee63ed1126b329441b7d80955111c7c4c6b17c48c04302810ab2d654",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/keeper-idle.svg",
+      "bytes": 806,
+      "sha256": "1271e5c58ff58458c128c35e7a88ad1aee24017d745166fca2e38a84e373996a",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/kicker-idle.svg",
+      "bytes": 609,
+      "sha256": "3931e8550a7fdbd35f589c97805dfc1c4d517bb609cbdc39e6b10398cb4a9183",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/kicker-runup.svg",
+      "bytes": 678,
+      "sha256": "a8bce2a89717aad441eff1aa6b052d6090a67d76ae11d8415b0b6c7d9aecba67",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/readme.txt",
+      "bytes": 564,
+      "sha256": "a768f3097d266154c9c8d78438c401012fad1c92b96767e475a0ffc1fabc4f32",
+      "ext": ".txt"
+    },
+    {
+      "path": "assets/supabase-X1tipi0N.js",
+      "bytes": 190809,
+      "sha256": "227aed6d9fb7cc49e87e95aabcb64bb001b295d87c46c147c4723c477f26f1bf",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/userContentLoadFunctions-BnpMKj8T.js",
+      "bytes": 17886,
+      "sha256": "6392fe481e458589a6d7b52f4ed5d743031ac45fee9dfa93efdc98bf1ccaaa41",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/vendor-C0jAFBLR.js",
+      "bytes": 1010624,
+      "sha256": "f245679cedb22e1e2110321b5af16bf695fe18c6d7296f43f8c2aeea063e453d",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/videoPrefetch.worker-DM62tp9J.js",
+      "bytes": 807,
+      "sha256": "238ec95d4f12d0cdc4643f0df4c8bc1dfe34b5e73669f9f5a4c3437211ee8ca0",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/worldTopLeagues-CdiL4QUm.js",
+      "bytes": 3702,
+      "sha256": "69e2b45444a22339e9127d228a5681b9a7058f4e945e5c682513b2a2c7822aca",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/zonaProTorneoPublishService-Dc9cOp9L.js",
+      "bytes": 4554,
+      "sha256": "b328b2ad82c6edd421807a63bce780b1c554d4c75ea3235803d2d731789e1edb",
+      "ext": ".js"
+    },
+    {
+      "path": "crear-torneo-premium.jpg",
+      "bytes": 311102,
+      "sha256": "ff3ed1bf4da15374d30ac8c4f45d3cf45764031f92c62cffcef880861f04095e",
+      "ext": ".jpg"
+    },
+    {
+      "path": "crear-torneo-premium.svg",
+      "bytes": 9872,
+      "sha256": "4d73b16d3b411464448b48062d3077ce53cd676733df6605c41270dbf69a2f67",
+      "ext": ".svg"
+    },
+    {
+      "path": "favicon.ico",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ext": ".ico"
+    },
+    {
+      "path": "favicon.svg",
+      "bytes": 9522,
+      "sha256": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66",
+      "ext": ".svg"
+    },
+    {
+      "path": "icons.svg",
+      "bytes": 5031,
+      "sha256": "b45fa506195cfcdef406ba9f0c77b36ddc1a7c224040926ec70abc2fdea7b93a",
+      "ext": ".svg"
+    },
+    {
+      "path": "index.html",
+      "bytes": 4807,
+      "sha256": "ace966d63b58bead6fe87614bd59684bb0f028bce6da4dca4ecc85a59ba1e63e",
+      "ext": ".html"
+    }
+  ],
+  "vs_legacy_enero": {
+    "note": "Los JSX de _legacy_archivo/src-ui-enero NO son el fuente del ZIP. Solo coincidencia de nombre.",
+    "deploy_expected_jsx_with_same_filename_in_enero": [
+      "CardFIFA.jsx",
+      "CrearTorneo.jsx",
+      "FormularioRegistroCompleto.jsx",
+      "NotFoundPage.jsx",
+      "PlantillaEquipo.jsx",
+      "Privacidad.jsx"
+    ],
+    "deploy_expected_jsx_NOT_in_enero": [
+      "AceptarTorneo.jsx",
+      "BuscarJugadoresPage.jsx",
+      "BuscarUsuariosPage.jsx",
+      "CardEquipo.jsx",
+      "ChatEquipoPage.jsx",
+      "ChatTorneo.jsx",
+      "ChatTorneoPage.jsx",
+      "EjerciciosPage.jsx",
+      "EquipoMenu.jsx",
+      "EquiposPage.jsx",
+      "FansEquipo.jsx",
+      "InvitacionesEquipo.jsx",
+      "LiveStreamPages.jsx",
+      "MisTorneos.jsx",
+      "PanelArbitro.jsx",
+      "PermisosEquipo.jsx",
+      "QADashboard.jsx",
+      "RegistroEntryRoute.jsx",
+      "SeguirTorneosPage.jsx",
+      "SoportePage.jsx",
+      "StoriesPage.jsx",
+      "VerEquipos.jsx",
+      "VideoFeed.jsx",
+      "loginpagesnew.jsx",
+      "seguirTorneosTabCache.jsx",
+      "zonaProTorneoPublishService.jsx"
+    ],
+    "enero_jsx_not_in_deploy_expected_sample": [
+      "AdminAuditoriaPage.jsx",
+      "AdminConfigPage.jsx",
+      "AdminConfiguracionPage.jsx",
+      "AdminDashboard.jsx",
+      "AdminEstadisticasPage.jsx",
+      "AdminGate.jsx",
+      "AdminNotificacionesPage.jsx",
+      "AdminPagosPage.jsx",
+      "AdminReportesPage.jsx",
+      "AdminUsersPage.jsx",
+      "Amigos.jsx",
+      "AmigosPanel.jsx",
+      "Amistoso.jsx",
+      "AmistososPanel.jsx",
+      "AmistososProgramar.jsx",
+      "App.jsx",
+      "AppLayout.jsx",
+      "ArbitroPanelPage.jsx",
+      "AuthCallback.jsx",
+      "AuthContext.jsx",
+      "AuthPage.jsx",
+      "Avatar.jsx",
+      "AyudaFAQ.jsx",
+      "BottomNav.jsx",
+      "BottomNavBar.jsx",
+      "BuscadorAvanzado.jsx",
+      "BuscarRanking.jsx",
+      "Button.jsx",
+      "CarFutPro.jsx",
+      "CarFutProForm.jsx",
+      "Card.jsx",
+      "Chat.jsx",
+      "ChatPage.jsx",
+      "CommentsModal.jsx",
+      "Comparativas.test.jsx",
+      "CondicionesUsoPanel.jsx",
+      "ConfiguracionCuenta.jsx",
+      "ConfiguracionPage.jsx",
+      "ConfiguracionPanel.jsx",
+      "ContactarSoporte.jsx"
+    ],
+    "enero_jsx_count": 299
+  },
+  "routes": [
+    "/",
+    "/aceptar-torneo",
+    "/aceptar-torneos",
+    "/amistoso",
+    "/amistosos",
+    "/auth/callback",
+    "/buscar-equipo",
+    "/buscar-usuarios",
+    "/callback",
+    "/card-fifa",
+    "/chat",
+    "/completar-perfil",
+    "/crear-equipo",
+    "/crear-torneo",
+    "/crear-torneo-inteligente",
+    "/cursos",
+    "/editar-perfil",
+    "/ejercicios",
+    "/en-vivo",
+    "/entrenamiento",
+    "/entrenamiento-equipo",
+    "/entrenamiento-personal",
+    "/entrenamientos",
+    "/equipo-invitaciones",
+    "/equipo-menu",
+    "/equipos",
+    "/equipos-lista",
+    "/escaner-qr",
+    "/estadisticas",
+    "/formulario-registro",
+    "/formulario-registro-completo",
+    "/home",
+    "/homepage",
+    "/homepages",
+    "/inscribirse",
+    "/live",
+    "/livestream",
+    "/livestream/create",
+    "/login",
+    "/market",
+    "/marketplace",
+    "/marketplace/create",
+    "/marketplace/mis-publicaciones",
+    "/menu",
+    "/mi-equipo",
+    "/mis-equipos",
+    "/mis-torneos",
+    "/notificaciones",
+    "/panel-arbitro",
+    "/partidos-en-vivo",
+    "/penaltis",
+    "/perfil",
+    "/perfil-card",
+    "/perfil-instagram",
+    "/perfil-pro",
+    "/perfilcard",
+    "/perfildeequipo",
+    "/perfilpro",
+    "/privacidad",
+    "/privacidad-seguridad",
+    "/ranking",
+    "/ranking-equipos",
+    "/ranking-jugadores",
+    "/register",
+    "/registro",
+    "/seguir-torneos",
+    "/soporte",
+    "/stats",
+    "/stories",
+    "/subir-historia",
+    "/torneos",
+    "/ver-equipos",
+    "/video-feed",
+    "/videofeed",
+    "/zona-pro/escaner-qr"
+  ],
+  "lazy_imports_from_index": [
+    "AceptarTorneo-BxYPrUpU.js",
+    "BuscarJugadoresPage-Ba1XA4PN.js",
+    "BuscarUsuariosPage-CXPLZjs9.js",
+    "CardEquipo-C2LerRC4.js",
+    "CardFIFA-JTvbNZ_5.js",
+    "ChatEquipoPage-CFKmchnx.js",
+    "ChatTorneo-BB__Aj4H.js",
+    "ChatTorneoPage-xTsKPQN4.js",
+    "CrearTorneo-DemyjbvC.js",
+    "EjerciciosPage-oJUR2TWm.js",
+    "EquipoMenu-3er0hKt5.js",
+    "EquiposPage-DCtRuFCl.js",
+    "FansEquipo-CQreWqVL.js",
+    "FormularioRegistroCompleto-DdkqOvO-.js",
+    "InvitacionesEquipo-B93K5ESN.js",
+    "LiveStreamPages-CMpvrrul.js",
+    "MisTorneos-C8CdB6gS.js",
+    "NotFoundPage-DV9Nnc7S.js",
+    "PanelArbitro-DFMVAGW1.js",
+    "PermisosEquipo-CifQVO7h.js",
+    "PlantillaEquipo-SlBwgJbY.js",
+    "Privacidad-DZu-TL35.js",
+    "QADashboard-BkVKSD_a.js",
+    "RegistroEntryRoute-CfFUwRAD.js",
+    "SeguirTorneosPage-CgH_lYdI.js",
+    "SoportePage-Cxbv8t2b.js",
+    "StoriesPage-H_ulay3n.js",
+    "VerEquipos-Cce5zEuy.js",
+    "VideoFeed-AcKtyNgF.js",
+    "homeSearchUsersRpc-TzKRV4NH.js",
+    "loginpagesnew-BPP0r_st.js",
+    "userContentLoadFunctions-BnpMKj8T.js",
+    "vendor-C0jAFBLR.js",
+    "worldTopLeagues-CdiL4QUm.js",
+    "zonaProTorneoPublishService-Dc9cOp9L.js"
+  ],
+  "inlined_in_index_bundle": {
+    "bundle": "assets/index-zp-nomenu-Hb7k2m.js",
+    "note": "No son chunks separados; OBLIGATORIOS al trabajar App/auth/card",
+    "modules": [
+      {
+        "source": "App.jsx",
+        "role": "router SPA",
+        "required": true
+      },
+      {
+        "source": "PerfilCard.jsx",
+        "role": "post-login/post-registro /perfilcard",
+        "required": true,
+        "routes": [
+          "/perfilcard",
+          "/perfil-card"
+        ]
+      },
+      {
+        "source": "PerfilPro.jsx",
+        "role": "perfil",
+        "required": true,
+        "routes": [
+          "/perfilpro",
+          "/perfil-pro",
+          "/perfil"
+        ]
+      },
+      {
+        "source": "AuthCallback.jsx",
+        "role": "OAuth callback → /perfilcard",
+        "required": true,
+        "routes": [
+          "/auth/callback",
+          "/callback"
+        ]
+      },
+      {
+        "source": "HomePage.jsx",
+        "role": "home/homepages",
+        "required": true,
+        "routes": [
+          "/",
+          "/home",
+          "/homepages"
+        ]
+      },
+      {
+        "source": "EditarPerfil.jsx",
+        "role": "editar perfil",
+        "required": true,
+        "routes": [
+          "/editar-perfil",
+          "/completar-perfil"
+        ]
+      },
+      {
+        "source": "AuthProvider / AppStateProvider",
+        "role": "sesión y guards",
+        "required": true
+      }
+    ]
+  },
+  "auth_flow_mandatory": {
+    "spec": "auditoria/FLUJO_COMPLETO_DEPLOY_ZONA_PRO.md",
+    "rule": "Login y registro SIEMPRE pasan por /perfilcard. Replicar igual que deploy.",
+    "canonical_route": "/perfilcard",
+    "alias_redirect": "/perfil-card -> /perfilcard",
+    "login": [
+      "/login (loginpagesnew)",
+      "emailRegistrationGate / fp_email_registro_estado",
+      "oauth_flow=login + email_gate_ok",
+      "OAuth redirectTo /auth/callback",
+      "AuthCallback reason login-entry-fast",
+      "/perfilcard (PerfilCard)",
+      "luego /homepages o /perfilpro desde PerfilCard"
+    ],
+    "register": [
+      "/registro (RegistroEntryRoute + FormularioRegistroCompleto)",
+      "pending_profile_data + oauth_flow=register",
+      "OAuth redirectTo /auth/callback",
+      "AuthCallback reason register-form-applied (o /completar-perfil si missing-profile)",
+      "/perfilcard (PerfilCard)"
+    ],
+    "guards": [
+      "forcedLogout -> /login",
+      "sin sesión en protegida -> /login",
+      "perfil completo en /registro -> /perfilcard (no-reregister)",
+      "sesión en /login -> /perfilcard (fromLoginGuard)"
+    ],
+    "signals_in_bundle": [
+      "Entrando a PerfilCard…",
+      "login-entry-fast",
+      "register-form-applied",
+      "perfilcard_mounted",
+      "futpro:perfilcard:cache:v1",
+      "UI=\"/perfilcard\""
+    ]
+  },
+  "must_have_fuente": [
+    "App.jsx",
+    "PerfilCard.jsx",
+    "AuthCallback.jsx",
+    "loginpagesnew.jsx",
+    "FormularioRegistroCompleto.jsx",
+    "PerfilPro.jsx",
+    "EditarPerfil.jsx",
+    "HomePage.jsx",
+    "package.json"
+  ],
+  "completeness": {
+    "omit_nothing": true,
+    "include_index_bundle_modules": true,
+    "include_all_lazy_chunks": true,
+    "include_root_static_assets": true,
+    "include_backend_repo_paths": [
+      "server.js",
+      "start.js",
+      "src/main/expressApp.js",
+      "src/routes/",
+      "src/controllers/",
+      "src/services/",
+      "functions/",
+      "supabase/",
+      "scripts/serve-producto.mjs"
+    ]
+  },
+  "expected_ui_jsx_complete": [
+    "AceptarTorneo.jsx",
+    "App.jsx",
+    "AuthCallback.jsx",
+    "BuscarJugadoresPage.jsx",
+    "BuscarUsuariosPage.jsx",
+    "CardEquipo.jsx",
+    "CardFIFA.jsx",
+    "ChatEquipoPage.jsx",
+    "ChatTorneo.jsx",
+    "ChatTorneoPage.jsx",
+    "CrearTorneo.jsx",
+    "EditarPerfil.jsx",
+    "EjerciciosPage.jsx",
+    "EquipoMenu.jsx",
+    "EquiposPage.jsx",
+    "FansEquipo.jsx",
+    "FormularioRegistroCompleto.jsx",
+    "HomePage.jsx",
+    "InvitacionesEquipo.jsx",
+    "LiveStreamPages.jsx",
+    "MisTorneos.jsx",
+    "NotFoundPage.jsx",
+    "PanelArbitro.jsx",
+    "PerfilCard.jsx",
+    "PerfilPro.jsx",
+    "PermisosEquipo.jsx",
+    "PlantillaEquipo.jsx",
+    "Privacidad.jsx",
+    "QADashboard.jsx",
+    "RegistroEntryRoute.jsx",
+    "SeguirTorneosPage.jsx",
+    "SoportePage.jsx",
+    "StoriesPage.jsx",
+    "VerEquipos.jsx",
+    "VideoFeed.jsx",
+    "loginpagesnew.jsx"
+  ]
+}

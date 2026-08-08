@@ -1,1 +1,0 @@
-// Archivo no encontrado, omito test unitario.

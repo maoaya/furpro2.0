@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esquema Páginas FutPro 2.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
+            color: #eee;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { color: #FFD700; margin-bottom: 10px; text-align: center; }
+        .subtitle { text-align: center; color: #aaa; margin-bottom: 30px; font-size: 14px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-box {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #FFD700;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-number { font-size: 32px; font-weight: bold; color: #FFD700; }
+        .stat-label { color: #aaa; font-size: 12px; margin-top: 5px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+        th {
+            background: #FFD700;
+            color: #000;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            border-bottom: 2px solid #000;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #333;
+        }
+        tr:hover { background: rgba(255, 215, 0, 0.05); }
+        .status-ok { color: #4ade80; font-weight: bold; }
+        .status-partial { color: #fbbf24; font-weight: bold; }
+        .status-missing { color: #ef4444; font-weight: bold; }
+        .tier {
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD700;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .feature {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        .auth-yes { background: #4ade80; color: #000; }
+        .auth-no { background: #ef4444; color: #fff; }
+        .auth-partial { background: #fbbf24; color: #000; }
+        .realtime-yes { background: #06b6d4; color: #000; }
+        .realtime-no { background: #666; color: #fff; }
+        .realtime-partial { background: #f59e0b; color: #000; }
+        .autosave-yes { background: #8b5cf6; color: #fff; }
+        .autosave-no { background: #666; color: #fff; }
+        .autosave-partial { background: #f59e0b; color: #000; }
+        .filter-section {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #FFD700;
+            background: transparent;
+            color: #FFD700;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .filter-btn.active {
+            background: #FFD700;
+            color: #000;
+        }
+        .filter-btn:hover { transform: scale(1.05); }
+        .priority-high { border-left: 4px solid #ef4444; }
+        .priority-medium { border-left: 4px solid #f59e0b; }
+        .priority-low { border-left: 4px solid #4ade80; }
+        .summary {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #FFD700;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .summary h3 { color: #FFD700; margin-bottom: 10px; }
+        .summary ul { margin-left: 20px; line-height: 1.8; }
+        .summary li { color: #ccc; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 ESQUEMA COMPLETO DE PÁGINAS - FUTPRO 2.0</h1>
+        <p class="subtitle">Análisis de Autenticación, Redirección Realtime y Autoguardado | 12 de diciembre de 2025</p>
+
+        <!-- ESTADÍSTICAS -->
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-number">40+</div>
+                <div class="stat-label">Páginas Principales</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">28/40</div>
+                <div class="stat-label">Con Autenticación ✅</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">2/40</div>
+                <div class="stat-label">Con Realtime 🔄</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">18/40</div>
+                <div class="stat-label">Con Autoguardado 💾</div>
+            </div>
+        </div>
+
+        <!-- RESUMEN -->
+        <div class="summary">
+            <h3>🎯 RECOMENDACIONES URGENTES</h3>
+            <ul>
+                <li><strong>CRÍTICA:</strong> Implementar realtime en Feed (posts), Perfil (followers), Marketplace (stock)</li>
+                <li><strong>IMPORTANTE:</strong> Añadir useAuth() a VideosFeed y TransmisionEnVivo</li>
+                <li><strong>OPTIMIZACIÓN:</strong> Migrar todos los localStorage a Supabase con debounce</li>
+                <li><strong>VALIDACIÓN:</strong> Implementar logout redirect en todas las páginas autenticadas</li>
+            </ul>
+        </div>
+
+        <!-- TABLA PRINCIPAL -->
+        <h2 style="color: #FFD700; margin-bottom: 20px;">📊 Estado de Páginas</h2>
+        <table id="mainTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Página</th>
+                    <th>Ruta</th>
+                    <th>Componente</th>
+                    <th>Tier</th>
+                    <th>Autenticación</th>
+                    <th>Realtime</th>
+                    <th>Autoguardado</th>
+                    <th>Prioridad</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- TIER 1: CORE SOCIAL -->
+                <tr class="priority-high">
+                    <td>1</td>
+                    <td>Home Principal</td>
+                    <td>/</td>
+                    <td>HomePage.jsx</td>
+                    <td><span class="tier">T1</span></td>
+                    <td><span class="feature auth-no">❌</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-partial">⚠️</span></td>
+                    <td>🔴 ALTA</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Feed</td>
+                    <td>/feed</td>
+                    <td>FeedPage.jsx</td>
+                    <td><span class="tier">T1</span></td>
+                    <td><span class="feature auth-partial">✅</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-no">❌</span></td>
+                    <td>🔴 CRÍTICA</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Perfil Instagram</td>
+                    <td>/perfil/me, /perfil/:userId</td>
+                    <td>PerfilInstagram.jsx</td>
+                    <td><span class="tier">T1</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-partial">⚠️</span></td>
+                    <td><span class="feature autosave-partial">⚠️</span></td>
+                    <td>🔴 CRÍTICA</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Notificaciones</td>
+                    <td>/notificaciones</td>
+                    <td>Notificaciones.jsx</td>
+                    <td><span class="tier">T1</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-partial">⚠️</span></td>
+                    <td><span class="feature autosave-partial">⚠️</span></td>
+                    <td>🟠 MEDIA</td>
+                </tr>
+
+                <!-- TIER 2: SOCIAL FEATURES -->
+                <tr class="priority-low">
+                    <td>5</td>
+                    <td>Estados</td>
+                    <td>/estados</td>
+                    <td>Estados.jsx</td>
+                    <td><span class="tier">T2</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-yes">✅</span></td>
+                    <td><span class="feature autosave-yes">✅</span></td>
+                    <td>✅ READY</td>
+                </tr>
+                <tr class="priority-low">
+                    <td>6</td>
+                    <td>Amigos</td>
+                    <td>/amigos</td>
+                    <td>Amigos.jsx</td>
+                    <td><span class="tier">T2</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-yes">✅</span></td>
+                    <td><span class="feature autosave-yes">✅</span></td>
+                    <td>✅ READY</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Videos Feed</td>
+                    <td>/videos</td>
+                    <td>VideosFeed.jsx</td>
+                    <td><span class="tier">T2</span></td>
+                    <td><span class="feature auth-partial">⚠️</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-partial">⚠️</span></td>
+                    <td>🟠 MEDIA</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Chat</td>
+                    <td>/chat</td>
+                    <td>Chat.jsx</td>
+                    <td><span class="tier">T2</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-partial">⚠️</span></td>
+                    <td><span class="feature autosave-partial">⚠️</span></td>
+                    <td>🟠 MEDIA</td>
+                </tr>
+
+                <!-- TIER 3: GAMIFICATION -->
+                <tr class="priority-low">
+                    <td>9</td>
+                    <td>Card FIFA</td>
+                    <td>/card-fifa</td>
+                    <td>CardFIFA.jsx</td>
+                    <td><span class="tier">T3</span></td>
+                    <td><span class="feature auth-no">❌</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-yes">✅</span></td>
+                    <td>✅ READY</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>Logros</td>
+                    <td>/logros</td>
+                    <td>Logros.jsx</td>
+                    <td><span class="tier">T3</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-no">❌</span></td>
+                    <td>🟠 MEDIA</td>
+                </tr>
+
+                <!-- TIER 4: MARKETPLACE -->
+                <tr class="priority-high">
+                    <td>11</td>
+                    <td>Marketplace</td>
+                    <td>/marketplace</td>
+                    <td>MarketplaceCompleto.jsx</td>
+                    <td><span class="tier">T4</span></td>
+                    <td><span class="feature auth-partial">✅</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-no">❌</span></td>
+                    <td>🔴 CRÍTICA</td>
+                </tr>
+                <tr class="priority-low">
+                    <td>12</td>
+                    <td>Ranking Jugadores</td>
+                    <td>/ranking-jugadores</td>
+                    <td>RankingJugadoresCompleto.jsx</td>
+                    <td><span class="tier">T4</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-partial">⚠️</span></td>
+                    <td><span class="feature autosave-no">N/A</span></td>
+                    <td>🟠 MEDIA</td>
+                </tr>
+                <tr class="priority-low">
+                    <td>13</td>
+                    <td>Ranking Equipos</td>
+                    <td>/ranking-equipos</td>
+                    <td>RankingEquiposCompleto.jsx</td>
+                    <td><span class="tier">T4</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-partial">⚠️</span></td>
+                    <td><span class="feature autosave-no">N/A</span></td>
+                    <td>🟠 MEDIA</td>
+                </tr>
+
+                <!-- TIER 5: STREAMING -->
+                <tr class="priority-high">
+                    <td>14</td>
+                    <td>Transmisión en Vivo</td>
+                    <td>/transmision-en-vivo</td>
+                    <td>TransmisionEnVivo.jsx</td>
+                    <td><span class="tier">T5</span></td>
+                    <td><span class="feature auth-partial">⚠️</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-no">❌</span></td>
+                    <td>🔴 ALTA</td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td>Partidos</td>
+                    <td>/partidos</td>
+                    <td>Partidos.jsx</td>
+                    <td><span class="tier">T5</span></td>
+                    <td><span class="feature auth-partial">✅</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-no">❌</span></td>
+                    <td>🟠 MEDIA</td>
+                </tr>
+
+                <!-- TIER 6: ADMIN -->
+                <tr>
+                    <td>16</td>
+                    <td>Configuración</td>
+                    <td>/configuracion</td>
+                    <td>ConfiguracionPage.jsx</td>
+                    <td><span class="tier">T6</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-partial">⚠️</span></td>
+                    <td>🟠 MEDIA</td>
+                </tr>
+                <tr>
+                    <td>17</td>
+                    <td>Equipos</td>
+                    <td>/equipos</td>
+                    <td>Equipos.jsx</td>
+                    <td><span class="tier">T6</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-no">❌</span></td>
+                    <td>🟠 MEDIA</td>
+                </tr>
+                <tr>
+                    <td>18</td>
+                    <td>Torneos</td>
+                    <td>/torneos</td>
+                    <td>Torneos.jsx</td>
+                    <td><span class="tier">T6</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-no">❌</span></td>
+                    <td>🟠 MEDIA</td>
+                </tr>
+
+                <!-- TIER 7: STATS -->
+                <tr>
+                    <td>19</td>
+                    <td>Estadísticas</td>
+                    <td>/estadisticas</td>
+                    <td>Estadisticas.jsx</td>
+                    <td><span class="tier">T7</span></td>
+                    <td><span class="feature auth-yes">✅</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-no">N/A</span></td>
+                    <td>🟢 BAJA</td>
+                </tr>
+                <tr>
+                    <td>20</td>
+                    <td>Penaltis</td>
+                    <td>/penaltis</td>
+                    <td>Penaltis.jsx</td>
+                    <td><span class="tier">T7</span></td>
+                    <td><span class="feature auth-partial">⚠️</span></td>
+                    <td><span class="feature realtime-no">❌</span></td>
+                    <td><span class="feature autosave-partial">⚠️</span></td>
+                    <td>🟠 MEDIA</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- LEYENDA -->
+        <div style="background: rgba(255, 215, 0, 0.1); border: 2px solid #FFD700; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+            <h3 style="color: #FFD700; margin-bottom: 15px;">📖 Leyenda</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <div>
+                    <strong style="color: #4ade80;">✅ Autenticación:</strong> Implementado con useAuth()
+                </div>
+                <div>
+                    <strong style="color: #fbbf24;">⚠️ Autenticación:</strong> Parcial o necesita validación
+                </div>
+                <div>
+                    <strong style="color: #ef4444;">❌ Autenticación:</strong> No implementado o público
+                </div>
+                <div>
+                    <strong style="color: #06b6d4;">✅ Realtime:</strong> Supabase channel implementado
+                </div>
+                <div>
+                    <strong style="color: #f59e0b;">⚠️ Realtime:</strong> Parcial o necesita expansión
+                </div>
+                <div>
+                    <strong style="color: #666;">❌ Realtime:</strong> No implementado
+                </div>
+                <div>
+                    <strong style="color: #8b5cf6;">✅ Autoguardado:</strong> localStorage o Supabase upsert
+                </div>
+                <div>
+                    <strong style="color: #f59e0b;">⚠️ Autoguardado:</strong> Manual o incompleto
+                </div>
+                <div>
+                    <strong style="color: #666;">❌ Autoguardado:</strong> No implementado
+                </div>
+                <div>
+                    <strong style="color: #fff;">N/A:</strong> No aplica (read-only)
+                </div>
+            </div>
+        </div>
+
+        <!-- TIERS EXPLANATION -->
+        <div style="background: rgba(255, 215, 0, 0.1); border: 2px solid #FFD700; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+            <h3 style="color: #FFD700; margin-bottom: 15px;">🏗️ Explicación de Tiers</h3>
+            <ul style="margin-left: 20px; line-height: 2;">
+                <li><strong>T1 (Core Social):</strong> HomePage, Feed, Perfil, Notificaciones</li>
+                <li><strong>T2 (Social Features):</strong> Estados, Amigos, Videos, Chat</li>
+                <li><strong>T3 (Gamification):</strong> CardFIFA, Logros, Badges</li>
+                <li><strong>T4 (Marketplace & Ranking):</strong> Marketplace, Rankings</li>
+                <li><strong>T5 (Streaming & Events):</strong> Transmisión, Partidos</li>
+                <li><strong>T6 (Admin & Teams):</strong> Configuración, Equipos, Torneos</li>
+                <li><strong>T7 (Stats & Analytics):</strong> Estadísticas, Penaltis, Historial</li>
+            </ul>
+        </div>
+
+        <!-- PRÓXIMOS PASOS -->
+        <div style="background: rgba(255, 215, 0, 0.1); border: 2px solid #FFD700; padding: 20px; border-radius: 8px;">
+            <h3 style="color: #FFD700; margin-bottom: 15px;">🎯 Próximos Pasos</h3>
+            <ol style="margin-left: 20px; line-height: 2;">
+                <li><strong>SEMANA 1 (CRÍTICA):</strong>
+                    <ul style="margin-top: 5px;">
+                        <li>✏️ Implementar realtime en Feed (posts)</li>
+                        <li>✏️ Implementar realtime en Perfil (followers)</li>
+                        <li>✏️ Implementar realtime en Marketplace (stock)</li>
+                        <li>✏️ Añadir useAuth() a VideosFeed</li>
+                    </ul>
+                </li>
+                <li><strong>SEMANA 2 (IMPORTANTE):</strong>
+                    <ul style="margin-top: 5px;">
+                        <li>✏️ TransmisionEnVivo WebRTC + realtime</li>
+                        <li>✏️ Realtime Rankings</li>
+                        <li>✏️ Autoguardado en Configuracion</li>
+                    </ul>
+                </li>
+                <li><strong>SEMANA 3+ (OPTIMIZACIÓN):</strong>
+                    <ul style="margin-top: 5px;">
+                        <li>✏️ Migrar todos los localStorage a Supabase</li>
+                        <li>✏️ Debouncing en forms</li>
+                        <li>✏️ Optimistic UI updates</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

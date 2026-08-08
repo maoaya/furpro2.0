@@ -1,0 +1,971 @@
+{
+  "generated_at": "2026-08-08T20:54:47.640014+00:00",
+  "canonical_zip": "deploy-6a7256d5ffd58e44433d5158.zip",
+  "canonical_zip_md5": "9ff7aad60440af4fe2500b3178732ef7",
+  "product_root": "producto-deploy/",
+  "pc_source_expected": "C:\\Users\\lenovo\\Desktop\\futpro2.0",
+  "index_html_assets": [
+    "index-",
+    "index-DoGwQ0mo.css",
+    "index-zp-nomenu-Hb7k2m.js",
+    "loginpagesnew-BPP0r_st.js",
+    "supabase-X1tipi0N.js",
+    "vendor-C0jAFBLR.js"
+  ],
+  "file_count": 63,
+  "files": [
+    {
+      "path": "MANIFEST_CANONICO.json",
+      "bytes": 27119,
+      "sha256": "318d5980fdd33b133daa8f424e851a7064814ff0637ee3b8a85995da7b2fc54a",
+      "ext": ".json"
+    },
+    {
+      "path": "README_PRODUCTO.txt",
+      "bytes": 48,
+      "sha256": "65271202b4711bdd26fc99723d185d8060e42e51b71ed55c86783c8e527d27f2",
+      "ext": ".txt"
+    },
+    {
+      "path": "SOURCE_ZIP.txt",
+      "bytes": 73,
+      "sha256": "35a07fa123ac74826d1de21cacffdfe81c7014816f63764bf446d741e1c51d0b",
+      "ext": ".txt"
+    },
+    {
+      "path": "VERSION_LOCK.txt",
+      "bytes": 196,
+      "sha256": "71d954345a444b4c0aaeca9509b3e55c6cbc2ac03b9b5a2322decf07f01ea3cc",
+      "ext": ".txt"
+    },
+    {
+      "path": "assets/AceptarTorneo-BxYPrUpU.js",
+      "bytes": 11794,
+      "sha256": "28af5d198b7e1e830b75874cc693add83d905e916a5cda25eebbc63221276c8f",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/BuscarJugadoresPage-Ba1XA4PN.js",
+      "bytes": 13494,
+      "sha256": "e73aeada6b32c0a527be9f5c6c1c2f8a89e56b61768220c4c57d18ef9ff4dcee",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/BuscarUsuariosPage-CXPLZjs9.js",
+      "bytes": 43105,
+      "sha256": "87f86d1577dbd21e18768926cd79b3ea99776e486470c81939c9c7a9d91a05c8",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/CardEquipo-C2LerRC4.js",
+      "bytes": 6903,
+      "sha256": "60c58214d9f39921e907191876902b97d6bb7674e89f3e246dab0d99f3d547c0",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/CardFIFA-JTvbNZ_5.js",
+      "bytes": 4157,
+      "sha256": "655b8ff7a4acfaadae7d325838e6532702a1b87a7cb45fd00d95e320c9fabd83",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/ChatEquipoPage-CFKmchnx.js",
+      "bytes": 7881,
+      "sha256": "4c05e5edad0bac882e54b236d5039b945fb13a561f5ef4bd3e360d4bd7e75d0e",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/ChatTorneo-BB__Aj4H.js",
+      "bytes": 39406,
+      "sha256": "a7a3df100d23eccbebeca077e6c4836b64bfcc802aa17063d7ff95367ad51f1d",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/ChatTorneoPage-xTsKPQN4.js",
+      "bytes": 3673,
+      "sha256": "83c5647e7f3348a367cd5735432de0ce10ae439ee6feddd974da680a4e1cace4",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/CrearTorneo-DQgvw16o.css",
+      "bytes": 264,
+      "sha256": "2c5b6c89f277a17b7d6d6e2caee86e54bbd5a76efcc47fe0de0d8e42f54bb4e6",
+      "ext": ".css"
+    },
+    {
+      "path": "assets/CrearTorneo-DemyjbvC.js",
+      "bytes": 24068,
+      "sha256": "3faee407f9b92d71d107b520b83ffa46926293d4c7b22a3baac9d3a2fa59a874",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/EjerciciosPage-oJUR2TWm.js",
+      "bytes": 2727,
+      "sha256": "7b1525dbf33ab870c4d084d525fc63bb3b30080fa53006c181af2d1784c33ca2",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/EquipoMenu-3er0hKt5.js",
+      "bytes": 7117,
+      "sha256": "2ddf3277b9d60538626809f226946050e089005e003faaa2fb08f93e112bcda4",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/EquiposPage-DCtRuFCl.js",
+      "bytes": 12183,
+      "sha256": "ce05409051db9a446f76253edb24c66a8c2e7a5e23538ce14e5c9645c1220eeb",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/FansEquipo-CQreWqVL.js",
+      "bytes": 3789,
+      "sha256": "a05b2fe1abcbd3d7c09ddc36698582c13d6d74161e0f98adb0722a8ebf3a325f",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/FormularioRegistroCompleto-DOQtZrac.css",
+      "bytes": 2514,
+      "sha256": "b5a8644c57c643d9598be13dc9263c7e47d469546bdedb679974c0952915d6ad",
+      "ext": ".css"
+    },
+    {
+      "path": "assets/FormularioRegistroCompleto-DdkqOvO-.js",
+      "bytes": 39565,
+      "sha256": "98432131b188ad9b7a729068d3c9eb3c1ee0e169a3301d4051b85ac2354800e5",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/InvitacionesEquipo-B93K5ESN.js",
+      "bytes": 11591,
+      "sha256": "13d126ae4989f3d91c6b9a7deb98a4eddb0ed358a1081da52db59254dfbe8652",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/LiveStreamPages-CMpvrrul.js",
+      "bytes": 12512,
+      "sha256": "406449471ef9d8770cabec27ea647f1f1695ddbd8b00874c63ec69c1887241c2",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/MisTorneos-C8CdB6gS.js",
+      "bytes": 16336,
+      "sha256": "3e726698f642bf005f47e2c9bff9533a0c3921a0cbb6f6201e7f5a41de695d35",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/NotFoundPage-DV9Nnc7S.js",
+      "bytes": 1874,
+      "sha256": "52d71727d92cfaf45a3c6a7cbb7a919f817d95d88a6c4442c2d7d6748ac4b6d9",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/PanelArbitro-DFMVAGW1.js",
+      "bytes": 14245,
+      "sha256": "96bec8db52dd7e34bd8237476b2c7c397f7accaaddba7a651a4b02591e78465b",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/PermisosEquipo-CifQVO7h.js",
+      "bytes": 15259,
+      "sha256": "b35e736fcb04e7d66dac6933649d60128521125ded2e96594a9ba17431100b78",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/PlantillaEquipo-SlBwgJbY.js",
+      "bytes": 23499,
+      "sha256": "7b126ae5c75c0178800299786435155e22ec35b57eb28ebf143b002895351d89",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/Privacidad-DZu-TL35.js",
+      "bytes": 3546,
+      "sha256": "3a5b506c7ae372ad355f9faf6fe8ded065625a33f2e8ef9b9c34f5620e2e7b75",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/QADashboard-BkVKSD_a.js",
+      "bytes": 7458,
+      "sha256": "bb9387781e8d6553fd5c5c92e9c49576858af26240bfdee8506d5a5bf286d3d2",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/RegistroEntryRoute-CfFUwRAD.js",
+      "bytes": 737,
+      "sha256": "ce6bfd006b3d56649f86996eb27d30a095d2bbf032a4d7038e4e990a461fb2ba",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/SeguirTorneosPage-CgH_lYdI.js",
+      "bytes": 78784,
+      "sha256": "afa5651e004905f4fd6a46f85f7c98a638e43c6d86a4861a451ee80e2b4f9139",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/SoportePage-Cxbv8t2b.js",
+      "bytes": 3803,
+      "sha256": "30b117d486e54b4507bc0881c999e4583ddd8b867308aecfa9ad51c5e6048fed",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/StoriesPage-H_ulay3n.js",
+      "bytes": 31639,
+      "sha256": "e243f4bd77a15444847f5f8563d2fa4360500bd4aefd4107d84b05cb20141b0a",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/VerEquipos-Cce5zEuy.js",
+      "bytes": 437,
+      "sha256": "8fb790276b89917500862e953f749881beb7d40cb6d06b46dd145b1911343019",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/VideoFeed-AcKtyNgF.js",
+      "bytes": 10435,
+      "sha256": "8e766d5a097fd83279caf8697dba48c2d36523f8c8db88776d9f6a458389e7c6",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/framePipeline.worker-CLc9_q77.js",
+      "bytes": 5831,
+      "sha256": "69eff8821a7c0b8bb39c03798a17a85ed3a089a73e398505cb087211830087c4",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/futpro-fifa-card-frame.png",
+      "bytes": 179170,
+      "sha256": "fc1b26ce13d39f8ae7a050e8be215e9d98c242a9ca561ce1c828ab728550c72f",
+      "ext": ".png"
+    },
+    {
+      "path": "assets/homeSearchUsersRpc-TzKRV4NH.js",
+      "bytes": 3900,
+      "sha256": "03b391eee4a43d49182c1b92e59ca6d7d8cc7c4cf0f5fb8ed1f74a6b204e65af",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/index-DoGwQ0mo.css",
+      "bytes": 124173,
+      "sha256": "72200c27e811051fd7851e4473dd3987d6655659870b47c993fad8955f66069e",
+      "ext": ".css"
+    },
+    {
+      "path": "assets/index-zp-nomenu-Hb7k2m.js",
+      "bytes": 4377835,
+      "sha256": "c03b843e445d78f1b932286e0a7a55607315d05198919713aaf091b154d94d32",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/loginpagesnew-BPP0r_st.js",
+      "bytes": 9744,
+      "sha256": "01ba20ccd7b27bc8bea99f9fa283db18997b03c97598c7743db57c01e6620692",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/notification-fallback-zona-pro.png",
+      "bytes": 90301,
+      "sha256": "b1349559a412f5f164f68e7039b1115167502e6c00b4bb84cdbb211b82f64395",
+      "ext": ".png"
+    },
+    {
+      "path": "assets/perfilpro-fifa-template.png",
+      "bytes": 190223,
+      "sha256": "fe48962c6124f47243ec7879e35362c74d24d95af6ab36f138693e4b99bf3258",
+      "ext": ".png"
+    },
+    {
+      "path": "assets/seguirTorneosTabCache-D0oCVdgm.js",
+      "bytes": 2937,
+      "sha256": "f50607e3a595985420f86e5c3de8c4cdcb4917176096c0b49883f96b1c718c97",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/sprites/keeper-dive-left.svg",
+      "bytes": 674,
+      "sha256": "c9b0359a38dbbb9e33cf388b5063157d2cc4f0d8fb78418881cc4dea3095477e",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/keeper-dive-right.svg",
+      "bytes": 688,
+      "sha256": "cc0fd9c19ff1fda95093ac23f8aa1830cd8e80ac4a04060cef47ae8e8e385d22",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/keeper-dive-up.svg",
+      "bytes": 653,
+      "sha256": "07055c42ee63ed1126b329441b7d80955111c7c4c6b17c48c04302810ab2d654",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/keeper-idle.svg",
+      "bytes": 806,
+      "sha256": "1271e5c58ff58458c128c35e7a88ad1aee24017d745166fca2e38a84e373996a",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/kicker-idle.svg",
+      "bytes": 609,
+      "sha256": "3931e8550a7fdbd35f589c97805dfc1c4d517bb609cbdc39e6b10398cb4a9183",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/kicker-runup.svg",
+      "bytes": 678,
+      "sha256": "a8bce2a89717aad441eff1aa6b052d6090a67d76ae11d8415b0b6c7d9aecba67",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/readme.txt",
+      "bytes": 564,
+      "sha256": "a768f3097d266154c9c8d78438c401012fad1c92b96767e475a0ffc1fabc4f32",
+      "ext": ".txt"
+    },
+    {
+      "path": "assets/supabase-X1tipi0N.js",
+      "bytes": 190809,
+      "sha256": "227aed6d9fb7cc49e87e95aabcb64bb001b295d87c46c147c4723c477f26f1bf",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/userContentLoadFunctions-BnpMKj8T.js",
+      "bytes": 17886,
+      "sha256": "6392fe481e458589a6d7b52f4ed5d743031ac45fee9dfa93efdc98bf1ccaaa41",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/vendor-C0jAFBLR.js",
+      "bytes": 1010624,
+      "sha256": "f245679cedb22e1e2110321b5af16bf695fe18c6d7296f43f8c2aeea063e453d",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/videoPrefetch.worker-DM62tp9J.js",
+      "bytes": 807,
+      "sha256": "238ec95d4f12d0cdc4643f0df4c8bc1dfe34b5e73669f9f5a4c3437211ee8ca0",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/worldTopLeagues-CdiL4QUm.js",
+      "bytes": 3702,
+      "sha256": "69e2b45444a22339e9127d228a5681b9a7058f4e945e5c682513b2a2c7822aca",
+      "ext": ".js"
+    },
+    {
+      "path": "assets/zonaProTorneoPublishService-Dc9cOp9L.js",
+      "bytes": 4554,
+      "sha256": "b328b2ad82c6edd421807a63bce780b1c554d4c75ea3235803d2d731789e1edb",
+      "ext": ".js"
+    },
+    {
+      "path": "crear-torneo-premium.jpg",
+      "bytes": 311102,
+      "sha256": "ff3ed1bf4da15374d30ac8c4f45d3cf45764031f92c62cffcef880861f04095e",
+      "ext": ".jpg"
+    },
+    {
+      "path": "crear-torneo-premium.svg",
+      "bytes": 9872,
+      "sha256": "4d73b16d3b411464448b48062d3077ce53cd676733df6605c41270dbf69a2f67",
+      "ext": ".svg"
+    },
+    {
+      "path": "favicon.ico",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ext": ".ico"
+    },
+    {
+      "path": "favicon.svg",
+      "bytes": 9522,
+      "sha256": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66",
+      "ext": ".svg"
+    },
+    {
+      "path": "icons.svg",
+      "bytes": 5031,
+      "sha256": "b45fa506195cfcdef406ba9f0c77b36ddc1a7c224040926ec70abc2fdea7b93a",
+      "ext": ".svg"
+    },
+    {
+      "path": "index.html",
+      "bytes": 4807,
+      "sha256": "ace966d63b58bead6fe87614bd59684bb0f028bce6da4dca4ecc85a59ba1e63e",
+      "ext": ".html"
+    }
+  ],
+  "js_chunks": [
+    {
+      "file": "assets/AceptarTorneo-BxYPrUpU.js",
+      "logical": "AceptarTorneo",
+      "bytes": 11794,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "AceptarTorneo.jsx",
+      "has_zona_pro_text": true,
+      "sha256": "28af5d198b7e1e830b75874cc693add83d905e916a5cda25eebbc63221276c8f"
+    },
+    {
+      "file": "assets/BuscarJugadoresPage-Ba1XA4PN.js",
+      "logical": "BuscarJugadoresPage",
+      "bytes": 13494,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "BuscarJugadoresPage.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "e73aeada6b32c0a527be9f5c6c1c2f8a89e56b61768220c4c57d18ef9ff4dcee"
+    },
+    {
+      "file": "assets/BuscarUsuariosPage-CXPLZjs9.js",
+      "logical": "BuscarUsuariosPage",
+      "bytes": 43105,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "BuscarUsuariosPage.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "87f86d1577dbd21e18768926cd79b3ea99776e486470c81939c9c7a9d91a05c8"
+    },
+    {
+      "file": "assets/CardEquipo-C2LerRC4.js",
+      "logical": "CardEquipo",
+      "bytes": 6903,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "CardEquipo.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "60c58214d9f39921e907191876902b97d6bb7674e89f3e246dab0d99f3d547c0"
+    },
+    {
+      "file": "assets/CardFIFA-JTvbNZ_5.js",
+      "logical": "CardFIFA",
+      "bytes": 4157,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "CardFIFA.jsx",
+      "has_zona_pro_text": true,
+      "sha256": "655b8ff7a4acfaadae7d325838e6532702a1b87a7cb45fd00d95e320c9fabd83"
+    },
+    {
+      "file": "assets/ChatEquipoPage-CFKmchnx.js",
+      "logical": "ChatEquipoPage",
+      "bytes": 7881,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "ChatEquipoPage.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "4c05e5edad0bac882e54b236d5039b945fb13a561f5ef4bd3e360d4bd7e75d0e"
+    },
+    {
+      "file": "assets/ChatTorneo-BB__Aj4H.js",
+      "logical": "ChatTorneo",
+      "bytes": 39406,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "ChatTorneo.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "a7a3df100d23eccbebeca077e6c4836b64bfcc802aa17063d7ff95367ad51f1d"
+    },
+    {
+      "file": "assets/ChatTorneoPage-xTsKPQN4.js",
+      "logical": "ChatTorneoPage",
+      "bytes": 3673,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "ChatTorneoPage.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "83c5647e7f3348a367cd5735432de0ce10ae439ee6feddd974da680a4e1cace4"
+    },
+    {
+      "file": "assets/CrearTorneo-DemyjbvC.js",
+      "logical": "CrearTorneo",
+      "bytes": 24068,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "CrearTorneo.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "3faee407f9b92d71d107b520b83ffa46926293d4c7b22a3baac9d3a2fa59a874"
+    },
+    {
+      "file": "assets/EjerciciosPage-oJUR2TWm.js",
+      "logical": "EjerciciosPage",
+      "bytes": 2727,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "EjerciciosPage.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "7b1525dbf33ab870c4d084d525fc63bb3b30080fa53006c181af2d1784c33ca2"
+    },
+    {
+      "file": "assets/EquipoMenu-3er0hKt5.js",
+      "logical": "EquipoMenu",
+      "bytes": 7117,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "EquipoMenu.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "2ddf3277b9d60538626809f226946050e089005e003faaa2fb08f93e112bcda4"
+    },
+    {
+      "file": "assets/EquiposPage-DCtRuFCl.js",
+      "logical": "EquiposPage",
+      "bytes": 12183,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "EquiposPage.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "ce05409051db9a446f76253edb24c66a8c2e7a5e23538ce14e5c9645c1220eeb"
+    },
+    {
+      "file": "assets/FansEquipo-CQreWqVL.js",
+      "logical": "FansEquipo",
+      "bytes": 3789,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "FansEquipo.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "a05b2fe1abcbd3d7c09ddc36698582c13d6d74161e0f98adb0722a8ebf3a325f"
+    },
+    {
+      "file": "assets/FormularioRegistroCompleto-DdkqOvO-.js",
+      "logical": "FormularioRegistroCompleto",
+      "bytes": 39565,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "FormularioRegistroCompleto.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "98432131b188ad9b7a729068d3c9eb3c1ee0e169a3301d4051b85ac2354800e5"
+    },
+    {
+      "file": "assets/InvitacionesEquipo-B93K5ESN.js",
+      "logical": "InvitacionesEquipo",
+      "bytes": 11591,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "InvitacionesEquipo.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "13d126ae4989f3d91c6b9a7deb98a4eddb0ed358a1081da52db59254dfbe8652"
+    },
+    {
+      "file": "assets/LiveStreamPages-CMpvrrul.js",
+      "logical": "LiveStreamPages",
+      "bytes": 12512,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "LiveStreamPages.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "406449471ef9d8770cabec27ea647f1f1695ddbd8b00874c63ec69c1887241c2"
+    },
+    {
+      "file": "assets/MisTorneos-C8CdB6gS.js",
+      "logical": "MisTorneos",
+      "bytes": 16336,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "MisTorneos.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "3e726698f642bf005f47e2c9bff9533a0c3921a0cbb6f6201e7f5a41de695d35"
+    },
+    {
+      "file": "assets/NotFoundPage-DV9Nnc7S.js",
+      "logical": "NotFoundPage",
+      "bytes": 1874,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "NotFoundPage.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "52d71727d92cfaf45a3c6a7cbb7a919f817d95d88a6c4442c2d7d6748ac4b6d9"
+    },
+    {
+      "file": "assets/PanelArbitro-DFMVAGW1.js",
+      "logical": "PanelArbitro",
+      "bytes": 14245,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "PanelArbitro.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "96bec8db52dd7e34bd8237476b2c7c397f7accaaddba7a651a4b02591e78465b"
+    },
+    {
+      "file": "assets/PermisosEquipo-CifQVO7h.js",
+      "logical": "PermisosEquipo",
+      "bytes": 15259,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "PermisosEquipo.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "b35e736fcb04e7d66dac6933649d60128521125ded2e96594a9ba17431100b78"
+    },
+    {
+      "file": "assets/PlantillaEquipo-SlBwgJbY.js",
+      "logical": "PlantillaEquipo",
+      "bytes": 23499,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "PlantillaEquipo.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "7b126ae5c75c0178800299786435155e22ec35b57eb28ebf143b002895351d89"
+    },
+    {
+      "file": "assets/Privacidad-DZu-TL35.js",
+      "logical": "Privacidad",
+      "bytes": 3546,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "Privacidad.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "3a5b506c7ae372ad355f9faf6fe8ded065625a33f2e8ef9b9c34f5620e2e7b75"
+    },
+    {
+      "file": "assets/QADashboard-BkVKSD_a.js",
+      "logical": "QADashboard",
+      "bytes": 7458,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "QADashboard.jsx",
+      "has_zona_pro_text": true,
+      "sha256": "bb9387781e8d6553fd5c5c92e9c49576858af26240bfdee8506d5a5bf286d3d2"
+    },
+    {
+      "file": "assets/RegistroEntryRoute-CfFUwRAD.js",
+      "logical": "RegistroEntryRoute",
+      "bytes": 737,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "RegistroEntryRoute.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "ce6bfd006b3d56649f86996eb27d30a095d2bbf032a4d7038e4e990a461fb2ba"
+    },
+    {
+      "file": "assets/SeguirTorneosPage-CgH_lYdI.js",
+      "logical": "SeguirTorneosPage",
+      "bytes": 78784,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "SeguirTorneosPage.jsx",
+      "has_zona_pro_text": true,
+      "sha256": "afa5651e004905f4fd6a46f85f7c98a638e43c6d86a4861a451ee80e2b4f9139"
+    },
+    {
+      "file": "assets/SoportePage-Cxbv8t2b.js",
+      "logical": "SoportePage",
+      "bytes": 3803,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "SoportePage.jsx",
+      "has_zona_pro_text": true,
+      "sha256": "30b117d486e54b4507bc0881c999e4583ddd8b867308aecfa9ad51c5e6048fed"
+    },
+    {
+      "file": "assets/StoriesPage-H_ulay3n.js",
+      "logical": "StoriesPage",
+      "bytes": 31639,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "StoriesPage.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "e243f4bd77a15444847f5f8563d2fa4360500bd4aefd4107d84b05cb20141b0a"
+    },
+    {
+      "file": "assets/VerEquipos-Cce5zEuy.js",
+      "logical": "VerEquipos",
+      "bytes": 437,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "VerEquipos.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "8fb790276b89917500862e953f749881beb7d40cb6d06b46dd145b1911343019"
+    },
+    {
+      "file": "assets/VideoFeed-AcKtyNgF.js",
+      "logical": "VideoFeed",
+      "bytes": 10435,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "VideoFeed.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "8e766d5a097fd83279caf8697dba48c2d36523f8c8db88776d9f6a458389e7c6"
+    },
+    {
+      "file": "assets/framePipeline.worker-CLc9_q77.js",
+      "logical": "framePipeline.worker",
+      "bytes": 5831,
+      "kind": "worker",
+      "expected_jsx_on_pc": "framePipeline.worker.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "69eff8821a7c0b8bb39c03798a17a85ed3a089a73e398505cb087211830087c4"
+    },
+    {
+      "file": "assets/homeSearchUsersRpc-TzKRV4NH.js",
+      "logical": "homeSearchUsersRpc",
+      "bytes": 3900,
+      "kind": "service-module",
+      "expected_jsx_on_pc": "homeSearchUsersRpc.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "03b391eee4a43d49182c1b92e59ca6d7d8cc7c4cf0f5fb8ed1f74a6b204e65af"
+    },
+    {
+      "file": "assets/index-zp-nomenu-Hb7k2m.js",
+      "logical": "index-zp-nomenu",
+      "bytes": 4377835,
+      "kind": "page-chunk",
+      "expected_jsx_on_pc": "index-zp-nomenu.jsx",
+      "has_zona_pro_text": true,
+      "sha256": "c03b843e445d78f1b932286e0a7a55607315d05198919713aaf091b154d94d32"
+    },
+    {
+      "file": "assets/loginpagesnew-BPP0r_st.js",
+      "logical": "loginpagesnew",
+      "bytes": 9744,
+      "kind": "auth-page",
+      "expected_jsx_on_pc": "loginpagesnew.jsx",
+      "has_zona_pro_text": true,
+      "sha256": "01ba20ccd7b27bc8bea99f9fa283db18997b03c97598c7743db57c01e6620692"
+    },
+    {
+      "file": "assets/seguirTorneosTabCache-D0oCVdgm.js",
+      "logical": "seguirTorneosTabCache",
+      "bytes": 2937,
+      "kind": "service-module",
+      "expected_jsx_on_pc": "seguirTorneosTabCache.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "f50607e3a595985420f86e5c3de8c4cdcb4917176096c0b49883f96b1c718c97"
+    },
+    {
+      "file": "assets/supabase-X1tipi0N.js",
+      "logical": "supabase",
+      "bytes": 190809,
+      "kind": "vendor",
+      "expected_jsx_on_pc": null,
+      "has_zona_pro_text": false,
+      "sha256": "227aed6d9fb7cc49e87e95aabcb64bb001b295d87c46c147c4723c477f26f1bf"
+    },
+    {
+      "file": "assets/userContentLoadFunctions-BnpMKj8T.js",
+      "logical": "userContentLoadFunctions",
+      "bytes": 17886,
+      "kind": "service-module",
+      "expected_jsx_on_pc": "userContentLoadFunctions.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "6392fe481e458589a6d7b52f4ed5d743031ac45fee9dfa93efdc98bf1ccaaa41"
+    },
+    {
+      "file": "assets/vendor-C0jAFBLR.js",
+      "logical": "vendor",
+      "bytes": 1010624,
+      "kind": "vendor",
+      "expected_jsx_on_pc": null,
+      "has_zona_pro_text": false,
+      "sha256": "f245679cedb22e1e2110321b5af16bf695fe18c6d7296f43f8c2aeea063e453d"
+    },
+    {
+      "file": "assets/videoPrefetch.worker-DM62tp9J.js",
+      "logical": "videoPrefetch.worker",
+      "bytes": 807,
+      "kind": "worker",
+      "expected_jsx_on_pc": "videoPrefetch.worker.jsx",
+      "has_zona_pro_text": false,
+      "sha256": "238ec95d4f12d0cdc4643f0df4c8bc1dfe34b5e73669f9f5a4c3437211ee8ca0"
+    },
+    {
+      "file": "assets/worldTopLeagues-CdiL4QUm.js",
+      "logical": "worldTopLeagues",
+      "bytes": 3702,
+      "kind": "service-module",
+      "expected_jsx_on_pc": "worldTopLeagues.jsx",
+      "has_zona_pro_text": true,
+      "sha256": "69e2b45444a22339e9127d228a5681b9a7058f4e945e5c682513b2a2c7822aca"
+    },
+    {
+      "file": "assets/zonaProTorneoPublishService-Dc9cOp9L.js",
+      "logical": "zonaProTorneoPublishService",
+      "bytes": 4554,
+      "kind": "service-module",
+      "expected_jsx_on_pc": "zonaProTorneoPublishService.jsx",
+      "has_zona_pro_text": true,
+      "sha256": "b328b2ad82c6edd421807a63bce780b1c554d4c75ea3235803d2d731789e1edb"
+    }
+  ],
+  "css": [
+    {
+      "file": "assets/CrearTorneo-DQgvw16o.css",
+      "logical": "CrearTorneo",
+      "bytes": 264
+    },
+    {
+      "file": "assets/FormularioRegistroCompleto-DOQtZrac.css",
+      "logical": "FormularioRegistroCompleto",
+      "bytes": 2514
+    },
+    {
+      "file": "assets/index-DoGwQ0mo.css",
+      "logical": "index",
+      "bytes": 124173
+    }
+  ],
+  "media": [
+    {
+      "path": "assets/futpro-fifa-card-frame.png",
+      "bytes": 179170,
+      "sha256": "fc1b26ce13d39f8ae7a050e8be215e9d98c242a9ca561ce1c828ab728550c72f",
+      "ext": ".png"
+    },
+    {
+      "path": "assets/notification-fallback-zona-pro.png",
+      "bytes": 90301,
+      "sha256": "b1349559a412f5f164f68e7039b1115167502e6c00b4bb84cdbb211b82f64395",
+      "ext": ".png"
+    },
+    {
+      "path": "assets/perfilpro-fifa-template.png",
+      "bytes": 190223,
+      "sha256": "fe48962c6124f47243ec7879e35362c74d24d95af6ab36f138693e4b99bf3258",
+      "ext": ".png"
+    },
+    {
+      "path": "assets/sprites/keeper-dive-left.svg",
+      "bytes": 674,
+      "sha256": "c9b0359a38dbbb9e33cf388b5063157d2cc4f0d8fb78418881cc4dea3095477e",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/keeper-dive-right.svg",
+      "bytes": 688,
+      "sha256": "cc0fd9c19ff1fda95093ac23f8aa1830cd8e80ac4a04060cef47ae8e8e385d22",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/keeper-dive-up.svg",
+      "bytes": 653,
+      "sha256": "07055c42ee63ed1126b329441b7d80955111c7c4c6b17c48c04302810ab2d654",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/keeper-idle.svg",
+      "bytes": 806,
+      "sha256": "1271e5c58ff58458c128c35e7a88ad1aee24017d745166fca2e38a84e373996a",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/kicker-idle.svg",
+      "bytes": 609,
+      "sha256": "3931e8550a7fdbd35f589c97805dfc1c4d517bb609cbdc39e6b10398cb4a9183",
+      "ext": ".svg"
+    },
+    {
+      "path": "assets/sprites/kicker-runup.svg",
+      "bytes": 678,
+      "sha256": "a8bce2a89717aad441eff1aa6b052d6090a67d76ae11d8415b0b6c7d9aecba67",
+      "ext": ".svg"
+    },
+    {
+      "path": "crear-torneo-premium.jpg",
+      "bytes": 311102,
+      "sha256": "ff3ed1bf4da15374d30ac8c4f45d3cf45764031f92c62cffcef880861f04095e",
+      "ext": ".jpg"
+    },
+    {
+      "path": "crear-torneo-premium.svg",
+      "bytes": 9872,
+      "sha256": "4d73b16d3b411464448b48062d3077ce53cd676733df6605c41270dbf69a2f67",
+      "ext": ".svg"
+    },
+    {
+      "path": "favicon.ico",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ext": ".ico"
+    },
+    {
+      "path": "favicon.svg",
+      "bytes": 9522,
+      "sha256": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66",
+      "ext": ".svg"
+    },
+    {
+      "path": "icons.svg",
+      "bytes": 5031,
+      "sha256": "b45fa506195cfcdef406ba9f0c77b36ddc1a7c224040926ec70abc2fdea7b93a",
+      "ext": ".svg"
+    }
+  ],
+  "jsx_hints_from_bundles": [
+    "PartidosEnVivo.jsx",
+    "loginpagesnew.jsx"
+  ],
+  "debug_jsx_refs": [
+    "loginpagesnew.jsx"
+  ],
+  "route_hints_sample": [
+    "/chat",
+    "/crear-equipo",
+    "/crear-torneo",
+    "/crear-torneo-inteligente",
+    "/equipos",
+    "/home",
+    "/login",
+    "/marketplace",
+    "/partidos-en-vivo",
+    "/partidos-en-vivo?accion=ver",
+    "/perfil",
+    "/privacidad",
+    "/registro",
+    "/seguir-torneos",
+    "/seguir-torneos?tab=noticias",
+    "/soporte",
+    "/torneos"
+  ],
+  "name_overlap_with_enero_legacy": [
+    {
+      "deploy_chunk": "assets/CardFIFA-JTvbNZ_5.js",
+      "logical": "CardFIFA",
+      "legacy_jsx_same_name": [
+        "_legacy_archivo/src-ui-enero/pages/CardFIFA.jsx"
+      ],
+      "warning": "NOMBRE parecido en enero — NO asumir mismo código"
+    },
+    {
+      "deploy_chunk": "assets/CrearTorneo-DemyjbvC.js",
+      "logical": "CrearTorneo",
+      "legacy_jsx_same_name": [
+        "_legacy_archivo/src-ui-enero/pages/CrearTorneo.jsx"
+      ],
+      "warning": "NOMBRE parecido en enero — NO asumir mismo código"
+    },
+    {
+      "deploy_chunk": "assets/FormularioRegistroCompleto-DdkqOvO-.js",
+      "logical": "FormularioRegistroCompleto",
+      "legacy_jsx_same_name": [
+        "_legacy_archivo/src-ui-enero/pages/FormularioRegistroCompleto.jsx"
+      ],
+      "warning": "NOMBRE parecido en enero — NO asumir mismo código"
+    },
+    {
+      "deploy_chunk": "assets/NotFoundPage-DV9Nnc7S.js",
+      "logical": "NotFoundPage",
+      "legacy_jsx_same_name": [
+        "_legacy_archivo/src-ui-enero/pages/NotFoundPage.jsx"
+      ],
+      "warning": "NOMBRE parecido en enero — NO asumir mismo código"
+    },
+    {
+      "deploy_chunk": "assets/PlantillaEquipo-SlBwgJbY.js",
+      "logical": "PlantillaEquipo",
+      "legacy_jsx_same_name": [
+        "_legacy_archivo/src-ui-enero/pages/PlantillaEquipo.jsx"
+      ],
+      "warning": "NOMBRE parecido en enero — NO asumir mismo código"
+    },
+    {
+      "deploy_chunk": "assets/Privacidad-DZu-TL35.js",
+      "logical": "Privacidad",
+      "legacy_jsx_same_name": [
+        "_legacy_archivo/src-ui-enero/pages/Privacidad.jsx"
+      ],
+      "warning": "NOMBRE parecido en enero — NO asumir mismo código"
+    }
+  ],
+  "chunk_logicals_without_enero_homonym": [
+    "AceptarTorneo",
+    "BuscarJugadoresPage",
+    "BuscarUsuariosPage",
+    "CardEquipo",
+    "ChatEquipoPage",
+    "ChatTorneo",
+    "ChatTorneoPage",
+    "EjerciciosPage",
+    "EquipoMenu",
+    "EquiposPage",
+    "FansEquipo",
+    "InvitacionesEquipo",
+    "LiveStreamPages",
+    "MisTorneos",
+    "PanelArbitro",
+    "PermisosEquipo",
+    "QADashboard",
+    "RegistroEntryRoute",
+    "SeguirTorneosPage",
+    "SoportePage",
+    "StoriesPage",
+    "VerEquipos",
+    "VideoFeed",
+    "framePipeline.worker",
+    "homeSearchUsersRpc",
+    "index-zp-nomenu",
+    "loginpagesnew",
+    "seguirTorneosTabCache",
+    "userContentLoadFunctions",
+    "videoPrefetch.worker",
+    "worldTopLeagues",
+    "zonaProTorneoPublishService"
+  ]
+}

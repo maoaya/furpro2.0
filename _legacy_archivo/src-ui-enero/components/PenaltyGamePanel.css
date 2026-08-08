@@ -1,0 +1,88 @@
+.penalty-game-panel {
+  background: #232323;
+  color: #FFD700;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  padding: 32px;
+  max-width: 420px;
+  margin: 40px auto;
+  text-align: center;
+  border: 2px solid #FFD700;
+}
+.penalty-arco {
+  position: relative;
+  width: 180px;
+  height: 60px;
+  margin: 24px auto 12px auto;
+  background: #181818;
+  border-radius: 0 0 90px 90px;
+  border-bottom: 6px solid #FFD700;
+}
+.penalty-keeper {
+  position: absolute;
+  top: 0;
+  width: 60px;
+  height: 60px;
+  background: #FFD700;
+  border-radius: 50%;
+  left: 60px;
+  transition: left 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.penalty-ball {
+  position: absolute;
+  bottom: -18px;
+  left: 80px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  border: 2px solid #FFD700;
+}
+.penalty-directions {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 18px 0;
+}
+.penalty-btn {
+  background: #FFD700;
+  color: #232323;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.penalty-btn:disabled {
+  background: #888;
+  color: #232323;
+  cursor: not-allowed;
+}
+.penalty-info {
+  margin: 12px 0;
+}
+.penalty-message {
+  margin: 12px 0;
+  font-size: 1.1em;
+}
+.penalty-result {
+  margin: 18px 0;
+}
+.penalty-next-btn, .penalty-exit-btn {
+  background: #FFD700;
+  color: #232323;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 12px;
+}
+.penalty-next-btn:hover, .penalty-exit-btn:hover {
+  background: #232323;
+  color: #FFD700;
+}

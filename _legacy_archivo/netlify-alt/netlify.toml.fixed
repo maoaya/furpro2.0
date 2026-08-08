@@ -1,0 +1,183 @@
+# Netlify optimized config for FutPro VIP - Sistema de Autenticación Unificado
+[build]
+  # Copiar .env.netlify a un archivo que Vite cargue en producción y luego construir
+  command = "bash -lc 'cp .env.netlify .env.production || cp .env.netlify .env; npm run build'"
+  publish = "dist"
+  functions = "functions"
+
+[build.environment]
+  NODE_VERSION = "18"
+  SECRETS_SCAN_ENABLED = "false"
+  SECRETS_SCAN_OMIT_PATHS = ".env,.env.example,README.md,*.md,scripts/*,deploy-*,src/*" 
+  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_JWT_SECRET,SUPABASE_SERVICE_ROLE_KEY,VITE_APP_URL,JWT_SECRET,SERVICE_ROLE"
+  # Activar auto-confirmación de signup (frontend leerá este flag)
+  VITE_AUTO_CONFIRM_SIGNUP = "true"
+
+# === RUTAS DE AUTENTICACIÓN UNIFICADA ===
+
+# Página principal de autenticación
+[[redirects]]
+  from = "/auth"
+  to = "/index.html"
+  status = 200
+
+# Callbacks OAuth optimizados
+[[redirects]]
+  from = "/auth/callback"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/oauth/callback"
+  to = "/index.html"
+  status = 200
+
+# Todas las rutas de autenticación
+[[redirects]]
+  from = "/auth/*"
+  to = "/index.html"
+  status = 200
+
+# === RUTAS PRINCIPALES DE LA APLICACIÓN ===
+
+# HomePage y rutas principales
+[[redirects]]
+  from = "/home/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/inicio/*"
+  to = "/index.html"
+  status = 200
+  
+[[redirects]]
+  from = "/perfil/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/torneos/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/equipos/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/usuarios/*"
+  to = "/index.html"
+  status = 200
+
+# === RUTAS DE AUTENTICACIÓN LEGACY ===
+
+[[redirects]]
+  from = "/login/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/registro/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/callback/*"
+  to = "/index.html"
+  status = 200
+
+# API proxy para evitar CORS (si es necesario)
+[[redirects]]
+  from = "/api/*"
+  to = "https://qqrxetxcglwrejtblwut.supabase.co/rest/v1/:splat"
+  status = 200
+  headers = {Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.kXZzpXZQf3rS_LRNnWf0Bz7r4Ik8vqhAoTKxGzgwWFA"}
+
+# Catch-all redirect (debe ser el último)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+
+# Security headers optimized for auth app
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+    Service-Worker-Allowed = "/"
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Main security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://*.supabase.co https://challenges.cloudflare.com https://hcaptcha.com https://*.hcaptcha.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: https://challenges.cloudflare.com https://hcaptcha.com https://*.hcaptcha.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com https://hcaptcha.com https://*.hcaptcha.com; frame-src 'self' https://challenges.cloudflare.com https://hcaptcha.com https://*.hcaptcha.com"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=()"
+
+# Preload critical resources
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Link = "</assets/index.css>; rel=preload; as=style, </assets/index.js>; rel=preload; as=script"
+
+# Error pages
+[[redirects]]
+  from = "/404"
+  to = "/index.html"
+  status = 404
+  
+[[redirects]]
+  from = "/500"  
+  to = "/index.html"
+  status = 500
+
+# Force HTTPS
+[[redirects]]
+  from = "http://futpro.vip/*"
+  to = "https://futpro.vip/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.futpro.vip/*"
+  to = "https://futpro.vip/:splat"
+  status = 301
+  force = true

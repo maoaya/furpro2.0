@@ -1,4 +1,4 @@
-import{u as r,r as l,j as e}from"./vendor-C0jAFBLR.js";import{ah as d,aj as p}from"./index-DchpCYR3.js";import"./supabase-X1tipi0N.js";function x(){d({flightKey:"ejercicios"});const a=r(),[o,n]=l.useState("futbol"),s=[{id:"futbol",name:"Fútbol",emoji:"⚽"},{id:"basquetbol",name:"Basquetbol",emoji:"🏀"},{id:"tenis",name:"Tenis",emoji:"🎾"},{id:"voleibol",name:"Voleibol",emoji:"🏐"}];return e.jsxs("div",{style:t.container,children:[e.jsx("style",{children:`
+import{u as r,r as l,j as e}from"./vendor-C0jAFBLR.js";import{ah as d,aj as p}from"./index-zp-nomenu-Hb7k2m.js";import"./supabase-X1tipi0N.js";function x(){d({flightKey:"ejercicios"});const a=r(),[o,n]=l.useState("futbol"),s=[{id:"futbol",name:"Fútbol",emoji:"⚽"},{id:"basquetbol",name:"Basquetbol",emoji:"🏀"},{id:"tenis",name:"Tenis",emoji:"🎾"},{id:"voleibol",name:"Voleibol",emoji:"🏐"}];return e.jsxs("div",{style:t.container,children:[e.jsx("style",{children:`
         @keyframes slideIn {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }

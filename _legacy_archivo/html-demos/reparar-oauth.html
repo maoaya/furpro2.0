@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutPro - Limpieza y Reparación OAuth</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 16px;
+            font-size: 28px;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+        .status {
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ccc;
+        }
+        .status.success { background: #d4edda; border-color: #28a745; }
+        .status.error { background: #f8d7da; border-color: #dc3545; }
+        .status.info { background: #d1ecf1; border-color: #17a2b8; }
+        button {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 8px 0;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        button:active { transform: translateY(0); }
+        button.secondary {
+            background: #6c757d;
+        }
+        button.secondary:hover {
+            background: #5a6268;
+        }
+        .log {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        .icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🔧</div>
+        <h1>Reparación OAuth Google</h1>
+        <p class="subtitle">Limpia errores y prepara tu navegador para autenticación</p>
+        
+        <div id="status"></div>
+        <div id="log" class="log" style="display: none;"></div>
+        
+        <button onclick="repairOAuth()">🔧 Reparar y Limpiar Todo</button>
+        <button onclick="testOAuth()">🔐 Probar OAuth Google Ahora</button>
+        <button onclick="goToLogin()" class="secondary">← Volver al Login</button>
+    </div>
+
+    <script>
+        // Usar fetch en lugar de importar desde CDN bloqueado por CSP
+        const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8';
+        
+        // Cliente Supabase simplificado con fetch
+        const supabase = {
+            auth: {
+                signOut: async () => {
+                    return fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+                        method: 'POST',
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(r => ({ data: null, error: null }));
+                },
+                getSession: async () => {
+                    // Buscar token en localStorage
+                    const authToken = localStorage.getItem('sb-qqrxetxcglwrejtblwut-auth-token');
+                    return { data: { session: authToken ? { user: { email: 'cached' } } : null }, error: null };
+                },
+                signInWithOAuth: async ({ provider, options }) => {
+                    const redirectTo = options?.redirectTo || `${window.location.origin}/auth/callback`;
+                    const url = `${SUPABASE_URL}/auth/v1/authorize?provider=${provider}&redirect_to=${encodeURIComponent(redirectTo)}`;
+                    window.location.href = url;
+                    return { data: null, error: null };
+                }
+            }
+        };
+        
+        const log = [];
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            log.push({ timestamp, message, type });
+            updateLogDisplay();
+        }
+        
+        function updateLogDisplay() {
+            const logDiv = document.getElementById('log');
+            logDiv.style.display = 'block';
+            logDiv.innerHTML = log.map(entry => 
+                `<div class="log-entry">[${entry.timestamp}] ${entry.message}</div>`
+            ).join('');
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+        }
+        
+        window.repairOAuth = async function() {
+            log.length = 0; // Clear log
+            addLog('🔧 Iniciando reparación completa...');
+            
+            try {
+                // 1. Limpiar tracking bloqueado
+                addLog('Paso 1/6: Limpiando bloqueo de UserActivityTracker...');
+                localStorage.removeItem('futpro_tracking_disabled');
+                addLog('✅ Tracking desbloqueado');
+                
+                // 2. Limpiar sesiones antiguas
+                addLog('Paso 2/6: Limpiando sesiones antiguas...');
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('supabase') || key.includes('futpro-auth'))) {
+                        keysToRemove.push(key);
+                    }
+                }
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+                addLog(`✅ Eliminadas ${keysToRemove.length} claves de sesión`);
+                
+                // 3. Limpiar cookies de sesión
+                addLog('Paso 3/6: Limpiando cookies...');
+                document.cookie.split(";").forEach(c => {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+                addLog('✅ Cookies limpiadas');
+                
+                // 4. Limpiar session storage
+                addLog('Paso 4/6: Limpiando sessionStorage...');
+                sessionStorage.clear();
+                addLog('✅ SessionStorage limpiado');
+                
+                // 5. Cerrar sesión de Supabase
+                addLog('Paso 5/6: Cerrando sesión de Supabase...');
+                await supabase.auth.signOut();
+                addLog('✅ Sesión cerrada');
+                
+                // 6. Verificar estado final
+                addLog('Paso 6/6: Verificando estado...');
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    addLog('⚠️ Aún hay una sesión activa, pero OAuth debería funcionar');
+                } else {
+                    addLog('✅ No hay sesión activa - Estado limpio');
+                }
+                
+                addLog('🎉 Reparación completa');
+                
+                showStatus(`
+                    <strong>✅ Reparación Completada</strong><br><br>
+                    Se han limpiado:<br>
+                    • Bloqueo del UserActivityTracker<br>
+                    • ${keysToRemove.length} claves de sesión<br>
+                    • Todas las cookies<br>
+                    • SessionStorage<br>
+                    • Sesión de Supabase<br><br>
+                    <strong>Ahora puedes probar OAuth Google</strong>
+                `, 'success');
+                
+            } catch (error) {
+                addLog(`❌ Error durante reparación: ${error.message}`, 'error');
+                showStatus(`
+                    <strong>❌ Error durante reparación</strong><br><br>
+                    ${error.message}<br><br>
+                    Intenta recargar la página y probar de nuevo.
+                `, 'error');
+            }
+        };
+        
+        window.testOAuth = async function() {
+            addLog('🔐 Iniciando test de OAuth Google...');
+            showStatus('<strong>🔐 Iniciando OAuth...</strong><br>Redirigiendo a Google...', 'info');
+            
+            try {
+                const callbackUrl = `${window.location.origin}/auth/callback`;
+                addLog(`Callback URL: ${callbackUrl}`);
+                
+                const { error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: callbackUrl,
+                        queryParams: {
+                            access_type: 'offline',
+                            prompt: 'consent'
+                        }
+                    }
+                });
+                
+                if (error) {
+                    addLog(`❌ Error OAuth: ${error.message}`, 'error');
+                    showStatus(`
+                        <strong>❌ Error al iniciar OAuth</strong><br><br>
+                        ${error.message}<br><br>
+                        <strong>Verifica:</strong><br>
+                        • Supabase Dashboard: URL Configuration tiene ${callbackUrl}<br>
+                        • Google Cloud Console: Authorized redirect URIs configurados<br>
+                        • Supabase Providers: Google está habilitado
+                    `, 'error');
+                } else {
+                    addLog('✅ Redireccionando a Google...');
+                }
+                
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                showStatus(`<strong>❌ Error</strong><br>${error.message}`, 'error');
+            }
+        };
+        
+        window.goToLogin = function() {
+            window.location.href = '/';
+        };
+        
+        // Auto-mostrar estado inicial
+        showStatus(`
+            <strong>🛠️ Herramienta de Reparación OAuth</strong><br><br>
+            Esta herramienta soluciona:<br>
+            • Error "UserActivityTracker deshabilitado"<br>
+            • Error 401 Unauthorized<br>
+            • Sesiones corruptas o bloqueadas<br>
+            • Cache conflictivo<br><br>
+            <strong>Click en "Reparar y Limpiar Todo" para comenzar</strong>
+        `, 'info');
+    </script>
+</body>
+</html>

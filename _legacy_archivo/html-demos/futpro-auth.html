@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutPro 2.0 - Red Social de Fútbol</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #0a4b3e, #1a5f4d, #2d7a5f, #0f3029);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Partículas de fondo */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        }
+
+        /* Header */
+        .header {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 2rem 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00ff88, #00cc66, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        /* Contenedor principal */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Menú principal */
+        .main-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .menu-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+
+        .menu-card:hover::before {
+            opacity: 1;
+            animation: shine 0.8s ease;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3);
+            border-color: #00ff88;
+        }
+
+        .menu-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #00ff88;
+        }
+
+        .menu-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .menu-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Modal de autenticación */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(10, 75, 62, 0.95), rgba(26, 95, 77, 0.95));
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 25px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #ff4444;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.2);
+            text-shadow: 0 0 10px #ff4444;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #00ff88, #00cc66);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff4444, #cc3333);
+        }
+
+        .oauth-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .oauth-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .google-btn {
+            background: #4285f4;
+            color: white;
+        }
+
+        .facebook-btn {
+            background: #1877f2;
+            color: white;
+        }
+
+        .oauth-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Estadísticas en vivo */
+        .live-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .main-menu {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .oauth-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid #00ff88;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notificaciones */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #00ff88, #00cc66);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: linear-gradient(45deg, #ff4444, #cc3333);
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de fondo -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">⚽</div>
+        <h1 class="title">FUTPRO 2.0</h1>
+        <p class="subtitle">La red social más avanzada para futbolistas profesionales</p>
+    </header>
+
+    <!-- Contenedor principal -->
+    <div class="main-container">
+        <!-- Menú principal -->
+        <div class="main-menu">
+            <div class="menu-card" onclick="openModal('register')">
+                <div class="menu-icon"><i class="fas fa-user-plus"></i></div>
+                <h3 class="menu-title">1. REGISTRARSE</h3>
+                <p class="menu-description">Crea tu cuenta de futbolista profesional y únete a la comunidad</p>
+            </div>
+
+            <div class="menu-card" onclick="openModal('login')">
+                <div class="menu-icon"><i class="fas fa-sign-in-alt"></i></div>
+                <h3 class="menu-title">2. INICIAR SESIÓN</h3>
+                <p class="menu-description">Accede a tu cuenta y conecta con jugadores de todo el mundo</p>
+            </div>
+
+            <div class="menu-card" onclick="openModal('changePassword')">
+                <div class="menu-icon"><i class="fas fa-key"></i></div>
+                <h3 class="menu-title">3. CAMBIAR CONTRASEÑA</h3>
+                <p class="menu-description">Actualiza tu contraseña por seguridad</p>
+            </div>
+
+            <div class="menu-card" onclick="openModal('forgotPassword')">
+                <div class="menu-icon"><i class="fas fa-question-circle"></i></div>
+                <h3 class="menu-title">4. OLVIDÉ MI CONTRASEÑA</h3>
+                <p class="menu-description">Recupera el acceso a tu cuenta fácilmente</p>
+            </div>
+        </div>
+
+        <!-- Estadísticas en vivo -->
+        <div class="live-stats">
+            <div class="stat-card">
+                <div class="stat-number" id="playersCount">12,847</div>
+                <div class="stat-label">Jugadores Registrados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="matchesCount">3,291</div>
+                <div class="stat-label">Partidos Jugados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="teamsCount">1,156</div>
+                <div class="stat-label">Equipos Activos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="tournamentsCount">89</div>
+                <div class="stat-label">Torneos en Curso</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Registro -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('register')">&times;</button>
+            <h2><i class="fas fa-user-plus"></i> Crear Cuenta</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label class="form-label">Nombre Completo</label>
+                    <input type="text" class="form-input" placeholder="Ej: Lionel Messi" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" class="form-input" placeholder="Mínimo 8 caracteres" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Posición</label>
+                    <select class="form-input" required>
+                        <option value="">Selecciona tu posición</option>
+                        <option value="portero">Portero</option>
+                        <option value="defensa">Defensa</option>
+                        <option value="mediocampo">Mediocampo</option>
+                        <option value="delantero">Delantero</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-rocket"></i> Crear Mi Cuenta
+                </button>
+            </form>
+            <div class="oauth-buttons">
+                <button class="oauth-btn google-btn" onclick="loginWithProvider('google')">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button class="oauth-btn facebook-btn" onclick="loginWithProvider('facebook')">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Inicio de Sesión -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('login')">&times;</button>
+            <h2><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" class="form-input" placeholder="Tu contraseña" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-futbol"></i> Entrar al Juego
+                </button>
+            </form>
+            <div class="oauth-buttons">
+                <button class="oauth-btn google-btn" onclick="loginWithProvider('google')">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button class="oauth-btn facebook-btn" onclick="loginWithProvider('facebook')">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cambiar Contraseña -->
+    <div class="modal" id="changePasswordModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('changePassword')">&times;</button>
+            <h2><i class="fas fa-key"></i> Cambiar Contraseña</h2>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña Actual</label>
+                    <input type="password" class="form-input" placeholder="Contraseña actual" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nueva Contraseña</label>
+                    <input type="password" class="form-input" placeholder="Nueva contraseña" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmar Nueva Contraseña</label>
+                    <input type="password" class="form-input" placeholder="Confirma la nueva contraseña" required>
+                </div>
+                <button type="submit" class="btn btn-secondary">
+                    <i class="fas fa-shield-alt"></i> Actualizar Contraseña
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Olvidé Contraseña -->
+    <div class="modal" id="forgotPasswordModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('forgotPassword')">&times;</button>
+            <h2><i class="fas fa-question-circle"></i> Recuperar Contraseña</h2>
+            <p style="margin-bottom: 2rem; color: rgba(255, 255, 255, 0.8);">
+                Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña
+            </p>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="tu@email.com" required>
+                </div>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-paper-plane"></i> Enviar Enlace de Recuperación
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading screen -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Conectando con los servidores de FutPro...</p>
+    </div>
+
+    <!-- Notificación -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Crear partículas de fondo
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particles.appendChild(particle);
+            }
+        }
+
+        // Animar estadísticas
+        function animateStats() {
+            const stats = [
+                { id: 'playersCount', target: 12847, current: 0 },
+                { id: 'matchesCount', target: 3291, current: 0 },
+                { id: 'teamsCount', target: 1156, current: 0 },
+                { id: 'tournamentsCount', target: 89, current: 0 }
+            ];
+
+            stats.forEach(stat => {
+                const element = document.getElementById(stat.id);
+                const increment = stat.target / 100;
+                const timer = setInterval(() => {
+                    stat.current += increment;
+                    if (stat.current >= stat.target) {
+                        stat.current = stat.target;
+                        clearInterval(timer);
+                    }
+                    element.textContent = Math.floor(stat.current).toLocaleString();
+                }, 30);
+            });
+        }
+
+        // Actualizar estadísticas cada 5 segundos
+        function updateStats() {
+            setInterval(() => {
+                const elements = ['playersCount', 'matchesCount', 'teamsCount', 'tournamentsCount'];
+                elements.forEach(id => {
+                    const element = document.getElementById(id);
+                    const current = parseInt(element.textContent.replace(/,/g, ''));
+                    const newValue = current + Math.floor(Math.random() * 5) + 1;
+                    element.textContent = newValue.toLocaleString();
+                });
+            }, 5000);
+        }
+
+        // Abrir modal
+        function openModal(type) {
+            const modal = document.getElementById(type + 'Modal');
+            modal.classList.add('active');
+        }
+
+        // Cerrar modal
+        function closeModal(type) {
+            const modal = document.getElementById(type + 'Modal');
+            modal.classList.remove('active');
+        }
+
+        // Mostrar notificación
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // Mostrar loading
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        // Ocultar loading
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Simular autenticación con providers
+        function loginWithProvider(provider) {
+            showLoading();
+            
+            setTimeout(() => {
+                hideLoading();
+                showNotification(`¡Conectando con ${provider.charAt(0).toUpperCase() + provider.slice(1)}! Redirigiendo...`);
+                
+                setTimeout(() => {
+                    // Simular redirección a dashboard
+                    if (provider === 'google') {
+                        window.open('https://qqrxetxcglwrejtblwut.supabase.co/auth/v1/callback', '_blank');
+                    } else {
+                        showNotification('¡Autenticación exitosa! Bienvenido a FutPro 2.0');
+                    }
+                }, 2000);
+            }, 2000);
+        }
+
+        // Manejar formularios
+        document.addEventListener('DOMContentLoaded', function() {
+            // Registro
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                showLoading();
+                
+                setTimeout(() => {
+                    hideLoading();
+                    showNotification('¡Cuenta creada exitosamente! Bienvenido a FutPro 2.0');
+                    closeModal('register');
+                }, 2000);
+            });
+
+            // Login
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                showLoading();
+                
+                setTimeout(() => {
+                    hideLoading();
+                    showNotification('¡Inicio de sesión exitoso! Cargando tu perfil...');
+                    closeModal('login');
+                    
+                    // Simular carga del dashboard
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }, 2000);
+            });
+
+            // Cambiar contraseña
+            document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const newPassword = this.querySelector('input[placeholder="Nueva contraseña"]').value;
+                const confirmPassword = this.querySelector('input[placeholder="Confirma la nueva contraseña"]').value;
+                
+                if (newPassword !== confirmPassword) {
+                    showNotification('Las contraseñas no coinciden', 'error');
+                    return;
+                }
+                
+                showLoading();
+                
+                setTimeout(() => {
+                    hideLoading();
+                    showNotification('¡Contraseña actualizada exitosamente!');
+                    closeModal('changePassword');
+                }, 2000);
+            });
+
+            // Forgot password
+            document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                showLoading();
+                
+                setTimeout(() => {
+                    hideLoading();
+                    showNotification('¡Enlace de recuperación enviado! Revisa tu email');
+                    closeModal('forgotPassword');
+                }, 2000);
+            });
+
+            // Cerrar modales con ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const activeModal = document.querySelector('.modal.active');
+                    if (activeModal) {
+                        activeModal.classList.remove('active');
+                    }
+                }
+            });
+
+            // Cerrar modales al hacer clic fuera
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                    }
+                });
+            });
+
+            // Inicializar efectos
+            createParticles();
+            animateStats();
+            updateStats();
+        });
+    </script>
+</body>
+</html>
