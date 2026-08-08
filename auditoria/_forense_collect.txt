@@ -1,0 +1,186 @@
+=== MASTER ===
+80d7863f942feb91ca63af7e3b218d8f5fa0c5ec 2026-01-18 04:25:25 -0500 🔧 FIX: Eliminar duplicado /chat route
+=== AGENT COMMITS Aug6-7 ===
+5328e9e|2026-08-07 17:34|Cursor Agent|fix(auth): restore ZONA PRO login; quarantine Instagram HTML stubs
+dad8d84|2026-08-07 17:28|Cursor Agent|chore: drop unused LoginPage import
+953b122|2026-08-07 17:28|Cursor Agent|fix(auth): restore AuthPageUnificada as product login entry
+ad0922d|2026-08-07 17:23|Cursor Agent|revert: undo wrong homepage-instagram redirect; keep master entry
+764990a|2026-08-07 17:08|Cursor Agent|docs(auditoria): inventory agent damage from 2026-08-06 ~19:03 UTC-5
+4290ffd|2026-08-07 17:06|Cursor Agent|chore: remove unused HomePage import after restore
+bab2667|2026-08-07 17:05|Cursor Agent|fix(nav): restore real home to homepage-instagram.html
+=== FILES CHANGED PER BREAK COMMIT ===
+--- fe76f3d ---
+fe76f3d feat: fast SPA nav, fix realtime notifications, mercado on home
+M	src/App.jsx
+M	src/components/BottomNav.jsx
+A	src/components/HomeMercadoFichajes.jsx
+M	src/context/NotificationsContext.jsx
+M	src/main.jsx
+M	src/pages/HomePage.jsx
+M	src/pages/MarketplaceCompleto.jsx
+M	src/pages/Notificaciones.jsx
+M	src/services/NotificacionesService.js
+M	src/services/NotificationManager.js
+
+--- d614691 ---
+d614691 fix(home): show mercado de fichajes for guests on /
+A	auditoria/_validate_nav_notif_mercado.mjs
+M	src/App.jsx
+M	src/pages/HomePage.jsx
+
+--- bab2667 ---
+bab2667 fix(nav): restore real home to homepage-instagram.html
+A	auditoria/RESTAURAR_HOME_INSTAGRAM_20260807.md
+M	src/App.jsx
+M	src/pages/LoginPage.jsx
+M	src/pages/PerfilCard.jsx
+
+--- 5328e9e ---
+5328e9e fix(auth): restore ZONA PRO login; quarantine Instagram HTML stubs
+M	auditoria/RESTAURAR_AUTH_UNIFICADA_20260807.md
+A	auditoria/VALIDACION_ZONA_PRO_LOGIN.json
+A	auditoria/VALIDACION_ZONA_PRO_LOGIN.md
+A	auditoria/_validate_zona_pro_login.mjs
+A	legacy-html-stubs/README.md
+R100	public/homepage-instagram.html	legacy-html-stubs/homepage-instagram.html
+R100	public/perfil-instagram.html	legacy-html-stubs/perfil-instagram.html
+R100	perfil.html	legacy-html-stubs/perfil.html
+R100	src/pages/homepage-instagram.html	legacy-html-stubs/src-pages-homepage-instagram.html
+M	src/pages/AuthPageUnificada.jsx
+M	vite.config.js
+
+--- 4f98d93 ---
+4f98d93 test(audit): validate FP-AUTH-002 and FP-MEM-001
+A	auditoria/VALIDACION_FP_AUTH_002.json
+A	auditoria/VALIDACION_FP_AUTH_002.md
+A	auditoria/VALIDACION_FP_MEM_001.json
+A	auditoria/VALIDACION_FP_MEM_001.md
+M	auditoria/_validate_fp_mem_001.mjs
+M	src/config/supabase.js
+M	src/services/RealtimeService.js
+
+--- 3d3123e ---
+3d3123e fix(auth): FP-AUTH-001 stop /auth/v1/health 401 storm
+A	auditoria/VALIDACION_FP_AUTH_001.json
+A	auditoria/VALIDACION_FP_AUTH_001.md
+A	auditoria/_validate_fp_auth_001.mjs
+M	src/config/supabase.js
+
+--- 06a0da9 ---
+06a0da9 fix(supabase): FP-SB-001 schema gate for products/valoraciones
+A	auditoria/VALIDACION_FP_SB_001.json
+A	auditoria/VALIDACION_FP_SB_001.md
+A	auditoria/_validate_fp_sb_001.mjs
+M	src/components/RankingMejorado.jsx
+M	src/config/supabase.js
+M	src/pages/FeedPage.jsx
+M	src/pages/HomePage.jsx
+M	src/pages/MarketplaceCompleto.jsx
+M	src/services/TournamentService.js
+A	src/utils/schemaCompatibilityGate.js
+
+--- 4ca7a15 ---
+4ca7a15 fix(nav): FP-NAV-001 restore /perfil SPA and stabilize crear-equipo
+A	auditoria/VALIDACION_FP_NAV_001.json
+A	auditoria/VALIDACION_FP_NAV_001.md
+A	auditoria/_validate_fp_nav_001.mjs
+R100	perfil.html	legacy-html-stubs/perfil.html
+M	src/pages/PerfilNuevo.jsx
+M	vite.config.js
+
+--- 1f441f0 ---
+1f441f0 fix(auth): FP-AUTH-002 pages use useAuth instead of getSession/getUser
+A	auditoria/_validate_fp_auth_002.mjs
+M	src/pages/ConfiguracionCuenta.jsx
+M	src/pages/EditarPerfil.jsx
+M	src/pages/FeedPage.jsx
+M	src/pages/LoginPage.jsx
+M	src/pages/Notificaciones.jsx
+M	src/pages/PartidoArbitroPanel.jsx
+M	src/pages/PerfilInstagram.jsx
+M	src/pages/RankingJugadoresCompleto.jsx
+M	src/pages/RegistroPerfil.jsx
+M	src/pages/TorneoDetalleCompleto.jsx
+M	src/pages/TransmisionEnVivo.jsx
+
+--- e252b46 ---
+e252b46 fix(mem): FP-MEM-001 cleanup realtime channels and intervals
+A	auditoria/_validate_fp_mem_001.mjs
+M	src/components/CommentsModal.jsx
+M	src/context/NotificationsContext.jsx
+M	src/pages/Amigos.jsx
+M	src/pages/Estados.jsx
+M	src/pages/HomePage.jsx
+M	src/pages/MarketplaceCompleto.jsx
+M	src/pages/NotificacionesTorneoPage.jsx
+M	src/pages/Perfil.jsx
+M	src/pages/TorneoBracketPage.jsx
+M	src/pages/TorneoStandingsPage.jsx
+M	src/services/AnalyticsManager.js
+M	src/services/AutoSaveService.js
+A	src/utils/realtimeCleanup.js
+
+--- a905d97 ---
+a905d97 fix(schema+nav): stop 400 spam on mensajes/torneos; instant create→panel
+M	src/components/CrearTorneoMejorado.jsx
+A	src/components/NotificationItem.jsx
+M	src/pages/CrearEquipo.jsx
+M	src/pages/CrearTorneo.jsx
+M	src/pages/CrearTorneoAvanzado.jsx
+M	src/pages/CrearTorneoCompleto.jsx
+M	src/pages/Notificaciones.jsx
+A	src/services/torneosSchemaSafe.js
+M	src/services/usuarioService.js
+A	src/utils/safeSelect.js
+
+--- 2e7ff71 ---
+2e7ff71 fix(schema): align selects to public columns; soft API stubs
+A	auditoria/DIAGNOSTICO_SCHEMA_400_20260807.md
+A	functions/configurar-jugadores-torneo.js
+A	functions/gestion-torneo.js
+M	src/components/NotificationItem.jsx
+M	src/services/torneosSchemaSafe.js
+M	src/services/usuarioService.js
+M	src/utils/safeSelect.js
+M	src/utils/schemaCompatibilityGate.js
+M	vite.config.js
+
+=== LEGACY / BACKUP ARTIFACTS ===
+./public/assets/placeholder.txt
+./public/perfil-instagram.html
+./public/homepage-instagram.html
+./server/routes/backup.js
+./src/components/GlobalNav_backup.jsx
+./src/components/GoldenPlaceholder.jsx
+./src/stubs
+./src/pages/ChatInstagram.jsx
+./src/pages/SeccionPlaceholder.jsx
+./src/pages/ChatInstagramNew.jsx
+./src/pages/PerfilCard.jsx.backup
+./src/pages/homepage-instagram.html
+./src/pages/PerfilInstagram.jsx
+./netlify.toml.backup
+./legacy-html-stubs
+./testing/perfil_instagram_real.test.js
+./testing/perfil_instagram.test.js
+=== HTML stubs ===
+total 28
+drwxr-xr-x  2 ubuntu ubuntu  4096 Aug  7 23:35 .
+drwxr-xr-x 30 ubuntu ubuntu 20480 Aug  7 23:35 ..
+-rw-r--r--  1 ubuntu ubuntu   180 Aug  7 21:41 perfil.html
+=== 4d64150 backup commit ===
+4d64150924aa2b6b6440e9db0a3d2f181e5ee44c 2025-12-12 12:49:06 -0500 🔐 Backup antes de limpieza de duplicados y archivos legacy
+=== When LoginPage replaced AuthPageUnificada ===
+56d7d81e969f41af01531719279fda9eba4746cc 2026-01-02 22:22:31 -0500 Create simple LoginPage with all buttons working
+=== PR list ===
+11	fix(auth): restaurar login ZONA PRO (no Instagram HTML residual)	cursor/restore-auth-unificada-f7dd	OPEN	2026-08-07T22:28:12Z
+10	SUPERSEDED — no usar (error homepage-instagram)	cursor/restore-homepage-instagram-f7dd	CLOSED	2026-08-07T22:05:56Z
+9	fix(realtime): invitaciones de torneo llegan a capitán, staff y jugadores	cursor/audit-realtime-invites-f7dd	CLOSED	2026-08-07T00:16:18Z
+8	fix(schema+nav): stop 400 spam; public column align; soft APIs; instant create	cursor/fix-schema400-instant-create-nav-f7dd	CLOSED	2026-08-07T00:05:58Z
+7	DO NOT MERGE — rediseño Home guest (rompe diseño del producto)	cursor/opt-nav-notif-mercado-f7dd	CLOSED	2026-08-07T00:03:38Z
+6	fix(P0/P1): FP-AUTH-002 useAuth + FP-MEM-001 channel/interval cleanup	cursor/fix-auth002-mem001-f7dd	DRAFT	2026-08-06T23:53:09Z
+5	fix(nav): FP-NAV-001 — /perfil SPA + /crear-equipo sin abort	cursor/fix-fp-nav-001-perfil-equipo-f7dd	DRAFT	2026-08-06T23:48:10Z
+4	fix(supabase): FP-SB-001 — schema gate (products/valoraciones/tournaments)	cursor/fix-fp-sb-001-schema-gate-f7dd	DRAFT	2026-08-06T23:45:36Z
+3	fix(auth): FP-AUTH-001 — eliminar tormenta /auth/v1/health 401	cursor/fix-fp-auth-001-health-f7dd	DRAFT	2026-08-06T23:41:48Z
+2	docs(auditoria): auditoría técnica integral 15 fases — sin tocar src	cursor/auditoria-tecnica-integral-f7dd	DRAFT	2026-08-06T23:32:01Z
+1	build(deps): bump the npm_and_yarn group across 1 directory with 2 updates	dependabot/npm_and_yarn/npm_and_yarn-b14919e7d3	OPEN	2025-09-18T18:18:13Z
