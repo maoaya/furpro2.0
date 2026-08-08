@@ -1028,17 +1028,31 @@
     ]
   },
   "auth_flow_mandatory": {
-    "rule": "Login y registro SIEMPRE pasan por PerfilCard (/perfilcard). No omitir.",
+    "spec": "auditoria/FLUJO_COMPLETO_DEPLOY_ZONA_PRO.md",
+    "rule": "Login y registro SIEMPRE pasan por /perfilcard. Replicar igual que deploy.",
+    "canonical_route": "/perfilcard",
+    "alias_redirect": "/perfil-card -> /perfilcard",
     "login": [
       "/login (loginpagesnew)",
-      "/auth/callback (AuthCallback)",
-      "/perfilcard (PerfilCard)"
+      "emailRegistrationGate / fp_email_registro_estado",
+      "oauth_flow=login + email_gate_ok",
+      "OAuth redirectTo /auth/callback",
+      "AuthCallback reason login-entry-fast",
+      "/perfilcard (PerfilCard)",
+      "luego /homepages o /perfilpro desde PerfilCard"
     ],
     "register": [
-      "/registro (FormularioRegistroCompleto)",
-      "auth",
-      "/auth/callback",
-      "/perfilcard"
+      "/registro (RegistroEntryRoute + FormularioRegistroCompleto)",
+      "pending_profile_data + oauth_flow=register",
+      "OAuth redirectTo /auth/callback",
+      "AuthCallback reason register-form-applied (o /completar-perfil si missing-profile)",
+      "/perfilcard (PerfilCard)"
+    ],
+    "guards": [
+      "forcedLogout -> /login",
+      "sin sesión en protegida -> /login",
+      "perfil completo en /registro -> /perfilcard (no-reregister)",
+      "sesión en /login -> /perfilcard (fromLoginGuard)"
     ],
     "signals_in_bundle": [
       "Entrando a PerfilCard…",
@@ -1046,7 +1060,7 @@
       "register-form-applied",
       "perfilcard_mounted",
       "futpro:perfilcard:cache:v1",
-      "route default \"/perfilcard\""
+      "UI=\"/perfilcard\""
     ]
   },
   "must_have_fuente": [

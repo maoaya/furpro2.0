@@ -29,21 +29,18 @@ Evidencia en el bundle:
 
 ### Flujo que NO se puede romper
 
+**Especificación completa (replicar igual):**  
+`auditoria/FLUJO_COMPLETO_DEPLOY_ZONA_PRO.md`
+
 ```
 /login (loginpagesnew.jsx)
-    → Google / auth
+    → email gate → Google OAuth
     → /auth/callback (AuthCallback)
     → SIEMPRE /perfilcard (PerfilCard.jsx)
-         ↳ si ya tiene card → home / perfilpro desde ahí
-         ↳ si falta card → completar en PerfilCard
-```
+         ↳ luego /homepages o /perfilpro (desde PerfilCard)
 
-Registro:
-
-```
-/registro → FormularioRegistroCompleto.jsx
-    → auth
-    → /auth/callback
+/registro → FormularioRegistroCompleto + pending_profile_data
+    → OAuth → /auth/callback
     → SIEMPRE /perfilcard
 ```
 

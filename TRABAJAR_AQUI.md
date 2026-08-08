@@ -10,6 +10,7 @@ Esta carpeta **es** el proyecto. Trabaja en esta rama; no en el árbol de enero.
 | Backend / API / SQL | `functions/`, `supabase/`, `src/main`, `server.js` |
 | Basura / enero / demos | `_legacy_archivo/` — **NO reactivar** |
 | Guía completa | `auditoria/COMO_TRABAJAR_EN_ESTE_PROYECTO.md` |
+| Flujo auth/card (igual deploy) | `auditoria/FLUJO_COMPLETO_DEPLOY_ZONA_PRO.md` |
 | Estado del sistema | `auditoria/ESTADO_SISTEMA.md` |
 
 ## Por qué “no deja editar de forma segura”
