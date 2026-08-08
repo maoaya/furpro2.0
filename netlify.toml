@@ -90,6 +90,8 @@
   to = "/.netlify/functions/crear-encuentro-vs"
   status = 200
 
+# Proxy TheSportsDB / fixtures / live (el bundle llama POST /api/zona-pro? action=sportsdb|…)
+# Sin esta function el cliente cae al fetch directo → CORS + 429 en localhost/preview.
 [[redirects]]
   from = "/api/zona-pro"
   to = "/.netlify/functions/zona-pro-ai"

@@ -40,3 +40,9 @@ Diagnóstico: `auditoria/DIAGNOSTICO_ERRORES_SUPABASE_CONSOLA.md`
 SQL fix: `auditoria/sql/2026-08-08_fix_schema_drift_chat_ranking_historias.sql`
 
 Hay que **ejecutar el SQL en el Dashboard de Supabase** (este agente no tiene `service_role` / MCP auth).
+
+## 2026-08-08 — Proxy TheSportsDB / menú forzar
+
+- **Forzar sistema** y **Recargar completa** ya existen en el menú ⋮ del ZIP canónico.
+- CORS TheSportsDB: function `zona-pro-ai` + `npm start` con `scripts/serve-producto.mjs` (POST `/api/zona-pro`).
+- Detalle: `auditoria/FIX_THESPORTSDB_CORS_Y_FORZAR_SISTEMA.md`.
