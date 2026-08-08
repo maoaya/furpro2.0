@@ -55,7 +55,21 @@ if (/command\s*=\s*["']npm run build["']/.test(toml)) {
   fail('netlify.toml no debe hacer npm run build del src viejo');
 }
 
+// Candados anti-reactivación
+if (fs.existsSync(path.join(root, 'index.html')) && fs.existsSync(path.join(root, 'vite.config.js'))) {
+  fail('Existen index.html + vite.config.js en la raíz (entrada Vite enero). Deben estar en _legacy_archivo/vite-entry/');
+}
+if (fs.existsSync(path.join(root, 'legacy-html-stubs'))) {
+  fail('legacy-html-stubs/ volvió a la raíz (Instagram). Debe estar en _legacy_archivo/');
+}
+for (const bad of ['netlify-emergency.toml', 'netlify.deploy-local.toml']) {
+  if (fs.existsSync(path.join(root, bad))) {
+    fail(`${bad} en la raíz publica dist viejo. Muévelo a _legacy_archivo/netlify-alt/`);
+  }
+}
+
 ok('producto-deploy presente (Zona Pro + loginpagesnew)');
 ok('netlify.toml publica producto-deploy');
+ok('candados anti-Vite/Instagram/dist OK');
 console.log('→ Arranque: npm start  →  http://127.0.0.1:4173/');
-console.log('→ No uses Vite/src de enero como producto.');
+console.log('→ Contexto: auditoria/AUDITORIA_CONTEXTO_PRODUCTO_ZONA_PRO.md');
