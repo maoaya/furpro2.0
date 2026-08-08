@@ -457,7 +457,9 @@ const AuthPageUnificada = () => {
   };
 
   // Pantalla de acceso ZONA PRO (foto producto: camisetas negras/oro + trofeo)
-  const gold = '#FFB800';
+  // Fondo: /zona-pro-bg.jpg si el usuario lo sube; si no, capas CSS + stock (mismo layout de la foto).
+  const gold = '#FFD700';
+  const zonaProBg = '/zona-pro-bg.jpg';
   const shellBg = {
     minHeight: '100vh',
     position: 'relative',
@@ -472,36 +474,37 @@ const AuthPageUnificada = () => {
 
   return (
     <div style={shellBg}>
-      {/* Plano full-bleed: fila de camisetas (arriba) + trofeo luminoso (abajo) */}
+      {/* Plano full-bleed: fila de camisetas (arriba) + trofeo luminoso (abajo) — como la foto */}
       <div
         aria-hidden
         style={{
           position: 'absolute',
           inset: 0,
           backgroundImage:
-            'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 38%, rgba(0,0,0,0.82) 68%, rgba(0,0,0,0.92) 100%),' +
-            'url(https://images.unsplash.com/photo-1517649763962-0c623066027b?auto=format&fit=crop&w=1600&q=80),' +
-            'url(https://images.unsplash.com/photo-1560272564-c83b66b1ad12?auto=format&fit=crop&w=1600&q=80)',
-          backgroundSize: 'cover, cover, cover',
-          backgroundPosition: 'center top, center 18%, center bottom',
-          backgroundBlendMode: 'normal, soft-light, soft-light',
-          filter: 'saturate(1.05) contrast(1.08)',
+            `linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.45) 35%, rgba(0,0,0,0.75) 62%, rgba(0,0,0,0.9) 100%),` +
+            `url(${zonaProBg}),` +
+            'url(https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1600&q=80),' +
+            'url(https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1600&q=80)',
+          backgroundSize: 'cover, cover, cover, cover',
+          backgroundPosition: 'center, center top, center 10%, center bottom',
+          backgroundRepeat: 'no-repeat',
+          filter: 'saturate(1.1) contrast(1.1)',
           zIndex: 0,
         }}
       />
-      {/* Brillo del trofeo — ancla inferior */}
+      {/* Brillo del trofeo — ancla inferior (foto) */}
       <div
         aria-hidden
         style={{
           position: 'absolute',
           left: '50%',
-          bottom: '-6%',
+          bottom: '-8%',
           transform: 'translateX(-50%)',
-          width: '85vmin',
-          height: '48vmin',
+          width: '95vmin',
+          height: '55vmin',
           background:
-            'radial-gradient(ellipse at center, rgba(255,184,0,0.55) 0%, rgba(255,140,0,0.18) 42%, transparent 72%)',
-          filter: 'blur(6px)',
+            'radial-gradient(ellipse at center, rgba(255,215,0,0.65) 0%, rgba(255,160,0,0.22) 40%, transparent 70%)',
+          filter: 'blur(4px)',
           zIndex: 1,
           pointerEvents: 'none',
         }}
@@ -594,7 +597,7 @@ const AuthPageUnificada = () => {
                 textTransform: 'uppercase',
               }}
             >
-              Gmail
+              GMAIL
             </label>
             <input
               id="zona-pro-email"
