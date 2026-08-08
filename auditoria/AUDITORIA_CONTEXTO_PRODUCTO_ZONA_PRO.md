@@ -11,6 +11,7 @@ Este documento es el **contexto obligatorio**. El ZIP es la versión del sistema
 
 Inventario tabular del ZIP: [`INVENTARIO_ZIP_TABLA.md`](./INVENTARIO_ZIP_TABLA.md)  
 **Lista total keep/delete del repo:** [`LISTA_TOTAL_CONSERVAR_ELIMINAR.md`](./LISTA_TOTAL_CONSERVAR_ELIMINAR.md)  
+**JSX vs ZIP (¿están anclados?):** [`JSX_VS_ZIP_CANONICO.md`](./JSX_VS_ZIP_CANONICO.md) — veredicto: **NO**; el ZIP no trae `.jsx`, los de `src/` son legado.  
 Manifiesto JSON (hashes): [`MANIFEST_DEPLOY_ZIP.json`](./MANIFEST_DEPLOY_ZIP.json) · `producto-deploy/MANIFEST_CANONICO.json`
 
 ---
