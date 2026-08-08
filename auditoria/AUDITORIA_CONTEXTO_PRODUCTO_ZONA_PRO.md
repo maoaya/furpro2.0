@@ -10,6 +10,7 @@
 Este documento es el **contexto obligatorio**. El ZIP es la versión del sistema; todo lo demás del repo que simule UI es impostor o legado.
 
 Inventario tabular del ZIP: [`INVENTARIO_ZIP_TABLA.md`](./INVENTARIO_ZIP_TABLA.md)  
+**Lista total keep/delete del repo:** [`LISTA_TOTAL_CONSERVAR_ELIMINAR.md`](./LISTA_TOTAL_CONSERVAR_ELIMINAR.md)  
 Manifiesto JSON (hashes): [`MANIFEST_DEPLOY_ZIP.json`](./MANIFEST_DEPLOY_ZIP.json) · `producto-deploy/MANIFEST_CANONICO.json`
 
 ---
@@ -200,6 +201,7 @@ Copia archivada: `_legacy_archivo/netlify-alt/netlify.from-deploy-zip-PC-WINDOWS
 - [x] `ensure-producto-deploy` valida SHA256 críticos
 - [x] Cuarentena impostores
 - [x] Workflow Netlify → solo `producto-deploy`
+- [x] `LISTA_TOTAL_CONSERVAR_ELIMINAR.md` + basura raíz en cuarentena
 - [ ] Merge a `master` + redeploy Netlify (Clear cache)
 
 ---

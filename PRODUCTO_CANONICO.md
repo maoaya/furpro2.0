@@ -1,57 +1,58 @@
 # Versión canónica del sistema — Zona Pro
 
-> Auditoría completa (qué conservar / eliminar / por qué falló):  
-> **`auditoria/AUDITORIA_CONTEXTO_PRODUCTO_ZONA_PRO.md`**  
-> ZIP canónico (archivos vinculados totales): **`auditoria/deploy-6a7256d5ffd58e44433d5158.zip`**  
-> Impostores cuarentenados: **`_legacy_archivo/`** (ver `NO_REACTIVAR.md`)
-
 ## Esta es LA versión del producto
 
 | | |
 |--|--|
-| Carpeta | `producto-deploy/` |
-| Origen | ZIP `deploy-6a7256d5ffd58e44433d5158` = `Desktop\futpro2.0\dist` |
+| ZIP vinculado | `auditoria/deploy-6a7256d5ffd58e44433d5158.zip` |
+| Carpeta publicada | `producto-deploy/` |
+| Origen | Build del PC `Desktop\futpro2.0\dist` (Netlify deploy zip) |
 | Meta | `futpro-deploy` = `2026-08-04T21:16:30Z` |
+| Bundle | `assets/index-DchpCYR3.js` |
 | Login | `loginpagesnew-BPP0r_st.js` → pantalla **ZONA PRO** |
-| Bundle | `index-DchpCYR3.js` |
-| Candado | hashes SHA256 en `scripts/ensure-producto-deploy.mjs` + `MANIFEST_CANONICO.json` |
+| Contexto / auditoría | `auditoria/AUDITORIA_CONTEXTO_PRODUCTO_ZONA_PRO.md` |
+| Lista keep/delete | `auditoria/LISTA_TOTAL_CONSERVAR_ELIMINAR.md` |
 
-**El `src/` de enero NO es el producto.** La entrada Vite, HTML Instagram, TOML `publish=dist` y demos están en `_legacy_archivo/` para que no vuelvan.  
-**El `netlify.toml` dentro del ZIP es del PC Windows — no usarlo.**
+**El `src/` de enero NO es el producto.** Está marcado legado; Vite/build legacy están bloqueados.
 
 ## Cómo arrancar (siempre)
 
 ```bash
+npm run check:producto
 npm start
-# o
-npm run dev
 ```
 
-Abre: **http://127.0.0.1:4173/**
+Abre: **http://127.0.0.1:4173/** · Login: **http://127.0.0.1:4173/login**
 
 ## Cómo publicar (Netlify)
 
 - `netlify.toml` → `publish = "producto-deploy"`
+- `command = "node scripts/ensure-producto-deploy.mjs"` (valida SHA256 del ZIP)
 - **No** ejecuta `npm run build` del `src` viejo
-- Tras cambios: subir un nuevo `dist` del PC a `producto-deploy/` y push a `master`
+- Tras merge: **Clear cache and deploy** en Netlify
 
-## Prohibido (causa la falla de “volver a enero”)
-
-1. `git reset --hard` a `80d7863` u otros tips solo-enero  
-2. `npm run dev:legacy-src` / Vite sobre `src/` como si fuera producción  
-3. Cambiar Netlify `publish` a `dist` generado desde el `src` viejo  
-4. Mergear ramas del agente que reescriban Home/login sobre la base enero  
-
-## Actualizar el producto
-
-En el PC donde está el fuente bueno:
+## Actualizar el producto (solo desde el PC bueno)
 
 ```bat
 cd Desktop\futpro2.0
 npm run build
 ```
 
-Copia el contenido de `dist\` a `producto-deploy\` en este repo (respetando mayúsculas de archivos), commit y push a `master`.
+Empaqueta/`dist` → ZIP → en este repo:
+
+```bash
+node scripts/sync-producto-from-zip.mjs ruta/al.zip
+npm run check:producto
+git add producto-deploy auditoria && git commit && git push
+```
+
+## Prohibido (causa “volver a enero”)
+
+1. `git reset --hard` a `80d7863` u otros tips solo-enero
+2. Restaurar `_legacy_archivo/` a la raíz
+3. Usar el `netlify.toml` **dentro del ZIP** (rutas Windows + `npm run build`)
+4. Servir Vite/`src` como si fuera producción (puerto 5173)
+5. Cambiar Netlify `publish` a `dist`
 
 ## Verificación
 

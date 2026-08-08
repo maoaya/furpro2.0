@@ -17,3 +17,6 @@ Fue movido aquí para que jamás vuelva a publicarse ni a servirse como la app.
 **Producto canónico:** `producto-deploy/`  
 **Documentación:** `auditoria/AUDITORIA_CONTEXTO_PRODUCTO_ZONA_PRO.md`  
 **Arranque:** `npm start` → http://127.0.0.1:4173/
+
+| `basura-raiz/` | Archivos basura con nombres rotos (`console.log(...)`, `vite`, `{`, etc.) |
+| `deploy-manual/` | Carpeta de deploy manual que no es producto-deploy |
