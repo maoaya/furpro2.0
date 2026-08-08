@@ -1,70 +1,66 @@
-# Cómo trabajar — el producto final es el ZIP
+# Cómo trabajar — producto final = ZIP (enero NO)
 
-**Orden clara:**  
-`deploy-6a7256d5ffd58e44433d5158` / `producto-deploy/` = **el sistema**.  
-La UI de **enero ya no está en el árbol activo** (fue a `_legacy_archivo/src-ui-enero/`). **No se trabaja ahí.**
+## El sistema está restaurado como producto
+
+- App: `npm start` → http://127.0.0.1:4173/login (**ZONA PRO**)
+- Código de producto en uso: `producto-deploy/` = ZIP `deploy-6a7256d5ffd58e44433d5158`
+- UI de enero: **fuera** (`_legacy_archivo/src-ui-enero/`) — **no se restaura**
+
+Detalle: `ESTADO_SISTEMA.md`
 
 ---
 
-## Producto final (único)
+## Quieres editar muchas funciones — haz esto
 
-| Qué | Dónde |
-|---|---|
-| ZIP | `auditoria/deploy-6a7256d5ffd58e44433d5158.zip` |
-| App publicada | `producto-deploy/` |
-| Login | http://127.0.0.1:4173/login → **ZONA PRO** (`loginpagesnew`) |
-| Candado | `npm run check:producto` (hashes SHA256) |
+El ZIP es el producto, pero es **compilado**. Para editar pantallas/funciones UI necesitas el fuente del PC:
+
+### Paso 1 — Sube el fuente (no el deploy zip)
+
+En Windows, el proyecto bueno:
+
+`Desktop\futpro2.0` (con `src\*.jsx`, `package.json`, etc.)
+
+Súbelo como ZIP **fuente** a este entorno y:
 
 ```bash
-npm start
-# → http://127.0.0.1:4173/login
+npm run import:fuente-pc -- ruta/a/futpro2.0-fuente.zip
 ```
 
----
+Eso llena `src-zona-pro/`. **Ahí** editas.
 
-## Qué hay en `src/` ahora
+### Paso 2 — Editar
 
-Solo **backend/API** (`main/`, `modules/`, `routes/`, `controllers/`, …).  
-**Cero** `pages/`, `components/`, `App.jsx`, `main.jsx`.  
-Si vuelven, `check:producto` **falla a propósito**.
+Trabaja solo en:
 
----
+| Editar | Carpeta |
+|---|---|
+| Pantallas / login / torneos / UI | `src-zona-pro/` (tras importar) |
+| API / Express / Supabase | `functions/`, `supabase/`, `src/main`, `server.js` |
+| Ver resultado del producto actual | `npm start` → `:4173` |
 
-## Cómo cambiar la UI (pantallas)
+### Paso 3 — Volver a publicar UI
 
-Los JSX reales del producto **no viven en este repo** (el ZIP es compilado).  
-Se editan en el PC donde se generó el build:
-
-1. PC: `Desktop\futpro2.0` → editar → `npm run build`
-2. Traer ZIP/`dist` a este repo:
+En el PC o tras build del fuente importado, genera `dist` y:
 
 ```bash
-node scripts/sync-producto-from-zip.mjs ruta/al.zip
+node scripts/sync-producto-from-zip.mjs ruta/al/dist-o-deploy.zip
 npm run check:producto
 git add producto-deploy auditoria && git commit && git push
 ```
 
-3. Netlify: **Clear cache and deploy** (`publish = producto-deploy`)
+---
+
+## Prohibido (rompe otra vez)
+
+- Restaurar `_legacy_archivo/src-ui-enero/` → `src/pages`
+- Editar “el de enero” porque “al menos hay jsx”
+- Vite sobre el legado
+- Confundir el deploy zip (build) con el zip fuente del PC
 
 ---
 
-## Cómo cambiar API / SQL
+## Si solo tienes el deploy zip ahora
 
-Sí, en este repo: `functions/`, `supabase/`, `server.js`, `src/main`, etc.  
-Sin tocar UI de enero ni restaurar `_legacy_archivo/`.
+Puedes **usar y desplegar** Zona Pro, pero **no** editar JSX hasta que subas `Desktop\futpro2.0` fuente.
 
----
-
-## Prohibido
-
-- Restaurar `_legacy_archivo/src-ui-enero/` a `src/`
-- Vite / puerto 5173 / `build:legacy-src`
-- Usar el `netlify.toml` de dentro del ZIP (Windows)
-- Tratar docs/HTML viejos como la app
-
----
-
-## Estado del sistema (no dañado)
-
-El producto ZIP sigue con hashes canónicos y responde en `:4173`.  
-Lo que se eliminó del flujo activo es el **impostor de enero**, no Zona Pro.
+Eso no es daño del sistema: el producto corre. Falta el fuente en GitHub.

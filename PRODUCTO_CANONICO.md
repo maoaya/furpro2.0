@@ -16,7 +16,9 @@
 **Producto final = este ZIP / `producto-deploy/`.**  
 La UI de enero **ya no está en `src/`** (cuarentena `_legacy_archivo/src-ui-enero/`). No se trabaja ahí.
 
-**Cómo trabajar:** → `auditoria/COMO_TRABAJAR_EN_ESTE_PROYECTO.md`
+**Cómo trabajar / editar:** → `auditoria/COMO_TRABAJAR_EN_ESTE_PROYECTO.md`  
+**Estado (no dañado):** → `auditoria/ESTADO_SISTEMA.md`  
+**Fuente editable (cuando subas el PC):** → `src-zona-pro/` + `npm run import:fuente-pc`
 
 ## Cómo arrancar (siempre)
 
