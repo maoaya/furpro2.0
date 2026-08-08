@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="kg1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#1fa2ff"/>
+      <stop offset="100%" stop-color="#0f5f9b"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="18" fill="#0e2940"/>
+  <rect x="10" y="10" width="236" height="236" rx="14" fill="none" stroke="#d9ecff" stroke-width="4"/>
+  <circle cx="128" cy="72" r="30" fill="#f3c99a"/>
+  <rect x="82" y="104" width="92" height="98" rx="18" fill="url(#kg1)"/>
+  <rect x="54" y="116" width="28" height="70" rx="12" fill="#7ec8ff"/>
+  <rect x="174" y="116" width="28" height="70" rx="12" fill="#7ec8ff"/>
+  <text x="128" y="238" fill="#f1f8ff" font-size="18" text-anchor="middle" font-family="Arial">KEEPER IDLE</text>
+</svg>

@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1800" viewBox="0 0 1200 1800" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#030303"/>
+      <stop offset="0.55" stop-color="#090909"/>
+      <stop offset="1" stop-color="#120a02"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#6F4410"/>
+      <stop offset="0.35" stop-color="#D99C2B"/>
+      <stop offset="0.7" stop-color="#FFD86E"/>
+      <stop offset="1" stop-color="#8E5A13"/>
+    </linearGradient>
+    <linearGradient id="goldSoft" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#F6D777"/>
+      <stop offset="1" stop-color="#AF6D18"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 1540) rotate(90) scale(220 420)">
+      <stop stop-color="#FFE38B" stop-opacity="0.9"/>
+      <stop offset="0.45" stop-color="#F4B62A" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#F4B62A" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blurLg" x="0" y="0" width="1200" height="1800" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="shadow" x="0" y="0" width="1200" height="1800" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#000" flood-opacity="0.48"/>
+    </filter>
+    <g id="jerseyFront">
+      <path d="M0 34L26 0H94L120 34V162C120 171 113 178 104 178H16C7 178 0 171 0 162V34Z" fill="#120F0C" stroke="url(#gold)" stroke-width="3"/>
+      <path d="M24 0H96L84 18H36L24 0Z" fill="#19120A"/>
+      <path d="M9 33L-11 57L4 77L21 58L20 34L9 33Z" fill="#17110B" stroke="url(#gold)" stroke-width="3"/>
+      <path d="M111 33L131 57L116 77L99 58L100 34L111 33Z" fill="#17110B" stroke="url(#gold)" stroke-width="3"/>
+      <rect x="10" y="58" width="100" height="9" fill="#C38A25" opacity="0.92"/>
+      <rect x="10" y="73" width="100" height="5" fill="#6F4410" opacity="0.9"/>
+      <rect x="10" y="150" width="100" height="10" fill="#C38A25" opacity="0.9"/>
+      <path d="M44 24H76L68 38H52L44 24Z" fill="#D4A642"/>
+    </g>
+    <g id="jerseyBack">
+      <path d="M0 34L26 0H94L120 34V162C120 171 113 178 104 178H16C7 178 0 171 0 162V34Z" fill="#100E0B" stroke="url(#gold)" stroke-width="3"/>
+      <path d="M24 0H96L84 18H36L24 0Z" fill="#18120B"/>
+      <path d="M9 33L-11 57L4 77L21 58L20 34L9 33Z" fill="#17110B" stroke="url(#gold)" stroke-width="3"/>
+      <path d="M111 33L131 57L116 77L99 58L100 34L111 33Z" fill="#17110B" stroke="url(#gold)" stroke-width="3"/>
+      <rect x="10" y="55" width="100" height="6" fill="#6F4410" opacity="0.85"/>
+      <rect x="10" y="64" width="100" height="10" fill="#C38A25" opacity="0.92"/>
+      <text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">23</text>
+    </g>
+  </defs>
+  <rect width="1200" height="1800" fill="url(#bg)"/>
+  <g opacity="0.65" filter="url(#blurLg)">
+    <circle cx="194" cy="378" r="110" fill="#77470D"/>
+    <circle cx="972" cy="450" r="120" fill="#5D3608"/>
+    <circle cx="602" cy="1100" r="180" fill="#3A2407"/>
+  </g>
+  <g opacity="0.7">
+    <circle cx="96" cy="1620" r="2" fill="#FFD97F"/>
+    <circle cx="204" cy="1508" r="3" fill="#FFD97F"/>
+    <circle cx="335" cy="1590" r="2" fill="#FFD97F"/>
+    <circle cx="460" cy="1450" r="2" fill="#FFD97F"/>
+    <circle cx="525" cy="1560" r="4" fill="#FFD97F"/>
+    <circle cx="679" cy="1498" r="3" fill="#FFD97F"/>
+    <circle cx="812" cy="1584" r="2" fill="#FFD97F"/>
+    <circle cx="950" cy="1490" r="3" fill="#FFD97F"/>
+    <circle cx="1094" cy="1608" r="2" fill="#FFD97F"/>
+    <circle cx="144" cy="1340" r="2" fill="#FFD97F"/>
+    <circle cx="280" cy="1280" r="3" fill="#FFD97F"/>
+    <circle cx="748" cy="1310" r="2" fill="#FFD97F"/>
+    <circle cx="1022" cy="1248" r="2" fill="#FFD97F"/>
+  </g>
+
+  <g transform="translate(68 60)">
+    <g transform="translate(0 0)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">23</text></g>
+    <g transform="translate(215 0)"><use href="#jerseyFront"/><text x="60" y="128" text-anchor="middle" font-family="Arial, sans-serif" font-size="52" font-weight="900" fill="#F2C963">10</text></g>
+    <g transform="translate(430 0)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">99</text></g>
+    <g transform="translate(645 0)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">23</text></g>
+    <g transform="translate(860 0)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">24</text></g>
+
+    <g transform="translate(0 250)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">12</text></g>
+    <g transform="translate(215 250)"><use href="#jerseyFront"/></g>
+    <g transform="translate(430 250)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">7</text></g>
+    <g transform="translate(645 250)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">23</text></g>
+    <g transform="translate(860 250)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">33</text></g>
+
+    <g transform="translate(0 500)"><use href="#jerseyFront"/></g>
+    <g transform="translate(215 500)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">45</text></g>
+    <g transform="translate(430 500)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">24</text></g>
+    <g transform="translate(645 500)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">4</text></g>
+    <g transform="translate(860 500)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">33</text></g>
+
+    <g transform="translate(0 750)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">8</text></g>
+    <g transform="translate(215 750)"><use href="#jerseyFront"/></g>
+    <g transform="translate(430 750)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">33</text></g>
+    <g transform="translate(645 750)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">4</text></g>
+    <g transform="translate(860 750)"><use href="#jerseyFront"/></g>
+
+    <g transform="translate(0 1000)"><use href="#jerseyFront"/></g>
+    <g transform="translate(430 1000)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">33</text></g>
+    <g transform="translate(645 1000)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">99</text></g>
+    <g transform="translate(860 1000)"><use href="#jerseyFront"/></g>
+
+    <g transform="translate(0 1250)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">32</text></g>
+    <g transform="translate(215 1250)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">4</text></g>
+    <g transform="translate(645 1250)"><use href="#jerseyBack"/><text x="60" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#F2C963">99</text></g>
+    <g transform="translate(860 1250)"><use href="#jerseyFront"/></g>
+  </g>
+
+  <ellipse cx="600" cy="1585" rx="340" ry="120" fill="url(#glow)"/>
+  <g filter="url(#shadow)">
+    <path d="M458 1512H742L724 1658H476L458 1512Z" fill="#22160A"/>
+    <rect x="500" y="1452" width="200" height="86" rx="18" fill="#2E1C09" stroke="url(#gold)" stroke-width="8"/>
+    <path d="M510 892H690L744 1064C770 1144 818 1204 900 1242L862 1312C736 1270 672 1196 636 1102H564C528 1196 464 1270 338 1312L300 1242C382 1204 430 1144 456 1064L510 892Z" fill="url(#goldSoft)" stroke="url(#gold)" stroke-width="10"/>
+    <path d="M510 922H690V1048C690 1160 642 1230 600 1266C558 1230 510 1160 510 1048V922Z" fill="#E8B640"/>
+    <path d="M486 960C408 952 348 988 328 1054C312 1110 340 1170 402 1200" stroke="url(#gold)" stroke-width="18" stroke-linecap="round"/>
+    <path d="M714 960C792 952 852 988 872 1054C888 1110 860 1170 798 1200" stroke="url(#gold)" stroke-width="18" stroke-linecap="round"/>
+    <rect x="538" y="1540" width="124" height="38" rx="10" fill="#120B04" stroke="url(#gold)" stroke-width="4"/>
+  </g>
+  <rect x="0" y="0" width="1200" height="320" fill="url(#bg)" opacity="0.28"/>
+</svg>

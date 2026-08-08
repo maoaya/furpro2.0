@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="18" fill="#0b3145"/>
+  <rect x="10" y="10" width="236" height="236" rx="14" fill="none" stroke="#d9ecff" stroke-width="4"/>
+  <g transform="translate(0,-8)">
+    <circle cx="128" cy="52" r="28" fill="#f3c99a"/>
+    <rect x="84" y="78" width="88" height="86" rx="16" fill="#1a8ad1"/>
+    <rect x="52" y="70" width="24" height="76" rx="12" fill="#7ec8ff"/>
+    <rect x="180" y="70" width="24" height="76" rx="12" fill="#7ec8ff"/>
+  </g>
+  <text x="128" y="238" fill="#f1f8ff" font-size="18" text-anchor="middle" font-family="Arial">KEEPER UP</text>
+</svg>

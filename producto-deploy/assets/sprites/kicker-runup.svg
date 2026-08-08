@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="18" fill="#4f2e06"/>
+  <rect x="10" y="10" width="236" height="236" rx="14" fill="none" stroke="#ffe9bb" stroke-width="4"/>
+  <g transform="translate(26,0) rotate(-12 100 120)">
+    <circle cx="100" cy="70" r="26" fill="#f4caa0"/>
+    <rect x="62" y="98" width="80" height="92" rx="16" fill="#ffbf2f"/>
+    <rect x="60" y="184" width="20" height="40" rx="10" fill="#fbe5b1"/>
+    <rect x="128" y="190" width="20" height="34" rx="10" fill="#fbe5b1"/>
+  </g>
+  <text x="128" y="238" fill="#fff4db" font-size="18" text-anchor="middle" font-family="Arial">KICKER RUNUP</text>
+</svg>

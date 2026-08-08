@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="18" fill="#412708"/>
+  <rect x="10" y="10" width="236" height="236" rx="14" fill="none" stroke="#ffe9bb" stroke-width="4"/>
+  <circle cx="128" cy="72" r="28" fill="#f4caa0"/>
+  <rect x="86" y="102" width="84" height="94" rx="16" fill="#ffbf2f"/>
+  <rect x="94" y="194" width="20" height="34" rx="10" fill="#fbe5b1"/>
+  <rect x="142" y="194" width="20" height="34" rx="10" fill="#fbe5b1"/>
+  <text x="128" y="238" fill="#fff4db" font-size="18" text-anchor="middle" font-family="Arial">KICKER IDLE</text>
+</svg>

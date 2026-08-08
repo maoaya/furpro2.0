@@ -1,190 +1,33 @@
-# Redirecciones SPA para /home y /home/*
-[[redirects]]
-  from = "/home"
-  to = "/index.html"
-  status = 200
-[[redirects]]
-  from = "/home/*"
-  to = "/index.html"
-  status = 200
-# 🚀 FutPro 2.0 - Configuración Netlify Optimizada
-# Actualizada para máximo rendimiento y compatibilidad 2025
-
+# Zona Pro — publicar deploy del producto (no rebuild de src enero)
 [build]
-  base = "."
-  publish = "dist"
-  # Comando compatible con Linux y Netlify
-  command = "npm install --no-audit --no-fund && npm run build"
+  publish = "producto-deploy"
+  command = "echo 'Using prebuilt producto-deploy (Zona Pro)'"
   ignore = "false"
 
 [build.environment]
-  NODE_VERSION = "20.10.0"
-  NPM_VERSION = "10.2.0"
-  NODE_OPTIONS = "--max-old-space-size=4096"
-  VITE_NODE_ENV = "production"
-  # Optimizaciones de build
-  CI = "true"
-  DISABLE_ESLINT_PLUGIN = "true"
-  GENERATE_SOURCEMAP = "false"
-  # 🔥 DESHABILITAR ESCANEO DE SECRETOS - EVITA FALSOS POSITIVOS
-  SECRETS_SCAN_ENABLED = "false"
-  NETLIFY_SECRETS_SCAN = "false"
-  # Configuración FutPro específica
-  VITE_AUTO_CONFIRM_SIGNUP = "true"
-  VITE_PRODUCTION_MODE = "true"
-  VITE_TRACKING_ENABLED = "true"
-  VITE_AUTO_SAVE_ENABLED = "true"
-  # Configuración Supabase (valores públicos, seguros para git)
-  VITE_SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
-  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8"
-  VITE_GOOGLE_CLIENT_ID = "760210878835-r15nffmc9ldt4hb1a5k8mvs9dql7pkrf.apps.googleusercontent.com"
-  # Build ID actualizado para 2025
-  NETLIFY_BUILD_ID = "futpro-2025-no-secrets-scan-v2.1"
-  # Omitir archivos específicos del escaneo de secretos
-  SECRETS_SCAN_OMIT_PATHS = ".env,.env.example,.env.netlify,package.json,package-lock.json,*.md,RUTAS_COMPLETAS.md"
-  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_ANON_KEY,VITE_GOOGLE_CLIENT_ID,VITE_FIREBASE_API_KEY,SUPABASE_ANON_KEY"
-  # IMPORTANT: No colocar claves secretas en este archivo.
-  # Configura estas variables en Netlify (Site settings > Build & deploy > Environment):
-  # VITE_SUPABASE_URL
-  # VITE_SUPABASE_ANON_KEY
-  # SUPABASE_URL
-  # SUPABASE_SERVICE_ROLE_KEY  (solo para funciones)
-  # VITE_GOOGLE_CLIENT_ID
-  # VITE_FIREBASE_API_KEY
-  # VITE_FIREBASE_PROJECT_ID
-  # VITE_FIREBASE_APP_ID
-  # Puedes usar `.env.local` para pruebas locales (gitignored).
-    CYPRESS_INSTALL_BINARY = "0"
-
-[functions]
-  directory = "functions"
-  node_bundler = "esbuild"
-  external_node_modules = ["@supabase/supabase-js", "firebase"]
-
-# 🔄 Redirects SPA optimizados
-[[redirects]]
-  from = "/auth/callback"
-  to = "/index.html"
-  status = 200
-    # SPA: redirige a React router para manejar el callback
-
-[[redirects]]
-  from = "/auth/*"
-  to = "/index.html"
-  status = 200
-    # force eliminado para evitar conflicto
-
-[[redirects]]
-  from = "/oauth/*"
-  to = "/index.html"
-  status = 200
-    # force eliminado para evitar conflicto
-
-[[redirects]]
-  from = "/registro*"
-  to = "/index.html"
-  status = 200
-    # force eliminado para evitar conflicto
-
-[[redirects]]
-  # Registro multi-step completo (no coincidía con /registro*)
-  from = "/formulario-registro*"
-  to = "/index.html"
-  status = 200
-    # force eliminado para evitar conflicto
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-# 🛡️ Headers de seguridad y rendimiento optimizados
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "SAMEORIGIN"
-    X-Content-Type-Options = "nosniff"
-    X-XSS-Protection = "1; mode=block"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=*, microphone=*, geolocation=*"
-    Content-Security-Policy = """
-      default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: 
-      qqrxetxcglwrejtblwut.supabase.co 
-      *.googleapis.com 
-      *.google.com 
-      *.firebase.com 
-      *.firebaseio.com 
-      futpro.vip 
-      *.netlify.app;
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' 
-      *.googleapis.com 
-      *.google.com 
-      *.firebase.com;
-      style-src 'self' 'unsafe-inline' 
-      *.googleapis.com 
-      *.google.com;
-      img-src 'self' data: blob: 
-      *.supabase.co 
-      *.google.com 
-      *.googleapis.com
-      *.googleusercontent.com
-      lh3.googleusercontent.com
-      i.pravatar.cc
-      placekitten.com
-      via.placeholder.com;
-      connect-src 'self' 
-      https: http: wss: ws:
-      qqrxetxcglwrejtblwut.supabase.co 
-      wss://qqrxetxcglwrejtblwut.supabase.co
-      *.googleapis.com 
-      *.google.com 
-      *.firebase.com 
-      *.firebaseio.com 
-      ipapi.co 
-      ipwho.is;
-      font-src 'self' data: 
-      *.googleapis.com 
-      *.google.com;
-    """
-    Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
-    Access-Control-Allow-Headers = "Content-Type, Authorization, X-Requested-With"
-
-[[headers]]
-  for = "/static/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-    Cache-Control = "public, max-age=300, must-revalidate"
-
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-    Cache-Control = "public, max-age=300, must-revalidate"
-
-[[headers]]
-  for = "/*.html"
-  [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
-    Pragma = "no-cache"
-    Expires = "0"
-
-[[headers]]
-  for = "/index.html"
-  [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
-    Pragma = "no-cache"
-    Expires = "0"
+  NODE_VERSION = "20"
+  NPM_VERSION = "10"
 
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Content-Type = "text/html; charset=UTF-8"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# SPA
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
