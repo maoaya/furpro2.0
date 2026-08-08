@@ -18,17 +18,21 @@ if (!fs.existsSync(inventario)) {
 
 const data = JSON.parse(fs.readFileSync(inventario, 'utf8'));
 const expected = new Set();
-for (const c of data.chunks || []) {
-  const s = c.expected_source;
-  if (!s) continue;
+const addName = (s) => {
+  if (!s) return;
   expected.add(s);
-  // also allow .js/.ts for service-like names
   if (s.endsWith('.jsx')) {
     expected.add(s.replace(/\.jsx$/, '.js'));
     expected.add(s.replace(/\.jsx$/, '.tsx'));
     expected.add(s.replace(/\.jsx$/, '.ts'));
   }
-}
+};
+for (const c of data.chunks || []) addName(c.expected_source);
+for (const s of data.expected_ui_jsx_complete || []) addName(s);
+for (const s of data.must_have_fuente || []) addName(s);
+for (const m of (data.inlined_in_index_bundle || {}).modules || []) addName(m.source);
+
+const mustHave = (data.must_have_fuente || []).filter((n) => n.endsWith('.jsx') || n.endsWith('.js'));
 
 if (!fs.existsSync(path.join(fuente, 'README.md')) && !fs.existsSync(fuente)) {
   console.error('src-zona-pro/ vacío. Importa primero el ZIP del Desktop.');
@@ -91,6 +95,30 @@ fs.writeFileSync(
   JSON.stringify(report, null, 2)
 );
 console.log('\n→ auditoria/COMPARE_FUENTE_VS_DEPLOY.json');
+const mustMissing = mustHave.filter((name) => {
+  const base = name.replace(/\.(jsx|js|tsx|ts)$/, '');
+  return !(
+    found.has(name) ||
+    found.has(base + '.jsx') ||
+    found.has(base + '.js') ||
+    found.has(base + '.tsx') ||
+    found.has(base + '.ts')
+  );
+});
+console.log('\n=== MUST-HAVE auth/card/App (crítico) ===');
+for (const name of mustHave) {
+  const ok = !mustMissing.includes(name) && !mustMissing.includes(name.replace(/\.js$/, '.jsx'));
+  const presentOk = ['App.jsx','PerfilCard.jsx','AuthCallback.jsx','loginpagesnew.jsx','FormularioRegistroCompleto.jsx','PerfilPro.jsx','EditarPerfil.jsx','HomePage.jsx'].includes(name)
+    ? !mustMissing.some((m) => m.replace(/\.(jsx|js)$/, '') === name.replace(/\.(jsx|js)$/, ''))
+    : true;
+  const base = name.replace(/\.(jsx|js|tsx|ts)$/, '');
+  const hit = found.has(name) || found.has(base + '.jsx') || found.has(base + '.js') || found.has(base + '.tsx') || found.has(base + '.ts');
+  console.log(hit ? '  ✓' : '  ✗ CRÍTICO', name);
+}
+if (mustMissing.length) {
+  console.log('\n⚠️ Faltan módulos críticos (PerfilCard/App/Auth). El flujo login→perfilcard quedará roto.');
+}
+
 console.log(
   missing.length
     ? '\nAún falta fuente completo o nombres distintos en el PC.'

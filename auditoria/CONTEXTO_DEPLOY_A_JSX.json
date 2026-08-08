@@ -963,5 +963,156 @@
     "vendor-C0jAFBLR.js",
     "worldTopLeagues-CdiL4QUm.js",
     "zonaProTorneoPublishService-Dc9cOp9L.js"
+  ],
+  "inlined_in_index_bundle": {
+    "bundle": "assets/index-zp-nomenu-Hb7k2m.js",
+    "note": "No son chunks separados; OBLIGATORIOS al trabajar App/auth/card",
+    "modules": [
+      {
+        "source": "App.jsx",
+        "role": "router SPA",
+        "required": true
+      },
+      {
+        "source": "PerfilCard.jsx",
+        "role": "post-login/post-registro /perfilcard",
+        "required": true,
+        "routes": [
+          "/perfilcard",
+          "/perfil-card"
+        ]
+      },
+      {
+        "source": "PerfilPro.jsx",
+        "role": "perfil",
+        "required": true,
+        "routes": [
+          "/perfilpro",
+          "/perfil-pro",
+          "/perfil"
+        ]
+      },
+      {
+        "source": "AuthCallback.jsx",
+        "role": "OAuth callback → /perfilcard",
+        "required": true,
+        "routes": [
+          "/auth/callback",
+          "/callback"
+        ]
+      },
+      {
+        "source": "HomePage.jsx",
+        "role": "home/homepages",
+        "required": true,
+        "routes": [
+          "/",
+          "/home",
+          "/homepages"
+        ]
+      },
+      {
+        "source": "EditarPerfil.jsx",
+        "role": "editar perfil",
+        "required": true,
+        "routes": [
+          "/editar-perfil",
+          "/completar-perfil"
+        ]
+      },
+      {
+        "source": "AuthProvider / AppStateProvider",
+        "role": "sesión y guards",
+        "required": true
+      }
+    ]
+  },
+  "auth_flow_mandatory": {
+    "rule": "Login y registro SIEMPRE pasan por PerfilCard (/perfilcard). No omitir.",
+    "login": [
+      "/login (loginpagesnew)",
+      "/auth/callback (AuthCallback)",
+      "/perfilcard (PerfilCard)"
+    ],
+    "register": [
+      "/registro (FormularioRegistroCompleto)",
+      "auth",
+      "/auth/callback",
+      "/perfilcard"
+    ],
+    "signals_in_bundle": [
+      "Entrando a PerfilCard…",
+      "login-entry-fast",
+      "register-form-applied",
+      "perfilcard_mounted",
+      "futpro:perfilcard:cache:v1",
+      "route default \"/perfilcard\""
+    ]
+  },
+  "must_have_fuente": [
+    "App.jsx",
+    "PerfilCard.jsx",
+    "AuthCallback.jsx",
+    "loginpagesnew.jsx",
+    "FormularioRegistroCompleto.jsx",
+    "PerfilPro.jsx",
+    "EditarPerfil.jsx",
+    "HomePage.jsx",
+    "package.json"
+  ],
+  "completeness": {
+    "omit_nothing": true,
+    "include_index_bundle_modules": true,
+    "include_all_lazy_chunks": true,
+    "include_root_static_assets": true,
+    "include_backend_repo_paths": [
+      "server.js",
+      "start.js",
+      "src/main/expressApp.js",
+      "src/routes/",
+      "src/controllers/",
+      "src/services/",
+      "functions/",
+      "supabase/",
+      "scripts/serve-producto.mjs"
+    ]
+  },
+  "expected_ui_jsx_complete": [
+    "AceptarTorneo.jsx",
+    "App.jsx",
+    "AuthCallback.jsx",
+    "BuscarJugadoresPage.jsx",
+    "BuscarUsuariosPage.jsx",
+    "CardEquipo.jsx",
+    "CardFIFA.jsx",
+    "ChatEquipoPage.jsx",
+    "ChatTorneo.jsx",
+    "ChatTorneoPage.jsx",
+    "CrearTorneo.jsx",
+    "EditarPerfil.jsx",
+    "EjerciciosPage.jsx",
+    "EquipoMenu.jsx",
+    "EquiposPage.jsx",
+    "FansEquipo.jsx",
+    "FormularioRegistroCompleto.jsx",
+    "HomePage.jsx",
+    "InvitacionesEquipo.jsx",
+    "LiveStreamPages.jsx",
+    "MisTorneos.jsx",
+    "NotFoundPage.jsx",
+    "PanelArbitro.jsx",
+    "PerfilCard.jsx",
+    "PerfilPro.jsx",
+    "PermisosEquipo.jsx",
+    "PlantillaEquipo.jsx",
+    "Privacidad.jsx",
+    "QADashboard.jsx",
+    "RegistroEntryRoute.jsx",
+    "SeguirTorneosPage.jsx",
+    "SoportePage.jsx",
+    "StoriesPage.jsx",
+    "VerEquipos.jsx",
+    "VideoFeed.jsx",
+    "loginpagesnew.jsx"
   ]
 }
