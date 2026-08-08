@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutPro 2.0 - Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000, #1a1a1a, #2d2d2d, #1c1c1c);
+            background-size: 400% 400%;
+            animation: luxuryGradient 10s ease infinite;
+            color: #ffd700;
+            overflow-x: hidden;
+        }
+
+        @keyframes luxuryGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Header con navegación */
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-nav .logo {
+            font-size: 2rem;
+        }
+
+        .logo-nav .title {
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-item {
+            color: #ffd700;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #000;
+        }
+
+        /* Dashboard principal */
+        .dashboard {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ffd700, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Grid de funcionalidades */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
+            border-color: #ffd700;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #ffd700;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-btn {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #000;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .feature-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Panel de estadísticas del jugador */
+        .player-stats {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .stat-label {
+            color: rgba(255, 215, 0, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Modal para funcionalidades */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(26, 26, 26, 0.95));
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 25px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #ff4444;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header con navegación -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-nav">
+                <div class="logo">⚽</div>
+                <div class="title">FUTPRO 2.0</div>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item"><i class="fas fa-home"></i> Inicio</a>
+                <a href="#" class="nav-item"><i class="fas fa-users"></i> Equipos</a>
+                <a href="#" class="nav-item"><i class="fas fa-trophy"></i> Torneos</a>
+                <a href="#" class="nav-item"><i class="fas fa-video"></i> En Vivo</a>
+                <a href="#" class="nav-item"><i class="fas fa-comments"></i> Chat</a>
+            </nav>
+            
+            <div class="user-profile">
+                <div class="profile-avatar" onclick="openAvatarModal()">
+                    <img id="userAvatar" src="https://via.placeholder.com/40x40/FFD700/000000?text=LM" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                </div>
+                <span style="color: #ffd700;">Lionel M.</span>
+                <button onclick="logout()" style="background: none; border: 1px solid #ffd700; color: #ffd700; padding: 0.3rem 0.8rem; border-radius: 5px; margin-left: 1rem; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard principal -->
+    <main class="dashboard">
+        <!-- Sección de bienvenida -->
+        <section class="welcome-section">
+            <div style="position: relative;">
+                <!-- Gráfico de jugadores con copa -->
+                <div style="position: absolute; top: -50px; left: 50%; transform: translateX(-50%); font-size: 4rem; opacity: 0.3;">
+                    🏆🥇👥
+                </div>
+                <h1 class="welcome-title">¡Bienvenido a FutPro 2.0 Premium!</h1>
+                <p style="color: rgba(255, 215, 0, 0.8);">Tu plataforma profesional de fútbol está lista. Explora todas las funcionalidades premium disponibles.</p>
+                <div style="margin-top: 1rem; display: flex; justify-content: center; gap: 1rem; font-size: 2rem;">
+                    <span title="Jugadores celebrando">🎉</span>
+                    <span title="Copa de oro">🏆</span>
+                    <span title="Medalla de oro">🥇</span>
+                    <span title="Equipo campeón">👥</span>
+                    <span title="Estrella">⭐</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Estadísticas del jugador -->
+        <section class="player-stats">
+            <h2 style="margin-bottom: 1.5rem; text-align: center;">📊 Tus Estadísticas</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Partidos Jugados</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">23</div>
+                    <div class="stat-label">Goles</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">15</div>
+                    <div class="stat-label">Asistencias</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">8.7</div>
+                    <div class="stat-label">Rating</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Equipos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1,245</div>
+                    <div class="stat-label">Puntos XP</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Grid de funcionalidades -->
+        <section class="features-grid">
+            <div class="feature-card" onclick="openFeature('profile')">
+                <div class="feature-icon"><i class="fas fa-user-circle"></i></div>
+                <h3 class="feature-title">Mi Perfil</h3>
+                <p class="feature-desc">Gestiona tu información personal, estadísticas y preferencias</p>
+                <button class="feature-btn">Abrir Perfil</button>
+            </div>
+
+            <div class="feature-card" onclick="openFeature('teams')">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <h3 class="feature-title">Mis Equipos</h3>
+                <p class="feature-desc">Administra tus equipos, invita jugadores y organiza entrenamientos</p>
+                <button class="feature-btn">Gestionar Equipos</button>
+            </div>
+
+            <div class="feature-card" onclick="openFeature('tournaments')">
+                <div class="feature-icon"><i class="fas fa-trophy"></i></div>
+                <h3 class="feature-title">Torneos</h3>
+                <p class="feature-desc">Participa en competencias, crea torneos y compite por premios</p>
+                <button class="feature-btn">Ver Torneos</button>
+            </div>
+
+            <div class="feature-card" onclick="openFeature('matches')">
+                <div class="feature-icon"><i class="fas fa-futbol"></i></div>
+                <h3 class="feature-title">Partidos</h3>
+                <p class="feature-desc">Programa partidos, ve transmisiones en vivo y revisa resultados</p>
+                <button class="feature-btn">Ver Partidos</button>
+            </div>
+
+            <div class="feature-card" onclick="openFeature('chat')">
+                <div class="feature-icon"><i class="fas fa-comments"></i></div>
+                <h3 class="feature-title">Chat Global</h3>
+                <p class="feature-desc">Conecta con jugadores de todo el mundo en tiempo real</p>
+                <button class="feature-btn">Abrir Chat</button>
+            </div>
+
+            <div class="feature-card" onclick="openFeature('streaming')">
+                <div class="feature-icon"><i class="fas fa-video"></i></div>
+                <h3 class="feature-title">Transmisión</h3>
+                <p class="feature-desc">Transmite tus partidos en vivo y ve streams de otros jugadores</p>
+                <button class="feature-btn">Ir en Vivo</button>
+            </div>
+
+            <div class="feature-card" onclick="openFeature('achievements')">
+                <div class="feature-icon"><i class="fas fa-medal"></i></div>
+                <h3 class="feature-title">Logros</h3>
+                <p class="feature-desc">Desbloquea achievements, sube de nivel y gana recompensas</p>
+                <button class="feature-btn">Ver Logros</button>
+            </div>
+
+            <div class="feature-card" onclick="openFeature('analytics')">
+                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                <h3 class="feature-title">Analytics</h3>
+                <p class="feature-desc">Analiza tu rendimiento con estadísticas avanzadas</p>
+                <button class="feature-btn">Ver Analytics</button>
+            </div>
+
+            <div class="feature-card" onclick="openFeature('penalty')">
+                <div class="feature-icon"><i class="fas fa-gamepad"></i></div>
+                <h3 class="feature-title">Juego de Penales</h3>
+                <p class="feature-desc">Practica tus habilidades en nuestro juego interactivo</p>
+                <button class="feature-btn">Jugar Ahora</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal para funcionalidades -->
+    <div class="modal" id="featureModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeFeature()">&times;</button>
+            <div id="featureContent">
+                <!-- El contenido se cargará dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Avatar -->
+    <div class="modal" id="avatarModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeAvatarModal()">&times;</button>
+            <h2><i class="fas fa-user-circle"></i> Cambiar Foto de Perfil</h2>
+            <div style="margin: 2rem 0;">
+                <div style="width: 150px; height: 150px; border-radius: 50%; margin: 0 auto 2rem; overflow: hidden; border: 3px solid #ffd700;">
+                    <img id="avatarPreview" src="https://via.placeholder.com/150x150/FFD700/000000?text=LM" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <input type="file" id="avatarUpload" accept="image/*" style="display: none;" onchange="handleAvatarChange(event)">
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <button class="feature-btn" onclick="document.getElementById('avatarUpload').click()">
+                        <i class="fas fa-camera"></i> Subir Nueva Foto
+                    </button>
+                    <button class="feature-btn" onclick="removeAvatar()">
+                        <i class="fas fa-trash"></i> Quitar Foto
+                    </button>
+                </div>
+                <p style="margin-top: 1rem; color: rgba(255, 215, 0, 0.7); font-size: 0.9rem;">
+                    Formatos: JPG, PNG. Tamaño máximo: 5MB
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simular datos del usuario
+        const userData = {
+            name: "Lionel Messi",
+            position: "Delantero",
+            team: "Inter Miami",
+            rating: 8.7,
+            matches: 47,
+            goals: 23,
+            assists: 15,
+            avatar: "https://via.placeholder.com/40x40/FFD700/000000?text=LM"
+        };
+
+        // Función para abrir funcionalidades
+        function openFeature(feature) {
+            const modal = document.getElementById('featureModal');
+            const content = document.getElementById('featureContent');
+            
+            let featureContent = '';
+            
+            switch(feature) {
+                case 'profile':
+                    featureContent = `
+                        <h2><i class="fas fa-user-circle"></i> Mi Perfil</h2>
+                        <div style="text-align: left; margin-top: 2rem;">
+                            <p><strong>Nombre:</strong> ${userData.name}</p>
+                            <p><strong>Posición:</strong> ${userData.position}</p>
+                            <p><strong>Equipo Actual:</strong> ${userData.team}</p>
+                            <p><strong>Rating:</strong> ${userData.rating}/10</p>
+                            <p><strong>Estado:</strong> Activo</p>
+                        </div>
+                        <button class="feature-btn" style="margin-top: 2rem;">Editar Perfil</button>
+                    `;
+                    break;
+                case 'teams':
+                    featureContent = `
+                        <h2><i class="fas fa-users"></i> Gestión de Equipos</h2>
+                        <div style="margin-top: 2rem;">
+                            <h3>Mis Equipos:</h3>
+                            <div style="background: rgba(0,255,136,0.1); padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                                <strong>Inter Miami CF</strong><br>
+                                <small>Delantero • 23 partidos • 15 goles</small>
+                            </div>
+                            <div style="background: rgba(0,255,136,0.1); padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                                <strong>Argentina Nacional</strong><br>
+                                <small>Capitán • 18 partidos • 12 goles</small>
+                            </div>
+                        </div>
+                        <button class="feature-btn">Crear Nuevo Equipo</button>
+                    `;
+                    break;
+                case 'tournaments':
+                    featureContent = `
+                        <h2><i class="fas fa-trophy"></i> Torneos Disponibles</h2>
+                        <div style="margin-top: 2rem;">
+                            <div style="background: rgba(0,255,136,0.1); padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                                <strong>Copa FutPro 2025</strong><br>
+                                <small>Inicio: 15 Agosto • Premio: $50,000</small><br>
+                                <button class="feature-btn" style="margin-top: 0.5rem; padding: 0.5rem 1rem;">Inscribirse</button>
+                            </div>
+                            <div style="background: rgba(255,215,0,0.1); padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                                <strong>Liga de Verano</strong><br>
+                                <small>En curso • Tu equipo: 3° lugar</small><br>
+                                <button class="feature-btn" style="margin-top: 0.5rem; padding: 0.5rem 1rem;">Ver Tabla</button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'matches':
+                    featureContent = `
+                        <h2><i class="fas fa-futbol"></i> Próximos Partidos</h2>
+                        <div style="margin-top: 2rem;">
+                            <div style="background: rgba(0,255,136,0.1); padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                                <strong>Inter Miami vs LA Galaxy</strong><br>
+                                <small>Hoy 20:00 • Estadio DRV PNK</small><br>
+                                <button class="feature-btn" style="margin-top: 0.5rem; padding: 0.5rem 1rem;">Ver en Vivo</button>
+                            </div>
+                            <div style="background: rgba(255,165,0,0.1); padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                                <strong>Argentina vs Brasil</strong><br>
+                                <small>Mañana 19:00 • Maracaná</small><br>
+                                <button class="feature-btn" style="margin-top: 0.5rem; padding: 0.5rem 1rem;">Prepararse</button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'chat':
+                    featureContent = `
+                        <h2><i class="fas fa-comments"></i> Chat Global</h2>
+                        <div style="margin-top: 2rem; text-align: left;">
+                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 10px; height: 200px; overflow-y: auto;">
+                                <p><strong>Cristiano7:</strong> ¡Gran partido hoy! 🔥</p>
+                                <p><strong>Neymar10:</strong> ¿Alguien para un 1v1?</p>
+                                <p><strong>Mbappe29:</strong> Preparándome para la final 💪</p>
+                                <p><strong>Tú:</strong> ¡Hola a todos! 👋</p>
+                            </div>
+                            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                                <input type="text" placeholder="Escribe tu mensaje..." style="flex: 1; padding: 0.5rem; border-radius: 5px; border: none;">
+                                <button class="feature-btn" style="padding: 0.5rem 1rem;">Enviar</button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'penalty':
+                    featureContent = `
+                        <h2><i class="fas fa-gamepad"></i> Juego de Penales</h2>
+                        <div style="margin-top: 2rem;">
+                            <div style="background: rgba(0,255,136,0.1); padding: 2rem; border-radius: 15px;">
+                                <div style="font-size: 4rem; margin-bottom: 1rem;">🥅</div>
+                                <p>Elige la dirección de tu tiro:</p>
+                                <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+                                    <button class="feature-btn" onclick="shootPenalty('left')">⬅️ Izquierda</button>
+                                    <button class="feature-btn" onclick="shootPenalty('center')">⬆️ Centro</button>
+                                    <button class="feature-btn" onclick="shootPenalty('right')">➡️ Derecha</button>
+                                </div>
+                                <div id="penaltyResult" style="margin-top: 1rem; font-size: 1.2rem;"></div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                default:
+                    featureContent = `
+                        <h2><i class="fas fa-cog"></i> Función en Desarrollo</h2>
+                        <p>Esta funcionalidad estará disponible pronto.</p>
+                        <p>¡Mantente atento a las actualizaciones!</p>
+                    `;
+            }
+            
+            content.innerHTML = featureContent;
+            modal.classList.add('active');
+        }
+
+        // Cerrar modal
+        function closeFeature() {
+            const modal = document.getElementById('featureModal');
+            modal.classList.remove('active');
+        }
+
+        // Juego de penales
+        function shootPenalty(direction) {
+            const results = ['¡GOOOOOL! 🎉', '¡Atajada! 🧤', '¡Al palo! 😱'];
+            const random = Math.random();
+            let result;
+            
+            if (random < 0.7) {
+                result = results[0]; // 70% probabilidad de gol
+            } else if (random < 0.9) {
+                result = results[1]; // 20% probabilidad de atajada
+            } else {
+                result = results[2]; // 10% probabilidad de palo
+            }
+            
+            document.getElementById('penaltyResult').innerHTML = `
+                <strong>${result}</strong><br>
+                <small>Dirección elegida: ${direction}</small>
+            `;
+        }
+
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeFeature();
+                closeAvatarModal();
+            }
+        });
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('featureModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFeature();
+            }
+        });
+
+        document.getElementById('avatarModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAvatarModal();
+            }
+        });
+
+        // Funciones del avatar
+        function openAvatarModal() {
+            const modal = document.getElementById('avatarModal');
+            modal.classList.add('active');
+        }
+
+        function closeAvatarModal() {
+            const modal = document.getElementById('avatarModal');
+            modal.classList.remove('active');
+        }
+
+        function handleAvatarChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Validar tipo de archivo
+                if (!file.type.startsWith('image/')) {
+                    alert('Por favor selecciona una imagen válida (JPG, PNG)');
+                    return;
+                }
+                
+                // Validar tamaño (máximo 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('La imagen debe ser menor a 5MB');
+                    return;
+                }
+                
+                // Mostrar preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('avatarPreview');
+                    const userAvatar = document.getElementById('userAvatar');
+                    
+                    preview.src = e.target.result;
+                    userAvatar.src = e.target.result;
+                    
+                    // Guardar en localStorage
+                    localStorage.setItem('userAvatar', e.target.result);
+                };
+                reader.readAsDataURL(file);
+                
+                // Mostrar notificación
+                showNotification('¡Foto de perfil actualizada exitosamente! 📸');
+            }
+        }
+
+        function removeAvatar() {
+            const defaultAvatar = "https://via.placeholder.com/150x150/FFD700/000000?text=" + userData.name.split(' ').map(n => n[0]).join('');
+            
+            document.getElementById('avatarPreview').src = defaultAvatar;
+            document.getElementById('userAvatar').src = defaultAvatar.replace('150x150', '40x40');
+            
+            localStorage.removeItem('userAvatar');
+            showNotification('Foto de perfil eliminada 🗑️');
+        }
+
+        function logout() {
+            if (confirm('¿Estás seguro que quieres cerrar sesión?')) {
+                // Limpiar datos locales
+                localStorage.clear();
+                
+                showNotification('Cerrando sesión... 👋');
+                
+                setTimeout(() => {
+                    window.location.href = 'futpro-premium.html';
+                }, 2000);
+            }
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.background = 'linear-gradient(45deg, #ffd700, #ffed4e)';
+            notification.style.color = '#000';
+            notification.style.padding = '1rem 2rem';
+            notification.style.borderRadius = '10px';
+            notification.style.zIndex = '2000';
+            notification.style.animation = 'slideIn 0.3s ease';
+            notification.style.fontWeight = 'bold';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // Cargar avatar guardado al iniciar
+        window.addEventListener('load', function() {
+            const savedAvatar = localStorage.getItem('userAvatar');
+            if (savedAvatar) {
+                document.getElementById('userAvatar').src = savedAvatar;
+                document.getElementById('avatarPreview').src = savedAvatar;
+            }
+        });
+
+        // Simular notificaciones en tiempo real
+        function showRandomNotification() {
+            const notifications = [
+                "¡Nuevo mensaje de Cristiano Ronaldo!",
+                "Tu equipo tiene un partido en 1 hora",
+                "¡Has desbloqueado un nuevo logro!",
+                "Invitación a torneo recibida",
+                "¡Tu último gol fue trending!"
+            ];
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification show';
+            notification.textContent = notifications[Math.floor(Math.random() * notifications.length)];
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.background = 'linear-gradient(45deg, #00ff88, #00cc66)';
+            notification.style.color = 'white';
+            notification.style.padding = '1rem 2rem';
+            notification.style.borderRadius = '10px';
+            notification.style.zIndex = '2000';
+            notification.style.animation = 'slideIn 0.3s ease';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // Mostrar notificación cada 10 segundos
+        setInterval(showRandomNotification, 10000);
+
+        console.log('🚀 FutPro 2.0 Dashboard cargado correctamente');
+        console.log('👋 Bienvenido,', userData.name);
+    </script>
+</body>
+</html>

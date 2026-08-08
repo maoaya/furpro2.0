@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutPro 2.0 - Premium Edition</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000, #1a1a1a, #2d2d2d, #1c1c1c);
+            background-size: 400% 400%;
+            animation: luxuryGradient 10s ease infinite;
+            color: #ffd700;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        @keyframes luxuryGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Fondo con jugadores levantando copa */
+        .trophy-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23FFD700;stop-opacity:0.1"/><stop offset="100%" style="stop-color:%23FFA500;stop-opacity:0.05"/></linearGradient></defs><g fill="url(%23gold)"><circle cx="200" cy="600" r="3"/><circle cx="400" cy="650" r="2"/><circle cx="600" cy="580" r="4"/><circle cx="800" cy="620" r="3"/><circle cx="1000" cy="590" r="2"/><path d="M500 200 L520 180 L540 200 L530 220 L510 220 Z"/><path d="M700 150 L720 130 L740 150 L730 170 L710 170 Z"/></g></svg>');
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        /* Efecto de partículas doradas */
+        .golden-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Container principal */
+        .auth-container {
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.9) 0%, 
+                rgba(26, 26, 26, 0.95) 50%, 
+                rgba(0, 0, 0, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            border: 3px solid;
+            border-image: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700) 1;
+            border-radius: 30px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 90%;
+            margin: 2rem auto;
+            text-align: center;
+            box-shadow: 
+                0 25px 70px rgba(255, 215, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Logo y título */
+        .logo-section {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .trophy-icon {
+            font-size: 5rem;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffc107);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: trophyGlow 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+        }
+
+        @keyframes trophyGlow {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            background: linear-gradient(45deg, #ffd700, #ffffff, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .subtitle {
+            color: rgba(255, 215, 0, 0.8);
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        /* Vista principal con botones organizados */
+        .main-view {
+            display: block;
+        }
+
+        .main-view.hidden {
+            display: none;
+        }
+
+        .auth-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.1) 0%, 
+                rgba(255, 215, 0, 0.05) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .auth-card:hover::before {
+            left: 100%;
+        }
+
+        .auth-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #ffd700;
+            box-shadow: 
+                0 15px 40px rgba(255, 215, 0, 0.4),
+                0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: rgba(255, 215, 0, 0.7);
+            line-height: 1.4;
+        }
+
+        /* Sección de OAuth mejorada */
+        .oauth-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .oauth-title {
+            color: rgba(255, 215, 0, 0.8);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .oauth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .oauth-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            color: #ffd700;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.05) 0%, 
+                rgba(255, 215, 0, 0.1) 100%);
+        }
+
+        .google-btn:hover {
+            background: #db4437;
+            border-color: #db4437;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .facebook-btn:hover {
+            background: #4267B2;
+            border-color: #4267B2;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Formularios */
+        .form-container {
+            display: none;
+            text-align: left;
+            animation: slideInForm 0.5s ease;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        @keyframes slideInForm {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.2));
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            color: #ffd700;
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.3));
+            transform: translateX(-5px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ffd700;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.05) 0%, 
+                rgba(0, 0, 0, 0.8) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            color: #ffd700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.1) 0%, 
+                rgba(0, 0, 0, 0.9) 100%);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 215, 0, 0.5);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            border: none;
+            color: #000;
+            padding: 1.2rem;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(45deg, #ffed4e, #ffd700, #ffed4e);
+        }
+
+        /* Avatar upload section */
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.05) 0%, 
+                rgba(255, 215, 0, 0.1) 100%);
+            border: 2px dashed rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+        }
+
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #ffd700;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.2));
+            overflow: hidden;
+            position: relative;
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-upload {
+            display: none;
+        }
+
+        .avatar-btn {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.2));
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            color: #ffd700;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.3));
+        }
+
+        /* Mensajes */
+        .message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .message.error {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1));
+            border: 2px solid #dc3545;
+            color: #ff6b6b;
+        }
+
+        .message.success {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
+            border: 2px solid #28a745;
+            color: #51cf66;
+        }
+
+        .message.info {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+            border: 2px solid #ffd700;
+            color: #ffd700;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .golden-spinner {
+            border: 4px solid rgba(255, 215, 0, 0.3);
+            border-top: 4px solid #ffd700;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .auth-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .oauth-buttons {
+                flex-direction: column;
+            }
+            
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .auth-container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+        }
+
+        /* Efectos especiales */
+        .champion-effect {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #000;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo con efecto de jugadores -->
+    <div class="trophy-background"></div>
+    <canvas class="golden-particles" id="particles"></canvas>
+
+    <div class="auth-container">
+        <!-- Vista Principal -->
+        <div id="main-view" class="main-view">
+            <div class="logo-section">
+                <div class="trophy-icon">🏆</div>
+                <h1 class="title">FUTPRO 2.0</h1>
+                <p class="subtitle">Plataforma Premium de Fútbol Profesional</p>
+                <div class="champion-effect">PREMIUM</div>
+            </div>
+            
+            <div class="auth-grid">
+                <div class="auth-card" onclick="showForm('register')">
+                    <i class="fas fa-user-plus card-icon"></i>
+                    <div class="card-title">Crear Cuenta</div>
+                    <div class="card-desc">Únete a la elite del fútbol mundial</div>
+                </div>
+                
+                <div class="auth-card" onclick="showForm('login')">
+                    <i class="fas fa-sign-in-alt card-icon"></i>
+                    <div class="card-title">Iniciar Sesión</div>
+                    <div class="card-desc">Accede a tu perfil profesional</div>
+                </div>
+                
+                <div class="auth-card" onclick="showForm('change-password')">
+                    <i class="fas fa-shield-alt card-icon"></i>
+                    <div class="card-title">Cambiar Contraseña</div>
+                    <div class="card-desc">Actualiza tu seguridad</div>
+                </div>
+                
+                <div class="auth-card" onclick="showForm('forgot-password')">
+                    <i class="fas fa-life-ring card-icon"></i>
+                    <div class="card-title">Recuperar Acceso</div>
+                    <div class="card-desc">Restaura tu cuenta</div>
+                </div>
+            </div>
+
+            <div class="oauth-section">
+                <div class="oauth-title">Acceso Rápido con Redes Sociales</div>
+                <div class="oauth-buttons">
+                    <button class="oauth-btn google-btn" onclick="handleOAuthLogin('google')">
+                        <i class="fab fa-google"></i> Google
+                    </button>
+                    <button class="oauth-btn facebook-btn" onclick="handleOAuthLogin('facebook')">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de Registro -->
+        <div id="register-form" class="form-container">
+            <button class="back-btn" onclick="showMain()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            
+            <div class="form-header">
+                <h2><i class="fas fa-trophy"></i> Crear Cuenta Premium</h2>
+            </div>
+            
+            <div id="register-message"></div>
+            
+            <!-- Sección de Avatar -->
+            <div class="avatar-section">
+                <div class="avatar-preview" id="avatarPreview">
+                    <i class="fas fa-user"></i>
+                </div>
+                <input type="file" id="avatarUpload" class="avatar-upload" accept="image/*" onchange="handleAvatarUpload(event)">
+                <button type="button" class="avatar-btn" onclick="document.getElementById('avatarUpload').click()">
+                    <i class="fas fa-camera"></i> Subir Foto de Perfil
+                </button>
+            </div>
+            
+            <form onsubmit="register(event)">
+                <div class="form-group">
+                    <label class="form-label">Nombre Completo</label>
+                    <input type="text" id="reg-fullname" class="form-input" placeholder="Ej: Lionel Messi" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="reg-email" class="form-input" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" id="reg-password" class="form-input" placeholder="Mínimo 6 caracteres" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmar Contraseña</label>
+                    <input type="password" id="reg-confirm-password" class="form-input" placeholder="Repite tu contraseña" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-crown"></i> Crear Cuenta Premium
+                </button>
+            </form>
+        </div>
+
+        <!-- Formulario de Login -->
+        <div id="login-form" class="form-container">
+            <button class="back-btn" onclick="showMain()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            
+            <div class="form-header">
+                <h2><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h2>
+            </div>
+            
+            <div id="login-message"></div>
+            
+            <form onsubmit="login(event)">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="login-email" class="form-input" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" id="login-password" class="form-input" placeholder="Tu contraseña" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-sign-in-alt"></i> Acceder a FutPro
+                </button>
+            </form>
+        </div>
+
+        <!-- Formulario de Cambio de Contraseña -->
+        <div id="change-password-form" class="form-container">
+            <button class="back-btn" onclick="showMain()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            
+            <div class="form-header">
+                <h2><i class="fas fa-shield-alt"></i> Cambiar Contraseña</h2>
+            </div>
+            
+            <div id="change-password-message"></div>
+            
+            <form onsubmit="changePassword(event)">
+                <div class="form-group">
+                    <label class="form-label">Contraseña Actual</label>
+                    <input type="password" id="current-password" class="form-input" placeholder="Tu contraseña actual" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nueva Contraseña</label>
+                    <input type="password" id="new-password" class="form-input" placeholder="Mínimo 6 caracteres" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmar Nueva Contraseña</label>
+                    <input type="password" id="confirm-new-password" class="form-input" placeholder="Repite la nueva contraseña" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-save"></i> Actualizar Contraseña
+                </button>
+            </form>
+        </div>
+
+        <!-- Formulario de Recuperación -->
+        <div id="forgot-password-form" class="form-container">
+            <button class="back-btn" onclick="showMain()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            
+            <div class="form-header">
+                <h2><i class="fas fa-life-ring"></i> Recuperar Acceso</h2>
+            </div>
+            
+            <div id="forgot-password-message"></div>
+            
+            <form onsubmit="resetPassword(event)">
+                <div class="form-group">
+                    <label class="form-label">Email de tu Cuenta</label>
+                    <input type="email" id="reset-email" class="form-input" placeholder="tu@email.com" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Enviar Recuperación
+                </button>
+            </form>
+            <p style="margin-top: 1rem; color: rgba(255, 215, 0, 0.7); font-size: 0.9rem; text-align: center;">
+                Te enviaremos un email con las instrucciones para restablecer tu contraseña.
+            </p>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading">
+            <div class="golden-spinner"></div>
+            <p style="color: #ffd700;">Procesando tu solicitud...</p>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Supabase
+        const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU4NDkwMDEsImV4cCI6MjA1MTQyNTAwMX0.YpU5CqvKs2o8bVvOCjv1WK5H8H_fOMgKT7uZTSxGIEI';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Variables globales
+        let currentAvatarFile = null;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏆 FutPro 2.0 Premium iniciado');
+            createGoldenParticles();
+            
+            // Verificar sesión existente
+            checkSession();
+        });
+
+        // Verificar sesión
+        async function checkSession() {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    console.log('✅ Sesión activa:', session.user.email);
+                    redirectToDashboard();
+                }
+            } catch (error) {
+                console.log('ℹ️ No hay sesión activa');
+            }
+        }
+
+        // Crear partículas doradas
+        function createGoldenParticles() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particles = [];
+            
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 4 + 1,
+                    speedX: Math.random() * 2 - 1,
+                    speedY: Math.random() * 2 - 1,
+                    opacity: Math.random() * 0.8 + 0.2,
+                    color: `rgba(255, ${215 + Math.random() * 40}, 0, ${Math.random() * 0.5 + 0.2})`
+                });
+            }
+            
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(particle => {
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    ctx.fillStyle = particle.color;
+                    ctx.fill();
+                    
+                    particle.x += particle.speedX;
+                    particle.y += particle.speedY;
+                    
+                    if (particle.x > canvas.width) particle.x = 0;
+                    if (particle.x < 0) particle.x = canvas.width;
+                    if (particle.y > canvas.height) particle.y = 0;
+                    if (particle.y < 0) particle.y = canvas.height;
+                });
+                
+                requestAnimationFrame(animateParticles);
+            }
+            
+            animateParticles();
+        }
+
+        // Navegación
+        function showForm(formName) {
+            document.getElementById('main-view').classList.add('hidden');
+            document.querySelectorAll('.form-container').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById(formName + '-form').classList.add('active');
+            clearMessage(formName);
+        }
+
+        function showMain() {
+            document.getElementById('main-view').classList.remove('hidden');
+            document.querySelectorAll('.form-container').forEach(form => {
+                form.classList.remove('active');
+            });
+            hideLoading();
+        }
+
+        // Utilidades
+        function showMessage(text, type, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="message ${type}">${text}</div>`;
+        }
+
+        function clearMessage(formName) {
+            const container = document.getElementById(formName + '-message');
+            if (container) container.innerHTML = '';
+        }
+
+        function showLoading() {
+            document.getElementById('main-view').classList.add('hidden');
+            document.querySelectorAll('.form-container').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById('loading').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('active');
+        }
+
+        function redirectToDashboard() {
+            showMessage('✅ ¡Redirigiendo al dashboard premium...', 'success', 'register-message');
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 2000);
+        }
+
+        // Manejo de avatar
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Validar tipo de archivo
+                if (!file.type.startsWith('image/')) {
+                    alert('Por favor selecciona una imagen válida');
+                    return;
+                }
+                
+                // Validar tamaño (máximo 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('La imagen debe ser menor a 5MB');
+                    return;
+                }
+                
+                currentAvatarFile = file;
+                
+                // Mostrar preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('avatarPreview');
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Avatar Preview">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // OAuth mejorado
+        async function handleOAuthLogin(provider) {
+            showLoading();
+            
+            try {
+                // Usar redirect en lugar de popup para evitar problemas de permisos
+                const redirectUrl = window.location.origin + '/auth/callback.html';
+                
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: provider,
+                    options: {
+                        redirectTo: redirectUrl,
+                        queryParams: {
+                            access_type: 'offline',
+                            prompt: 'consent',
+                        }
+                    }
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                // La redirección ocurre automáticamente
+                
+            } catch (error) {
+                hideLoading();
+                showMain();
+                console.error(`Error con ${provider} OAuth:`, error);
+                
+                // Mostrar método alternativo
+                showMessage(`⚠️ Problema con ${provider}. Usa el formulario de registro manual.`, 'error', 'main-view');
+            }
+        }
+
+        // FUNCIONES DE AUTENTICACIÓN
+
+        async function register(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+            const fullName = document.getElementById('reg-fullname').value;
+            
+            // Validaciones
+            if (!email || !password || !confirmPassword || !fullName) {
+                showMessage('⚠️ Todos los campos son obligatorios', 'error', 'register-message');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('⚠️ Las contraseñas no coinciden', 'error', 'register-message');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('⚠️ La contraseña debe tener al menos 6 caracteres', 'error', 'register-message');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: fullName,
+                            avatar_url: currentAvatarFile ? await uploadAvatar() : null
+                        }
+                    }
+                });
+                
+                hideLoading();
+                showForm('register');
+                
+                if (error) {
+                    throw error;
+                }
+                
+                if (data.user && !data.session) {
+                    showMessage('📧 ¡Cuenta creada! Te hemos enviado un email de confirmación.', 'success', 'register-message');
+                } else if (data.session) {
+                    showMessage('✅ ¡Cuenta premium creada exitosamente!', 'success', 'register-message');
+                    setTimeout(redirectToDashboard, 2000);
+                }
+                
+            } catch (error) {
+                hideLoading();
+                showForm('register');
+                console.error('Error en registro:', error);
+                showMessage(`❌ Error: ${error.message}`, 'error', 'register-message');
+            }
+        }
+
+        async function login(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                showMessage('⚠️ Email y contraseña son obligatorios', 'error', 'login-message');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                hideLoading();
+                
+                if (error) {
+                    showForm('login');
+                    throw error;
+                }
+                
+                showMessage('✅ ¡Bienvenido de vuelta, campeón!', 'success', 'login-message');
+                setTimeout(redirectToDashboard, 2000);
+                
+            } catch (error) {
+                showForm('login');
+                console.error('Error en login:', error);
+                showMessage(`❌ Error: ${error.message}`, 'error', 'login-message');
+            }
+        }
+
+        async function changePassword(event) {
+            event.preventDefault();
+            
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmNewPassword = document.getElementById('confirm-new-password').value;
+            
+            if (!currentPassword || !newPassword || !confirmNewPassword) {
+                showMessage('⚠️ Todos los campos son obligatorios', 'error', 'change-password-message');
+                return;
+            }
+            
+            if (newPassword !== confirmNewPassword) {
+                showMessage('⚠️ Las nuevas contraseñas no coinciden', 'error', 'change-password-message');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showMessage('⚠️ La nueva contraseña debe tener al menos 6 caracteres', 'error', 'change-password-message');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const { error } = await supabase.auth.updateUser({
+                    password: newPassword
+                });
+                
+                hideLoading();
+                showForm('change-password');
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showMessage('✅ ¡Contraseña actualizada exitosamente!', 'success', 'change-password-message');
+                
+                // Limpiar campos
+                document.getElementById('current-password').value = '';
+                document.getElementById('new-password').value = '';
+                document.getElementById('confirm-new-password').value = '';
+                
+            } catch (error) {
+                hideLoading();
+                showForm('change-password');
+                console.error('Error al cambiar contraseña:', error);
+                showMessage(`❌ Error: ${error.message}`, 'error', 'change-password-message');
+            }
+        }
+
+        async function resetPassword(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('reset-email').value;
+            
+            if (!email) {
+                showMessage('⚠️ El email es obligatorio', 'error', 'forgot-password-message');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/futpro-premium.html'
+                });
+                
+                hideLoading();
+                showForm('forgot-password');
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showMessage('📧 ¡Email de recuperación enviado! Revisa tu bandeja de entrada.', 'success', 'forgot-password-message');
+                
+            } catch (error) {
+                hideLoading();
+                showForm('forgot-password');
+                console.error('Error al recuperar contraseña:', error);
+                showMessage(`❌ Error: ${error.message}`, 'error', 'forgot-password-message');
+            }
+        }
+
+        // Upload de avatar
+        async function uploadAvatar() {
+            if (!currentAvatarFile) return null;
+            
+            try {
+                const fileName = `avatar_${Date.now()}.${currentAvatarFile.name.split('.').pop()}`;
+                
+                const { data, error } = await supabase.storage
+                    .from('avatars')
+                    .upload(fileName, currentAvatarFile);
+                
+                if (error) throw error;
+                
+                const { data: { publicUrl } } = supabase.storage
+                    .from('avatars')
+                    .getPublicUrl(fileName);
+                
+                return publicUrl;
+                
+            } catch (error) {
+                console.error('Error uploading avatar:', error);
+                return null;
+            }
+        }
+
+        // Resize canvas
+        window.addEventListener('resize', function() {
+            const canvas = document.getElementById('particles');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        console.log('🏆 FutPro 2.0 Premium Edition cargado completamente');
+    </script>
+</body>
+</html>

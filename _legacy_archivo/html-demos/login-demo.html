@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro Login Demo (11/oct 6pm)</title>
+  <style>
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #222 0%, #333 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+    .login-box {
+      background: #1a1a1a;
+      border: 2px solid #FFD700;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+    }
+    .login-box h1 {
+      color: #FFD700;
+      margin: 0;
+      font-size: 24px;
+    }
+    .login-box p {
+      color: #ccc;
+      margin: 5px 0 0 0;
+      font-size: 14px;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border: 1px solid #555;
+      border-radius: 8px;
+      background: #2a2a2a;
+      color: #fff;
+      font-size: 16px;
+    }
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: #FFD700;
+      color: #222;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .login-box button.alt {
+      background: transparent;
+      color: #FFD700;
+      border: 1px solid #FFD700;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .login-box .social-btn {
+      background: #4285f4;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .login-box .fb-btn {
+      background: #1877f2;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    .login-box .registro-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .login-box .crear-btn {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: #fff;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+    .login-box .crear-backup {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: #fff;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <div style="font-size:48px;margin-bottom:10px;">⚽</div>
+    <h1>FutPro</h1>
+    <p>Plataforma de Fútbol</p>
+    <button class="social-btn">🌐 Continuar con Google</button>
+    <button class="fb-btn">📘 Continuar con Facebook</button>
+    <div style="display:flex;align-items:center;margin:20px 0;color:#666;">
+      <hr style="flex:1;border:none;border-top:1px solid #333;" />
+      <span style="padding:0 15px;font-size:14px;">o</span>
+      <hr style="flex:1;border:none;border-top:1px solid #333;" />
+    </div>
+    <form>
+      <input type="email" placeholder="Email" required />
+      <input type="password" placeholder="Contraseña" required />
+      <button type="submit">Ingresar</button>
+      <button type="button" class="alt">¿No tienes cuenta? Registrarse</button>
+      <button type="button" class="registro-btn" onclick="window.location.href='/registro-nuevo'">🚀 Registro Completo (Recomendado)</button>
+      <button type="button" class="crear-btn" onclick="window.location.href='/registro-nuevo'">👤 Crear Usuario</button>
+      <button type="button" class="crear-backup" onclick="window.location.href='/registro-nuevo'">🚨 CREAR USUARIO (Si el de arriba no funciona)</button>
+    </form>
+  </div>
+</body>
+</html>

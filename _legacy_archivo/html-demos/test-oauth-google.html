@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test OAuth Google - FutPro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 700px;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 24px;
+            font-size: 32px;
+            text-align: center;
+        }
+        .log {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .log-entry {
+            padding: 6px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .log-entry:last-child { border-bottom: none; }
+        .log-entry.error { color: #dc3545; font-weight: bold; }
+        .log-entry.success { color: #28a745; font-weight: bold; }
+        .log-entry.info { color: #17a2b8; }
+        button {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 12px 0;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .url-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+        .url-box strong { display: block; margin-bottom: 8px; }
+        .url-box code {
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: block;
+            margin-top: 4px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Test OAuth Google</h1>
+        
+        <div class="url-box">
+            <strong>📍 Configuración Actual:</strong>
+            <code id="currentOrigin"></code>
+            <code id="callbackUrl"></code>
+        </div>
+        
+        <div id="log" class="log"></div>
+        
+        <button onclick="testDirectURL()">🔗 Test 1: URL Directa de Google</button>
+        <button onclick="testSupabaseAuth()">🔐 Test 2: Supabase signInWithOAuth</button>
+        <button onclick="clearLog()">🗑️ Limpiar Log</button>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://qqrxetxcglwrejtblwut.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnhldHhjZ2x3cmVqdGJsd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDU0NzQsImV4cCI6MjA2OTgyMTQ3NH0.F6GSIfkPgpgrcXkJU8b2PHhv-T5Lh36WSS2xdiuH-C8';
+        
+        const log = [];
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            log.push({ timestamp, message, type });
+            updateLogDisplay();
+        }
+        
+        function updateLogDisplay() {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML = log.map(entry => 
+                `<div class="log-entry ${entry.type}">[${entry.timestamp}] ${entry.message}</div>`
+            ).join('');
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function clearLog() {
+            log.length = 0;
+            updateLogDisplay();
+        }
+        
+        // Mostrar configuración actual
+        const origin = window.location.origin;
+        const callbackUrl = `${origin}/auth/callback`;
+        document.getElementById('currentOrigin').textContent = `Origin: ${origin}`;
+        document.getElementById('callbackUrl').textContent = `Callback: ${callbackUrl}`;
+        
+        // Test 1: URL directa de Google OAuth
+        function testDirectURL() {
+            addLog('🔗 Test 1: Construyendo URL directa de Google OAuth...', 'info');
+            
+            const clientId = '760210878835-bnl2k6qfb4vuhm9v6fqpj1dqh5kul6d8.apps.googleusercontent.com';
+            const redirectUri = `${SUPABASE_URL}/auth/v1/callback`;
+            const state = btoa(JSON.stringify({ redirect_to: callbackUrl }));
+            
+            const url = `https://accounts.google.com/o/oauth2/v2/auth?` +
+                `client_id=${clientId}&` +
+                `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+                `response_type=code&` +
+                `scope=openid%20email%20profile&` +
+                `state=${state}`;
+            
+            addLog(`✅ URL construida:`, 'success');
+            addLog(`  Client ID: ${clientId}`, 'info');
+            addLog(`  Redirect URI: ${redirectUri}`, 'info');
+            addLog(`  Final callback: ${callbackUrl}`, 'info');
+            addLog(`🚀 Redirigiendo en 3 segundos...`, 'info');
+            
+            setTimeout(() => {
+                addLog(`➡️ Redirigiendo ahora a Google...`, 'success');
+                window.location.href = url;
+            }, 3000);
+        }
+        
+        // Test 2: Usar Supabase Auth directamente
+        async function testSupabaseAuth() {
+            addLog('🔐 Test 2: Usando Supabase signInWithOAuth...', 'info');
+            
+            try {
+                // Construir URL de autorización manualmente
+                const authUrl = `${SUPABASE_URL}/auth/v1/authorize?` +
+                    `provider=google&` +
+                    `redirect_to=${encodeURIComponent(callbackUrl)}`;
+                
+                addLog(`✅ URL de autorización construida:`, 'success');
+                addLog(`  ${authUrl}`, 'info');
+                addLog(`🚀 Redirigiendo en 2 segundos...`, 'info');
+                
+                setTimeout(() => {
+                    addLog(`➡️ Redirigiendo ahora...`, 'success');
+                    window.location.href = authUrl;
+                }, 2000);
+                
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                console.error('Error completo:', error);
+            }
+        }
+        
+        // Log inicial
+        addLog('✅ Test OAuth inicializado', 'success');
+        addLog(`📍 Origen actual: ${origin}`, 'info');
+        addLog(`🔗 Callback configurado: ${callbackUrl}`, 'info');
+        addLog('', 'info');
+        addLog('👉 Selecciona un test para comenzar', 'info');
+    </script>
+</body>
+</html>

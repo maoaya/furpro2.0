@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FutPro</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            background: #FFD700;
+            color: #222;
+            font-family: Arial;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 { font-size: 48px; margin-bottom: 30px; }
+        .btn {
+            background: #222;
+            color: #FFD700;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>⚽ FutPro</h1>
+    <h2>¡Sitio Activo!</h2>
+    <p>Deploy exitoso - Timestamp: <span id="time"></span></p>
+    <button class="btn" onclick="alert('Login funcionando!')">Probar Login</button>
+    <script>
+        document.getElementById('time').textContent = new Date().toLocaleString();
+    </script>
+</body>
+</html>

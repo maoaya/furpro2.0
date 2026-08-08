@@ -1,0 +1,266 @@
+functionsDirectory = "C:\\Users\\lenovo\\Desktop\\futpro2.0\\netlify\\functions"
+functionsDirectoryOrigin = "config"
+headersOrigin = "config"
+redirectsOrigin = "config"
+plugins = []
+
+[build]
+publish = "C:\\Users\\lenovo\\Desktop\\futpro2.0\\dist"
+publishOrigin = "config"
+command = "npm run build"
+commandOrigin = "ui"
+functions = "C:\\Users\\lenovo\\Desktop\\futpro2.0\\netlify\\functions"
+
+  [build.environment]
+  NODE_VERSION = "20"
+  NPM_VERSION = "9"
+  VITE_SUPABASE_URL = "https://qqrxetxcglwrejtblwut.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "sb_publishable_ogM0DfDZHePZ3FiOmlxpUg_WPURRcKm"
+  VITE_SUPABASE_AVATARS_BUCKET = "avatars"
+  VITE_FORCE_SUPABASE_RELINK = "false"
+  VITE_MEDIA_SERVER_URL = "https://media.futpro.vip"
+  VITE_LIVE_USE_SIGNALING_WS = "false"
+  VITE_LIVE_DISABLE_P2P_VIEWERS = "true"
+
+  [build.processing]
+
+    [build.processing.css]
+
+    [build.processing.html]
+
+    [build.processing.images]
+
+    [build.processing.js]
+
+  [build.services]
+
+[functions]
+
+  [functions.zona-pro-ai]
+  timeout = 26
+
+  [functions."*"]
+
+[[headers]]
+for = "/assets/*"
+
+  [headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "*.css"
+
+  [headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "*.js"
+
+  [headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/"
+
+  [headers.values]
+  Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+for = "/index.html"
+
+  [headers.values]
+  Cache-Control = "no-cache, no-store, must-revalidate"
+  Content-Type = "text/html; charset=UTF-8"
+
+[[headers]]
+for = "/*.html"
+
+  [headers.values]
+  Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+for = "/*"
+
+  [headers.values]
+  X-Content-Type-Options = "nosniff"
+  X-Frame-Options = "DENY"
+  X-XSS-Protection = "1; mode=block"
+  Referrer-Policy = "strict-origin-when-cross-origin"
+  Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+  Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+
+[[headers]]
+for = "/api/*"
+
+  [headers.values]
+  Access-Control-Allow-Origin = "*"
+  Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+  Access-Control-Allow-Headers = "Content-Type, Authorization"
+
+[[redirects]]
+from = "/api/video/transcode/*"
+to = "/.netlify/functions/video-transcode/:splat"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/video/transcode"
+to = "/.netlify/functions/video-transcode"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/webhooks/*"
+to = "/.netlify/functions/webhooks/:splat"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/team-shield"
+to = "/.netlify/functions/team-shield"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/events/*"
+to = "/.netlify/functions/events-qr/:splat"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/events"
+to = "/.netlify/functions/events-qr"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/gestion-torneo"
+to = "/.netlify/functions/gestion-torneo"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/configurar-jugadores-torneo"
+to = "/.netlify/functions/configurar-jugadores-torneo"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/responder-invitacion-torneo"
+to = "/.netlify/functions/responder-invitacion-torneo"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/invitar-equipo-torneo"
+to = "/.netlify/functions/invitar-equipo-torneo"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/crear-encuentro-vs"
+to = "/.netlify/functions/crear-encuentro-vs"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/zona-pro"
+to = "/.netlify/functions/zona-pro-ai"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/api/zona-pro/*"
+to = "/.netlify/functions/zona-pro-ai/:splat"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+force = false
+
+  [redirects.query]
+
+  [redirects.conditions]
+
+  [redirects.headers]

@@ -1,12 +1,15 @@
 # =============================================================================
 # ZONA PRO — ÚNICA versión de producción
-# publish = producto-deploy (build del dominio / PC). NUNCA rebuild de src/ enero.
-# Ver PRODUCTO_CANONICO.md
+# publish = producto-deploy (contenido del ZIP deploy-6a7256d5ffd58e44433d5158)
+# NUNCA publish=dist ni command=npm run build del src/ enero.
+# El netlify.toml DENTRO del ZIP del PC es Windows (rutas absolutas) — NO usarlo aquí.
+# Ver: auditoria/AUDITORIA_CONTEXTO_PRODUCTO_ZONA_PRO.md
 # =============================================================================
 [build]
   publish = "producto-deploy"
   command = "node scripts/ensure-producto-deploy.mjs"
   ignore = "false"
+  functions = "functions"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -29,8 +32,75 @@
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
 
-# SPA
+# API → functions (paridad con deploy del PC; sin rutas Windows)
+[[redirects]]
+  from = "/api/video/transcode/*"
+  to = "/.netlify/functions/video-transcode/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/video/transcode"
+  to = "/.netlify/functions/video-transcode"
+  status = 200
+
+[[redirects]]
+  from = "/api/webhooks/*"
+  to = "/.netlify/functions/webhooks/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/team-shield"
+  to = "/.netlify/functions/team-shield"
+  status = 200
+
+[[redirects]]
+  from = "/api/events/*"
+  to = "/.netlify/functions/events-qr/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/events"
+  to = "/.netlify/functions/events-qr"
+  status = 200
+
+[[redirects]]
+  from = "/api/gestion-torneo"
+  to = "/.netlify/functions/gestion-torneo"
+  status = 200
+
+[[redirects]]
+  from = "/api/configurar-jugadores-torneo"
+  to = "/.netlify/functions/configurar-jugadores-torneo"
+  status = 200
+
+[[redirects]]
+  from = "/api/responder-invitacion-torneo"
+  to = "/.netlify/functions/responder-invitacion-torneo"
+  status = 200
+
+[[redirects]]
+  from = "/api/invitar-equipo-torneo"
+  to = "/.netlify/functions/invitar-equipo-torneo"
+  status = 200
+
+[[redirects]]
+  from = "/api/crear-encuentro-vs"
+  to = "/.netlify/functions/crear-encuentro-vs"
+  status = 200
+
+[[redirects]]
+  from = "/api/zona-pro"
+  to = "/.netlify/functions/zona-pro-ai"
+  status = 200
+
+[[redirects]]
+  from = "/api/zona-pro/*"
+  to = "/.netlify/functions/zona-pro-ai/:splat"
+  status = 200
+
+# SPA fallback (debe ir al final)
 [[redirects]]
   from = "/*"
   to = "/index.html"
