@@ -14,9 +14,40 @@ No tienes que ejecutar comandos raros. El ZIP de deploy **no sirve para editar**
 
 6. Yo ejecuto el import a `src-zona-pro/` y ya podemos editar funciones.
 
-## Opción B — Si no puedes zippear
+## Opción B — Si este chat NO deja adjuntar (usa esta)
 
-Arrastra al chat **varios archivos clave** no basta para todo el sistema. Mejor el zip de toda la carpeta.
+No abras otro chat. Sube el fuente por GitHub desde el PC y avísame aquí con el enlace.
+
+### B1 — Rama en este repo (recomendado si sabes usar Git / GitHub Desktop)
+
+En el PC, dentro de `C:\Users\lenovo\Desktop\futpro2.0`:
+
+1. Crea una carpeta zip **o** copia el contenido fuente (con `src` + `package.json`) a un sitio temporal.
+2. Sube ese zip a GitHub Releases **o** push a una rama, por ejemplo:
+
+```bat
+cd C:\Users\lenovo\Desktop\futpro2.0
+git init
+git remote add origin https://github.com/maoaya/furpro2.0.git
+git checkout -b fuente-pc-zona-pro
+git add src package.json vite.config.js vite.config.ts index.html public netlify 2>nul
+git commit -m "fuente Desktop futpro2.0 para editar"
+git push -u origin fuente-pc-zona-pro
+```
+
+(Si esa carpeta ya es un git distinto, también vale: súbelo y pega aquí la URL del repo/rama.)
+
+3. En **este mismo chat** escribe solo:  
+   `fuente subido en rama fuente-pc-zona-pro`  
+   Yo lo traigo a `src-zona-pro/`.
+
+### B2 — Enlace de descarga
+
+Sube el ZIP a Google Drive / OneDrive / Dropbox (enlace público o que yo pueda abrir) y pega el link aquí.
+
+### B3 — Cursor Desktop local
+
+Abre Cursor en la carpeta `C:\Users\lenovo\Desktop\futpro2.0` (File → Open Folder) y trabaja ahí. Ese agente sí ve los `.jsx` del PC.
 
 ## Qué NO subir
 
