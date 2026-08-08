@@ -21,8 +21,8 @@
 /perfil-card          /index.html   200
 
 # === RUTAS PRINCIPALES DE LA APLICACIÓN ===
-/home                 /homepage-instagram.html   200
-/home/*               /homepage-instagram.html   200
+/home                 /index.html   200
+/home/*               /index.html   200
 /inicio               /index.html   200
 /inicio/*             /index.html   200
 
