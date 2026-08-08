@@ -9,9 +9,9 @@
   "content_mismatches": [],
   "extra_in_prod_non_lock": [],
   "critical_sha256": {
-    "index.html": "86f35324af55bdb5142263524aaa47312e10eaa57303123f25df9d2b9e9f355d",
-    "assets/index-DchpCYR3.js": "c97ebd22c2ba24706d71f4b9fe5e5b3ff66d65c8ed38f492ae25061511012da1",
-    "assets/loginpagesnew-BPP0r_st.js": "532cbe1a8d0b34f760a6e465b4d6553c0cf79702aa9e98019dd78b148a470cbe",
+    "index.html": "0a1cad71024d3d9b8c7cab428167966807bbc8e62d56091485397224784dae32",
+    "assets/index-DchpCYR3.js": "508808af5e8c5e2076f3c9c17ca77f385223df89332717091e3133a940e0aef2",
+    "assets/loginpagesnew-BPP0r_st.js": "4f8edd111f98c04c8953b94ee165dfb8c4e95eaafac6c15249f48b67254bcf93",
     "assets/index-DoGwQ0mo.css": "72200c27e811051fd7851e4473dd3987d6655659870b47c993fad8955f66069e"
   },
   "zip_inventory": [
@@ -753,6 +753,10 @@
       "date": "2026-08-08",
       "file": "assets/index-DchpCYR3.js",
       "change": "Realtime: channel names únicos + IO harden; singleFlight timeout 20s soft-fail (home-page)"
+    },
+    {
+      "date": "2026-08-08",
+      "change": "FeedbackContext default + login safe showFeedback (evita crash login)"
     }
   ]
 }

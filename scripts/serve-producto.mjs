@@ -64,7 +64,7 @@ function serveFile(res, filePath) {
     ext === '.html'
       ? 'no-cache, no-store, must-revalidate'
       : ext === '.js' || ext === '.css'
-        ? 'public, max-age=31536000, immutable'
+        ? 'no-cache, must-revalidate'
         : 'public, max-age=3600';
   res.writeHead(200, { 'Content-Type': type, 'Cache-Control': cache });
   fs.createReadStream(filePath).pipe(res);
