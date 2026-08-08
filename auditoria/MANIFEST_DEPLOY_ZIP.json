@@ -1,0 +1,746 @@
+{
+  "canonical_zip": "deploy-6a7256d5ffd58e44433d5158.zip",
+  "upload_name": "deploy-6a7256d5ffd58e44433d5158_b744.zip",
+  "deploy_meta": "2026-08-04T21:16:30Z",
+  "product": "Zona Pro",
+  "zip_file_count": 61,
+  "publishable_matched": 59,
+  "missing_in_prod": [],
+  "content_mismatches": [],
+  "extra_in_prod_non_lock": [],
+  "critical_sha256": {
+    "index.html": "1151fe8f29f7ade97471370b5a218a719b4fab71245869c1fc5de76aedc137e3",
+    "assets/index-DchpCYR3.js": "c5f6a2a97061bb5127f0aec1719ffea443103c97e820f7f0f1edfcae221cfe8d",
+    "assets/loginpagesnew-BPP0r_st.js": "532cbe1a8d0b34f760a6e465b4d6553c0cf79702aa9e98019dd78b148a470cbe",
+    "assets/index-DoGwQ0mo.css": "72200c27e811051fd7851e4473dd3987d6655659870b47c993fad8955f66069e"
+  },
+  "zip_inventory": [
+    {
+      "path": "__tmp_measure_home.js",
+      "bytes": 2392,
+      "sha256": "f3e92dff1e20ce2d01d3bde45192ecb77d4b7b66f91d67162754b59140f5c62d",
+      "exclude_from_publish": true
+    },
+    {
+      "path": "assets/aceptartorneo-bxyprupu.js",
+      "bytes": 11786,
+      "sha256": "2ce6822bf54cfa9c1c08764835342ed7983fbde69b029e20b87683a5656adf77",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/buscarjugadorespage-ba1xa4pn.js",
+      "bytes": 13486,
+      "sha256": "9a3be1a11b43d8a0bf2e06ae60cc042b66b692659316806c524fcb3693bb8974",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/buscarusuariospage-cxplzjs9.js",
+      "bytes": 43097,
+      "sha256": "f30232e49ce160b1016a3e9626b2d7d6314bd53293204fae1bfc574e0ce0aee0",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/cardequipo-c2lerrc4.js",
+      "bytes": 6895,
+      "sha256": "1339403b9de3afbcdeaec38c06e202d19859ce4f3f4afd0fcab9e7b9c8ff29ec",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/cardfifa-jtvbnz_5.js",
+      "bytes": 4149,
+      "sha256": "cb5f11cf1c3a8bca3893132537ca2818251e36539e7296e3b7686b55a54489ba",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/chatequipopage-cfkmchnx.js",
+      "bytes": 7873,
+      "sha256": "618c10c1d4240e9f1c109f00ef00692a9b6a04384eab34b7c7bf2a0b3e968450",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/chattorneo-bb__aj4h.js",
+      "bytes": 39398,
+      "sha256": "11dac17d001e3308c28dfac33533e76ee7d3f741614267d79a58a093e24611bc",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/chattorneopage-xtskpqn4.js",
+      "bytes": 3665,
+      "sha256": "040c1e4da8624e61f474b12deb73ed6be92b07ca65e769aab40f4c4de56102c6",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/creartorneo-demyjbvc.js",
+      "bytes": 24060,
+      "sha256": "2b6577ff99d5c0a4bd56642cdc52dfb65ee1a98d9f4e3d877c57bcc1f2937349",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/creartorneo-dqgvw16o.css",
+      "bytes": 264,
+      "sha256": "2c5b6c89f277a17b7d6d6e2caee86e54bbd5a76efcc47fe0de0d8e42f54bb4e6",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/ejerciciospage-ojur2twm.js",
+      "bytes": 2719,
+      "sha256": "35e8fddbf51c35b5fc87b272d4e21c78e2af3e6de1f21c6bce55c2d2e00b9e60",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/equipomenu-3er0hkt5.js",
+      "bytes": 7109,
+      "sha256": "2a4d3c7037a951a8c63aaeba9315ac3bbd04b06bfd674dd3ac582f08e6832990",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/equipospage-dctrufcl.js",
+      "bytes": 12175,
+      "sha256": "f1f1a77bd8f7dcaec4032cb687a63326f03a4ce5ca2ae6e17abfa21450de3ded",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/fansequipo-cqrewqvl.js",
+      "bytes": 3781,
+      "sha256": "3b8e307b62baaec8e75807d7e78d4f109d02d1808e44092229a894a3a6527a16",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/formularioregistrocompleto-ddkqovo-.js",
+      "bytes": 39525,
+      "sha256": "b3ba46ade91aeec959545cbbe2c99e5314edeb75e9176fd4d769c58a23a6a5ea",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/formularioregistrocompleto-doqtzrac.css",
+      "bytes": 2514,
+      "sha256": "b5a8644c57c643d9598be13dc9263c7e47d469546bdedb679974c0952915d6ad",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/framepipeline.worker-clc9_q77.js",
+      "bytes": 5831,
+      "sha256": "69eff8821a7c0b8bb39c03798a17a85ed3a089a73e398505cb087211830087c4",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/futpro-fifa-card-frame.png",
+      "bytes": 179170,
+      "sha256": "fc1b26ce13d39f8ae7a050e8be215e9d98c242a9ca561ce1c828ab728550c72f",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/homesearchusersrpc-tzkrv4nh.js",
+      "bytes": 3892,
+      "sha256": "a9ef024198ea60f8ba0ccf768134ab76d1575d6955b8cec6cd3f238cf3d8e69f",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/index-dchpcyr3.js",
+      "bytes": 4376002,
+      "sha256": "c5f6a2a97061bb5127f0aec1719ffea443103c97e820f7f0f1edfcae221cfe8d",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/index-dogwq0mo.css",
+      "bytes": 124173,
+      "sha256": "72200c27e811051fd7851e4473dd3987d6655659870b47c993fad8955f66069e",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/invitacionesequipo-b93k5esn.js",
+      "bytes": 11583,
+      "sha256": "843d7afdbd7966dbd02a54a9a484fce81a14b022ce892136317a26f429aa6fd8",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/livestreampages-cmpvrrul.js",
+      "bytes": 12504,
+      "sha256": "496d19639ebb17981165690e8aa0472f4b991768b5dc43519ff7a34f8354e3cc",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/loginpagesnew-bpp0r_st.js",
+      "bytes": 9720,
+      "sha256": "532cbe1a8d0b34f760a6e465b4d6553c0cf79702aa9e98019dd78b148a470cbe",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/mistorneos-c8cdb6gs.js",
+      "bytes": 16328,
+      "sha256": "2d17c8c416e60e3c244053b26f3b731429a651c192653eb8ee11005eca1f879a",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/notfoundpage-dv9nnc7s.js",
+      "bytes": 1866,
+      "sha256": "5140d97f77143e9d8ba20bba659d1d149ffacaeeb22338ab3143599606d515d8",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/notification-fallback-zona-pro.png",
+      "bytes": 90301,
+      "sha256": "b1349559a412f5f164f68e7039b1115167502e6c00b4bb84cdbb211b82f64395",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/panelarbitro-dfmvagw1.js",
+      "bytes": 14237,
+      "sha256": "46f0ff714360b328c0aafe5ee1fcb8246bcf90d304b764d4793383c9345621f7",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/perfilpro-fifa-template.png",
+      "bytes": 190223,
+      "sha256": "fe48962c6124f47243ec7879e35362c74d24d95af6ab36f138693e4b99bf3258",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/permisosequipo-cifqvo7h.js",
+      "bytes": 15251,
+      "sha256": "862f376db8671329980279e2c24ab44e95abfc69f07c32577d82fc7432f14c24",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/plantillaequipo-slbwgjby.js",
+      "bytes": 23491,
+      "sha256": "defdece5675f95b85ee89c001e6c9e505affaa482ac1265e27ffeabfe0f974fc",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/privacidad-dzu-tl35.js",
+      "bytes": 3538,
+      "sha256": "373785a59bed7d8214af2e68275d809643917bb77c1bc97388ee393beb3a64a0",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/qadashboard-bkvksd_a.js",
+      "bytes": 7450,
+      "sha256": "e0aa64bfcaf72b1da778180395ae99029e6cc5938e126f9eadfd0666928b44ef",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/registroentryroute-cffuwrad.js",
+      "bytes": 729,
+      "sha256": "dde44c63c4f3bd18bd8b88c6fc59af1c2e537ae4ea5640669e68732204f32ef0",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/seguirtorneospage-cgh_lydi.js",
+      "bytes": 78752,
+      "sha256": "5a21cc6bd0e1b1da853b9d773ebd124b4899d1d9ef00c449166c70c780916e95",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/seguirtorneostabcache-d0ocvdgm.js",
+      "bytes": 2929,
+      "sha256": "b3e67bbd2c19c4684655571233c4d18e9bf77b685d46e1e20f7b98ebe5dedb56",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/soportepage-cxbv8t2b.js",
+      "bytes": 3795,
+      "sha256": "695b9975e4274824529faf67676f9c9a143e7ad946c0e340c6fae2b4de3343c3",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/sprites/keeper-dive-left.svg",
+      "bytes": 674,
+      "sha256": "c9b0359a38dbbb9e33cf388b5063157d2cc4f0d8fb78418881cc4dea3095477e",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/sprites/keeper-dive-right.svg",
+      "bytes": 688,
+      "sha256": "cc0fd9c19ff1fda95093ac23f8aa1830cd8e80ac4a04060cef47ae8e8e385d22",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/sprites/keeper-dive-up.svg",
+      "bytes": 653,
+      "sha256": "07055c42ee63ed1126b329441b7d80955111c7c4c6b17c48c04302810ab2d654",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/sprites/keeper-idle.svg",
+      "bytes": 806,
+      "sha256": "1271e5c58ff58458c128c35e7a88ad1aee24017d745166fca2e38a84e373996a",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/sprites/kicker-idle.svg",
+      "bytes": 609,
+      "sha256": "3931e8550a7fdbd35f589c97805dfc1c4d517bb609cbdc39e6b10398cb4a9183",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/sprites/kicker-runup.svg",
+      "bytes": 678,
+      "sha256": "a8bce2a89717aad441eff1aa6b052d6090a67d76ae11d8415b0b6c7d9aecba67",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/sprites/readme.txt",
+      "bytes": 564,
+      "sha256": "a768f3097d266154c9c8d78438c401012fad1c92b96767e475a0ffc1fabc4f32",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/storiespage-h_ulay3n.js",
+      "bytes": 31631,
+      "sha256": "c02a12dd3d5130a54a1a775a48e6a85ddc8a684ca687162e92cee1d7b332f775",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/supabase-x1tipi0n.js",
+      "bytes": 190809,
+      "sha256": "227aed6d9fb7cc49e87e95aabcb64bb001b295d87c46c147c4723c477f26f1bf",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/usercontentloadfunctions-bnpmkj8t.js",
+      "bytes": 17838,
+      "sha256": "e6e0ba2bf6ee21fc715e57e436cb64e185eeaae14fbf19c7b6c44ece2a8b5d96",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/vendor-c0jafblr.js",
+      "bytes": 1010624,
+      "sha256": "f245679cedb22e1e2110321b5af16bf695fe18c6d7296f43f8c2aeea063e453d",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/verequipos-cce5zeuy.js",
+      "bytes": 429,
+      "sha256": "f526ebacd68ddfdad78a08327ec840508ae555c0a3caba5d5440f01dc2706c0c",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/videofeed-acktyngf.js",
+      "bytes": 10427,
+      "sha256": "eee4340555be447c794df409b3c2458a3848e43a9ee8384a6d885c65338d942b",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/videoprefetch.worker-dm62tp9j.js",
+      "bytes": 807,
+      "sha256": "238ec95d4f12d0cdc4643f0df4c8bc1dfe34b5e73669f9f5a4c3437211ee8ca0",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/worldtopleagues-cdil4qum.js",
+      "bytes": 3702,
+      "sha256": "69e2b45444a22339e9127d228a5681b9a7058f4e945e5c682513b2a2c7822aca",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "assets/zonaprotorneopublishservice-dc9cop9l.js",
+      "bytes": 4546,
+      "sha256": "84aba6fc4934dfaee97d9a59d2e231bea8d82d6b74c929753b4d317521ea8a5d",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "crear-torneo-premium.jpg",
+      "bytes": 311102,
+      "sha256": "ff3ed1bf4da15374d30ac8c4f45d3cf45764031f92c62cffcef880861f04095e",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "crear-torneo-premium.svg",
+      "bytes": 9872,
+      "sha256": "4d73b16d3b411464448b48062d3077ce53cd676733df6605c41270dbf69a2f67",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "favicon.ico",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "favicon.svg",
+      "bytes": 9522,
+      "sha256": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "icons.svg",
+      "bytes": 5031,
+      "sha256": "b45fa506195cfcdef406ba9f0c77b36ddc1a7c224040926ec70abc2fdea7b93a",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "index.html",
+      "bytes": 4406,
+      "sha256": "1151fe8f29f7ade97471370b5a218a719b4fab71245869c1fc5de76aedc137e3",
+      "exclude_from_publish": false
+    },
+    {
+      "path": "netlify.toml",
+      "bytes": 4824,
+      "sha256": "63b2d697eb26f21268ee0d3c906d3aa185e833891b5aa4413a352173513d65b0",
+      "exclude_from_publish": true
+    }
+  ],
+  "prod_case_map": [
+    {
+      "zip": "assets/aceptartorneo-bxyprupu.js",
+      "prod": "assets/AceptarTorneo-BxYPrUpU.js",
+      "sha256": "2ce6822bf54cfa9c1c08764835342ed7983fbde69b029e20b87683a5656adf77",
+      "bytes": 11786
+    },
+    {
+      "zip": "assets/buscarjugadorespage-ba1xa4pn.js",
+      "prod": "assets/BuscarJugadoresPage-Ba1XA4PN.js",
+      "sha256": "9a3be1a11b43d8a0bf2e06ae60cc042b66b692659316806c524fcb3693bb8974",
+      "bytes": 13486
+    },
+    {
+      "zip": "assets/buscarusuariospage-cxplzjs9.js",
+      "prod": "assets/BuscarUsuariosPage-CXPLZjs9.js",
+      "sha256": "f30232e49ce160b1016a3e9626b2d7d6314bd53293204fae1bfc574e0ce0aee0",
+      "bytes": 43097
+    },
+    {
+      "zip": "assets/cardequipo-c2lerrc4.js",
+      "prod": "assets/CardEquipo-C2LerRC4.js",
+      "sha256": "1339403b9de3afbcdeaec38c06e202d19859ce4f3f4afd0fcab9e7b9c8ff29ec",
+      "bytes": 6895
+    },
+    {
+      "zip": "assets/cardfifa-jtvbnz_5.js",
+      "prod": "assets/CardFIFA-JTvbNZ_5.js",
+      "sha256": "cb5f11cf1c3a8bca3893132537ca2818251e36539e7296e3b7686b55a54489ba",
+      "bytes": 4149
+    },
+    {
+      "zip": "assets/chatequipopage-cfkmchnx.js",
+      "prod": "assets/ChatEquipoPage-CFKmchnx.js",
+      "sha256": "618c10c1d4240e9f1c109f00ef00692a9b6a04384eab34b7c7bf2a0b3e968450",
+      "bytes": 7873
+    },
+    {
+      "zip": "assets/chattorneo-bb__aj4h.js",
+      "prod": "assets/ChatTorneo-BB__Aj4H.js",
+      "sha256": "11dac17d001e3308c28dfac33533e76ee7d3f741614267d79a58a093e24611bc",
+      "bytes": 39398
+    },
+    {
+      "zip": "assets/chattorneopage-xtskpqn4.js",
+      "prod": "assets/ChatTorneoPage-xTsKPQN4.js",
+      "sha256": "040c1e4da8624e61f474b12deb73ed6be92b07ca65e769aab40f4c4de56102c6",
+      "bytes": 3665
+    },
+    {
+      "zip": "assets/creartorneo-demyjbvc.js",
+      "prod": "assets/CrearTorneo-DemyjbvC.js",
+      "sha256": "2b6577ff99d5c0a4bd56642cdc52dfb65ee1a98d9f4e3d877c57bcc1f2937349",
+      "bytes": 24060
+    },
+    {
+      "zip": "assets/creartorneo-dqgvw16o.css",
+      "prod": "assets/CrearTorneo-DQgvw16o.css",
+      "sha256": "2c5b6c89f277a17b7d6d6e2caee86e54bbd5a76efcc47fe0de0d8e42f54bb4e6",
+      "bytes": 264
+    },
+    {
+      "zip": "assets/ejerciciospage-ojur2twm.js",
+      "prod": "assets/EjerciciosPage-oJUR2TWm.js",
+      "sha256": "35e8fddbf51c35b5fc87b272d4e21c78e2af3e6de1f21c6bce55c2d2e00b9e60",
+      "bytes": 2719
+    },
+    {
+      "zip": "assets/equipomenu-3er0hkt5.js",
+      "prod": "assets/EquipoMenu-3er0hKt5.js",
+      "sha256": "2a4d3c7037a951a8c63aaeba9315ac3bbd04b06bfd674dd3ac582f08e6832990",
+      "bytes": 7109
+    },
+    {
+      "zip": "assets/equipospage-dctrufcl.js",
+      "prod": "assets/EquiposPage-DCtRuFCl.js",
+      "sha256": "f1f1a77bd8f7dcaec4032cb687a63326f03a4ce5ca2ae6e17abfa21450de3ded",
+      "bytes": 12175
+    },
+    {
+      "zip": "assets/fansequipo-cqrewqvl.js",
+      "prod": "assets/FansEquipo-CQreWqVL.js",
+      "sha256": "3b8e307b62baaec8e75807d7e78d4f109d02d1808e44092229a894a3a6527a16",
+      "bytes": 3781
+    },
+    {
+      "zip": "assets/formularioregistrocompleto-ddkqovo-.js",
+      "prod": "assets/FormularioRegistroCompleto-DdkqOvO-.js",
+      "sha256": "b3ba46ade91aeec959545cbbe2c99e5314edeb75e9176fd4d769c58a23a6a5ea",
+      "bytes": 39525
+    },
+    {
+      "zip": "assets/formularioregistrocompleto-doqtzrac.css",
+      "prod": "assets/FormularioRegistroCompleto-DOQtZrac.css",
+      "sha256": "b5a8644c57c643d9598be13dc9263c7e47d469546bdedb679974c0952915d6ad",
+      "bytes": 2514
+    },
+    {
+      "zip": "assets/framepipeline.worker-clc9_q77.js",
+      "prod": "assets/framePipeline.worker-CLc9_q77.js",
+      "sha256": "69eff8821a7c0b8bb39c03798a17a85ed3a089a73e398505cb087211830087c4",
+      "bytes": 5831
+    },
+    {
+      "zip": "assets/futpro-fifa-card-frame.png",
+      "prod": "assets/futpro-fifa-card-frame.png",
+      "sha256": "fc1b26ce13d39f8ae7a050e8be215e9d98c242a9ca561ce1c828ab728550c72f",
+      "bytes": 179170
+    },
+    {
+      "zip": "assets/homesearchusersrpc-tzkrv4nh.js",
+      "prod": "assets/homeSearchUsersRpc-TzKRV4NH.js",
+      "sha256": "a9ef024198ea60f8ba0ccf768134ab76d1575d6955b8cec6cd3f238cf3d8e69f",
+      "bytes": 3892
+    },
+    {
+      "zip": "assets/index-dchpcyr3.js",
+      "prod": "assets/index-DchpCYR3.js",
+      "sha256": "c5f6a2a97061bb5127f0aec1719ffea443103c97e820f7f0f1edfcae221cfe8d",
+      "bytes": 4376002
+    },
+    {
+      "zip": "assets/index-dogwq0mo.css",
+      "prod": "assets/index-DoGwQ0mo.css",
+      "sha256": "72200c27e811051fd7851e4473dd3987d6655659870b47c993fad8955f66069e",
+      "bytes": 124173
+    },
+    {
+      "zip": "assets/invitacionesequipo-b93k5esn.js",
+      "prod": "assets/InvitacionesEquipo-B93K5ESN.js",
+      "sha256": "843d7afdbd7966dbd02a54a9a484fce81a14b022ce892136317a26f429aa6fd8",
+      "bytes": 11583
+    },
+    {
+      "zip": "assets/livestreampages-cmpvrrul.js",
+      "prod": "assets/LiveStreamPages-CMpvrrul.js",
+      "sha256": "496d19639ebb17981165690e8aa0472f4b991768b5dc43519ff7a34f8354e3cc",
+      "bytes": 12504
+    },
+    {
+      "zip": "assets/loginpagesnew-bpp0r_st.js",
+      "prod": "assets/loginpagesnew-BPP0r_st.js",
+      "sha256": "532cbe1a8d0b34f760a6e465b4d6553c0cf79702aa9e98019dd78b148a470cbe",
+      "bytes": 9720
+    },
+    {
+      "zip": "assets/mistorneos-c8cdb6gs.js",
+      "prod": "assets/MisTorneos-C8CdB6gS.js",
+      "sha256": "2d17c8c416e60e3c244053b26f3b731429a651c192653eb8ee11005eca1f879a",
+      "bytes": 16328
+    },
+    {
+      "zip": "assets/notfoundpage-dv9nnc7s.js",
+      "prod": "assets/NotFoundPage-DV9Nnc7S.js",
+      "sha256": "5140d97f77143e9d8ba20bba659d1d149ffacaeeb22338ab3143599606d515d8",
+      "bytes": 1866
+    },
+    {
+      "zip": "assets/notification-fallback-zona-pro.png",
+      "prod": "assets/notification-fallback-zona-pro.png",
+      "sha256": "b1349559a412f5f164f68e7039b1115167502e6c00b4bb84cdbb211b82f64395",
+      "bytes": 90301
+    },
+    {
+      "zip": "assets/panelarbitro-dfmvagw1.js",
+      "prod": "assets/PanelArbitro-DFMVAGW1.js",
+      "sha256": "46f0ff714360b328c0aafe5ee1fcb8246bcf90d304b764d4793383c9345621f7",
+      "bytes": 14237
+    },
+    {
+      "zip": "assets/perfilpro-fifa-template.png",
+      "prod": "assets/perfilpro-fifa-template.png",
+      "sha256": "fe48962c6124f47243ec7879e35362c74d24d95af6ab36f138693e4b99bf3258",
+      "bytes": 190223
+    },
+    {
+      "zip": "assets/permisosequipo-cifqvo7h.js",
+      "prod": "assets/PermisosEquipo-CifQVO7h.js",
+      "sha256": "862f376db8671329980279e2c24ab44e95abfc69f07c32577d82fc7432f14c24",
+      "bytes": 15251
+    },
+    {
+      "zip": "assets/plantillaequipo-slbwgjby.js",
+      "prod": "assets/PlantillaEquipo-SlBwgJbY.js",
+      "sha256": "defdece5675f95b85ee89c001e6c9e505affaa482ac1265e27ffeabfe0f974fc",
+      "bytes": 23491
+    },
+    {
+      "zip": "assets/privacidad-dzu-tl35.js",
+      "prod": "assets/Privacidad-DZu-TL35.js",
+      "sha256": "373785a59bed7d8214af2e68275d809643917bb77c1bc97388ee393beb3a64a0",
+      "bytes": 3538
+    },
+    {
+      "zip": "assets/qadashboard-bkvksd_a.js",
+      "prod": "assets/QADashboard-BkVKSD_a.js",
+      "sha256": "e0aa64bfcaf72b1da778180395ae99029e6cc5938e126f9eadfd0666928b44ef",
+      "bytes": 7450
+    },
+    {
+      "zip": "assets/registroentryroute-cffuwrad.js",
+      "prod": "assets/RegistroEntryRoute-CfFUwRAD.js",
+      "sha256": "dde44c63c4f3bd18bd8b88c6fc59af1c2e537ae4ea5640669e68732204f32ef0",
+      "bytes": 729
+    },
+    {
+      "zip": "assets/seguirtorneospage-cgh_lydi.js",
+      "prod": "assets/SeguirTorneosPage-CgH_lYdI.js",
+      "sha256": "5a21cc6bd0e1b1da853b9d773ebd124b4899d1d9ef00c449166c70c780916e95",
+      "bytes": 78752
+    },
+    {
+      "zip": "assets/seguirtorneostabcache-d0ocvdgm.js",
+      "prod": "assets/seguirTorneosTabCache-D0oCVdgm.js",
+      "sha256": "b3e67bbd2c19c4684655571233c4d18e9bf77b685d46e1e20f7b98ebe5dedb56",
+      "bytes": 2929
+    },
+    {
+      "zip": "assets/soportepage-cxbv8t2b.js",
+      "prod": "assets/SoportePage-Cxbv8t2b.js",
+      "sha256": "695b9975e4274824529faf67676f9c9a143e7ad946c0e340c6fae2b4de3343c3",
+      "bytes": 3795
+    },
+    {
+      "zip": "assets/sprites/keeper-dive-left.svg",
+      "prod": "assets/sprites/keeper-dive-left.svg",
+      "sha256": "c9b0359a38dbbb9e33cf388b5063157d2cc4f0d8fb78418881cc4dea3095477e",
+      "bytes": 674
+    },
+    {
+      "zip": "assets/sprites/keeper-dive-right.svg",
+      "prod": "assets/sprites/keeper-dive-right.svg",
+      "sha256": "cc0fd9c19ff1fda95093ac23f8aa1830cd8e80ac4a04060cef47ae8e8e385d22",
+      "bytes": 688
+    },
+    {
+      "zip": "assets/sprites/keeper-dive-up.svg",
+      "prod": "assets/sprites/keeper-dive-up.svg",
+      "sha256": "07055c42ee63ed1126b329441b7d80955111c7c4c6b17c48c04302810ab2d654",
+      "bytes": 653
+    },
+    {
+      "zip": "assets/sprites/keeper-idle.svg",
+      "prod": "assets/sprites/keeper-idle.svg",
+      "sha256": "1271e5c58ff58458c128c35e7a88ad1aee24017d745166fca2e38a84e373996a",
+      "bytes": 806
+    },
+    {
+      "zip": "assets/sprites/kicker-idle.svg",
+      "prod": "assets/sprites/kicker-idle.svg",
+      "sha256": "3931e8550a7fdbd35f589c97805dfc1c4d517bb609cbdc39e6b10398cb4a9183",
+      "bytes": 609
+    },
+    {
+      "zip": "assets/sprites/kicker-runup.svg",
+      "prod": "assets/sprites/kicker-runup.svg",
+      "sha256": "a8bce2a89717aad441eff1aa6b052d6090a67d76ae11d8415b0b6c7d9aecba67",
+      "bytes": 678
+    },
+    {
+      "zip": "assets/sprites/readme.txt",
+      "prod": "assets/sprites/readme.txt",
+      "sha256": "a768f3097d266154c9c8d78438c401012fad1c92b96767e475a0ffc1fabc4f32",
+      "bytes": 564
+    },
+    {
+      "zip": "assets/storiespage-h_ulay3n.js",
+      "prod": "assets/StoriesPage-H_ulay3n.js",
+      "sha256": "c02a12dd3d5130a54a1a775a48e6a85ddc8a684ca687162e92cee1d7b332f775",
+      "bytes": 31631
+    },
+    {
+      "zip": "assets/supabase-x1tipi0n.js",
+      "prod": "assets/supabase-X1tipi0N.js",
+      "sha256": "227aed6d9fb7cc49e87e95aabcb64bb001b295d87c46c147c4723c477f26f1bf",
+      "bytes": 190809
+    },
+    {
+      "zip": "assets/usercontentloadfunctions-bnpmkj8t.js",
+      "prod": "assets/userContentLoadFunctions-BnpMKj8T.js",
+      "sha256": "e6e0ba2bf6ee21fc715e57e436cb64e185eeaae14fbf19c7b6c44ece2a8b5d96",
+      "bytes": 17838
+    },
+    {
+      "zip": "assets/vendor-c0jafblr.js",
+      "prod": "assets/vendor-C0jAFBLR.js",
+      "sha256": "f245679cedb22e1e2110321b5af16bf695fe18c6d7296f43f8c2aeea063e453d",
+      "bytes": 1010624
+    },
+    {
+      "zip": "assets/verequipos-cce5zeuy.js",
+      "prod": "assets/VerEquipos-Cce5zEuy.js",
+      "sha256": "f526ebacd68ddfdad78a08327ec840508ae555c0a3caba5d5440f01dc2706c0c",
+      "bytes": 429
+    },
+    {
+      "zip": "assets/videofeed-acktyngf.js",
+      "prod": "assets/VideoFeed-AcKtyNgF.js",
+      "sha256": "eee4340555be447c794df409b3c2458a3848e43a9ee8384a6d885c65338d942b",
+      "bytes": 10427
+    },
+    {
+      "zip": "assets/videoprefetch.worker-dm62tp9j.js",
+      "prod": "assets/videoPrefetch.worker-DM62tp9J.js",
+      "sha256": "238ec95d4f12d0cdc4643f0df4c8bc1dfe34b5e73669f9f5a4c3437211ee8ca0",
+      "bytes": 807
+    },
+    {
+      "zip": "assets/worldtopleagues-cdil4qum.js",
+      "prod": "assets/worldTopLeagues-CdiL4QUm.js",
+      "sha256": "69e2b45444a22339e9127d228a5681b9a7058f4e945e5c682513b2a2c7822aca",
+      "bytes": 3702
+    },
+    {
+      "zip": "assets/zonaprotorneopublishservice-dc9cop9l.js",
+      "prod": "assets/zonaProTorneoPublishService-Dc9cOp9L.js",
+      "sha256": "84aba6fc4934dfaee97d9a59d2e231bea8d82d6b74c929753b4d317521ea8a5d",
+      "bytes": 4546
+    },
+    {
+      "zip": "crear-torneo-premium.jpg",
+      "prod": "crear-torneo-premium.jpg",
+      "sha256": "ff3ed1bf4da15374d30ac8c4f45d3cf45764031f92c62cffcef880861f04095e",
+      "bytes": 311102
+    },
+    {
+      "zip": "crear-torneo-premium.svg",
+      "prod": "crear-torneo-premium.svg",
+      "sha256": "4d73b16d3b411464448b48062d3077ce53cd676733df6605c41270dbf69a2f67",
+      "bytes": 9872
+    },
+    {
+      "zip": "favicon.ico",
+      "prod": "favicon.ico",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "zip": "favicon.svg",
+      "prod": "favicon.svg",
+      "sha256": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66",
+      "bytes": 9522
+    },
+    {
+      "zip": "icons.svg",
+      "prod": "icons.svg",
+      "sha256": "b45fa506195cfcdef406ba9f0c77b36ddc1a7c224040926ec70abc2fdea7b93a",
+      "bytes": 5031
+    },
+    {
+      "zip": "index.html",
+      "prod": "index.html",
+      "sha256": "1151fe8f29f7ade97471370b5a218a719b4fab71245869c1fc5de76aedc137e3",
+      "bytes": 4406
+    }
+  ],
+  "notes": [
+    "ZIP asset filenames are lowercase (Windows). Linux/Netlify need mixed-case names as referenced by index.html and JS imports.",
+    "ZIP netlify.toml is the PC Windows config (publish=dist absolute paths) \u2014 NEVER use as repo netlify.toml.",
+    "__tmp_measure_home.js is diagnostic junk \u2014 do not publish."
+  ]
+}
