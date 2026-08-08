@@ -276,7 +276,7 @@ AS $$
     SELECT u.id
     FROM public.usuarios u, me
     WHERE me.uid IS NOT NULL
-      AND (u.id = me.uid OR u.auth_user_id = me.uid OR u.user_id = me.uid)
+      AND (u.id = me.uid OR u.auth_user_id = me.uid)
     UNION
     SELECT am.amigo_id
     FROM public.amistades am, me
