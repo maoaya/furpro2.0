@@ -154,11 +154,16 @@ Eso explica por qué “AuthPageUnificada” aparece en backups antiguos y no co
 
 ## 6. Mapa de recuperación (este remoto)
 
+Detalle ampliado (momentos de mezcla + comandos):  
+→ **`auditoria/RECUPERACION_CODIGO_PERDIDO_20260808.md`**
+
 | Objetivo | Ref Git | Comando |
 |----------|---------|---------|
 | GitHub limpio (ene 2026), sin cambios agente | `origin/master` = `80d7863` | `git checkout master && git reset --hard origin/master` |
 | Estado Cloud del **6 ago antes del rediseño** | `4f98d93` / `cursor/volver-antes-rotura-f7dd` | `git checkout cursor/volver-antes-rotura-f7dd` |
 | **Producto real ZONA PRO del 6 ago** | **No está en este remoto** | Recuperar en Windows: Local History / Timeline / `git reflog` de **esa** carpeta y **pushear** a GitHub |
+
+**Nota:** incluso en `master`, `public/_redirects` ya manda `/home` → `homepage-instagram.html` (mezcla estructural desde ~oct 2025, no solo el agente).
 
 ### PRs a no mergear (diseño)
 
