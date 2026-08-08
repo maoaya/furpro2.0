@@ -29,7 +29,8 @@
     "test": "cross-env NODE_ENV=test jest --config jest.backend.config.cjs --runInBand",
     "test:backend": "cross-env NODE_ENV=test jest --config jest.backend.config.cjs --runInBand testing/",
     "lint": "eslint .",
-    "audit:full": "npm audit --json > audit-latest.json || echo audit finished"
+    "audit:full": "npm audit --json > audit-latest.json || echo audit finished",
+    "compare:fuente-deploy": "node scripts/compare-fuente-vs-deploy.mjs"
   },
   "dependencies": {
     "@cypress/react": "^9.0.1",
