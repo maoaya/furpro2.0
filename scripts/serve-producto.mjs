@@ -146,5 +146,4 @@ const server = http.createServer(async (req, res) => {
 server.listen(port, host, () => {
   console.log(`✅ Zona Pro local: http://${host}:${port}/`);
   console.log('   proxy: POST /api/zona-pro  → TheSportsDB (sin CORS)');
-  console.log('   menú ⋮: Forzar sistema · Recargar completa');
 });

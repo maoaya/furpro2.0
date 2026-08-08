@@ -10,7 +10,7 @@
   "extra_in_prod_non_lock": [],
   "critical_sha256": {
     "index.html": "1151fe8f29f7ade97471370b5a218a719b4fab71245869c1fc5de76aedc137e3",
-    "assets/index-DchpCYR3.js": "c5f6a2a97061bb5127f0aec1719ffea443103c97e820f7f0f1edfcae221cfe8d",
+    "assets/index-DchpCYR3.js": "9cb103ce9fcfc6f4133e71e62fb1674573057c397882a0b66a41fc2f2d198c56",
     "assets/loginpagesnew-BPP0r_st.js": "532cbe1a8d0b34f760a6e465b4d6553c0cf79702aa9e98019dd78b148a470cbe",
     "assets/index-DoGwQ0mo.css": "72200c27e811051fd7851e4473dd3987d6655659870b47c993fad8955f66069e"
   },
@@ -740,7 +740,14 @@
   ],
   "notes": [
     "ZIP asset filenames are lowercase (Windows). Linux/Netlify need mixed-case names as referenced by index.html and JS imports.",
-    "ZIP netlify.toml is the PC Windows config (publish=dist absolute paths) \u2014 NEVER use as repo netlify.toml.",
-    "__tmp_measure_home.js is diagnostic junk \u2014 do not publish."
+    "ZIP netlify.toml is the PC Windows config (publish=dist absolute paths) — NEVER use as repo netlify.toml.",
+    "__tmp_measure_home.js is diagnostic junk — do not publish."
+  ],
+  "bundle_patches": [
+    {
+      "date": "2026-08-08",
+      "file": "assets/index-DchpCYR3.js",
+      "change": "Retirados del menú hamburguesa: Forzar sistema y Recargar completa; long-press Inicio ya no fuerza sistema"
+    }
   ]
 }

@@ -43,6 +43,6 @@ Hay que **ejecutar el SQL en el Dashboard de Supabase** (este agente no tiene `s
 
 ## 2026-08-08 — Proxy TheSportsDB / menú forzar
 
-- **Forzar sistema** y **Recargar completa** ya existen en el menú ⋮ del ZIP canónico.
+- **Forzar sistema** y **Recargar completa** retirados del menú ⋮ (y del long-press de Inicio).
 - CORS TheSportsDB: function `zona-pro-ai` + `npm start` con `scripts/serve-producto.mjs` (POST `/api/zona-pro`).
 - Detalle: `auditoria/FIX_THESPORTSDB_CORS_Y_FORZAR_SISTEMA.md`.

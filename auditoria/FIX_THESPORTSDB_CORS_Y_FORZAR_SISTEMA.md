@@ -2,18 +2,13 @@
 
 Fecha: 2026-08-08
 
-## Menú hamburguesa (ya en el ZIP canónico)
+## Menú hamburguesa — Forzar sistema / Recargar completa
 
-En `producto-deploy/assets/index-DchpCYR3.js` el menú ⋮ incluye:
+**Retirados** del menú ⋮ (pedido explícito 2026-08-08).
 
-| Label | Action | Comportamiento |
-|---|---|---|
-| Forzar sistema | `force-system` | Limpia SW/caches + soft/hard reset (`futpro:force-system`) |
-| Recargar completa | `force-reload` | `location.replace` con `?_force=<base36>` (ej. `homepages?_force=msk2ilhb`) |
+También se desactivó el long-press de Inicio que disparaba forzar sistema (title = “Inicio”).
 
-También: long-press (~900 ms) en Inicio → forzar sistema.
-
-**No hace falta añadirlos de nuevo** — ya existen en el producto canónico.
+Patch en `producto-deploy/assets/index-DchpCYR3.js` + hash en `scripts/ensure-producto-deploy.mjs` y `MANIFEST_CANONICO.json`.
 
 ## Error de consola (CORS / 429)
 
