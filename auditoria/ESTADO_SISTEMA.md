@@ -33,3 +33,10 @@ Lo que se quitó fue el **impostor de enero**, no Zona Pro. Restaurar enero ser�
 4. **Editar API/SQL:** `functions/`, `supabase/`, `src/main` (backend)
 
 Sin el fuente del PC, este repo solo tiene el **build** compilado: se puede usar y desplegar, pero no editar pantallas como JSX.
+
+## Errores de consola Supabase (chat / ranking / historias)
+
+Diagnóstico: `auditoria/DIAGNOSTICO_ERRORES_SUPABASE_CONSOLA.md`  
+SQL fix: `auditoria/sql/2026-08-08_fix_schema_drift_chat_ranking_historias.sql`
+
+Hay que **ejecutar el SQL en el Dashboard de Supabase** (este agente no tiene `service_role` / MCP auth).
